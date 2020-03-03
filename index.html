@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CoViD-19 View</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="Christian Haider"/>
+    <script type='text/javascript' src='the.js'></script>
+</head>
+
+<body>
+<script type='text/javascript'>
+    var global = typeof global === "undefined" ? window : global || window;
+    new Promise(function (resolve, reject) {
+        require(['app'], resolve, reject);
+    }).then(function (amber) {
+        return amber.initialize({
+            //used for all new packages in IDE
+            'transport.defaultAmdNamespace': "amber-covid19view"
+        }).then(function () {
+            amber.globals.Covid19view._start();
+        });
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,56 @@
+{
+  "name": "covid19view",
+  "title": "CoVid19View",
+  "description": "Visualization of the CoViD-19 data",
+  "version": "0.1.0",
+  "homepage": "https://github.com/Christian/CoViD19UI",
+  "author": {
+    "name": "Christian Haider",
+    "email": "ChristianHaider@users.noreply.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Christian/CoViD19UI.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Christian/CoViD19UI/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/Christian/CoViD19UI/blob/master/LICENSE-MIT"
+    }
+  ],
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "scripts": {
+    "reset": "npm run clean && npm run init",
+    "clean": "(rm -rf node_modules || rd /s/q node_modules)",
+    "init": "npm install && grunt default devel",
+    "test": "grunt test"
+  },
+  "dependencies": {
+    "@ambers/contrib-jquery": "^0.6.0",
+    "@ambers/contrib-web": "^0.8.2",
+    "@ambers/lang": "^0.24.0",
+    "@ambers/domite": "^0.9.0",
+    "es6-promise": "^4.2.6",
+    "@ambers/silk": "^0.5.1"
+  },
+  "devDependencies": {
+    "@ambers/ide-starter-modal": "^0.2.0",
+    "@ambers/sdk": "^0.12.1",
+    "@ambers/contrib-legacy": "^0.8.6",
+    "@ambers/helios": "^0.11.6",
+    "grunt": "^1.0.3",
+    "grunt-contrib-clean": "^1.1.0",
+    "grunt-contrib-requirejs": "^1.0.0",
+    "grunt-exec": "^3.0.0",
+    "requirejs": "^2.3.5"
+  },
+  "keywords": [
+    "Amber",
+    "Smalltalk"
+  ]
+}

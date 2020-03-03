@@ -9,7 +9,20 @@ Object subclass: #Covid19view
 getData
 	(Platform fetch: 'CoViD-19.json') then: [:response | 
 		response json then: [:json | 
-			self showData: json]]
+			| all |
+			console log: json.
+			all := json collect: [:data |
+				Series 
+					country: data country
+					state: data state
+					latLong: data latLong
+					series: (data series collect: [:d |
+						Datapoint 
+							date: d date 
+							confirmed: d confirmed 
+							deaths: d deaths 
+							recovered: d recovered])].
+			self showData: all]]
 !
 
 openHelios
@@ -19,6 +32,7 @@ openHelios
 showData: aJson
 	| list |
 	list := '#CountryList' asSilk.
+	list resetContents.
 	aJson do: [:country |
 		list LI: country]
 ! !
@@ -45,14 +59,14 @@ augmentPage
 !Covid19view class methodsFor: 'starting'!
 
 start
-	self new augmentPage
+  self new augmentPage
 ! !
 
 Object subclass: #Datapoint
 	slots: {#date. #confirmed. #deaths. #recovered}
 	package: 'Covid19view'!
 
-!Datapoint methodsFor: 'as yet unclassified'!
+!Datapoint methodsFor: 'accessing'!
 
 confirmed
 	"<Integer>"
@@ -78,17 +92,29 @@ recovered
 	^recovered
 ! !
 
-!Datapoint class methodsFor: 'starting'!
+!Datapoint methodsFor: 'as yet unclassified'!
 
-start
-	self new augmentPage
+initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger recovered: aRecoveredInteger
+	date := aDate.
+	confirmed := aConfirmedInteger.
+	deaths := aDeathsInteger.
+	recovered := aRecoveredInteger
+! !
+
+!Datapoint class methodsFor: 'instance creation'!
+
+date: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger recovered: aRecoveredInteger
+	| inst |
+	inst := self new.
+	inst initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger recovered: aRecoveredInteger.
+	^inst
 ! !
 
 Object subclass: #Series
 	slots: {#country. #state. #latLong. #series}
 	package: 'Covid19view'!
 
-!Series methodsFor: 'as yet unclassified'!
+!Series methodsFor: 'accessing'!
 
 country
 	"<String>"
@@ -114,9 +140,27 @@ state
 	^state
 ! !
 
-!Series class methodsFor: 'starting'!
+!Series methodsFor: 'as yet unclassified'!
 
-start
-	self new augmentPage
+printOn: stream
+	stream nextPutAll: self country, ' ', self state
+! !
+
+!Series methodsFor: 'initialization'!
+
+initializeCountry: aCountryString state: aStateString latLong: aLatLongPoint series: someDatapoints
+	country := aCountryString.
+	state := aStateString.
+	latLong := aLatLongPoint.
+	series := someDatapoints
+! !
+
+!Series class methodsFor: 'instance creation'!
+
+country: aCountryString state: aStateString latLong: aLatLongPoint series: someDatapoints
+	| inst |
+	inst := self new.
+	inst initializeCountry: aCountryString state: aStateString latLong: aLatLongPoint series: someDatapoints.
+	^inst
 ! !
 

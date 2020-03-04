@@ -7,22 +7,18 @@ Object subclass: #Covid19view
 !Covid19view methodsFor: 'action'!
 
 getData
-	(Platform fetch: 'CoViD-19.json') then: [:response | 
-		response json then: [:json | 
-			| all |
-			console log: json.
-			all := json collect: [:data |
-				Series 
-					country: data country
-					state: data state
-					latLong: data latLong
-					series: (data series collect: [:d |
-						Datapoint 
-							date: d date 
-							confirmed: d confirmed 
-							deaths: d deaths 
-							recovered: d recovered])].
-			self showData: all]]
+	(Platform fetch: 'CoViD-19.json')
+		then: [:response |
+			response json 
+				then: [:json |
+					self showData: (json collect: [:data |
+						Series 
+							country: data country
+							state: data state
+							latLong: data latLong
+							series: data series])]
+				catch: [:ex | ErrorHandler handleError: ex]]
+		catch: [:ex | ErrorHandler handleError: ex]
 !
 
 openHelios
@@ -92,7 +88,7 @@ recovered
 	^recovered
 ! !
 
-!Datapoint methodsFor: 'as yet unclassified'!
+!Datapoint methodsFor: 'initialize / release'!
 
 initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger recovered: aRecoveredInteger
 	date := aDate.
@@ -160,7 +156,16 @@ initializeCountry: aCountryString state: aStateString latLong: aLatLongPoint ser
 country: aCountryString state: aStateString latLong: aLatLongPoint series: someDatapoints
 	| inst |
 	inst := self new.
-	inst initializeCountry: aCountryString state: aStateString latLong: aLatLongPoint series: someDatapoints.
+	inst 
+		initializeCountry: aCountryString 
+		state: aStateString 
+		latLong: aLatLongPoint 
+		series: (someDatapoints collect: [:d |
+			Datapoint 
+				date: d date 
+				confirmed: d confirmed 
+				deaths: d deaths 
+				recovered: d recovered]).
 	^inst
 ! !
 

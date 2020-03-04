@@ -91,57 +91,62 @@ selector: "getData",
 protocol: "action",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "getData\x0a\x09(Platform fetch: 'CoViD-19.json') then: [:response | \x0a\x09\x09response json then: [:json | \x0a\x09\x09\x09| all |\x0a\x09\x09\x09console log: json.\x0a\x09\x09\x09all := json collect: [:data |\x0a\x09\x09\x09\x09Series \x0a\x09\x09\x09\x09\x09country: data country\x0a\x09\x09\x09\x09\x09state: data state\x0a\x09\x09\x09\x09\x09latLong: data latLong\x0a\x09\x09\x09\x09\x09series: (data series collect: [:d |\x0a\x09\x09\x09\x09\x09\x09Datapoint \x0a\x09\x09\x09\x09\x09\x09\x09date: d date \x0a\x09\x09\x09\x09\x09\x09\x09confirmed: d confirmed \x0a\x09\x09\x09\x09\x09\x09\x09deaths: d deaths \x0a\x09\x09\x09\x09\x09\x09\x09recovered: d recovered])].\x0a\x09\x09\x09self showData: all]]",
-referencedClasses: ["Platform", "Series", "Datapoint"],
+source: "getData\x0a\x09(Platform fetch: 'CoViD-19.json')\x0a\x09\x09then: [:response |\x0a\x09\x09\x09response json \x0a\x09\x09\x09\x09then: [:json |\x0a\x09\x09\x09\x09\x09self showData: (json collect: [:data |\x0a\x09\x09\x09\x09\x09\x09Series \x0a\x09\x09\x09\x09\x09\x09\x09country: data country\x0a\x09\x09\x09\x09\x09\x09\x09state: data state\x0a\x09\x09\x09\x09\x09\x09\x09latLong: data latLong\x0a\x09\x09\x09\x09\x09\x09\x09series: data series])]\x0a\x09\x09\x09\x09catch: [:ex | ErrorHandler handleError: ex]]\x0a\x09\x09catch: [:ex | ErrorHandler handleError: ex]",
+referencedClasses: ["Platform", "Series", "ErrorHandler"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["then:", "fetch:", "json", "log:", "collect:", "country:state:latLong:series:", "country", "state", "latLong", "series", "date:confirmed:deaths:recovered:", "date", "confirmed", "deaths", "recovered", "showData:"]
+messageSends: ["then:catch:", "fetch:", "json", "showData:", "collect:", "country:state:latLong:series:", "country", "state", "latLong", "series", "handleError:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-$recv($recv($globals.Platform)._fetch_("CoViD-19.json"))._then_((function(response){
+$recv($recv($globals.Platform)._fetch_("CoViD-19.json"))._then_catch_((function(response){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-return $recv($recv(response)._json())._then_((function(json){
-var all;
+return $recv($recv(response)._json())._then_catch_((function(json){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx3) {
 //>>excludeEnd("ctx");
-$recv(console)._log_(json);
-all=$recv(json)._collect_((function(data){
+return $self._showData_($recv(json)._collect_((function(data){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx4) {
 //>>excludeEnd("ctx");
-return $recv($globals.Series)._country_state_latLong_series_($recv(data)._country(),$recv(data)._state(),$recv(data)._latLong(),$recv($recv(data)._series())._collect_((function(d){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx5) {
-//>>excludeEnd("ctx");
-return $recv($globals.Datapoint)._date_confirmed_deaths_recovered_($recv(d)._date(),$recv(d)._confirmed(),$recv(d)._deaths(),$recv(d)._recovered());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx5) {$ctx5.fillBlock({d:d},$ctx4,4)});
-//>>excludeEnd("ctx");
-})));
+return $recv($globals.Series)._country_state_latLong_series_($recv(data)._country(),$recv(data)._state(),$recv(data)._latLong(),$recv(data)._series());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx4) {$ctx4.fillBlock({data:data},$ctx3,3)});
 //>>excludeEnd("ctx");
-}));
+})));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx3.sendIdx["collect:"]=1;
+}, function($ctx3) {$ctx3.fillBlock({json:json},$ctx2,2)});
 //>>excludeEnd("ctx");
-return $self._showData_(all);
+}),(function(ex){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({json:json,all:all},$ctx2,2)});
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
+return $recv($globals.ErrorHandler)._handleError_(ex);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx3.sendIdx["handleError:"]=1;
+//>>excludeEnd("ctx");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({ex:ex},$ctx2,4)});
 //>>excludeEnd("ctx");
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx2) {$ctx2.fillBlock({response:response},$ctx1,1)});
 //>>excludeEnd("ctx");
+}),(function(ex){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv($globals.ErrorHandler)._handleError_(ex);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({ex:ex},$ctx1,5)});
+//>>excludeEnd("ctx");
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["then:"]=1;
+$ctx1.sendIdx["then:catch:"]=1;
 //>>excludeEnd("ctx");
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -293,7 +298,7 @@ $globals.Datapoint);
 $core.addMethod(
 $core.method({
 selector: "initializeDate:confirmed:deaths:recovered:",
-protocol: "as yet unclassified",
+protocol: "initialize / release",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aDate", "aConfirmedInteger", "aDeathsInteger", "aRecoveredInteger"],
 source: "initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger recovered: aRecoveredInteger\x0a\x09date := aDate.\x0a\x09confirmed := aConfirmedInteger.\x0a\x09deaths := aDeathsInteger.\x0a\x09recovered := aRecoveredInteger",
@@ -489,11 +494,11 @@ selector: "country:state:latLong:series:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aCountryString", "aStateString", "aLatLongPoint", "someDatapoints"],
-source: "country: aCountryString state: aStateString latLong: aLatLongPoint series: someDatapoints\x0a\x09| inst |\x0a\x09inst := self new.\x0a\x09inst initializeCountry: aCountryString state: aStateString latLong: aLatLongPoint series: someDatapoints.\x0a\x09^inst",
-referencedClasses: [],
+source: "country: aCountryString state: aStateString latLong: aLatLongPoint series: someDatapoints\x0a\x09| inst |\x0a\x09inst := self new.\x0a\x09inst \x0a\x09\x09initializeCountry: aCountryString \x0a\x09\x09state: aStateString \x0a\x09\x09latLong: aLatLongPoint \x0a\x09\x09series: (someDatapoints collect: [:d |\x0a\x09\x09\x09Datapoint \x0a\x09\x09\x09\x09date: d date \x0a\x09\x09\x09\x09confirmed: d confirmed \x0a\x09\x09\x09\x09deaths: d deaths \x0a\x09\x09\x09\x09recovered: d recovered]).\x0a\x09^inst",
+referencedClasses: ["Datapoint"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["new", "initializeCountry:state:latLong:series:"]
+messageSends: ["new", "initializeCountry:state:latLong:series:", "collect:", "date:confirmed:deaths:recovered:", "date", "confirmed", "deaths", "recovered"]
 }, function ($methodClass){ return function (aCountryString,aStateString,aLatLongPoint,someDatapoints){
 var self=this,$self=this;
 var inst;
@@ -501,7 +506,15 @@ var inst;
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 inst=$self._new();
-$recv(inst)._initializeCountry_state_latLong_series_(aCountryString,aStateString,aLatLongPoint,someDatapoints);
+$recv(inst)._initializeCountry_state_latLong_series_(aCountryString,aStateString,aLatLongPoint,$recv(someDatapoints)._collect_((function(d){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv($globals.Datapoint)._date_confirmed_deaths_recovered_($recv(d)._date(),$recv(d)._confirmed(),$recv(d)._deaths(),$recv(d)._recovered());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({d:d},$ctx1,1)});
+//>>excludeEnd("ctx");
+})));
 return inst;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"country:state:latLong:series:",{aCountryString:aCountryString,aStateString:aStateString,aLatLongPoint:aLatLongPoint,someDatapoints:someDatapoints,inst:inst})});

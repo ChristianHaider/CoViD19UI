@@ -1,0 +1,131 @@
+#Contents {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: min-content 1fr min-content;
+	min-height: 98vh;
+}
+
+header {
+	background: #F1F3F4;
+	grid-column: 1 / span 2;
+	grid-row:    1;					
+}
+
+li {
+	list-style-type: none;
+}
+
+#CountryList {
+	background: #fffbf0;
+	grid-column: 1;
+}
+
+.ListItemSelected {
+	cursor: pointer;
+	background: #ddd9d0;
+}
+
+.ListItem {
+	cursor: pointer;
+}
+
+.CountryName {
+	font-weight: bold;
+}
+
+.StateName {
+	font-weight: normal;
+}
+
+.Confirmed {
+	font-weight: bold;
+	margin-left: 1em;
+}
+
+.Deaths {
+	color: red;
+	font-weight: bold;
+	margin-left: 1em;
+}
+
+.Recovered {
+	color: green;
+	font-weight: bold;
+	margin-left: 1em;
+}
+
+.treeButton {
+}
+
+.treeSpan {
+	width: 1.5em;
+	display: inline-block;
+}
+
+#Graphics {
+	background: #ffede0;		
+}
+
+.ValueAxis {
+	fill: none;
+}
+
+.ValueText {
+  font-family: sans-serif;
+  font-size: 7px;
+  fill: black;
+}
+
+.DateAxis {
+	fill: none;
+}
+
+.Monthline {
+	stroke: #aaa;
+}
+
+.Weekline {
+	stroke: #ddd;
+}
+
+.Baseline {
+	stroke: black;
+}
+
+.MonthText {
+  font-family: sans-serif;
+  font-size: 7px;
+  fill: black;
+}
+
+.ChartArea {
+	fill: none;
+}
+
+.BarConfirmed {
+	fill: orange;
+}
+
+.BarDeaths {
+	fill: red;
+}
+
+.BarRecovered {
+	fill: green;
+}
+
+footer {
+	background: #e4ebf2;
+	grid-column: 1 / span 2;
+	grid-row:    3;					
+}
+
+header,
+#CountryList,
+#Graphics,
+footer {
+	border-radius: 0px 0.5em 0.5em;
+	border: 1px solid;
+	padding: .5em;
+	margin: .5em;
+}

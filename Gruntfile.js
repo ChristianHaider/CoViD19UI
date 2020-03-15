@@ -118,6 +118,16 @@ module.exports = function (grunt) {
                 }
             }
         },
+			
+		watch: {
+			css: {
+				files: ['css/*.css'],
+			},
+			options: {
+				// Start a live reload server on the default port 35729
+				livereload: true,
+			}
+		},
 
         exec: {
             test_runner: 'node test_runner.js'
@@ -127,5 +137,8 @@ module.exports = function (grunt) {
             test_runner: ['test_runner.js']
         }
     });
+	
+	grunt.loadNpmTasks('grunt-contrib-watch');
+	grunt.loadNpmTasks('grunt-contrib-connect');
 
 };

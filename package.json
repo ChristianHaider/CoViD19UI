@@ -1,7 +1,8 @@
 {
   "name": "covid19view",
   "title": "CoVid19View",
-  "description": "Visualization of the CoViD-19 data",
+  "description": "Visualization of CoViD-19 data",
+  "license": "MIT",
   "version": "0.1.0",
   "homepage": "https://github.com/Christian/CoViD19UI",
   "author": {
@@ -15,12 +16,6 @@
   "bugs": {
     "url": "https://github.com/Christian/CoViD19UI/issues"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/Christian/CoViD19UI/blob/master/LICENSE-MIT"
-    }
-  ],
   "engines": {
     "node": ">=4.0.0"
   },
@@ -33,19 +28,22 @@
   "dependencies": {
     "@ambers/contrib-jquery": "^0.6.0",
     "@ambers/contrib-web": "^0.8.2",
-    "@ambers/lang": "^0.24.0",
     "@ambers/domite": "^0.9.0",
-    "es6-promise": "^4.2.6",
-    "@ambers/silk": "^0.5.1"
+    "@ambers/lang": "^0.24.0",
+    "@ambers/silk": "^0.5.1",
+    "d3": "^5.15.0",
+    "es6-promise": "^4.2.6"
   },
   "devDependencies": {
-    "@ambers/ide-starter-modal": "^0.2.0",
-    "@ambers/sdk": "^0.12.1",
     "@ambers/contrib-legacy": "^0.8.6",
     "@ambers/helios": "^0.11.6",
+    "@ambers/ide-starter-modal": "^0.2.0",
+    "@ambers/sdk": "^0.12.1",
     "grunt": "^1.0.3",
     "grunt-contrib-clean": "^1.1.0",
+    "grunt-contrib-connect": "^2.1.0",
     "grunt-contrib-requirejs": "^1.0.0",
+    "grunt-contrib-watch": "^1.1.0",
     "grunt-exec": "^3.0.0",
     "requirejs": "^2.3.5"
   },

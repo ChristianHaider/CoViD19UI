@@ -1,5 +1,6 @@
 {
   "paths": {
-    "amber-covid19view": "src"
+    "amber-covid19view": "src",
+    "amber-covid19view/css": "css"
   }
 }

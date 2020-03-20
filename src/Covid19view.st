@@ -246,7 +246,7 @@ svg
 	self valueAxisIn: svg.
 	self dateAxisIn: svg.
 	self chartAreaIn: svg.
-	self linLogButtonsIn: svg.
+	"self linLogButtonsIn: svg."
 	^svg
 !
 
@@ -352,21 +352,38 @@ withSeriesDo: aOneArgumentBlock
 addContentsTo: aDiv
 	| buttons list |
 	aDiv HEADER: {
-		(Silk H1: 'CoViD-19 data analysis').
-		(Silk DIV: (Silk A: {
+		Silk H1: 'CoViD-19 Charts'.
+		"self buttonsForDevelopment"}.
+	aDiv DIV: 'id' -> 'CountryList'.
+	aDiv DIV: 'id' -> 'Graphics'.
+	aDiv << self footer
+!
+
+buttonsForDevelopment
+	"<Silk>"
+	
+	^Silk DIV: {
+		'id' -> 'Buttons'.
+		(Silk BUTTON: 'reset') on: #click bind: [self resetContents].
+		(Silk BUTTON: 'get data') on: #click bind: [self getData].
+		(Silk BUTTON: 'Helios') on: #click bind: [self openHelios]}
+!
+
+footer
+	"<Silk>"
+	
+	^Silk FOOTER: {
+		'Done in Amber Smalltalk by Christian Haider'.
+		Silk SPAN: (Silk A: {
 			'href' -> 'https://github.com/CSSEGISandData/COVID-19'.
 			'target' -> '_blank'.
 			'rel' -> 'noopener'.
-			'Data on GitHub'})).
-	(Silk DIV: {'id' -> 'Buttons'.
-		((Silk BUTTON: 'reset') on: #click bind: [self resetContents]).
-		((Silk BUTTON: 'get data') on: #click bind: [self getData]).
-		((Silk BUTTON: 'Helios') on: #click bind: [self openHelios])
-	}).
-	}.
-	aDiv DIV: 'id' -> 'CountryList'.
-	aDiv DIV: 'id' -> 'Graphics'.
-	aDiv FOOTER: 'Done in Amber Smalltalk by Christian Haider'
+			'Data'}).
+		Silk SPAN: (Silk A: {
+			'href' -> 'https://github.com/ChristianHaider/CoViD19UI'.
+			'target' -> '_blank'.
+			'rel' -> 'noopener'.
+			'Source'})}
 ! !
 
 !CoViD19 methodsFor: 'starting'!
@@ -678,10 +695,10 @@ showInfo
 	graphics resetContents.
 	graphics H2: self name.
 	graphics DIV: {
-		Silk H3: 'Absolute'.
+		Silk H3: 'Cases'.
 		(Barchart on: self series) svg}.
 	graphics DIV: {
-		Silk H3: 'Differences'.
+		Silk H3: 'Change'.
 		(Barchart on: self changes) svg}
 ! !
 

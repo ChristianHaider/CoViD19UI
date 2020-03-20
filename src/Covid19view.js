@@ -942,11 +942,11 @@ selector: "svg",
 protocol: "html",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "svg\x0a\x09\x22<svg>\x22\x0a\x09\x0a\x09| svg valueAxis dateAxis buttons lin log |\x0a\x09svg := SVG SVG: {\x0a\x09\x09'viewBox' -> '0 0 200 100'.\x0a\x09\x09SVG RECT: {'x' -> 0. 'y' -> 0. 'width' -> '100%'. 'height' -> '100%'. 'fill' -> '#eee'}}.\x0a\x09self valueAxisIn: svg.\x0a\x09self dateAxisIn: svg.\x0a\x09self chartAreaIn: svg.\x0a\x09self linLogButtonsIn: svg.\x0a\x09^svg",
+source: "svg\x0a\x09\x22<svg>\x22\x0a\x09\x0a\x09| svg valueAxis dateAxis buttons lin log |\x0a\x09svg := SVG SVG: {\x0a\x09\x09'viewBox' -> '0 0 200 100'.\x0a\x09\x09SVG RECT: {'x' -> 0. 'y' -> 0. 'width' -> '100%'. 'height' -> '100%'. 'fill' -> '#eee'}}.\x0a\x09self valueAxisIn: svg.\x0a\x09self dateAxisIn: svg.\x0a\x09self chartAreaIn: svg.\x0a\x09\x22self linLogButtonsIn: svg.\x22\x0a\x09^svg",
 referencedClasses: ["SVG"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["SVG:", "->", "RECT:", "valueAxisIn:", "dateAxisIn:", "chartAreaIn:", "linLogButtonsIn:"]
+messageSends: ["SVG:", "->", "RECT:", "valueAxisIn:", "dateAxisIn:", "chartAreaIn:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 var svg,valueAxis,dateAxis,buttons,lin,log;
@@ -981,7 +981,6 @@ svg=$recv($globals.SVG)._SVG_($1);
 $self._valueAxisIn_(svg);
 $self._dateAxisIn_(svg);
 $self._chartAreaIn_(svg);
-$self._linLogButtonsIn_(svg);
 return svg;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"svg",{svg:svg,valueAxis:valueAxis,dateAxis:dateAxis,buttons:buttons,lin:lin,log:log})});
@@ -1361,98 +1360,29 @@ selector: "addContentsTo:",
 protocol: "contents",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aDiv"],
-source: "addContentsTo: aDiv\x0a\x09| buttons list |\x0a\x09aDiv HEADER: {\x0a\x09\x09(Silk H1: 'CoViD-19 data analysis').\x0a\x09\x09(Silk DIV: (Silk A: {\x0a\x09\x09\x09'href' -> 'https://github.com/CSSEGISandData/COVID-19'.\x0a\x09\x09\x09'target' -> '_blank'.\x0a\x09\x09\x09'rel' -> 'noopener'.\x0a\x09\x09\x09'Data on GitHub'})).\x0a\x09(Silk DIV: {'id' -> 'Buttons'.\x0a\x09\x09((Silk BUTTON: 'reset') on: #click bind: [self resetContents]).\x0a\x09\x09((Silk BUTTON: 'get data') on: #click bind: [self getData]).\x0a\x09\x09((Silk BUTTON: 'Helios') on: #click bind: [self openHelios])\x0a\x09}).\x0a\x09}.\x0a\x09aDiv DIV: 'id' -> 'CountryList'.\x0a\x09aDiv DIV: 'id' -> 'Graphics'.\x0a\x09aDiv FOOTER: 'Done in Amber Smalltalk by Christian Haider'",
+source: "addContentsTo: aDiv\x0a\x09| buttons list |\x0a\x09aDiv HEADER: {\x0a\x09\x09Silk H1: 'CoViD-19 Charts'.\x0a\x09\x09\x22self buttonsForDevelopment\x22}.\x0a\x09aDiv DIV: 'id' -> 'CountryList'.\x0a\x09aDiv DIV: 'id' -> 'Graphics'.\x0a\x09aDiv << self footer",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["HEADER:", "H1:", "DIV:", "A:", "->", "on:bind:", "BUTTON:", "resetContents", "getData", "openHelios", "FOOTER:"]
+messageSends: ["HEADER:", "H1:", "DIV:", "->", "<<", "footer"]
 }, function ($methodClass){ return function (aDiv){
 var self=this,$self=this;
 var buttons,list;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $2,$6,$7,$8,$5,$4,$3,$11,$13,$12,$15,$14,$10,$9,$1,$16;
-$2=$recv($globals.Silk)._H1_("CoViD-19 data analysis");
-$6="href".__minus_gt("https://github.com/CSSEGISandData/COVID-19");
+var $1;
+$recv(aDiv)._HEADER_([$recv($globals.Silk)._H1_("CoViD-19 Charts")]);
+$1="id".__minus_gt("CountryList");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["->"]=1;
 //>>excludeEnd("ctx");
-$7="target".__minus_gt("_blank");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=2;
-//>>excludeEnd("ctx");
-$8="rel".__minus_gt("noopener");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=3;
-//>>excludeEnd("ctx");
-$5=[$6,$7,$8,"Data on GitHub"];
-$4=$recv($globals.Silk)._A_($5);
-$3=$recv($globals.Silk)._DIV_($4);
+$recv(aDiv)._DIV_($1);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["DIV:"]=1;
 //>>excludeEnd("ctx");
-$11="id".__minus_gt("Buttons");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=4;
-//>>excludeEnd("ctx");
-$13=$recv($globals.Silk)._BUTTON_("reset");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["BUTTON:"]=1;
-//>>excludeEnd("ctx");
-$12=$recv($13)._on_bind_("click",(function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $self._resetContents();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["on:bind:"]=1;
-//>>excludeEnd("ctx");
-$15=$recv($globals.Silk)._BUTTON_("get data");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["BUTTON:"]=2;
-//>>excludeEnd("ctx");
-$14=$recv($15)._on_bind_("click",(function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $self._getData();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,2)});
-//>>excludeEnd("ctx");
-}));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["on:bind:"]=2;
-//>>excludeEnd("ctx");
-$10=[$11,$12,$14,$recv($recv($globals.Silk)._BUTTON_("Helios"))._on_bind_("click",(function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $self._openHelios();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,3)});
-//>>excludeEnd("ctx");
-}))];
-$9=$recv($globals.Silk)._DIV_($10);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["DIV:"]=2;
-//>>excludeEnd("ctx");
-$1=[$2,$3,$9];
-$recv(aDiv)._HEADER_($1);
-$16="id".__minus_gt("CountryList");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=5;
-//>>excludeEnd("ctx");
-$recv(aDiv)._DIV_($16);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["DIV:"]=3;
-//>>excludeEnd("ctx");
 $recv(aDiv)._DIV_("id".__minus_gt("Graphics"));
-$recv(aDiv)._FOOTER_("Done in Amber Smalltalk by Christian Haider");
+$recv(aDiv).__lt_lt($self._footer());
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"addContentsTo:",{aDiv:aDiv,buttons:buttons,list:list})});
@@ -1490,6 +1420,72 @@ $globals.CoViD19);
 
 $core.addMethod(
 $core.method({
+selector: "buttonsForDevelopment",
+protocol: "contents",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "buttonsForDevelopment\x0a\x09\x22<Silk>\x22\x0a\x09\x0a\x09^Silk DIV: {\x0a\x09\x09'id' -> 'Buttons'.\x0a\x09\x09(Silk BUTTON: 'reset') on: #click bind: [self resetContents].\x0a\x09\x09(Silk BUTTON: 'get data') on: #click bind: [self getData].\x0a\x09\x09(Silk BUTTON: 'Helios') on: #click bind: [self openHelios]}",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["DIV:", "->", "on:bind:", "BUTTON:", "resetContents", "getData", "openHelios"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $2,$4,$3,$6,$5,$1;
+$2="id".__minus_gt("Buttons");
+$4=$recv($globals.Silk)._BUTTON_("reset");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["BUTTON:"]=1;
+//>>excludeEnd("ctx");
+$3=$recv($4)._on_bind_("click",(function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._resetContents();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["on:bind:"]=1;
+//>>excludeEnd("ctx");
+$6=$recv($globals.Silk)._BUTTON_("get data");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["BUTTON:"]=2;
+//>>excludeEnd("ctx");
+$5=$recv($6)._on_bind_("click",(function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._getData();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,2)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["on:bind:"]=2;
+//>>excludeEnd("ctx");
+$1=[$2,$3,$5,$recv($recv($globals.Silk)._BUTTON_("Helios"))._on_bind_("click",(function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._openHelios();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,3)});
+//>>excludeEnd("ctx");
+}))];
+return $recv($globals.Silk)._DIV_($1);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"buttonsForDevelopment",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19);
+
+$core.addMethod(
+$core.method({
 selector: "countries",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -1513,6 +1509,63 @@ return $1;
 }
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"countries",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19);
+
+$core.addMethod(
+$core.method({
+selector: "footer",
+protocol: "contents",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "footer\x0a\x09\x22<Silk>\x22\x0a\x09\x0a\x09^Silk FOOTER: {\x0a\x09\x09'Done in Amber Smalltalk by Christian Haider'.\x0a\x09\x09Silk SPAN: (Silk A: {\x0a\x09\x09\x09'href' -> 'https://github.com/CSSEGISandData/COVID-19'.\x0a\x09\x09\x09'target' -> '_blank'.\x0a\x09\x09\x09'rel' -> 'noopener'.\x0a\x09\x09\x09'Data'}).\x0a\x09\x09Silk SPAN: (Silk A: {\x0a\x09\x09\x09'href' -> 'https://github.com/ChristianHaider/CoViD19UI'.\x0a\x09\x09\x09'target' -> '_blank'.\x0a\x09\x09\x09'rel' -> 'noopener'.\x0a\x09\x09\x09'Source'})}",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["FOOTER:", "SPAN:", "A:", "->"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $5,$6,$7,$4,$3,$2,$11,$12,$10,$9,$8,$1;
+$5="href".__minus_gt("https://github.com/CSSEGISandData/COVID-19");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=1;
+//>>excludeEnd("ctx");
+$6="target".__minus_gt("_blank");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=2;
+//>>excludeEnd("ctx");
+$7="rel".__minus_gt("noopener");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=3;
+//>>excludeEnd("ctx");
+$4=[$5,$6,$7,"Data"];
+$3=$recv($globals.Silk)._A_($4);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["A:"]=1;
+//>>excludeEnd("ctx");
+$2=$recv($globals.Silk)._SPAN_($3);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=1;
+//>>excludeEnd("ctx");
+$11="href".__minus_gt("https://github.com/ChristianHaider/CoViD19UI");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=4;
+//>>excludeEnd("ctx");
+$12="target".__minus_gt("_blank");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=5;
+//>>excludeEnd("ctx");
+$10=[$11,$12,"rel".__minus_gt("noopener"),"Source"];
+$9=$recv($globals.Silk)._A_($10);
+$8=$recv($globals.Silk)._SPAN_($9);
+$1=["Done in Amber Smalltalk by Christian Haider",$2,$8];
+return $recv($globals.Silk)._FOOTER_($1);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"footer",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19);
@@ -2873,7 +2926,7 @@ selector: "showInfo",
 protocol: "actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "showInfo\x0a\x09\x22add nice info graphics\x22\x0a\x09\x0a\x09| graphics |\x0a\x09graphics := '#Graphics' asSilk.\x0a\x09graphics resetContents.\x0a\x09graphics H2: self name.\x0a\x09graphics DIV: {\x0a\x09\x09Silk H3: 'Absolute'.\x0a\x09\x09(Barchart on: self series) svg}.\x0a\x09graphics DIV: {\x0a\x09\x09Silk H3: 'Differences'.\x0a\x09\x09(Barchart on: self changes) svg}",
+source: "showInfo\x0a\x09\x22add nice info graphics\x22\x0a\x09\x0a\x09| graphics |\x0a\x09graphics := '#Graphics' asSilk.\x0a\x09graphics resetContents.\x0a\x09graphics H2: self name.\x0a\x09graphics DIV: {\x0a\x09\x09Silk H3: 'Cases'.\x0a\x09\x09(Barchart on: self series) svg}.\x0a\x09graphics DIV: {\x0a\x09\x09Silk H3: 'Change'.\x0a\x09\x09(Barchart on: self changes) svg}",
 referencedClasses: ["Silk", "Barchart"],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -2889,7 +2942,7 @@ graphics="#Graphics"._asSilk();
 $recv(graphics)._resetContents();
 $recv(graphics)._H2_($self._name());
 $1=graphics;
-$3=$recv($globals.Silk)._H3_("Absolute");
+$3=$recv($globals.Silk)._H3_("Cases");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["H3:"]=1;
 //>>excludeEnd("ctx");
@@ -2906,7 +2959,7 @@ $recv($1)._DIV_($2);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["DIV:"]=1;
 //>>excludeEnd("ctx");
-$recv(graphics)._DIV_([$recv($globals.Silk)._H3_("Differences"),$recv($recv($globals.Barchart)._on_($self._changes()))._svg()]);
+$recv(graphics)._DIV_([$recv($globals.Silk)._H3_("Change"),$recv($recv($globals.Barchart)._on_($self._changes()))._svg()]);
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"showInfo",{graphics:graphics})});

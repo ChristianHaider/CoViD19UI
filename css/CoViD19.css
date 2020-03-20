@@ -164,6 +164,10 @@ footer {
 	grid-row:    3;					
 }
 
+footer a {
+	margin-left: 1em;				
+}
+
 header,
 #CountryList,
 #Graphics,

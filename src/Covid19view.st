@@ -1,10 +1,84 @@
 Smalltalk createPackage: 'Covid19view'!
-(Smalltalk packageAt: 'Covid19view' ifAbsent: [ self error: 'Package not created: Covid19view' ]) imports: {'d3' -> 'd3'. 'amber/web/Web'. 'amber/web/Web-JQuery'. 'silk/Silk'}!
+(Smalltalk packageAt: 'Covid19view' ifAbsent: [ self error: 'Package not created: Covid19view' ]) imports: {'silk/Silk'}!
 Object subclass: #Barchart
 	slots: {#series. #valuescale. #datescale}
 	package: 'Covid19view'!
 
 !Barchart methodsFor: 'accessing'!
+
+datapoints
+	"<Array of: Datapoint>"
+	
+	^self series series
+!
+
+datescale
+	"<Datescale>"
+	
+	^datescale ifNil: [
+		datescale := Datescale from: self firstDate to: self lastDate]
+!
+
+firstDate
+	^self series firstDate
+!
+
+lastDate
+	^self series lastDate
+!
+
+maxValue
+	"<Integer>"
+	
+	^self datapoints inject: 0 into: [:max :datapoint | max max: datapoint confirmed]
+!
+
+monthnameAt: aDate
+	"<String>"
+	
+	| index |
+	index := aDate month + 1.
+	index > 12 ifTrue: [
+		index := 1].
+	^#('January' 'February' 'March' 'April' 'May' 'June' 'July' 'August' 'September' 'October' 'November' 'December') at: index
+!
+
+numberOfValues
+	"<Integer>"
+	
+	^self series size
+!
+
+series
+	"<Dataseries>"
+	
+	^series
+!
+
+svgNamespace
+	^'http://www.w3.org/2000/svg'
+!
+
+valuescale
+	"<Valuescale>"
+	
+	^valuescale ifNil: [
+		valuescale := Valuescale from: 0 to: self maxValue]
+! !
+
+!Barchart methodsFor: 'actions'!
+
+setLinearScale
+	self valuescale beLinear.
+	console log: 'linear'
+!
+
+setLogarithmicScale
+	self valuescale beLogarithmic.
+	console log: 'logarithmic'
+! !
+
+!Barchart methodsFor: 'geometry'!
 
 chartBottom
 	"<Number>"
@@ -42,78 +116,10 @@ chartWidth
 	^self chartRight - self chartLeft
 !
 
-datapoints
-	"<Array of: Datapoint>"
-	
-	^self series series
-!
-
-datescale
-	"<Datescale>"
-	
-	^datescale ifNil: [
-		datescale := Datescale from: self firstDate to: self lastDate]
-!
-
 datescaleHeight
 	"<Number>"
 	
 	^100 - self chartHeight
-!
-
-firstDate
-	^self series firstDate
-!
-
-lastDate
-	^self series lastDate
-!
-
-maxValue
-	"<Integer>"
-	
-	^self datapoints inject: 0 into: [:max :datapoint | max max: datapoint confirmed]
-!
-
-monthnameAt: aDate
-	"<String>"
-	
-	^#('January' 'February' 'March' 'April' 'May' 'June' 'July' 'August' 'September' 'October' 'November' 'December') at: aDate month
-!
-
-numberOfValues
-	"<Integer>"
-	
-	^self series size
-!
-
-numberStringFor: asInteger
-	"<String>"
-	
-	| rst wst |
-	rst := asInteger printString reversed readStream.
-	wst := String new writeStream.
-	[rst atEnd] whileFalse: [
-		wst nextPutAll: (rst next: 3).
-		rst atEnd ifFalse: [wst nextPut: $.]].
-	^wst contents reversed
-!
-
-series
-	"<Dataseries>"
-	
-	^series
-!
-
-svgNamespace
-	^'http://www.w3.org/2000/svg'
-!
-
-valuescale
-	"<Valuescale>"
-	
-	^valuescale ifNil: [
-		valuescale := Valuescale from: 0 to: self maxValue]
 !
 
 valuescaleWidth
@@ -142,10 +148,11 @@ chartAreaIn: aSVG
 	"add the chart area"
 	
 	| chartArea barWidth |
-	chartArea := aSVG G: 'class' -> 'ChartArea'.
-	chartArea RECT: {
-		'x' -> self chartLeft. 'y' -> self chartTop. 
-		'width' -> self chartWidth. 'height' -> self chartHeight}.
+	chartArea := aSVG G: {
+		'class' -> 'ChartArea'.
+		SVG RECT: {
+			'x' -> self chartLeft. 'y' -> self chartTop. 
+			'width' -> self chartWidth. 'height' -> self chartHeight}}.
 	barWidth := self chartWidth / self datapoints size.
 	self datapoints do: [:datapoint |
 		| barLeft barTopConfirmed barHeightConfirmed barTopRecovered barHeightRecovered barTopDeaths barHeightDeaths |
@@ -175,13 +182,13 @@ chartAreaIn: aSVG
 dateAxisIn: aSVG
 	| dateAxis x |
 	dateAxis := aSVG G: 'class' -> 'DateAxis'.
-	self series firstDateOfWeeks allButFirst do: [:date |
+	self series lastDateOfWeeks do: [:date |
 		x := self xAt: date.
 		dateAxis LINE: {
 			'class' -> 'Weekline'.
 			'x1' -> x. 'y1' -> self chartBottom.
 			'x2' -> x. 'y2' -> self chartTop}].
-	self series firstDateOfMonths allButFirst do: [:date |
+	self series lastDateOfMonths do: [:date |
 		x := self xAt: date.
 		dateAxis LINE: {
 			'class' -> 'Monthline'.
@@ -198,30 +205,86 @@ dateAxisIn: aSVG
 	^dateAxis
 !
 
+linButtonIn: aSVG
+	| g |
+	g := aSVG G: 'class' -> 'LinearButton'.
+	g RECT: {
+		'x' -> 170. 'y' -> 90. 
+		'width' -> 15. 'height' -> 10}.
+	g TEXT: {
+		'class' -> 'ButtonText'.
+		'x' -> 175. 'y' -> 97.
+		'lin'}.
+	g on: #click bind: [self setLinearScale]
+!
+
+linLogButtonsIn: aSVG
+	self linButtonIn: aSVG.
+	self logButtonIn: aSVG
+!
+
+logButtonIn: aSVG
+	| g |
+	g := aSVG G: 'class' -> 'LogarithmicButton'.
+	g RECT: {
+		'x' -> 185. 'y' -> 90. 
+		'width' -> 15. 'height' -> 10}.
+	g TEXT: {
+		'class' -> 'ButtonText'.
+		'x' -> 188. 'y' -> 97.
+		'log'}.
+	g on: #click bind: [self setLogarithmicScale]
+!
+
 svg
 	"<svg>"
 	
-	| svg valueAxis dateAxis |
-	svg := Silk newElement: 'svg' xmlns: self svgNamespace.
-	svg << ('viewBox' -> '0 0 200 100').
-	svg RECT: {'x' -> 0. 'y' -> 0. 'width' -> '100%'. 'height' -> '100%'. 'fill' -> '#eee'}.
+	| svg valueAxis dateAxis buttons lin log |
+	svg := SVG SVG: {
+		'viewBox' -> '0 0 200 100'.
+		SVG RECT: {'x' -> 0. 'y' -> 0. 'width' -> '100%'. 'height' -> '100%'. 'fill' -> '#eee'}}.
 	self valueAxisIn: svg.
 	self dateAxisIn: svg.
 	self chartAreaIn: svg.
+	self linLogButtonsIn: svg.
 	^svg
 !
 
 valueAxisIn: aSVG
-	| valueAxis |
-	valueAxis := aSVG G: 'class' -> 'ValueAxis'.
-	valueAxis RECT: {
-		'x' -> self chartRight. 'y' -> self chartTop. 
-		'width' -> self valuescaleWidth. 'height' -> self chartHeight}.
+	| ticks majorTicks minorTicks valueAxis |
+	ticks := self valuescale ticks.
+	majorTicks := ticks first.
+	minorTicks := ticks last.
+	valueAxis := aSVG G: {
+		'class' -> 'ValueAxis'.
+		SVG RECT: {
+			'x' -> self chartRight. 'y' -> self chartTop. 
+			'width' -> self valuescaleWidth. 'height' -> self chartHeight}}.
+	minorTicks do: [:value |
+		| y |
+		y := self yAt: value.
+		valueAxis LINE: {
+			'class' -> 'Minorline'.
+			'x1' -> self chartLeft. 'y1' -> y.
+			'x2' -> self chartRight. 'y2' -> y}].
+	majorTicks do: [:value |
+		| y |
+		y := self yAt: value.
+		valueAxis LINE: {
+			'class' -> 'Majorline'.
+			'x1' -> self chartLeft. 'y1' -> y.
+			'x2' -> self chartRight. 'y2' -> y}.
+		y > 10 ifTrue: [
+			valueAxis TEXT: {
+				'class' -> 'MajorText'.
+				'text-anchor' -> 'end'.
+				'x' -> (self chartRight + self valuescaleWidth - 2). 'y' -> (y + 2).
+				value separatedThousandsString}]].
 	valueAxis TEXT: {
 		'class' -> 'ValueText'.
 		'text-anchor' -> 'end'.
 		'x' -> (self chartRight + self valuescaleWidth - 2). 'y' -> (self chartTop + 6).
-		self numberStringFor: self series lastConfirmed}.
+		self series lastConfirmed separatedThousandsString}.
 	^valueAxis
 ! !
 
@@ -266,15 +329,7 @@ showCountries
 	| list |
 	list := '#CountryList' asSilk.
 	list resetContents.
-	list << (self countries collect: #asListItem)
-!
-
-showD3
-	| circle |
-	circle := d3 selectAll: 'circle'.
-	Smalltalk optOut: circle.
-	circle style: 'fill' set: 'steelblue'.
-	circle attr: 'r' set: 20
+	self countries do: [:country | country addToList: list]
 !
 
 withSeriesDo: aOneArgumentBlock
@@ -290,12 +345,6 @@ withSeriesDo: aOneArgumentBlock
 			(ErrorHandler current respondsTo: #debugError:) 
 				ifTrue: [ErrorHandler current debugError: ex] 
 				ifFalse:[ErrorHandler handleError: ex]]
-! !
-
-!CoViD19 methodsFor: 'backend'!
-
-endpoint
-	^'https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_time_series/'
 ! !
 
 !CoViD19 methodsFor: 'contents'!
@@ -315,22 +364,9 @@ addContentsTo: aDiv
 		((Silk BUTTON: 'Helios') on: #click bind: [self openHelios])
 	}).
 	}.
-	aDiv UL: 'id' -> 'CountryList'.
+	aDiv DIV: 'id' -> 'CountryList'.
 	aDiv DIV: 'id' -> 'Graphics'.
 	aDiv FOOTER: 'Done in Amber Smalltalk by Christian Haider'
-!
-
-newSvg
-	| svg rect |
-	svg := Silk newElement: 'svg' xmlns: self svgNamespace.
-	svg << {
-		'width' -> '200px'. 'height' -> '100px'.  
-		'viewBox' -> '0 0 200 100'}.
-	svg RECT: {'x' -> 0. 'y' -> 0. 'width' -> '100%'. 'height' -> '100%'. 'fill' -> '#ccc'}.
-	svg CIRCLE: {'cx' -> 60. 'cy' -> 25. 'r' -> 10}.
-	svg CIRCLE: {'cx' -> 100. 'cy' -> 25. 'r' -> 10}.
-	svg CIRCLE: {'cx' -> 140. 'cy' -> 25. 'r' -> 10}.
-	^svg
 ! !
 
 !CoViD19 methodsFor: 'starting'!
@@ -338,7 +374,8 @@ newSvg
 augmentPage
 	Silk new 
 		reset;
-		DIV: self newContents
+		DIV: self newContents.
+	self getData
 !
 
 newContents
@@ -412,6 +449,16 @@ recovered
 	^recovered
 ! !
 
+!Datapoint methodsFor: 'calculating'!
+
+differenceTo: aDatapoint
+	^self class 
+		date: self date
+		confirmed: self confirmed - aDatapoint confirmed
+		deaths: self deaths - aDatapoint deaths
+		recovered: self recovered - aDatapoint recovered
+! !
+
 !Datapoint methodsFor: 'html'!
 
 asSpans
@@ -470,32 +517,26 @@ Object subclass: #Dataseries
 
 !Dataseries methodsFor: 'accessing'!
 
+changes
+	"<Dataseries>"
+	
+	| wst rst last |
+	wst := OrderedCollection new writeStream.
+	rst := self series readStream.
+	last := nil.
+	[rst atEnd] whileFalse: [
+		| datapoint | 
+		datapoint := rst next.
+		last ifNotNil: [
+			wst nextPut: (datapoint differenceTo: last)].
+		last := datapoint].
+	^self class series: wst contents
+!
+
 firstDate
 	"<Date>"
 	
 	^self series first date
-!
-
-firstDateOfMonths
-	"<Array of: Date>"
-	
-	^self series inject: OrderedCollection new into: [:list :datapoint |
-		list isEmpty
-			ifTrue: [list add: datapoint date]
-			ifFalse: [list last month = datapoint date month ifFalse: [
-				list add: datapoint date]].
-		list].
-!
-
-firstDateOfWeeks
-	"<Array of: Date>"
-	
-	^self series inject: OrderedCollection new into: [:list :datapoint |
-		list isEmpty
-			ifTrue: [list add: datapoint date]
-			ifFalse: [list last dayOfWeek > datapoint date dayOfWeek ifFalse: [
-				list add: datapoint date]].
-		list].
 !
 
 last
@@ -514,6 +555,25 @@ lastDate
 	"<Date>"
 	
 	^self series last date
+!
+
+lastDateOfMonths
+	"<Array of: Date>"
+	
+	| dates |
+	dates := OrderedCollection new.
+	(self series collect: #date) inject: nil into: [:last :date |
+		(last notNil and: [
+		last month ~= date month]) ifTrue: [
+			dates add: last].
+		date].
+	^dates
+!
+
+lastDateOfWeeks
+	"<Array of: Date>"
+	
+	^(self series collect: #date) select: [:date | date dayOfWeek = 7]
 !
 
 lastDeaths
@@ -572,6 +632,12 @@ Object subclass: #GeographicArea
 
 !GeographicArea methodsFor: 'accessing'!
 
+changes
+	"<Dataseries>"
+	
+	^self series changes
+!
+
 lastConfirmed
 	"<Integer>"
 	
@@ -602,33 +668,7 @@ series
 	^series
 ! !
 
-!GeographicArea methodsFor: 'html'!
-
-asListItem
-	"<LI>
-	a <li> representing the receiver"
-	
-	^Silk LI: {
-		Silk SPAN: 'class' -> 'treeSpan'.
-		self asListItemSpan}
-!
-
-asListItemSpan
-	"<span>
-	the body of the list item"
-	
-	| span |
-	span := Silk SPAN: {
-		'class' -> 'ListItem'. 
-		self name. 
-		self series last asSpans}.
-	span on: #click bind: [:event |
-		('#CountryList' asSilk allAt: '.ListItemSelected') do: [:selected |
-			selected attrAt: 'class' put: 'ListItem'].
-		span attrAt: 'class' put: 'ListItemSelected'. 
-		self showInfo].
-	^span
-!
+!GeographicArea methodsFor: 'actions'!
 
 showInfo
 	"add nice info graphics"
@@ -637,13 +677,53 @@ showInfo
 	graphics := '#Graphics' asSilk.
 	graphics resetContents.
 	graphics H2: self name.
-	graphics << self svgBarchart
+	graphics DIV: {
+		Silk H3: 'Absolute'.
+		(Barchart on: self series) svg}.
+	graphics DIV: {
+		Silk H3: 'Differences'.
+		(Barchart on: self changes) svg}
+! !
+
+!GeographicArea methodsFor: 'html'!
+
+addToList: anElement
+	"add html elements to anElement"
+	
+	anElement << {self emptySpan. self asNameSpan. self asValueSpan}
 !
 
-svgBarchart
-	"<svg>"
+asNameSpan
+	"<span>
+	the name of the list item"
 	
-	^(Barchart on: self series) svg
+	| item |
+	item := Silk SPAN: {
+		'class' -> 'ListItem'. 
+		(Silk SPAN: {'class' -> 'StateName'. self name})}.
+	item on: #click bind: [:event |
+		('#CountryList' asSilk allAt: '.selected') do: [:selected |
+			console log: selected.
+			selected attrAt: 'class' put: 'ListItem'].
+		item attrAt: 'class' put: 'ListItem selected'. 
+		self showInfo].
+	^item
+!
+
+asValueSpan
+	"<span>
+	the value of the list item"
+	
+	^Silk SPAN: {
+		'class' -> 'ListValue'. 
+		self lastConfirmed separatedThousandsString}
+!
+
+emptySpan
+	"<span>
+	in place of a +/- button"
+	
+	^Silk SPAN: 'class' -> 'treeSpan'
 ! !
 
 !GeographicArea methodsFor: 'initialization'!
@@ -698,29 +778,60 @@ seriesFromParts
 
 !Country methodsFor: 'html'!
 
-asListItem
-	| li plusButton minusButton button |
+addToList: anElement
+	"add html elements to anElement"
+	
+	| plusButton minusButton plusAction minusAction |
 	self parts ifEmpty: [
-		li := super asListItem.
-		li << ('class' -> 'CountryName').
-		^li].
-	li := Silk LI: 'class' -> 'CountryName'.
-	plusButton := Silk BUTTON: {'class' -> 'treeButton'. '+'}.
-	minusButton := Silk BUTTON: {'class' -> 'treeButton'. '-'}.
-	plusButton on: #click bind: [
-		li resetContents.
-		li << {minusButton. self asListItemSpan. self partsList}].
-	minusButton on: #click bind: [
-		li resetContents.
-		li << {plusButton. self asListItemSpan}].
-	li << {plusButton. self asListItemSpan}.
-	^li
+		anElement << {self emptySpan. self asNameSpan. self asValueSpan}.
+		^self].
+	plusButton := Silk BUTTON: {'class' -> 'treeButton'. 'type' -> 'button'. '+'}.
+	minusButton := Silk BUTTON: {'class' -> 'treeButton'. 'type' -> 'button'. '-'}.
+	plusAction := [:event |
+		| element after next2 insert |
+		element := Silk fromElement: event target.
+		element resetContents.
+		element off: #click unbind: plusAction.
+		element << '-'.
+		element on: #click bind: minusAction.
+		after := element setToAfter.
+		after next.
+		next2 := after next.
+		insert := next2 setToAfter.
+		self parts do: [:part | part addToList: insert]].
+	minusAction := [:event |
+		| element after next2 insert last |
+		element := Silk fromElement: event target.
+		element resetContents.
+		element off: #click unbind: minusAction.
+		element << '+'.
+		element on: #click bind: plusAction.
+		after := element setToAfter.
+		after next.
+		next2 := after next.
+		insert := next2 setToAfter.
+		self parts size * 3 timesRepeat: [last := after next].
+		insert cutUpTo: last setToAfter].
+	plusButton on: #click bind: plusAction.
+	minusButton on: #click bind: minusAction.
+	anElement << {plusButton. self asNameSpan. self asValueSpan}.
 !
 
-partsList
-	"<ul> of: <li>"
-
-	^Silk UL: (self parts collect: #asListItem)
+asNameSpan
+	"<span>
+	the name of the list item"
+	
+	| item |
+	item := Silk SPAN: {
+		'class' -> 'ListItem'. 
+		(Silk SPAN: {'class' -> 'CountryName'. self name})}.
+	item on: #click bind: [:event |
+		('#CountryList' asSilk allAt: '.selected') do: [:selected |
+			console log: selected.
+			selected attrAt: 'class' put: 'ListItem'].
+		item attrAt: 'class' put: 'ListItem selected'. 
+		self showInfo].
+	^item
 ! !
 
 !Country methodsFor: 'initialization'!
@@ -759,15 +870,6 @@ GeographicArea subclass: #State
 	slots: {}
 	package: 'Covid19view'!
 
-!State methodsFor: 'html'!
-
-asListItem
-	| li |
-	li := super asListItem.
-	li << ('class' -> 'StateName').
-	^li
-! !
-
 !State class methodsFor: 'instance creation'!
 
 allFromSeries: someSeries
@@ -777,6 +879,16 @@ allFromSeries: someSeries
 		self 
 			name: rawSeries state
 			series: rawSeries series]
+! !
+
+Silk subclass: #SVG
+	slots: {}
+	package: 'Covid19view'!
+
+!SVG class methodsFor: 'as yet unclassified'!
+
+namespace
+	^'http://www.w3.org/2000/svg'
 ! !
 
 Object subclass: #Scale
@@ -834,8 +946,76 @@ Scale subclass: #Datescale
 	package: 'Covid19view'!
 
 Scale subclass: #Valuescale
-	slots: {}
+	slots: {#logarithmic}
 	package: 'Covid19view'!
+
+!Valuescale methodsFor: 'accessing'!
+
+at: aDomainValue
+	self logarithmic ifFalse: [
+		^aDomainValue - self from / self range].
+	^aDomainValue - self from / self range
+!
+
+normTicks
+	"<Array[2] of: (Array of: Number)>"
+	
+	| f normed ticks |
+	f := self tickFactor.
+	normed := self normedTo.
+	ticks := 1 to: normed floor.
+	ticks size >= 8 ifTrue: [
+		^#(#(2 4 6 8) #())].
+	ticks size >= 6 ifTrue: [
+		^#(#(2 4 6) #())].
+	ticks size >= 4 ifTrue: [
+		^#(#(2 4) #())].
+	ticks size = 1 ifTrue: [
+		normed >= 1.5 ifTrue: [
+			^#(#(1) #(0.5 1.5))].
+		^#(#(1) #(0.5))].
+	^Array with: ticks with: #()
+!
+
+normedTo
+	"<Number [1..9.x]>
+	the highest value as number between 1 and less than 10; i.e. a one digit number (can have decimals)"
+	
+	^self to / self tickFactor
+!
+
+tickFactor
+	"<Number>"
+	
+	^10 raisedTo: (self to log: 10) floor
+!
+
+ticks
+	"<Array[2] of: (Array of: Number)>"
+	
+	| f |
+	f := self tickFactor.
+	^self normTicks collect: [:ticks |
+		ticks collect: [:n | n * f]]
+! !
+
+!Valuescale methodsFor: 'actions'!
+
+beLinear
+	logarithmic := false
+!
+
+beLogarithmic
+	logarithmic := true
+! !
+
+!Valuescale methodsFor: 'testing'!
+
+logarithmic
+	"<Boolean>"
+	
+	^logarithmic ifNil: [true]
+! !
 
 Object subclass: #Series
 	slots: {#country. #state. #latLong. #series}
@@ -933,82 +1113,18 @@ d: dayInteger m: monthInteger y: yearInteger
 	<inlineJS: 'return new Date(yearInteger, monthInteger - 1, dayInteger)'>
 ! !
 
-!Silk methodsFor: '*Covid19view'!
+!Number methodsFor: '*Covid19view'!
 
-doesNotUnderstand: aMessage
-	"`aSilk DIV` creates a div element and inserts it.
-	`aSilk DIV: anObject` creates a div element, inserts it
-	and puts contents in it"
-	(self class tryMakeDnuElement: aMessage in: self)
-		ifNil: [ ^ super doesNotUnderstand: aMessage ]
-		ifNotNil: [ :newElement | self << newElement. ^ newElement ]
-!
-
-namespace
+separatedThousandsString
 	"<String>
-	XML namespace for elements: html.
-	The default for all virtual Silk tag messages"
+	String with thousands separator every third insertin point"
 	
-	^self element namespaceURI
-! !
-
-!Silk class methodsFor: '*Covid19view'!
-
-doesNotUnderstand: aMessage
-	"`Silk DIV` creates a div element.
-	`Silk DIV: anObject` creates a div element and puts contents in it"
-	^ (self tryMakeDnuElement: aMessage in: self)
-		ifNil: [ super doesNotUnderstand: aMessage ]
-!
-
-htmlNamespace
-	"<String>
-	XML namespace for HTML elements.
-	The default for all virtual Silk tag messages"
-	
-	^'http://www.w3.org/1999/xhtml'
-!
-
-namespace
-	"<String>
-	XML namespace for elements: html.
-	The default for all virtual Silk tag messages"
-	
-	^self htmlNamespace
-!
-
-newElement: aString in: aSilk
-	"<Silk>
-	creates a new element in the same xml namespace as aSilk.
-	When aSilk is the class Silk, the default behavior applies (html namespace for new elements)"
-	
-	aSilk namespace = self htmlNamespace ifTrue: [
-		^self newElement: aString].
-	^self newElement: aString xmlns: aSilk namespace
-!
-
-tryMakeDnuElement: aMessage in: aSilk
-	"`DIV` creates a div element.
-	`DIV: anObject` creates a div element and puts contents in it.
-	When aSilk is an instance and not the class Silk, 
-	and the instance has an xml namespace other than the default #html,
-	Then the namespace is used for the new element.
-	You can do:
-		svg := Silk newElement: 'svg' xmlns: 'http://www.w3.org/2000/svg'.
-		svg CIRCLE: {'cx' -> 60. 'cy' -> 25. 'r' -> 10}.
-	This creates a svg circle, not a html circle."
-	
-	| selector newElement useArg |
-	selector := aMessage selector.
-	selector asUppercase = selector
-		ifFalse: [ ^ nil ].
-	selector last = ':'
-		ifTrue: [ useArg := true. selector := selector allButLast ]
-		ifFalse: [ useArg := false ].
-	(selector includes: ':')
-		ifTrue: [ ^ nil ].
-	newElement := self newElement: selector asLowercase in: aSilk.
-	useArg ifTrue: [ newElement << aMessage arguments first ].
-	^ newElement
+	| rst wst |
+	rst := self printString reversed readStream.
+	wst := String new writeStream.
+	[rst atEnd] whileFalse: [
+		wst nextPutAll: (rst next: 3).
+		rst atEnd ifFalse: [wst nextPut: $.]].
+	^wst contents reversed
 ! !
 

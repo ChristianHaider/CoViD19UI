@@ -1,6 +1,6 @@
 #Contents {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
+	grid-template-columns: auto 1fr;
 	grid-template-rows: min-content 1fr min-content;
 	min-height: 98vh;
 }
@@ -18,15 +18,26 @@ li {
 #CountryList {
 	background: #fffbf0;
 	grid-column: 1;
+	display: grid;
+	grid-template-columns: auto auto auto;
+	margin: 0em;
 }
 
-.ListItemSelected {
-	cursor: pointer;
+.treeButton {
+	grid-column: 1;
+}
+
+.treeSpan {
+	grid-column: 1;
+}
+
+.selected {
 	background: #ddd9d0;
 }
 
 .ListItem {
 	cursor: pointer;
+	grid-column: 2;
 }
 
 .CountryName {
@@ -34,7 +45,13 @@ li {
 }
 
 .StateName {
-	font-weight: normal;
+	padding-left: 1em;
+}
+
+.ListValue {
+	font-weight: bold;
+	justify-self: end;
+	grid-column: 3;
 }
 
 .Confirmed {
@@ -54,14 +71,6 @@ li {
 	margin-left: 1em;
 }
 
-.treeButton {
-}
-
-.treeSpan {
-	width: 1.5em;
-	display: inline-block;
-}
-
 #Graphics {
 	background: #ffede0;		
 }
@@ -70,10 +79,27 @@ li {
 	fill: none;
 }
 
+.Majorline {
+	stroke: #aaa;
+	stroke-width: 0.5;
+}
+
+.Minorline {
+	stroke: #ddd;
+	stroke-width: 0.5;
+}
+
 .ValueText {
-  font-family: sans-serif;
-  font-size: 7px;
-  fill: black;
+	font-family: sans-serif;
+	font-size: 7px;
+	font-weight: bold;
+	fill: black;
+}
+
+.MajorText {
+	font-family: sans-serif;
+	font-size: 7px;
+	fill: gray;
 }
 
 .DateAxis {
@@ -82,10 +108,12 @@ li {
 
 .Monthline {
 	stroke: #aaa;
+	stroke-width: 0.5;
 }
 
 .Weekline {
 	stroke: #ddd;
+	stroke-width: 0.5;
 }
 
 .Baseline {
@@ -93,9 +121,9 @@ li {
 }
 
 .MonthText {
-  font-family: sans-serif;
-  font-size: 7px;
-  fill: black;
+	font-family: sans-serif;
+	font-size: 7px;
+	fill: black;
 }
 
 .ChartArea {
@@ -112,6 +140,22 @@ li {
 
 .BarRecovered {
 	fill: green;
+}
+
+.ButtonText {
+	font-family: sans-serif;
+	font-size: 6px;
+	fill: black;
+}
+
+.LinearButton {
+	cursor: pointer;
+	fill: lightgray;	
+}
+
+.LogarithmicButton {
+	cursor: pointer;
+	fill: gray;	
 }
 
 footer {

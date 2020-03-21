@@ -78,6 +78,59 @@ setLogarithmicScale
 	console log: 'logarithmic'
 ! !
 
+!Barchart methodsFor: 'events'!
+
+mouseout: anEvent datapoint: aDatapoint
+	'#CasebarTooltip' asSilk << {'style' -> ('visibility: hidden;')}
+!
+
+mouseover: anEvent datapoint: aDatapoint
+	| tooltip svg |
+	console log: anEvent.
+	
+	tooltip := '#CasebarTooltip' asSilk.
+	tooltip resetContents.
+	tooltip << {
+		'style' -> (
+			'right: ', (window innerWidth - anEvent x) printString, 'px; ',
+			'top: ', anEvent y printString, 'px; ',
+			'visibility: visible;').
+		Silk SPAN: {'class' -> 'LegendBar'}.
+		Silk SPAN: {'class' -> 'LegendLabel'. aDatapoint date asLocaleDateString}.
+		Silk SPAN: {'class' -> 'LegendValue'}.
+		Silk SPAN: {
+			'class' -> 'LegendBar'.
+			SVG SVG: {
+				'viewBox' -> '0 0 10 5'.
+				SVG RECT: {
+					'class' -> 'BarConfirmed'.
+					'x' -> 0. 'y' -> 0. 
+					'width' -> '100%'. 'height' -> '100%'}}}.
+		Silk SPAN: {'class' -> 'LegendLabel'. 'confirmed'}.
+		Silk SPAN: {'class' -> 'LegendValue'. aDatapoint confirmed separatedThousandsString}.
+		Silk SPAN: {
+			'class' -> 'LegendBar'.
+			SVG SVG: {
+				'viewBox' -> '0 0 10 5'.
+				SVG RECT: {
+					'class' -> 'BarRecovered'.
+					'x' -> 0. 'y' -> 0. 
+					'width' -> '100%'. 'height' -> '100%'}}}.
+		Silk SPAN: {'class' -> 'LegendLabel'. 'recovered'}.
+		Silk SPAN: {'class' -> 'LegendValue'. aDatapoint recovered separatedThousandsString}.
+		Silk SPAN: {
+			'class' -> 'LegendBar'.
+			SVG SVG: {
+				'viewBox' -> '0 0 10 5'.
+				SVG RECT: {
+					'class' -> 'BarDeaths'.
+					'x' -> 0. 'y' -> 0. 
+					'width' -> '100%'. 'height' -> '100%'}}}.
+		Silk SPAN: {'class' -> 'LegendLabel'. 'deaths'}.
+		Silk SPAN: {'class' -> 'LegendValue'. aDatapoint deaths separatedThousandsString}
+	}
+! !
+
 !Barchart methodsFor: 'geometry'!
 
 chartBottom
@@ -142,40 +195,53 @@ yAt: aDomainValue
 	^self chartBottom - ((self valuescale at: aDomainValue) * self chartHeight)
 ! !
 
-!Barchart methodsFor: 'html'!
+!Barchart methodsFor: 'initialization'!
+
+initializeSeries: aDataseries
+	series := aDataseries
+! !
+
+!Barchart methodsFor: 'svg'!
+
+barForDatapoint: aDatapoint width: aWidth
+	"<g>"
+	
+	| barLeft barTopConfirmed barConfirmed barTopRecovered barRecovered barTopDeaths barDeaths g |
+	barLeft := (self xAt: aDatapoint date) - aWidth.
+	barTopConfirmed := self yAt: aDatapoint confirmed.
+	barConfirmed := SVG RECT: {
+		'class' -> 'BarConfirmed'.
+		'x' -> barLeft. 'y' -> barTopConfirmed. 
+		'width' -> aWidth. 'height' -> (self chartBottom - barTopConfirmed)}.
+	barTopRecovered := self yAt: aDatapoint decided.
+	barRecovered := SVG RECT: {
+		'class' -> 'BarRecovered'.
+		'x' -> barLeft. 'y' -> barTopRecovered. 
+		'width' -> aWidth. 'height' -> (self chartBottom - barTopRecovered)}.
+	barTopDeaths := self yAt: aDatapoint deaths.
+	barDeaths := SVG RECT: {
+		'class' -> 'BarDeaths'.
+		'x' -> barLeft. 'y' -> barTopDeaths. 
+		'width' -> aWidth. 'height' -> (self chartBottom - barTopDeaths)}.
+	g := SVG G: {
+		'class' -> 'Bar'.
+		barConfirmed.
+		barRecovered.
+		barDeaths}.
+	g on: #mouseover bind: [:event | self mouseover: event datapoint: aDatapoint].
+	g on: #mouseout bind: [:event | self mouseout: event datapoint: aDatapoint].
+	^g
+!
 
 chartAreaIn: aSVG
 	"add the chart area"
 	
 	| chartArea barWidth |
-	chartArea := aSVG G: {
-		'class' -> 'ChartArea'.
-		SVG RECT: {
-			'x' -> self chartLeft. 'y' -> self chartTop. 
-			'width' -> self chartWidth. 'height' -> self chartHeight}}.
+	chartArea := self graphicsArea.
 	barWidth := self chartWidth / self datapoints size.
 	self datapoints do: [:datapoint |
-		| barLeft barTopConfirmed barHeightConfirmed barTopRecovered barHeightRecovered barTopDeaths barHeightDeaths |
-		barLeft := (self xAt: datapoint date) - barWidth.
-		barTopConfirmed := self yAt: datapoint confirmed.
-		barHeightConfirmed := self chartBottom - barTopConfirmed.
-		chartArea RECT: {
-			'class' -> 'BarConfirmed'.
-			'x' -> barLeft. 'y' -> barTopConfirmed. 
-			'width' -> barWidth. 'height' -> barHeightConfirmed}.
-		barTopRecovered := self yAt: datapoint decided.
-		barHeightRecovered := self chartBottom - barTopRecovered.
-		chartArea RECT: {
-			'class' -> 'BarRecovered'.
-			'x' -> barLeft. 'y' -> barTopRecovered. 
-			'width' -> barWidth. 'height' -> barHeightRecovered}.
-		barTopDeaths := self yAt: datapoint deaths.
-		barHeightDeaths := self chartBottom - barTopDeaths.
-		chartArea RECT: {
-			'class' -> 'BarDeaths'.
-			'x' -> barLeft. 'y' -> barTopDeaths. 
-			'width' -> barWidth. 'height' -> barHeightDeaths}.
-	].
+		chartArea << (self barForDatapoint: datapoint width: barWidth)].
+	aSVG << chartArea.
 	^chartArea
 !
 
@@ -205,35 +271,23 @@ dateAxisIn: aSVG
 	^dateAxis
 !
 
-linButtonIn: aSVG
-	| g |
-	g := aSVG G: 'class' -> 'LinearButton'.
-	g RECT: {
-		'x' -> 170. 'y' -> 90. 
-		'width' -> 15. 'height' -> 10}.
-	g TEXT: {
-		'class' -> 'ButtonText'.
-		'x' -> 175. 'y' -> 97.
-		'lin'}.
-	g on: #click bind: [self setLinearScale]
+graphicsArea
+	"<g>"
+	
+	^SVG G: {
+		'class' -> 'GraphicsArea'.
+		SVG RECT: {
+			'x' -> self chartLeft. 'y' -> self chartTop. 
+			'width' -> self chartWidth. 'height' -> self chartHeight}}
 !
 
-linLogButtonsIn: aSVG
-	self linButtonIn: aSVG.
-	self logButtonIn: aSVG
-!
-
-logButtonIn: aSVG
-	| g |
-	g := aSVG G: 'class' -> 'LogarithmicButton'.
-	g RECT: {
-		'x' -> 185. 'y' -> 90. 
-		'width' -> 15. 'height' -> 10}.
-	g TEXT: {
-		'class' -> 'ButtonText'.
-		'x' -> 188. 'y' -> 97.
-		'log'}.
-	g on: #click bind: [self setLogarithmicScale]
+lastValueText
+	^SVG TEXT: {
+		'class' -> 'ValueText'.
+		'text-anchor' -> 'end'.
+		SVG TITLE: 'The last value of the data series'.
+		'x' -> (self chartRight + self valuescaleWidth - 2). 'y' -> (self chartTop + 6).
+		self series lastConfirmed separatedThousandsString}
 !
 
 svg
@@ -246,7 +300,6 @@ svg
 	self valueAxisIn: svg.
 	self dateAxisIn: svg.
 	self chartAreaIn: svg.
-	"self linLogButtonsIn: svg."
 	^svg
 !
 
@@ -280,18 +333,8 @@ valueAxisIn: aSVG
 				'text-anchor' -> 'end'.
 				'x' -> (self chartRight + self valuescaleWidth - 2). 'y' -> (y + 2).
 				value separatedThousandsString}]].
-	valueAxis TEXT: {
-		'class' -> 'ValueText'.
-		'text-anchor' -> 'end'.
-		'x' -> (self chartRight + self valuescaleWidth - 2). 'y' -> (self chartTop + 6).
-		self series lastConfirmed separatedThousandsString}.
+	valueAxis << self lastValueText.
 	^valueAxis
-! !
-
-!Barchart methodsFor: 'initialization'!
-
-initializeSeries: aDataseries
-	series := aDataseries
 ! !
 
 !Barchart class methodsFor: 'instance creation'!
@@ -369,10 +412,15 @@ withSeriesDo: aOneArgumentBlock
 !CoViD19 methodsFor: 'html'!
 
 addContentsTo: aDiv
-	aDiv << self header.
-	aDiv DIV: 'id' -> 'CountryList'.
-	aDiv DIV: 'id' -> 'Graphics'.
-	aDiv << self footer
+	self isDevelopment ifTrue: [
+		aDiv << self buttonsForDevelopment].
+	aDiv << {
+		self header.
+		Silk DIV: 'id' -> 'CountryList'.
+		Silk DIV: 'id' -> 'Graphics'.
+		self footer.
+		"self casebarTooltip."
+		self changebarTooltip}
 !
 
 augmentPage
@@ -385,11 +433,19 @@ augmentPage
 buttonsForDevelopment
 	"<Silk>"
 	
-	^Silk DIV: {
+	^Silk SPAN: {
 		'id' -> 'Buttons'.
 		(Silk BUTTON: 'reset') on: #click bind: [self resetContents].
 		(Silk BUTTON: 'get data') on: #click bind: [self getData].
 		(Silk BUTTON: 'Helios') on: #click bind: [self openHelios]}
+!
+
+casebarTooltip
+	^Silk DIV: 'id' -> 'CasebarTooltip'
+!
+
+changebarTooltip
+	^Silk DIV: 'id' -> 'ChangebarTooltip'
 !
 
 footer
@@ -414,8 +470,7 @@ header
 		Silk H1: 'CoViD-19 Charts'.
 		Silk SPAN: {
 			'id' -> 'Date'.
-			self lastDate asLocaleDateString}.
-		self buttonsForDevelopment}
+			self lastDate asLocaleDateString}}
 !
 
 newContents
@@ -435,6 +490,12 @@ resetContents
 	contents resetContents.
 	self addContentsTo: contents.
 	self showCountries
+! !
+
+!CoViD19 methodsFor: 'testing'!
+
+isDevelopment
+	^(window location host tokenize: ':') first = '127.0.0.1'
 ! !
 
 !CoViD19 class methodsFor: 'starting'!
@@ -727,7 +788,8 @@ showInfo
 	graphics H2: self name.
 	graphics DIV: {
 		Silk H3: 'Cases'.
-		(Barchart on: self series) svg}.
+		(Barchart on: self series) svg.
+		Silk DIV: 'id' -> 'CasebarTooltip'}.
 	graphics DIV: {
 		Silk H3: 'Change'.
 		(Barchart on: self changes) svg}
@@ -933,7 +995,7 @@ Silk subclass: #SVG
 	slots: {}
 	package: 'Covid19view'!
 
-!SVG class methodsFor: 'as yet unclassified'!
+!SVG class methodsFor: 'accessing'!
 
 namespace
 	^'http://www.w3.org/2000/svg'
@@ -1179,12 +1241,6 @@ separatedThousandsString
 	"<String>
 	String with thousands separator every third insertin point"
 	
-	| rst wst |
-	rst := self printString reversed readStream.
-	wst := String new writeStream.
-	[rst atEnd] whileFalse: [
-		wst nextPutAll: (rst next: 3).
-		rst atEnd ifFalse: [wst nextPut: $.]].
-	^wst contents reversed
+	<inlineJS: 'return self.toLocaleString()'>
 ! !
 

@@ -8,7 +8,19 @@
 header {
 	background: #F1F3F4;
 	grid-column: 1 / span 2;
-	grid-row:    1;					
+	grid-row:    1;	
+	display: grid;
+	grid-template-columns: auto auto;
+}
+
+#Buttons {
+	position: fixed;
+	right: 0.5em;
+}
+
+#Date {
+	justify-self: end;
+	align-self: end;
 }
 
 li {
@@ -126,26 +138,81 @@ li {
 	fill: black;
 }
 
-.ChartArea {
+.GraphicsArea {
 	fill: none;
+}
+
+.Bar:hover {
+	opacity: 0.5;
 }
 
 .BarConfirmed {
 	fill: orange;
+	stroke: gray;
+	stroke-width: 0.2;
 }
 
 .BarDeaths {
 	fill: red;
+	stroke: gray;
+	stroke-width: 0.2;
 }
 
 .BarRecovered {
 	fill: green;
+	stroke: gray;
+	stroke-width: 0.2;
 }
 
 .ButtonText {
 	font-family: sans-serif;
 	font-size: 6px;
 	fill: black;
+}
+
+.LegendBar {
+	width: 1em;
+	height: 0.7em;
+	grid-column: 1;
+	margin-left: 0.5em;
+}
+
+.LegendLabel {
+	grid-column: 2;
+	margin-left: 0.5em;
+}
+
+.LegendValue {
+	grid-column: 3;
+	justify-self: end;
+	margin-left: 0.5em;
+	margin-right: 0.5em;
+}
+
+#CasebarTooltip {
+	display: grid;
+	grid-template-columns: auto auto auto;
+	
+	visibility: hidden;
+	position: fixed;
+	
+	z-index: 1;
+	background-color: white;
+	padding: 0.3em 0;
+	border-style: solid;
+	border-radius: 0.4em;
+	border-width: 2px;
+	border-color: blue;
+}
+
+#ChangebarTooltip {
+	visibility: hidden;
+	position: absolute;
+	z-index: 1;
+	background-color: orange;
+	color: #ff0;
+	padding: 1em 0;
+	border-radius: 1em;
 }
 
 .LinearButton {

@@ -11,170 +11,191 @@ $pkg.transport = {"type":"amd","amdNamespace":"amber-covid19view"};
 $core.addClass("Barchart", $globals.Object, ["series", "valuescale", "datescale"], "Covid19view");
 $core.addMethod(
 $core.method({
-selector: "chartAreaIn:",
-protocol: "html",
+selector: "barForDatapoint:width:",
+protocol: "svg",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aSVG"],
-source: "chartAreaIn: aSVG\x0a\x09\x22add the chart area\x22\x0a\x09\x0a\x09| chartArea barWidth |\x0a\x09chartArea := aSVG G: {\x0a\x09\x09'class' -> 'ChartArea'.\x0a\x09\x09SVG RECT: {\x0a\x09\x09\x09'x' -> self chartLeft. 'y' -> self chartTop. \x0a\x09\x09\x09'width' -> self chartWidth. 'height' -> self chartHeight}}.\x0a\x09barWidth := self chartWidth / self datapoints size.\x0a\x09self datapoints do: [:datapoint |\x0a\x09\x09| barLeft barTopConfirmed barHeightConfirmed barTopRecovered barHeightRecovered barTopDeaths barHeightDeaths |\x0a\x09\x09barLeft := (self xAt: datapoint date) - barWidth.\x0a\x09\x09barTopConfirmed := self yAt: datapoint confirmed.\x0a\x09\x09barHeightConfirmed := self chartBottom - barTopConfirmed.\x0a\x09\x09chartArea RECT: {\x0a\x09\x09\x09'class' -> 'BarConfirmed'.\x0a\x09\x09\x09'x' -> barLeft. 'y' -> barTopConfirmed. \x0a\x09\x09\x09'width' -> barWidth. 'height' -> barHeightConfirmed}.\x0a\x09\x09barTopRecovered := self yAt: datapoint decided.\x0a\x09\x09barHeightRecovered := self chartBottom - barTopRecovered.\x0a\x09\x09chartArea RECT: {\x0a\x09\x09\x09'class' -> 'BarRecovered'.\x0a\x09\x09\x09'x' -> barLeft. 'y' -> barTopRecovered. \x0a\x09\x09\x09'width' -> barWidth. 'height' -> barHeightRecovered}.\x0a\x09\x09barTopDeaths := self yAt: datapoint deaths.\x0a\x09\x09barHeightDeaths := self chartBottom - barTopDeaths.\x0a\x09\x09chartArea RECT: {\x0a\x09\x09\x09'class' -> 'BarDeaths'.\x0a\x09\x09\x09'x' -> barLeft. 'y' -> barTopDeaths. \x0a\x09\x09\x09'width' -> barWidth. 'height' -> barHeightDeaths}.\x0a\x09].\x0a\x09^chartArea",
+args: ["aDatapoint", "aWidth"],
+source: "barForDatapoint: aDatapoint width: aWidth\x0a\x09\x22<g>\x22\x0a\x09\x0a\x09| barLeft barTopConfirmed barConfirmed barTopRecovered barRecovered barTopDeaths barDeaths g |\x0a\x09barLeft := (self xAt: aDatapoint date) - aWidth.\x0a\x09barTopConfirmed := self yAt: aDatapoint confirmed.\x0a\x09barConfirmed := SVG RECT: {\x0a\x09\x09'class' -> 'BarConfirmed'.\x0a\x09\x09'x' -> barLeft. 'y' -> barTopConfirmed. \x0a\x09\x09'width' -> aWidth. 'height' -> (self chartBottom - barTopConfirmed)}.\x0a\x09barTopRecovered := self yAt: aDatapoint decided.\x0a\x09barRecovered := SVG RECT: {\x0a\x09\x09'class' -> 'BarRecovered'.\x0a\x09\x09'x' -> barLeft. 'y' -> barTopRecovered. \x0a\x09\x09'width' -> aWidth. 'height' -> (self chartBottom - barTopRecovered)}.\x0a\x09barTopDeaths := self yAt: aDatapoint deaths.\x0a\x09barDeaths := SVG RECT: {\x0a\x09\x09'class' -> 'BarDeaths'.\x0a\x09\x09'x' -> barLeft. 'y' -> barTopDeaths. \x0a\x09\x09'width' -> aWidth. 'height' -> (self chartBottom - barTopDeaths)}.\x0a\x09g := SVG G: {\x0a\x09\x09'class' -> 'Bar'.\x0a\x09\x09barConfirmed.\x0a\x09\x09barRecovered.\x0a\x09\x09barDeaths}.\x0a\x09g on: #mouseover bind: [:event | self mouseover: event datapoint: aDatapoint].\x0a\x09g on: #mouseout bind: [:event | self mouseout: event datapoint: aDatapoint].\x0a\x09^g",
 referencedClasses: ["SVG"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["G:", "->", "RECT:", "chartLeft", "chartTop", "chartWidth", "chartHeight", "/", "size", "datapoints", "do:", "-", "xAt:", "date", "yAt:", "confirmed", "chartBottom", "decided", "deaths"]
+messageSends: ["-", "xAt:", "date", "yAt:", "confirmed", "RECT:", "->", "chartBottom", "decided", "deaths", "G:", "on:bind:", "mouseover:datapoint:", "mouseout:datapoint:"]
+}, function ($methodClass){ return function (aDatapoint,aWidth){
+var self=this,$self=this;
+var barLeft,barTopConfirmed,barConfirmed,barTopRecovered,barRecovered,barTopDeaths,barDeaths,g;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $2,$3,$4,$5,$8,$7,$6,$1,$10,$11,$12,$13,$16,$15,$14,$9,$18,$19,$20,$21,$22,$17;
+barLeft=$recv($self._xAt_($recv(aDatapoint)._date())).__minus(aWidth);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["-"]=1;
+//>>excludeEnd("ctx");
+barTopConfirmed=$self._yAt_($recv(aDatapoint)._confirmed());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["yAt:"]=1;
+//>>excludeEnd("ctx");
+$2="class".__minus_gt("BarConfirmed");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=1;
+//>>excludeEnd("ctx");
+$3="x".__minus_gt(barLeft);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=2;
+//>>excludeEnd("ctx");
+$4="y".__minus_gt(barTopConfirmed);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=3;
+//>>excludeEnd("ctx");
+$5="width".__minus_gt(aWidth);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=4;
+//>>excludeEnd("ctx");
+$8=$self._chartBottom();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["chartBottom"]=1;
+//>>excludeEnd("ctx");
+$7=$recv($8).__minus(barTopConfirmed);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["-"]=2;
+//>>excludeEnd("ctx");
+$6="height".__minus_gt($7);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=5;
+//>>excludeEnd("ctx");
+$1=[$2,$3,$4,$5,$6];
+barConfirmed=$recv($globals.SVG)._RECT_($1);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["RECT:"]=1;
+//>>excludeEnd("ctx");
+barTopRecovered=$self._yAt_($recv(aDatapoint)._decided());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["yAt:"]=2;
+//>>excludeEnd("ctx");
+$10="class".__minus_gt("BarRecovered");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=6;
+//>>excludeEnd("ctx");
+$11="x".__minus_gt(barLeft);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=7;
+//>>excludeEnd("ctx");
+$12="y".__minus_gt(barTopRecovered);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=8;
+//>>excludeEnd("ctx");
+$13="width".__minus_gt(aWidth);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=9;
+//>>excludeEnd("ctx");
+$16=$self._chartBottom();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["chartBottom"]=2;
+//>>excludeEnd("ctx");
+$15=$recv($16).__minus(barTopRecovered);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["-"]=3;
+//>>excludeEnd("ctx");
+$14="height".__minus_gt($15);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=10;
+//>>excludeEnd("ctx");
+$9=[$10,$11,$12,$13,$14];
+barRecovered=$recv($globals.SVG)._RECT_($9);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["RECT:"]=2;
+//>>excludeEnd("ctx");
+barTopDeaths=$self._yAt_($recv(aDatapoint)._deaths());
+$18="class".__minus_gt("BarDeaths");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=11;
+//>>excludeEnd("ctx");
+$19="x".__minus_gt(barLeft);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=12;
+//>>excludeEnd("ctx");
+$20="y".__minus_gt(barTopDeaths);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=13;
+//>>excludeEnd("ctx");
+$21="width".__minus_gt(aWidth);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=14;
+//>>excludeEnd("ctx");
+$22="height".__minus_gt($recv($self._chartBottom()).__minus(barTopDeaths));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=15;
+//>>excludeEnd("ctx");
+$17=[$18,$19,$20,$21,$22];
+barDeaths=$recv($globals.SVG)._RECT_($17);
+g=$recv($globals.SVG)._G_(["class".__minus_gt("Bar"),barConfirmed,barRecovered,barDeaths]);
+$recv(g)._on_bind_("mouseover",(function(event){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._mouseover_datapoint_(event,aDatapoint);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({event:event},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["on:bind:"]=1;
+//>>excludeEnd("ctx");
+$recv(g)._on_bind_("mouseout",(function(event){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._mouseout_datapoint_(event,aDatapoint);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({event:event},$ctx1,2)});
+//>>excludeEnd("ctx");
+}));
+return g;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"barForDatapoint:width:",{aDatapoint:aDatapoint,aWidth:aWidth,barLeft:barLeft,barTopConfirmed:barTopConfirmed,barConfirmed:barConfirmed,barTopRecovered:barTopRecovered,barRecovered:barRecovered,barTopDeaths:barTopDeaths,barDeaths:barDeaths,g:g})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Barchart);
+
+$core.addMethod(
+$core.method({
+selector: "chartAreaIn:",
+protocol: "svg",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aSVG"],
+source: "chartAreaIn: aSVG\x0a\x09\x22add the chart area\x22\x0a\x09\x0a\x09| chartArea barWidth |\x0a\x09chartArea := self graphicsArea.\x0a\x09barWidth := self chartWidth / self datapoints size.\x0a\x09self datapoints do: [:datapoint |\x0a\x09\x09chartArea << (self barForDatapoint: datapoint width: barWidth)].\x0a\x09aSVG << chartArea.\x0a\x09^chartArea",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["graphicsArea", "/", "chartWidth", "size", "datapoints", "do:", "<<", "barForDatapoint:width:"]
 }, function ($methodClass){ return function (aSVG){
 var self=this,$self=this;
 var chartArea,barWidth;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $2,$5,$6,$8,$7,$9,$4,$3,$1,$10,$12,$11,$13,$14,$16,$17,$18,$19,$20,$15,$21,$22,$24,$25,$26,$27,$28,$23,$29,$31,$32,$33,$34,$30;
-$2="class".__minus_gt("ChartArea");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=1;
-//>>excludeEnd("ctx");
-$5="x".__minus_gt($self._chartLeft());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=2;
-//>>excludeEnd("ctx");
-$6="y".__minus_gt($self._chartTop());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=3;
-//>>excludeEnd("ctx");
-$8=$self._chartWidth();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["chartWidth"]=1;
-//>>excludeEnd("ctx");
-$7="width".__minus_gt($8);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=4;
-//>>excludeEnd("ctx");
-$9="height".__minus_gt($self._chartHeight());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=5;
-//>>excludeEnd("ctx");
-$4=[$5,$6,$7,$9];
-$3=$recv($globals.SVG)._RECT_($4);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["RECT:"]=1;
-//>>excludeEnd("ctx");
-$1=[$2,$3];
-chartArea=$recv(aSVG)._G_($1);
-$10=$self._chartWidth();
-$12=$self._datapoints();
+var $1,$3,$2;
+chartArea=$self._graphicsArea();
+$1=$self._chartWidth();
+$3=$self._datapoints();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["datapoints"]=1;
 //>>excludeEnd("ctx");
-$11=$recv($12)._size();
-barWidth=$recv($10).__slash($11);
+$2=$recv($3)._size();
+barWidth=$recv($1).__slash($2);
 $recv($self._datapoints())._do_((function(datapoint){
-var barLeft,barTopConfirmed,barHeightConfirmed,barTopRecovered,barHeightRecovered,barTopDeaths,barHeightDeaths;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-barLeft=$recv($self._xAt_($recv(datapoint)._date())).__minus(barWidth);
+return $recv(chartArea).__lt_lt($self._barForDatapoint_width_(datapoint,barWidth));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["-"]=1;
+$ctx2.sendIdx["<<"]=1;
 //>>excludeEnd("ctx");
-barTopConfirmed=$self._yAt_($recv(datapoint)._confirmed());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["yAt:"]=1;
-//>>excludeEnd("ctx");
-$13=$self._chartBottom();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["chartBottom"]=1;
-//>>excludeEnd("ctx");
-barHeightConfirmed=$recv($13).__minus(barTopConfirmed);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["-"]=2;
-//>>excludeEnd("ctx");
-$14=chartArea;
-$16="class".__minus_gt("BarConfirmed");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["->"]=6;
-//>>excludeEnd("ctx");
-$17="x".__minus_gt(barLeft);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["->"]=7;
-//>>excludeEnd("ctx");
-$18="y".__minus_gt(barTopConfirmed);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["->"]=8;
-//>>excludeEnd("ctx");
-$19="width".__minus_gt(barWidth);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["->"]=9;
-//>>excludeEnd("ctx");
-$20="height".__minus_gt(barHeightConfirmed);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["->"]=10;
-//>>excludeEnd("ctx");
-$15=[$16,$17,$18,$19,$20];
-$recv($14)._RECT_($15);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["RECT:"]=2;
-//>>excludeEnd("ctx");
-barTopRecovered=$self._yAt_($recv(datapoint)._decided());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["yAt:"]=2;
-//>>excludeEnd("ctx");
-$21=$self._chartBottom();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["chartBottom"]=2;
-//>>excludeEnd("ctx");
-barHeightRecovered=$recv($21).__minus(barTopRecovered);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["-"]=3;
-//>>excludeEnd("ctx");
-$22=chartArea;
-$24="class".__minus_gt("BarRecovered");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["->"]=11;
-//>>excludeEnd("ctx");
-$25="x".__minus_gt(barLeft);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["->"]=12;
-//>>excludeEnd("ctx");
-$26="y".__minus_gt(barTopRecovered);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["->"]=13;
-//>>excludeEnd("ctx");
-$27="width".__minus_gt(barWidth);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["->"]=14;
-//>>excludeEnd("ctx");
-$28="height".__minus_gt(barHeightRecovered);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["->"]=15;
-//>>excludeEnd("ctx");
-$23=[$24,$25,$26,$27,$28];
-$recv($22)._RECT_($23);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["RECT:"]=3;
-//>>excludeEnd("ctx");
-barTopDeaths=$self._yAt_($recv(datapoint)._deaths());
-barHeightDeaths=$recv($self._chartBottom()).__minus(barTopDeaths);
-$29=chartArea;
-$31="class".__minus_gt("BarDeaths");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["->"]=16;
-//>>excludeEnd("ctx");
-$32="x".__minus_gt(barLeft);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["->"]=17;
-//>>excludeEnd("ctx");
-$33="y".__minus_gt(barTopDeaths);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["->"]=18;
-//>>excludeEnd("ctx");
-$34="width".__minus_gt(barWidth);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["->"]=19;
-//>>excludeEnd("ctx");
-$30=[$31,$32,$33,$34,"height".__minus_gt(barHeightDeaths)];
-return $recv($29)._RECT_($30);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({datapoint:datapoint,barLeft:barLeft,barTopConfirmed:barTopConfirmed,barHeightConfirmed:barHeightConfirmed,barTopRecovered:barTopRecovered,barHeightRecovered:barHeightRecovered,barTopDeaths:barTopDeaths,barHeightDeaths:barHeightDeaths},$ctx1,1)});
+}, function($ctx2) {$ctx2.fillBlock({datapoint:datapoint},$ctx1,1)});
 //>>excludeEnd("ctx");
 }));
+$recv(aSVG).__lt_lt(chartArea);
 return chartArea;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"chartAreaIn:",{aSVG:aSVG,chartArea:chartArea,barWidth:barWidth})});
@@ -331,7 +352,7 @@ $globals.Barchart);
 $core.addMethod(
 $core.method({
 selector: "dateAxisIn:",
-protocol: "html",
+protocol: "svg",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aSVG"],
 source: "dateAxisIn: aSVG\x0a\x09| dateAxis x |\x0a\x09dateAxis := aSVG G: 'class' -> 'DateAxis'.\x0a\x09self series lastDateOfWeeks do: [:date |\x0a\x09\x09x := self xAt: date.\x0a\x09\x09dateAxis LINE: {\x0a\x09\x09\x09'class' -> 'Weekline'.\x0a\x09\x09\x09'x1' -> x. 'y1' -> self chartBottom.\x0a\x09\x09\x09'x2' -> x. 'y2' -> self chartTop}].\x0a\x09self series lastDateOfMonths do: [:date |\x0a\x09\x09x := self xAt: date.\x0a\x09\x09dateAxis LINE: {\x0a\x09\x09\x09'class' -> 'Monthline'.\x0a\x09\x09\x09'x1' -> x. 'y1' -> (self chartBottom + self datescaleHeight).\x0a\x09\x09\x09'x2' -> x. 'y2' -> self chartTop}.\x0a\x09\x09dateAxis TEXT: {\x0a\x09\x09\x09'class' -> 'MonthText'.\x0a\x09\x09\x09'x' -> (x + 10). 'y' -> (self chartBottom + 8).\x0a\x09\x09\x09self monthnameAt: date}].\x0a\x09dateAxis LINE: {\x0a\x09\x09'class' -> 'Baseline'.\x0a\x09\x09'x1' -> self chartLeft. 'y1' -> self chartBottom.\x0a\x09\x09'x2' -> self chartRight. 'y2' -> self chartBottom}.\x0a\x09^dateAxis",
@@ -580,6 +601,49 @@ $globals.Barchart);
 
 $core.addMethod(
 $core.method({
+selector: "graphicsArea",
+protocol: "svg",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "graphicsArea\x0a\x09\x22<g>\x22\x0a\x09\x0a\x09^SVG G: {\x0a\x09\x09'class' -> 'GraphicsArea'.\x0a\x09\x09SVG RECT: {\x0a\x09\x09\x09'x' -> self chartLeft. 'y' -> self chartTop. \x0a\x09\x09\x09'width' -> self chartWidth. 'height' -> self chartHeight}}",
+referencedClasses: ["SVG"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["G:", "->", "RECT:", "chartLeft", "chartTop", "chartWidth", "chartHeight"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $2,$5,$6,$7,$4,$3,$1;
+$2="class".__minus_gt("GraphicsArea");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=1;
+//>>excludeEnd("ctx");
+$5="x".__minus_gt($self._chartLeft());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=2;
+//>>excludeEnd("ctx");
+$6="y".__minus_gt($self._chartTop());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=3;
+//>>excludeEnd("ctx");
+$7="width".__minus_gt($self._chartWidth());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=4;
+//>>excludeEnd("ctx");
+$4=[$5,$6,$7,"height".__minus_gt($self._chartHeight())];
+$3=$recv($globals.SVG)._RECT_($4);
+$1=[$2,$3];
+return $recv($globals.SVG)._G_($1);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"graphicsArea",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Barchart);
+
+$core.addMethod(
+$core.method({
 selector: "initializeSeries:",
 protocol: "initialization",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -622,163 +686,43 @@ $globals.Barchart);
 
 $core.addMethod(
 $core.method({
-selector: "linButtonIn:",
-protocol: "html",
+selector: "lastValueText",
+protocol: "svg",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aSVG"],
-source: "linButtonIn: aSVG\x0a\x09| g |\x0a\x09g := aSVG G: 'class' -> 'LinearButton'.\x0a\x09g RECT: {\x0a\x09\x09'x' -> 170. 'y' -> 90. \x0a\x09\x09'width' -> 15. 'height' -> 10}.\x0a\x09g TEXT: {\x0a\x09\x09'class' -> 'ButtonText'.\x0a\x09\x09'x' -> 175. 'y' -> 97.\x0a\x09\x09'lin'}.\x0a\x09g on: #click bind: [self setLinearScale]",
-referencedClasses: [],
+args: [],
+source: "lastValueText\x0a\x09^SVG TEXT: {\x0a\x09\x09'class' -> 'ValueText'.\x0a\x09\x09'text-anchor' -> 'end'.\x0a\x09\x09SVG TITLE: 'The last value of the data series'.\x0a\x09\x09'x' -> (self chartRight + self valuescaleWidth - 2). 'y' -> (self chartTop + 6).\x0a\x09\x09self series lastConfirmed separatedThousandsString}",
+referencedClasses: ["SVG"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["G:", "->", "RECT:", "TEXT:", "on:bind:", "setLinearScale"]
-}, function ($methodClass){ return function (aSVG){
+messageSends: ["TEXT:", "->", "TITLE:", "-", "+", "chartRight", "valuescaleWidth", "chartTop", "separatedThousandsString", "lastConfirmed", "series"]
+}, function ($methodClass){ return function (){
 var self=this,$self=this;
-var g;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1,$2,$4,$5,$6,$7,$3,$8,$10,$11,$9;
-$1="class".__minus_gt("LinearButton");
+var $2,$3,$4,$7,$6,$5,$1;
+$2="class".__minus_gt("ValueText");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["->"]=1;
 //>>excludeEnd("ctx");
-g=$recv(aSVG)._G_($1);
-$2=g;
-$4="x".__minus_gt((170));
+$3="text-anchor".__minus_gt("end");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["->"]=2;
 //>>excludeEnd("ctx");
-$5="y".__minus_gt((90));
+$4=$recv($globals.SVG)._TITLE_("The last value of the data series");
+$7=$recv($self._chartRight()).__plus($self._valuescaleWidth());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["+"]=1;
+//>>excludeEnd("ctx");
+$6=$recv($7).__minus((2));
+$5="x".__minus_gt($6);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["->"]=3;
 //>>excludeEnd("ctx");
-$6="width".__minus_gt((15));
+$1=[$2,$3,$4,$5,"y".__minus_gt($recv($self._chartTop()).__plus((6))),$recv($recv($self._series())._lastConfirmed())._separatedThousandsString()];
+return $recv($globals.SVG)._TEXT_($1);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=4;
-//>>excludeEnd("ctx");
-$7="height".__minus_gt((10));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=5;
-//>>excludeEnd("ctx");
-$3=[$4,$5,$6,$7];
-$recv($2)._RECT_($3);
-$8=g;
-$10="class".__minus_gt("ButtonText");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=6;
-//>>excludeEnd("ctx");
-$11="x".__minus_gt((175));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=7;
-//>>excludeEnd("ctx");
-$9=[$10,$11,"y".__minus_gt((97)),"lin"];
-$recv($8)._TEXT_($9);
-$recv(g)._on_bind_("click",(function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $self._setLinearScale();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"linButtonIn:",{aSVG:aSVG,g:g})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Barchart);
-
-$core.addMethod(
-$core.method({
-selector: "linLogButtonsIn:",
-protocol: "html",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aSVG"],
-source: "linLogButtonsIn: aSVG\x0a\x09self linButtonIn: aSVG.\x0a\x09self logButtonIn: aSVG",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["linButtonIn:", "logButtonIn:"]
-}, function ($methodClass){ return function (aSVG){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-$self._linButtonIn_(aSVG);
-$self._logButtonIn_(aSVG);
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"linLogButtonsIn:",{aSVG:aSVG})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Barchart);
-
-$core.addMethod(
-$core.method({
-selector: "logButtonIn:",
-protocol: "html",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aSVG"],
-source: "logButtonIn: aSVG\x0a\x09| g |\x0a\x09g := aSVG G: 'class' -> 'LogarithmicButton'.\x0a\x09g RECT: {\x0a\x09\x09'x' -> 185. 'y' -> 90. \x0a\x09\x09'width' -> 15. 'height' -> 10}.\x0a\x09g TEXT: {\x0a\x09\x09'class' -> 'ButtonText'.\x0a\x09\x09'x' -> 188. 'y' -> 97.\x0a\x09\x09'log'}.\x0a\x09g on: #click bind: [self setLogarithmicScale]",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["G:", "->", "RECT:", "TEXT:", "on:bind:", "setLogarithmicScale"]
-}, function ($methodClass){ return function (aSVG){
-var self=this,$self=this;
-var g;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-var $1,$2,$4,$5,$6,$7,$3,$8,$10,$11,$9;
-$1="class".__minus_gt("LogarithmicButton");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=1;
-//>>excludeEnd("ctx");
-g=$recv(aSVG)._G_($1);
-$2=g;
-$4="x".__minus_gt((185));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=2;
-//>>excludeEnd("ctx");
-$5="y".__minus_gt((90));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=3;
-//>>excludeEnd("ctx");
-$6="width".__minus_gt((15));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=4;
-//>>excludeEnd("ctx");
-$7="height".__minus_gt((10));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=5;
-//>>excludeEnd("ctx");
-$3=[$4,$5,$6,$7];
-$recv($2)._RECT_($3);
-$8=g;
-$10="class".__minus_gt("ButtonText");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=6;
-//>>excludeEnd("ctx");
-$11="x".__minus_gt((188));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=7;
-//>>excludeEnd("ctx");
-$9=[$10,$11,"y".__minus_gt((97)),"log"];
-$recv($8)._TEXT_($9);
-$recv(g)._on_bind_("click",(function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $self._setLogarithmicScale();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"logButtonIn:",{aSVG:aSVG,g:g})});
+}, function($ctx1) {$ctx1.fill(self,"lastValueText",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Barchart);
@@ -841,6 +785,293 @@ index;
 return ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]._at_(index);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"monthnameAt:",{aDate:aDate,index:index})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Barchart);
+
+$core.addMethod(
+$core.method({
+selector: "mouseout:datapoint:",
+protocol: "events",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anEvent", "aDatapoint"],
+source: "mouseout: anEvent datapoint: aDatapoint\x0a\x09'#CasebarTooltip' asSilk << {'style' -> ('visibility: hidden;')}",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["<<", "asSilk", "->"]
+}, function ($methodClass){ return function (anEvent,aDatapoint){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv("#CasebarTooltip"._asSilk()).__lt_lt(["style".__minus_gt("visibility: hidden;")]);
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"mouseout:datapoint:",{anEvent:anEvent,aDatapoint:aDatapoint})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Barchart);
+
+$core.addMethod(
+$core.method({
+selector: "mouseover:datapoint:",
+protocol: "events",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anEvent", "aDatapoint"],
+source: "mouseover: anEvent datapoint: aDatapoint\x0a\x09| tooltip svg |\x0a\x09console log: anEvent.\x0a\x09\x0a\x09tooltip := '#CasebarTooltip' asSilk.\x0a\x09tooltip resetContents.\x0a\x09tooltip << {\x0a\x09\x09'style' -> (\x0a\x09\x09\x09'right: ', (window innerWidth - anEvent x) printString, 'px; ',\x0a\x09\x09\x09'top: ', anEvent y printString, 'px; ',\x0a\x09\x09\x09'visibility: visible;').\x0a\x09\x09Silk SPAN: {'class' -> 'LegendBar'}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. aDatapoint date asLocaleDateString}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'}.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'class' -> 'LegendBar'.\x0a\x09\x09\x09SVG SVG: {\x0a\x09\x09\x09\x09'viewBox' -> '0 0 10 5'.\x0a\x09\x09\x09\x09SVG RECT: {\x0a\x09\x09\x09\x09\x09'class' -> 'BarConfirmed'.\x0a\x09\x09\x09\x09\x09'x' -> 0. 'y' -> 0. \x0a\x09\x09\x09\x09\x09'width' -> '100%'. 'height' -> '100%'}}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. 'confirmed'}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'. aDatapoint confirmed separatedThousandsString}.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'class' -> 'LegendBar'.\x0a\x09\x09\x09SVG SVG: {\x0a\x09\x09\x09\x09'viewBox' -> '0 0 10 5'.\x0a\x09\x09\x09\x09SVG RECT: {\x0a\x09\x09\x09\x09\x09'class' -> 'BarRecovered'.\x0a\x09\x09\x09\x09\x09'x' -> 0. 'y' -> 0. \x0a\x09\x09\x09\x09\x09'width' -> '100%'. 'height' -> '100%'}}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. 'recovered'}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'. aDatapoint recovered separatedThousandsString}.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'class' -> 'LegendBar'.\x0a\x09\x09\x09SVG SVG: {\x0a\x09\x09\x09\x09'viewBox' -> '0 0 10 5'.\x0a\x09\x09\x09\x09SVG RECT: {\x0a\x09\x09\x09\x09\x09'class' -> 'BarDeaths'.\x0a\x09\x09\x09\x09\x09'x' -> 0. 'y' -> 0. \x0a\x09\x09\x09\x09\x09'width' -> '100%'. 'height' -> '100%'}}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. 'deaths'}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'. aDatapoint deaths separatedThousandsString}\x0a\x09}",
+referencedClasses: ["Silk", "SVG"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["log:", "asSilk", "resetContents", "<<", "->", ",", "printString", "-", "innerWidth", "x", "y", "SPAN:", "asLocaleDateString", "date", "SVG:", "RECT:", "separatedThousandsString", "confirmed", "recovered", "deaths"]
+}, function ($methodClass){ return function (anEvent,aDatapoint){
+var self=this,$self=this;
+var tooltip,svg;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$10,$9,$8,$7,$6,$5,$4,$3,$13,$12,$11,$16,$15,$14,$19,$18,$17,$22,$25,$28,$29,$30,$31,$32,$27,$26,$24,$23,$21,$20,$35,$34,$33,$38,$39,$37,$36,$42,$45,$48,$49,$50,$51,$52,$47,$46,$44,$43,$41,$40,$55,$54,$53,$58,$59,$57,$56,$62,$65,$68,$69,$70,$71,$72,$67,$66,$64,$63,$61,$60,$75,$74,$73,$2;
+$recv(console)._log_(anEvent);
+tooltip="#CasebarTooltip"._asSilk();
+$recv(tooltip)._resetContents();
+$1=tooltip;
+$10=$recv($recv($recv(window)._innerWidth()).__minus($recv(anEvent)._x()))._printString();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["printString"]=1;
+//>>excludeEnd("ctx");
+$9="right: ".__comma($10);
+$8=$recv($9).__comma("px; ");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx[","]=5;
+//>>excludeEnd("ctx");
+$7=$recv($8).__comma("top: ");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx[","]=4;
+//>>excludeEnd("ctx");
+$6=$recv($7).__comma($recv($recv(anEvent)._y())._printString());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx[","]=3;
+//>>excludeEnd("ctx");
+$5=$recv($6).__comma("px; ");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx[","]=2;
+//>>excludeEnd("ctx");
+$4=$recv($5).__comma("visibility: visible;");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx[","]=1;
+//>>excludeEnd("ctx");
+$3="style".__minus_gt($4);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=1;
+//>>excludeEnd("ctx");
+$13="class".__minus_gt("LegendBar");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=2;
+//>>excludeEnd("ctx");
+$12=[$13];
+$11=$recv($globals.Silk)._SPAN_($12);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=1;
+//>>excludeEnd("ctx");
+$16="class".__minus_gt("LegendLabel");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=3;
+//>>excludeEnd("ctx");
+$15=[$16,$recv($recv(aDatapoint)._date())._asLocaleDateString()];
+$14=$recv($globals.Silk)._SPAN_($15);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=2;
+//>>excludeEnd("ctx");
+$19="class".__minus_gt("LegendValue");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=4;
+//>>excludeEnd("ctx");
+$18=[$19];
+$17=$recv($globals.Silk)._SPAN_($18);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=3;
+//>>excludeEnd("ctx");
+$22="class".__minus_gt("LegendBar");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=5;
+//>>excludeEnd("ctx");
+$25="viewBox".__minus_gt("0 0 10 5");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=6;
+//>>excludeEnd("ctx");
+$28="class".__minus_gt("BarConfirmed");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=7;
+//>>excludeEnd("ctx");
+$29="x".__minus_gt((0));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=8;
+//>>excludeEnd("ctx");
+$30="y".__minus_gt((0));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=9;
+//>>excludeEnd("ctx");
+$31="width".__minus_gt("100%");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=10;
+//>>excludeEnd("ctx");
+$32="height".__minus_gt("100%");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=11;
+//>>excludeEnd("ctx");
+$27=[$28,$29,$30,$31,$32];
+$26=$recv($globals.SVG)._RECT_($27);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["RECT:"]=1;
+//>>excludeEnd("ctx");
+$24=[$25,$26];
+$23=$recv($globals.SVG)._SVG_($24);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SVG:"]=1;
+//>>excludeEnd("ctx");
+$21=[$22,$23];
+$20=$recv($globals.Silk)._SPAN_($21);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=4;
+//>>excludeEnd("ctx");
+$35="class".__minus_gt("LegendLabel");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=12;
+//>>excludeEnd("ctx");
+$34=[$35,"confirmed"];
+$33=$recv($globals.Silk)._SPAN_($34);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=5;
+//>>excludeEnd("ctx");
+$38="class".__minus_gt("LegendValue");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=13;
+//>>excludeEnd("ctx");
+$39=$recv($recv(aDatapoint)._confirmed())._separatedThousandsString();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["separatedThousandsString"]=1;
+//>>excludeEnd("ctx");
+$37=[$38,$39];
+$36=$recv($globals.Silk)._SPAN_($37);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=6;
+//>>excludeEnd("ctx");
+$42="class".__minus_gt("LegendBar");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=14;
+//>>excludeEnd("ctx");
+$45="viewBox".__minus_gt("0 0 10 5");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=15;
+//>>excludeEnd("ctx");
+$48="class".__minus_gt("BarRecovered");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=16;
+//>>excludeEnd("ctx");
+$49="x".__minus_gt((0));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=17;
+//>>excludeEnd("ctx");
+$50="y".__minus_gt((0));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=18;
+//>>excludeEnd("ctx");
+$51="width".__minus_gt("100%");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=19;
+//>>excludeEnd("ctx");
+$52="height".__minus_gt("100%");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=20;
+//>>excludeEnd("ctx");
+$47=[$48,$49,$50,$51,$52];
+$46=$recv($globals.SVG)._RECT_($47);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["RECT:"]=2;
+//>>excludeEnd("ctx");
+$44=[$45,$46];
+$43=$recv($globals.SVG)._SVG_($44);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SVG:"]=2;
+//>>excludeEnd("ctx");
+$41=[$42,$43];
+$40=$recv($globals.Silk)._SPAN_($41);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=7;
+//>>excludeEnd("ctx");
+$55="class".__minus_gt("LegendLabel");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=21;
+//>>excludeEnd("ctx");
+$54=[$55,"recovered"];
+$53=$recv($globals.Silk)._SPAN_($54);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=8;
+//>>excludeEnd("ctx");
+$58="class".__minus_gt("LegendValue");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=22;
+//>>excludeEnd("ctx");
+$59=$recv($recv(aDatapoint)._recovered())._separatedThousandsString();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["separatedThousandsString"]=2;
+//>>excludeEnd("ctx");
+$57=[$58,$59];
+$56=$recv($globals.Silk)._SPAN_($57);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=9;
+//>>excludeEnd("ctx");
+$62="class".__minus_gt("LegendBar");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=23;
+//>>excludeEnd("ctx");
+$65="viewBox".__minus_gt("0 0 10 5");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=24;
+//>>excludeEnd("ctx");
+$68="class".__minus_gt("BarDeaths");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=25;
+//>>excludeEnd("ctx");
+$69="x".__minus_gt((0));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=26;
+//>>excludeEnd("ctx");
+$70="y".__minus_gt((0));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=27;
+//>>excludeEnd("ctx");
+$71="width".__minus_gt("100%");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=28;
+//>>excludeEnd("ctx");
+$72="height".__minus_gt("100%");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=29;
+//>>excludeEnd("ctx");
+$67=[$68,$69,$70,$71,$72];
+$66=$recv($globals.SVG)._RECT_($67);
+$64=[$65,$66];
+$63=$recv($globals.SVG)._SVG_($64);
+$61=[$62,$63];
+$60=$recv($globals.Silk)._SPAN_($61);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=10;
+//>>excludeEnd("ctx");
+$75="class".__minus_gt("LegendLabel");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=30;
+//>>excludeEnd("ctx");
+$74=[$75,"deaths"];
+$73=$recv($globals.Silk)._SPAN_($74);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=11;
+//>>excludeEnd("ctx");
+$2=[$3,$11,$14,$17,$20,$33,$36,$40,$53,$56,$60,$73,$recv($globals.Silk)._SPAN_(["class".__minus_gt("LegendValue"),$recv($recv(aDatapoint)._deaths())._separatedThousandsString()])];
+$recv($1).__lt_lt($2);
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"mouseover:datapoint:",{anEvent:anEvent,aDatapoint:aDatapoint,tooltip:tooltip,svg:svg})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Barchart);
@@ -939,10 +1170,10 @@ $globals.Barchart);
 $core.addMethod(
 $core.method({
 selector: "svg",
-protocol: "html",
+protocol: "svg",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "svg\x0a\x09\x22<svg>\x22\x0a\x09\x0a\x09| svg valueAxis dateAxis buttons lin log |\x0a\x09svg := SVG SVG: {\x0a\x09\x09'viewBox' -> '0 0 200 100'.\x0a\x09\x09SVG RECT: {'x' -> 0. 'y' -> 0. 'width' -> '100%'. 'height' -> '100%'. 'fill' -> '#eee'}}.\x0a\x09self valueAxisIn: svg.\x0a\x09self dateAxisIn: svg.\x0a\x09self chartAreaIn: svg.\x0a\x09\x22self linLogButtonsIn: svg.\x22\x0a\x09^svg",
+source: "svg\x0a\x09\x22<svg>\x22\x0a\x09\x0a\x09| svg valueAxis dateAxis buttons lin log |\x0a\x09svg := SVG SVG: {\x0a\x09\x09'viewBox' -> '0 0 200 100'.\x0a\x09\x09SVG RECT: {'x' -> 0. 'y' -> 0. 'width' -> '100%'. 'height' -> '100%'. 'fill' -> '#eee'}}.\x0a\x09self valueAxisIn: svg.\x0a\x09self dateAxisIn: svg.\x0a\x09self chartAreaIn: svg.\x0a\x09^svg",
 referencedClasses: ["SVG"],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -1009,21 +1240,21 @@ $globals.Barchart);
 $core.addMethod(
 $core.method({
 selector: "valueAxisIn:",
-protocol: "html",
+protocol: "svg",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aSVG"],
-source: "valueAxisIn: aSVG\x0a\x09| ticks majorTicks minorTicks valueAxis |\x0a\x09ticks := self valuescale ticks.\x0a\x09majorTicks := ticks first.\x0a\x09minorTicks := ticks last.\x0a\x09valueAxis := aSVG G: {\x0a\x09\x09'class' -> 'ValueAxis'.\x0a\x09\x09SVG RECT: {\x0a\x09\x09\x09'x' -> self chartRight. 'y' -> self chartTop. \x0a\x09\x09\x09'width' -> self valuescaleWidth. 'height' -> self chartHeight}}.\x0a\x09minorTicks do: [:value |\x0a\x09\x09| y |\x0a\x09\x09y := self yAt: value.\x0a\x09\x09valueAxis LINE: {\x0a\x09\x09\x09'class' -> 'Minorline'.\x0a\x09\x09\x09'x1' -> self chartLeft. 'y1' -> y.\x0a\x09\x09\x09'x2' -> self chartRight. 'y2' -> y}].\x0a\x09majorTicks do: [:value |\x0a\x09\x09| y |\x0a\x09\x09y := self yAt: value.\x0a\x09\x09valueAxis LINE: {\x0a\x09\x09\x09'class' -> 'Majorline'.\x0a\x09\x09\x09'x1' -> self chartLeft. 'y1' -> y.\x0a\x09\x09\x09'x2' -> self chartRight. 'y2' -> y}.\x0a\x09\x09y > 10 ifTrue: [\x0a\x09\x09\x09valueAxis TEXT: {\x0a\x09\x09\x09\x09'class' -> 'MajorText'.\x0a\x09\x09\x09\x09'text-anchor' -> 'end'.\x0a\x09\x09\x09\x09'x' -> (self chartRight + self valuescaleWidth - 2). 'y' -> (y + 2).\x0a\x09\x09\x09\x09value separatedThousandsString}]].\x0a\x09valueAxis TEXT: {\x0a\x09\x09'class' -> 'ValueText'.\x0a\x09\x09'text-anchor' -> 'end'.\x0a\x09\x09'x' -> (self chartRight + self valuescaleWidth - 2). 'y' -> (self chartTop + 6).\x0a\x09\x09self series lastConfirmed separatedThousandsString}.\x0a\x09^valueAxis",
+source: "valueAxisIn: aSVG\x0a\x09| ticks majorTicks minorTicks valueAxis |\x0a\x09ticks := self valuescale ticks.\x0a\x09majorTicks := ticks first.\x0a\x09minorTicks := ticks last.\x0a\x09valueAxis := aSVG G: {\x0a\x09\x09'class' -> 'ValueAxis'.\x0a\x09\x09SVG RECT: {\x0a\x09\x09\x09'x' -> self chartRight. 'y' -> self chartTop. \x0a\x09\x09\x09'width' -> self valuescaleWidth. 'height' -> self chartHeight}}.\x0a\x09minorTicks do: [:value |\x0a\x09\x09| y |\x0a\x09\x09y := self yAt: value.\x0a\x09\x09valueAxis LINE: {\x0a\x09\x09\x09'class' -> 'Minorline'.\x0a\x09\x09\x09'x1' -> self chartLeft. 'y1' -> y.\x0a\x09\x09\x09'x2' -> self chartRight. 'y2' -> y}].\x0a\x09majorTicks do: [:value |\x0a\x09\x09| y |\x0a\x09\x09y := self yAt: value.\x0a\x09\x09valueAxis LINE: {\x0a\x09\x09\x09'class' -> 'Majorline'.\x0a\x09\x09\x09'x1' -> self chartLeft. 'y1' -> y.\x0a\x09\x09\x09'x2' -> self chartRight. 'y2' -> y}.\x0a\x09\x09y > 10 ifTrue: [\x0a\x09\x09\x09valueAxis TEXT: {\x0a\x09\x09\x09\x09'class' -> 'MajorText'.\x0a\x09\x09\x09\x09'text-anchor' -> 'end'.\x0a\x09\x09\x09\x09'x' -> (self chartRight + self valuescaleWidth - 2). 'y' -> (y + 2).\x0a\x09\x09\x09\x09value separatedThousandsString}]].\x0a\x09valueAxis << self lastValueText.\x0a\x09^valueAxis",
 referencedClasses: ["SVG"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ticks", "valuescale", "first", "last", "G:", "->", "RECT:", "chartRight", "chartTop", "valuescaleWidth", "chartHeight", "do:", "yAt:", "LINE:", "chartLeft", "ifTrue:", ">", "TEXT:", "-", "+", "separatedThousandsString", "lastConfirmed", "series"]
+messageSends: ["ticks", "valuescale", "first", "last", "G:", "->", "RECT:", "chartRight", "chartTop", "valuescaleWidth", "chartHeight", "do:", "yAt:", "LINE:", "chartLeft", "ifTrue:", ">", "TEXT:", "-", "+", "separatedThousandsString", "<<", "lastValueText"]
 }, function ($methodClass){ return function (aSVG){
 var self=this,$self=this;
 var ticks,majorTicks,minorTicks,valueAxis;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $2,$6,$5,$8,$7,$10,$9,$11,$4,$3,$1,$12,$14,$16,$15,$17,$19,$18,$20,$13,$21,$23,$24,$25,$27,$26,$28,$22,$29,$30,$32,$33,$37,$38,$36,$35,$34,$40,$39,$41,$31,$42,$44,$45,$48,$47,$46,$43;
+var $2,$6,$5,$7,$9,$8,$10,$4,$3,$1,$11,$13,$15,$14,$16,$18,$17,$19,$12,$20,$22,$23,$24,$26,$25,$27,$21,$28,$29,$31,$32,$35,$34,$33,$30;
 ticks=$recv($self._valuescale())._ticks();
 majorTicks=$recv(ticks)._first();
 minorTicks=$recv(ticks)._last();
@@ -1039,27 +1270,23 @@ $5="x".__minus_gt($6);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["->"]=2;
 //>>excludeEnd("ctx");
-$8=$self._chartTop();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["chartTop"]=1;
-//>>excludeEnd("ctx");
-$7="y".__minus_gt($8);
+$7="y".__minus_gt($self._chartTop());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["->"]=3;
 //>>excludeEnd("ctx");
-$10=$self._valuescaleWidth();
+$9=$self._valuescaleWidth();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["valuescaleWidth"]=1;
 //>>excludeEnd("ctx");
-$9="width".__minus_gt($10);
+$8="width".__minus_gt($9);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["->"]=4;
 //>>excludeEnd("ctx");
-$11="height".__minus_gt($self._chartHeight());
+$10="height".__minus_gt($self._chartHeight());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["->"]=5;
 //>>excludeEnd("ctx");
-$4=[$5,$7,$9,$11];
+$4=[$5,$7,$8,$10];
 $3=$recv($globals.SVG)._RECT_($4);
 $1=[$2,$3];
 valueAxis=$recv(aSVG)._G_($1);
@@ -1072,37 +1299,37 @@ y=$self._yAt_(value);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["yAt:"]=1;
 //>>excludeEnd("ctx");
-$12=valueAxis;
-$14="class".__minus_gt("Minorline");
+$11=valueAxis;
+$13="class".__minus_gt("Minorline");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["->"]=6;
 //>>excludeEnd("ctx");
-$16=$self._chartLeft();
+$15=$self._chartLeft();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["chartLeft"]=1;
 //>>excludeEnd("ctx");
-$15="x1".__minus_gt($16);
+$14="x1".__minus_gt($15);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["->"]=7;
 //>>excludeEnd("ctx");
-$17="y1".__minus_gt(y);
+$16="y1".__minus_gt(y);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["->"]=8;
 //>>excludeEnd("ctx");
-$19=$self._chartRight();
+$18=$self._chartRight();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["chartRight"]=2;
 //>>excludeEnd("ctx");
-$18="x2".__minus_gt($19);
+$17="x2".__minus_gt($18);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["->"]=9;
 //>>excludeEnd("ctx");
-$20="y2".__minus_gt(y);
+$19="y2".__minus_gt(y);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["->"]=10;
 //>>excludeEnd("ctx");
-$13=[$14,$15,$17,$18,$20];
-return $recv($12)._LINE_($13);
+$12=[$13,$14,$16,$17,$19];
+return $recv($11)._LINE_($12);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["LINE:"]=1;
 //>>excludeEnd("ctx");
@@ -1119,106 +1346,61 @@ var y;
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
 y=$self._yAt_(value);
-$21=valueAxis;
-$23="class".__minus_gt("Majorline");
+$20=valueAxis;
+$22="class".__minus_gt("Majorline");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["->"]=11;
 //>>excludeEnd("ctx");
-$24="x1".__minus_gt($self._chartLeft());
+$23="x1".__minus_gt($self._chartLeft());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["->"]=12;
 //>>excludeEnd("ctx");
-$25="y1".__minus_gt(y);
+$24="y1".__minus_gt(y);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["->"]=13;
 //>>excludeEnd("ctx");
-$27=$self._chartRight();
+$26=$self._chartRight();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["chartRight"]=3;
 //>>excludeEnd("ctx");
-$26="x2".__minus_gt($27);
+$25="x2".__minus_gt($26);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["->"]=14;
 //>>excludeEnd("ctx");
-$28="y2".__minus_gt(y);
+$27="y2".__minus_gt(y);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["->"]=15;
 //>>excludeEnd("ctx");
-$22=[$23,$24,$25,$26,$28];
-$recv($21)._LINE_($22);
-$29=$recv(y).__gt((10));
-if($core.assert($29)){
-$30=valueAxis;
-$32="class".__minus_gt("MajorText");
+$21=[$22,$23,$24,$25,$27];
+$recv($20)._LINE_($21);
+$28=$recv(y).__gt((10));
+if($core.assert($28)){
+$29=valueAxis;
+$31="class".__minus_gt("MajorText");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["->"]=16;
 //>>excludeEnd("ctx");
-$33="text-anchor".__minus_gt("end");
+$32="text-anchor".__minus_gt("end");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["->"]=17;
 //>>excludeEnd("ctx");
-$37=$self._chartRight();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["chartRight"]=4;
-//>>excludeEnd("ctx");
-$38=$self._valuescaleWidth();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["valuescaleWidth"]=2;
-//>>excludeEnd("ctx");
-$36=$recv($37).__plus($38);
+$35=$recv($self._chartRight()).__plus($self._valuescaleWidth());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["+"]=1;
 //>>excludeEnd("ctx");
-$35=$recv($36).__minus((2));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["-"]=1;
-//>>excludeEnd("ctx");
-$34="x".__minus_gt($35);
+$34=$recv($35).__minus((2));
+$33="x".__minus_gt($34);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["->"]=18;
 //>>excludeEnd("ctx");
-$40=$recv(y).__plus((2));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["+"]=2;
-//>>excludeEnd("ctx");
-$39="y".__minus_gt($40);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["->"]=19;
-//>>excludeEnd("ctx");
-$41=$recv(value)._separatedThousandsString();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["separatedThousandsString"]=1;
-//>>excludeEnd("ctx");
-$31=[$32,$33,$34,$39,$41];
-return $recv($30)._TEXT_($31);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["TEXT:"]=1;
-//>>excludeEnd("ctx");
+$30=[$31,$32,$33,"y".__minus_gt($recv(y).__plus((2))),$recv(value)._separatedThousandsString()];
+return $recv($29)._TEXT_($30);
 }
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx2) {$ctx2.fillBlock({value:value,y:y},$ctx1,2)});
 //>>excludeEnd("ctx");
 }));
-$42=valueAxis;
-$44="class".__minus_gt("ValueText");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=20;
-//>>excludeEnd("ctx");
-$45="text-anchor".__minus_gt("end");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=21;
-//>>excludeEnd("ctx");
-$48=$recv($self._chartRight()).__plus($self._valuescaleWidth());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["+"]=3;
-//>>excludeEnd("ctx");
-$47=$recv($48).__minus((2));
-$46="x".__minus_gt($47);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=22;
-//>>excludeEnd("ctx");
-$43=[$44,$45,$46,"y".__minus_gt($recv($self._chartTop()).__plus((6))),$recv($recv($self._series())._lastConfirmed())._separatedThousandsString()];
-$recv($42)._TEXT_($43);
+$recv(valueAxis).__lt_lt($self._lastValueText());
 return valueAxis;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"valueAxisIn:",{aSVG:aSVG,ticks:ticks,majorTicks:majorTicks,minorTicks:minorTicks,valueAxis:valueAxis})});
@@ -1360,31 +1542,35 @@ selector: "addContentsTo:",
 protocol: "html",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aDiv"],
-source: "addContentsTo: aDiv\x0a\x09aDiv << self header.\x0a\x09aDiv DIV: 'id' -> 'CountryList'.\x0a\x09aDiv DIV: 'id' -> 'Graphics'.\x0a\x09aDiv << self footer",
-referencedClasses: [],
+source: "addContentsTo: aDiv\x0a\x09self isDevelopment ifTrue: [\x0a\x09\x09aDiv << self buttonsForDevelopment].\x0a\x09aDiv << {\x0a\x09\x09self header.\x0a\x09\x09Silk DIV: 'id' -> 'CountryList'.\x0a\x09\x09Silk DIV: 'id' -> 'Graphics'.\x0a\x09\x09self footer.\x0a\x09\x09\x22self casebarTooltip.\x22\x0a\x09\x09self changebarTooltip}",
+referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["<<", "header", "DIV:", "->", "footer"]
+messageSends: ["ifTrue:", "isDevelopment", "<<", "buttonsForDevelopment", "header", "DIV:", "->", "footer", "changebarTooltip"]
 }, function ($methodClass){ return function (aDiv){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1;
-$recv(aDiv).__lt_lt($self._header());
+var $1,$3,$5,$4,$2;
+$1=$self._isDevelopment();
+if($core.assert($1)){
+$recv(aDiv).__lt_lt($self._buttonsForDevelopment());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["<<"]=1;
 //>>excludeEnd("ctx");
-$1="id".__minus_gt("CountryList");
+}
+$3=$self._header();
+$5="id".__minus_gt("CountryList");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["->"]=1;
 //>>excludeEnd("ctx");
-$recv(aDiv)._DIV_($1);
+$4=$recv($globals.Silk)._DIV_($5);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["DIV:"]=1;
 //>>excludeEnd("ctx");
-$recv(aDiv)._DIV_("id".__minus_gt("Graphics"));
-$recv(aDiv).__lt_lt($self._footer());
+$2=[$3,$4,$recv($globals.Silk)._DIV_("id".__minus_gt("Graphics")),$self._footer(),$self._changebarTooltip()];
+$recv(aDiv).__lt_lt($2);
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"addContentsTo:",{aDiv:aDiv})});
@@ -1426,11 +1612,11 @@ selector: "buttonsForDevelopment",
 protocol: "html",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "buttonsForDevelopment\x0a\x09\x22<Silk>\x22\x0a\x09\x0a\x09^Silk DIV: {\x0a\x09\x09'id' -> 'Buttons'.\x0a\x09\x09(Silk BUTTON: 'reset') on: #click bind: [self resetContents].\x0a\x09\x09(Silk BUTTON: 'get data') on: #click bind: [self getData].\x0a\x09\x09(Silk BUTTON: 'Helios') on: #click bind: [self openHelios]}",
+source: "buttonsForDevelopment\x0a\x09\x22<Silk>\x22\x0a\x09\x0a\x09^Silk SPAN: {\x0a\x09\x09'id' -> 'Buttons'.\x0a\x09\x09(Silk BUTTON: 'reset') on: #click bind: [self resetContents].\x0a\x09\x09(Silk BUTTON: 'get data') on: #click bind: [self getData].\x0a\x09\x09(Silk BUTTON: 'Helios') on: #click bind: [self openHelios]}",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["DIV:", "->", "on:bind:", "BUTTON:", "resetContents", "getData", "openHelios"]
+messageSends: ["SPAN:", "->", "on:bind:", "BUTTON:", "resetContents", "getData", "openHelios"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -1479,9 +1665,55 @@ return $self._openHelios();
 }, function($ctx2) {$ctx2.fillBlock({},$ctx1,3)});
 //>>excludeEnd("ctx");
 }))];
-return $recv($globals.Silk)._DIV_($1);
+return $recv($globals.Silk)._SPAN_($1);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"buttonsForDevelopment",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19);
+
+$core.addMethod(
+$core.method({
+selector: "casebarTooltip",
+protocol: "html",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "casebarTooltip\x0a\x09^Silk DIV: 'id' -> 'CasebarTooltip'",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["DIV:", "->"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($globals.Silk)._DIV_("id".__minus_gt("CasebarTooltip"));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"casebarTooltip",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19);
+
+$core.addMethod(
+$core.method({
+selector: "changebarTooltip",
+protocol: "html",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "changebarTooltip\x0a\x09^Silk DIV: 'id' -> 'ChangebarTooltip'",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["DIV:", "->"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($globals.Silk)._DIV_("id".__minus_gt("ChangebarTooltip"));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"changebarTooltip",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19);
@@ -1613,19 +1845,42 @@ selector: "header",
 protocol: "html",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "header\x0a\x09^Silk HEADER: {\x0a\x09\x09Silk H1: 'CoViD-19 Charts'.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'id' -> 'Date'.\x0a\x09\x09\x09self lastDate asLocaleDateString}.\x0a\x09\x09self buttonsForDevelopment}",
+source: "header\x0a\x09^Silk HEADER: {\x0a\x09\x09Silk H1: 'CoViD-19 Charts'.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'id' -> 'Date'.\x0a\x09\x09\x09self lastDate asLocaleDateString}}",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["HEADER:", "H1:", "SPAN:", "->", "asLocaleDateString", "lastDate", "buttonsForDevelopment"]
+messageSends: ["HEADER:", "H1:", "SPAN:", "->", "asLocaleDateString", "lastDate"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($globals.Silk)._HEADER_([$recv($globals.Silk)._H1_("CoViD-19 Charts"),$recv($globals.Silk)._SPAN_(["id".__minus_gt("Date"),$recv($self._lastDate())._asLocaleDateString()]),$self._buttonsForDevelopment()]);
+return $recv($globals.Silk)._HEADER_([$recv($globals.Silk)._H1_("CoViD-19 Charts"),$recv($globals.Silk)._SPAN_(["id".__minus_gt("Date"),$recv($self._lastDate())._asLocaleDateString()])]);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"header",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19);
+
+$core.addMethod(
+$core.method({
+selector: "isDevelopment",
+protocol: "testing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "isDevelopment\x0a\x09^(window location host tokenize: ':') first = '127.0.0.1'",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["=", "first", "tokenize:", "host", "location"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($recv($recv($recv($recv(window)._location())._host())._tokenize_(":"))._first()).__eq("127.0.0.1");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"isDevelopment",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19);
@@ -3034,18 +3289,18 @@ selector: "showInfo",
 protocol: "actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "showInfo\x0a\x09\x22add nice info graphics\x22\x0a\x09\x0a\x09| graphics |\x0a\x09graphics := '#Graphics' asSilk.\x0a\x09graphics resetContents.\x0a\x09graphics H2: self name.\x0a\x09graphics DIV: {\x0a\x09\x09Silk H3: 'Cases'.\x0a\x09\x09(Barchart on: self series) svg}.\x0a\x09graphics DIV: {\x0a\x09\x09Silk H3: 'Change'.\x0a\x09\x09(Barchart on: self changes) svg}",
+source: "showInfo\x0a\x09\x22add nice info graphics\x22\x0a\x09\x0a\x09| graphics |\x0a\x09graphics := '#Graphics' asSilk.\x0a\x09graphics resetContents.\x0a\x09graphics H2: self name.\x0a\x09graphics DIV: {\x0a\x09\x09Silk H3: 'Cases'.\x0a\x09\x09(Barchart on: self series) svg.\x0a\x09\x09Silk DIV: 'id' -> 'CasebarTooltip'}.\x0a\x09graphics DIV: {\x0a\x09\x09Silk H3: 'Change'.\x0a\x09\x09(Barchart on: self changes) svg}",
 referencedClasses: ["Silk", "Barchart"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["asSilk", "resetContents", "H2:", "name", "DIV:", "H3:", "svg", "on:", "series", "changes"]
+messageSends: ["asSilk", "resetContents", "H2:", "name", "DIV:", "H3:", "svg", "on:", "series", "->", "changes"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 var graphics;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1,$3,$5,$4,$2;
+var $1,$3,$5,$4,$6,$2;
 graphics="#Graphics"._asSilk();
 $recv(graphics)._resetContents();
 $recv(graphics)._H2_($self._name());
@@ -3062,7 +3317,11 @@ $4=$recv($5)._svg();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["svg"]=1;
 //>>excludeEnd("ctx");
-$2=[$3,$4];
+$6=$recv($globals.Silk)._DIV_("id".__minus_gt("CasebarTooltip"));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["DIV:"]=2;
+//>>excludeEnd("ctx");
+$2=[$3,$4,$6];
 $recv($1)._DIV_($2);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["DIV:"]=1;
@@ -3659,7 +3918,7 @@ $core.addClass("SVG", $globals.Silk, [], "Covid19view");
 $core.addMethod(
 $core.method({
 selector: "namespace",
-protocol: "as yet unclassified",
+protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
 source: "namespace\x0a\x09^'http://www.w3.org/2000/svg'",
@@ -4421,51 +4680,20 @@ selector: "separatedThousandsString",
 protocol: "*Covid19view",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "separatedThousandsString\x0a\x09\x22<String>\x0a\x09String with thousands separator every third insertin point\x22\x0a\x09\x0a\x09| rst wst |\x0a\x09rst := self printString reversed readStream.\x0a\x09wst := String new writeStream.\x0a\x09[rst atEnd] whileFalse: [\x0a\x09\x09wst nextPutAll: (rst next: 3).\x0a\x09\x09rst atEnd ifFalse: [wst nextPut: $.]].\x0a\x09^wst contents reversed",
-referencedClasses: ["String"],
+source: "separatedThousandsString\x0a\x09\x22<String>\x0a\x09String with thousands separator every third insertin point\x22\x0a\x09\x0a\x09<inlineJS: 'return self.toLocaleString()'>",
+referencedClasses: [],
 //>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["readStream", "reversed", "printString", "writeStream", "new", "whileFalse:", "atEnd", "nextPutAll:", "next:", "ifFalse:", "nextPut:", "contents"]
+pragmas: [["inlineJS:", ["return self.toLocaleString()"]]],
+messageSends: []
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
-var rst,wst;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1,$2;
-$1=$recv($self._printString())._reversed();
+return self.toLocaleString();
+return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["reversed"]=1;
-//>>excludeEnd("ctx");
-rst=$recv($1)._readStream();
-wst=$recv($recv($globals.String)._new())._writeStream();
-$recv((function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $recv(rst)._atEnd();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["atEnd"]=1;
-//>>excludeEnd("ctx");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
-//>>excludeEnd("ctx");
-}))._whileFalse_((function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-$recv(wst)._nextPutAll_($recv(rst)._next_((3)));
-$2=$recv(rst)._atEnd();
-if(!$core.assert($2)){
-return $recv(wst)._nextPut_(".");
-}
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,2)});
-//>>excludeEnd("ctx");
-}));
-return $recv($recv(wst)._contents())._reversed();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"separatedThousandsString",{rst:rst,wst:wst})});
+}, function($ctx1) {$ctx1.fill(self,"separatedThousandsString",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Number);

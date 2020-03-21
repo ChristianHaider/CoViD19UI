@@ -310,7 +310,18 @@ Object subclass: #CoViD19
 !CoViD19 methodsFor: 'accessing'!
 
 countries
-	^countries ifNil: [self getData]
+	"<Array of: Country>"
+	
+	^countries ifNil: [
+		self getData.
+		#()]
+!
+
+lastDate
+	"<Date>
+	the most recent date in the data"
+	
+	^self countries inject: (Date d: 1 m: 1 y: 2020) into: [:latest :country | latest max: country lastDate]
 ! !
 
 !CoViD19 methodsFor: 'action'!
@@ -318,6 +329,7 @@ countries
 getData
 	self withSeriesDo: [:someSeries | 
 		countries := Country allFromSeries: someSeries.
+		self showDate.
 		self showCountries]
 !
 
@@ -330,6 +342,13 @@ showCountries
 	list := '#CountryList' asSilk.
 	list resetContents.
 	self countries do: [:country | country addToList: list]
+!
+
+showDate
+	| element |
+	element := '#Date' asSilk.
+	element resetContents.
+	element << self lastDate asLocaleDateString
 !
 
 withSeriesDo: aOneArgumentBlock
@@ -347,16 +366,20 @@ withSeriesDo: aOneArgumentBlock
 				ifFalse:[ErrorHandler handleError: ex]]
 ! !
 
-!CoViD19 methodsFor: 'contents'!
+!CoViD19 methodsFor: 'html'!
 
 addContentsTo: aDiv
-	| buttons list |
-	aDiv HEADER: {
-		Silk H1: 'CoViD-19 Charts'.
-		"self buttonsForDevelopment"}.
+	aDiv << self header.
 	aDiv DIV: 'id' -> 'CountryList'.
 	aDiv DIV: 'id' -> 'Graphics'.
 	aDiv << self footer
+!
+
+augmentPage
+	Silk new 
+		reset;
+		DIV: self newContents.
+	self getData
 !
 
 buttonsForDevelopment
@@ -384,15 +407,15 @@ footer
 			'target' -> '_blank'.
 			'rel' -> 'noopener'.
 			'Source'})}
-! !
+!
 
-!CoViD19 methodsFor: 'starting'!
-
-augmentPage
-	Silk new 
-		reset;
-		DIV: self newContents.
-	self getData
+header
+	^Silk HEADER: {
+		Silk H1: 'CoViD-19 Charts'.
+		Silk SPAN: {
+			'id' -> 'Date'.
+			self lastDate asLocaleDateString}.
+		self buttonsForDevelopment}
 !
 
 newContents
@@ -402,7 +425,9 @@ newContents
 	contents := Silk DIV: {'id' -> 'Contents'}.
 	self addContentsTo: contents.
 	^contents
-!
+! !
+
+!CoViD19 methodsFor: 'initialize / release'!
 
 resetContents
 	| contents |
@@ -659,6 +684,12 @@ lastConfirmed
 	"<Integer>"
 	
 	^self series lastConfirmed
+!
+
+lastDate
+	"<Date>"
+	
+	^self series lastDate
 !
 
 lastDeaths
@@ -1122,6 +1153,18 @@ fromJson: aJson
 		state: aJson state 
 		latLong: aJson latLong 
 		series: (Dataseries fromJson: aJson series)
+! !
+
+!Date methodsFor: '*Covid19view'!
+
+asLocaleDateString
+	<inlineJS: 'return self.toLocaleDateString()'>
+!
+
+max: aDate
+	aDate > self ifTrue: [
+		^aDate].
+	^self
 ! !
 
 !Date class methodsFor: '*Covid19view'!

@@ -1357,22 +1357,24 @@ $core.addClass("CoViD19", $globals.Object, ["countries"], "Covid19view");
 $core.addMethod(
 $core.method({
 selector: "addContentsTo:",
-protocol: "contents",
+protocol: "html",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aDiv"],
-source: "addContentsTo: aDiv\x0a\x09| buttons list |\x0a\x09aDiv HEADER: {\x0a\x09\x09Silk H1: 'CoViD-19 Charts'.\x0a\x09\x09\x22self buttonsForDevelopment\x22}.\x0a\x09aDiv DIV: 'id' -> 'CountryList'.\x0a\x09aDiv DIV: 'id' -> 'Graphics'.\x0a\x09aDiv << self footer",
-referencedClasses: ["Silk"],
+source: "addContentsTo: aDiv\x0a\x09aDiv << self header.\x0a\x09aDiv DIV: 'id' -> 'CountryList'.\x0a\x09aDiv DIV: 'id' -> 'Graphics'.\x0a\x09aDiv << self footer",
+referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["HEADER:", "H1:", "DIV:", "->", "<<", "footer"]
+messageSends: ["<<", "header", "DIV:", "->", "footer"]
 }, function ($methodClass){ return function (aDiv){
 var self=this,$self=this;
-var buttons,list;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 var $1;
-$recv(aDiv)._HEADER_([$recv($globals.Silk)._H1_("CoViD-19 Charts")]);
+$recv(aDiv).__lt_lt($self._header());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["<<"]=1;
+//>>excludeEnd("ctx");
 $1="id".__minus_gt("CountryList");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["->"]=1;
@@ -1385,7 +1387,7 @@ $recv(aDiv)._DIV_("id".__minus_gt("Graphics"));
 $recv(aDiv).__lt_lt($self._footer());
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"addContentsTo:",{aDiv:aDiv,buttons:buttons,list:list})});
+}, function($ctx1) {$ctx1.fill(self,"addContentsTo:",{aDiv:aDiv})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19);
@@ -1393,7 +1395,7 @@ $globals.CoViD19);
 $core.addMethod(
 $core.method({
 selector: "augmentPage",
-protocol: "starting",
+protocol: "html",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
 source: "augmentPage\x0a\x09Silk new \x0a\x09\x09reset;\x0a\x09\x09DIV: self newContents.\x0a\x09self getData",
@@ -1421,7 +1423,7 @@ $globals.CoViD19);
 $core.addMethod(
 $core.method({
 selector: "buttonsForDevelopment",
-protocol: "contents",
+protocol: "html",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
 source: "buttonsForDevelopment\x0a\x09\x22<Silk>\x22\x0a\x09\x0a\x09^Silk DIV: {\x0a\x09\x09'id' -> 'Buttons'.\x0a\x09\x09(Silk BUTTON: 'reset') on: #click bind: [self resetContents].\x0a\x09\x09(Silk BUTTON: 'get data') on: #click bind: [self getData].\x0a\x09\x09(Silk BUTTON: 'Helios') on: #click bind: [self openHelios]}",
@@ -1490,7 +1492,7 @@ selector: "countries",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "countries\x0a\x09^countries ifNil: [self getData]",
+source: "countries\x0a\x09\x22<Array of: Country>\x22\x0a\x09\x0a\x09^countries ifNil: [\x0a\x09\x09self getData.\x0a\x09\x09#()]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -1503,7 +1505,8 @@ return $core.withContext(function($ctx1) {
 var $1,$receiver;
 $1=$self.countries;
 if(($receiver = $1) == null || $receiver.a$nil){
-return $self._getData();
+$self._getData();
+return [];
 } else {
 return $1;
 }
@@ -1516,7 +1519,7 @@ $globals.CoViD19);
 $core.addMethod(
 $core.method({
 selector: "footer",
-protocol: "contents",
+protocol: "html",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
 source: "footer\x0a\x09\x22<Silk>\x22\x0a\x09\x0a\x09^Silk FOOTER: {\x0a\x09\x09'Done in Amber Smalltalk by Christian Haider'.\x0a\x09\x09Silk SPAN: (Silk A: {\x0a\x09\x09\x09'href' -> 'https://github.com/CSSEGISandData/COVID-19'.\x0a\x09\x09\x09'target' -> '_blank'.\x0a\x09\x09\x09'rel' -> 'noopener'.\x0a\x09\x09\x09'Data'}).\x0a\x09\x09Silk SPAN: (Silk A: {\x0a\x09\x09\x09'href' -> 'https://github.com/ChristianHaider/CoViD19UI'.\x0a\x09\x09\x09'target' -> '_blank'.\x0a\x09\x09\x09'rel' -> 'noopener'.\x0a\x09\x09\x09'Source'})}",
@@ -1576,11 +1579,11 @@ selector: "getData",
 protocol: "action",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "getData\x0a\x09self withSeriesDo: [:someSeries | \x0a\x09\x09countries := Country allFromSeries: someSeries.\x0a\x09\x09self showCountries]",
+source: "getData\x0a\x09self withSeriesDo: [:someSeries | \x0a\x09\x09countries := Country allFromSeries: someSeries.\x0a\x09\x09self showDate.\x0a\x09\x09self showCountries]",
 referencedClasses: ["Country"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["withSeriesDo:", "allFromSeries:", "showCountries"]
+messageSends: ["withSeriesDo:", "allFromSeries:", "showDate", "showCountries"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -1591,6 +1594,7 @@ $self._withSeriesDo_((function(someSeries){
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
 $self.countries=$recv($globals.Country)._allFromSeries_(someSeries);
+$self._showDate();
 return $self._showCountries();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx2) {$ctx2.fillBlock({someSeries:someSeries},$ctx1,1)});
@@ -1605,8 +1609,62 @@ $globals.CoViD19);
 
 $core.addMethod(
 $core.method({
+selector: "header",
+protocol: "html",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "header\x0a\x09^Silk HEADER: {\x0a\x09\x09Silk H1: 'CoViD-19 Charts'.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'id' -> 'Date'.\x0a\x09\x09\x09self lastDate asLocaleDateString}.\x0a\x09\x09self buttonsForDevelopment}",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["HEADER:", "H1:", "SPAN:", "->", "asLocaleDateString", "lastDate", "buttonsForDevelopment"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($globals.Silk)._HEADER_([$recv($globals.Silk)._H1_("CoViD-19 Charts"),$recv($globals.Silk)._SPAN_(["id".__minus_gt("Date"),$recv($self._lastDate())._asLocaleDateString()]),$self._buttonsForDevelopment()]);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"header",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19);
+
+$core.addMethod(
+$core.method({
+selector: "lastDate",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "lastDate\x0a\x09\x22<Date>\x0a\x09the most recent date in the data\x22\x0a\x09\x0a\x09^self countries inject: (Date d: 1 m: 1 y: 2020) into: [:latest :country | latest max: country lastDate]",
+referencedClasses: ["Date"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["inject:into:", "countries", "d:m:y:", "max:", "lastDate"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._countries())._inject_into_($recv($globals.Date)._d_m_y_((1),(1),(2020)),(function(latest,country){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv(latest)._max_($recv(country)._lastDate());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({latest:latest,country:country},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"lastDate",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19);
+
+$core.addMethod(
+$core.method({
 selector: "newContents",
-protocol: "starting",
+protocol: "html",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
 source: "newContents\x0a\x09\x22<DIV>\x22\x0a\x09\x0a\x09| contents |\x0a\x09contents := Silk DIV: {'id' -> 'Contents'}.\x0a\x09self addContentsTo: contents.\x0a\x09^contents",
@@ -1656,7 +1714,7 @@ $globals.CoViD19);
 $core.addMethod(
 $core.method({
 selector: "resetContents",
-protocol: "starting",
+protocol: "initialize / release",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
 source: "resetContents\x0a\x09| contents |\x0a\x09contents := '#Contents' asSilk.\x0a\x09contents resetContents.\x0a\x09self addContentsTo: contents.\x0a\x09self showCountries",
@@ -1712,6 +1770,33 @@ return $recv(country)._addToList_(list);
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"showCountries",{list:list})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19);
+
+$core.addMethod(
+$core.method({
+selector: "showDate",
+protocol: "action",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "showDate\x0a\x09| element |\x0a\x09element := '#Date' asSilk.\x0a\x09element resetContents.\x0a\x09element << self lastDate asLocaleDateString",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["asSilk", "resetContents", "<<", "asLocaleDateString", "lastDate"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+var element;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+element="#Date"._asSilk();
+$recv(element)._resetContents();
+$recv(element).__lt_lt($recv($self._lastDate())._asLocaleDateString());
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"showDate",{element:element})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19);
@@ -2834,6 +2919,29 @@ return $core.withContext(function($ctx1) {
 return $recv($self._series())._lastConfirmed();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"lastConfirmed",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.GeographicArea);
+
+$core.addMethod(
+$core.method({
+selector: "lastDate",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "lastDate\x0a\x09\x22<Date>\x22\x0a\x09\x0a\x09^self series lastDate",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["lastDate", "series"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._series())._lastDate();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"lastDate",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.GeographicArea);
@@ -4230,6 +4338,58 @@ return $self._country_state_latLong_series_($recv(aJson)._country(),$recv(aJson)
 //>>excludeEnd("ctx");
 }; }),
 $globals.Series.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "asLocaleDateString",
+protocol: "*Covid19view",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "asLocaleDateString\x0a\x09<inlineJS: 'return self.toLocaleDateString()'>",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [["inlineJS:", ["return self.toLocaleDateString()"]]],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return self.toLocaleDateString();
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"asLocaleDateString",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Date);
+
+$core.addMethod(
+$core.method({
+selector: "max:",
+protocol: "*Covid19view",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aDate"],
+source: "max: aDate\x0a\x09aDate > self ifTrue: [\x0a\x09\x09^aDate].\x0a\x09^self",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifTrue:", ">"]
+}, function ($methodClass){ return function (aDate){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1;
+$1=$recv(aDate).__gt(self);
+if($core.assert($1)){
+return aDate;
+}
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"max:",{aDate:aDate})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Date);
 
 $core.addMethod(
 $core.method({

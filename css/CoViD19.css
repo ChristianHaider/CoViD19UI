@@ -1,8 +1,12 @@
+body {
+}
+
 #Contents {
 	display: grid;
 	grid-template-columns: auto 1fr;
 	grid-template-rows: min-content 1fr min-content;
 	min-height: 98vh;
+	margin: 0em;
 }
 
 header {
@@ -31,16 +35,51 @@ li {
 	background: #fffbf0;
 	grid-column: 1;
 	display: grid;
-	grid-template-columns: auto auto auto;
-	margin: 0em;
+	grid-template-columns: auto auto auto auto;
 }
 
 .treeButton {
 	grid-column: 1;
+	background-color: #F1F3F4;
+	border: solid;
+	border-color: #aaa;
+	border-radius: 4px;
+	border-width: 0.1em;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 14px;
+	font-weight: bold;
+	padding-top: 0.01em;
+	padding-bottom: 0.1em;
+	padding-left: 0.2em;
+	padding-right: 0.2em;
+}
+
+.subtreeButton {
+	grid-column: 2;
+	background-color: #F1F3F4;
+	border: solid;
+	border-color: #aaa;
+	border-radius: 4px;
+	border-width: 0.1em;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 14px;
+	font-weight: bold;
+	padding-top: 0.01em;
+	padding-bottom: 0.1em;
+	padding-left: 0.2em;
+	padding-right: 0.2em;
 }
 
 .treeSpan {
 	grid-column: 1;
+}
+
+.subtreeSpan {
+	grid-column: 2;
 }
 
 .selected {
@@ -49,11 +88,16 @@ li {
 
 .ListItem {
 	cursor: pointer;
-	grid-column: 2;
+	grid-column: 3;
+	margin-left: 0.5em;
 }
 
 .CountryName {
 	font-weight: bold;
+}
+
+.LandName {
+	padding-left: 0.5em;
 }
 
 .StateName {
@@ -63,7 +107,7 @@ li {
 .ListValue {
 	font-weight: bold;
 	justify-self: end;
-	grid-column: 3;
+	grid-column: 4;
 }
 
 .Confirmed {

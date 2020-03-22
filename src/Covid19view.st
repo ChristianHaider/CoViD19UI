@@ -86,8 +86,6 @@ mouseout: anEvent datapoint: aDatapoint
 
 mouseover: anEvent datapoint: aDatapoint
 	| tooltip svg |
-	console log: anEvent.
-	
 	tooltip := '#CasebarTooltip' asSilk.
 	tooltip resetContents.
 	tooltip << {
@@ -370,8 +368,14 @@ lastDate
 !CoViD19 methodsFor: 'action'!
 
 getData
-	self withSeriesDo: [:someSeries | 
-		countries := Country allFromSeries: someSeries.
+	self withSeriesDo: [:jsons | 
+		| seriesJHU seriesRKI germany states |
+		seriesJHU := (jsons first value collect: [:data | JHUSeries fromJson: data]).
+		countries := Country allFromSeries: seriesJHU.
+		germany := countries detect: [:country | country name = 'Germany'].
+		seriesRKI := (jsons last value collect: [:data | RKISeries fromJson: data]).
+		states := Country allFromRKISeries: seriesRKI.
+		germany addGermanStates: states.
 		self showDate.
 		self showCountries]
 !
@@ -395,14 +399,11 @@ showDate
 !
 
 withSeriesDo: aOneArgumentBlock
-	(Platform fetch: 'CoViD-19.json')
-		then: [:response |
-			response json
-				then: [:json | aOneArgumentBlock value: (json collect: [:data | Series fromJson: data])]
-				catch: [:ex |
-					(ErrorHandler current respondsTo: #debugError:) 
-						ifTrue: [ErrorHandler current debugError: ex] 
-						ifFalse:[ErrorHandler handleError: ex]]]
+	(Promise all: {
+		(Platform fetch: 'CoViD-19.json'). 
+		(Platform fetch: 'RKI_COVID19.json')}) then: [:responses |
+			(Promise all: (responses collect: #json)) then: [:jsons |
+				aOneArgumentBlock value: jsons]]
 		catch: [:ex | 
 			(ErrorHandler current respondsTo: #debugError:) 
 				ifTrue: [ErrorHandler current debugError: ex] 
@@ -416,7 +417,11 @@ addContentsTo: aDiv
 		aDiv << self buttonsForDevelopment].
 	aDiv << {
 		self header.
-		Silk DIV: 'id' -> 'CountryList'.
+		Silk DIV: {
+			'id' -> 'CountryList'.
+			Silk DIV: {
+				'id' -> 'CountryList'.
+				'Loading data... Your browser will smoke... After that it will be fine...'}}.
 		Silk DIV: 'id' -> 'Graphics'.
 		self footer.
 		"self casebarTooltip."
@@ -505,22 +510,10 @@ start
 ! !
 
 Object subclass: #Datapoint
-	slots: {#date. #confirmed. #deaths. #recovered}
+	slots: {#date. #confirmed. #deaths}
 	package: 'Covid19view'!
 
 !Datapoint methodsFor: 'accessing'!
-
-+ aDatapoint
-	"<Datapoint>"
-	
-	self date = aDatapoint date ifFalse: [
-		self error: 'the dates are not the same'].
-	^self class 
-		date: self date 
-		confirmed: self confirmed + aDatapoint confirmed 
-		deaths: self deaths + aDatapoint deaths 
-		recovered: self recovered + aDatapoint recovered
-!
 
 confirmed
 	"<Integer>"
@@ -549,17 +542,53 @@ decided
 recovered
 	"<Integer>"
 	
-	^recovered
+	^0
 ! !
 
-!Datapoint methodsFor: 'calculating'!
+!Datapoint methodsFor: 'arithmetic'!
+
++ aDatapoint
+	"<Datapoint>"
+	
+	^self subclassResponsibility
+!
+
+addToDictionary: aDictionary from: anotherDictionary
+	"<Dictionary>"
+	
+	| dict |
+	dict := Dictionary new.
+	aDictionary keysAndValuesDo: [:string :number |
+		dict at: string put: number].
+	anotherDictionary keysAndValuesDo: [:string :number |
+		dict at: string put: (dict at: string ifAbsent: [0]) + number].
+	^dict
+!
+
+dictionary: aDictionary minus: anotherDictionary
+	"<Dictionary>"
+	
+	| dict |
+	dict := Dictionary new.
+	aDictionary keysAndValuesDo: [:string :number |
+		dict at: string put: number].
+	anotherDictionary keysAndValuesDo: [:string :number |
+		dict at: string put: (dict at: string ifAbsent: [0]) - number].
+	^dict
+!
 
 differenceTo: aDatapoint
-	^self class 
-		date: self date
-		confirmed: self confirmed - aDatapoint confirmed
-		deaths: self deaths - aDatapoint deaths
-		recovered: self recovered - aDatapoint recovered
+	"<Datapoint>"
+	
+	^self subclassResponsibility
+! !
+
+!Datapoint methodsFor: 'copying'!
+
+copyWithDate: aDate
+	"<Datapoint>"
+	
+	^self class date: aDate confirmed: self confirmed deaths: self deaths
 ! !
 
 !Datapoint methodsFor: 'html'!
@@ -568,27 +597,38 @@ asSpans
 	"<Array of: <span>"
 	
 	^{Silk SPAN: {'class' -> 'Confirmed'. self confirmed}. 
-	Silk SPAN: {'class' -> 'Deaths'. self deaths}. 
-	Silk SPAN: {'class' -> 'Recovered'. self recovered}}
+	Silk SPAN: {'class' -> 'Deaths'. self deaths}}
 ! !
 
 !Datapoint methodsFor: 'initialization'!
 
-initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger recovered: aRecoveredInteger
+initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger
 	date := aDate.
 	confirmed := aConfirmedInteger.
-	deaths := aDeathsInteger.
-	recovered := aRecoveredInteger
+	deaths := aDeathsInteger
 ! !
 
 !Datapoint class methodsFor: 'instance creation'!
 
-date: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger recovered: aRecoveredInteger
+date: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger
 	| inst |
 	inst := self new.
-	inst initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger recovered: aRecoveredInteger.
+	inst initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger.
 	^inst
 !
+
+fromJson: aJson
+	^self subclassResponsibility
+!
+
+newZero
+	^self 
+		date: (Date d: 1 m: 1 y: 2020) 
+		confirmed: 0 
+		deaths: 0
+! !
+
+!Datapoint class methodsFor: 'reading'!
 
 dateFromJson: aJson
 	| days year mst month |
@@ -604,6 +644,75 @@ dateFromJson: aJson
 
 dateYear: aYearInteger month: aMonthInteger day: aDayInteger
 	<inlineJS: 'return new Date(aYearInteger, aMonthInteger, aDayInteger)'>
+! !
+
+Datapoint subclass: #JHUDatapoint
+	slots: {#recovered}
+	package: 'Covid19view'!
+
+!JHUDatapoint methodsFor: 'accessing'!
+
+recovered
+	"<Integer>"
+	
+	^recovered
+! !
+
+!JHUDatapoint methodsFor: 'arithmetic'!
+
++ aJHUDatapoint
+	"<JHUDatapoint>"
+	
+	self date = aJHUDatapoint date ifFalse: [
+		self error: 'the dates are not the same'].
+	^self class 
+		date: self date 
+		confirmed: self confirmed + aJHUDatapoint confirmed 
+		deaths: self deaths + aJHUDatapoint deaths 
+		recovered: self recovered + aJHUDatapoint recovered
+!
+
+differenceTo: aJHUDatapoint
+	^self class 
+		date: self date
+		confirmed: self confirmed - aJHUDatapoint confirmed
+		deaths: self deaths - aJHUDatapoint deaths
+		recovered: self recovered - aJHUDatapoint recovered
+! !
+
+!JHUDatapoint methodsFor: 'copying'!
+
+copyWithDate: aDate
+	^self class 
+		date: aDate 
+		confirmed: self confirmed 
+		deaths: self deaths 
+		recovered: self recovered
+! !
+
+!JHUDatapoint methodsFor: 'html'!
+
+asSpans
+	"<Array of: <span>"
+	
+	^super asSpans, { 
+		Silk SPAN: {'class' -> 'Recovered'. self recovered}}
+! !
+
+!JHUDatapoint methodsFor: 'initialization'!
+
+initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger recovered: aRecoveredInteger
+	self initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger.
+	recovered := aRecoveredInteger
+! !
+
+!JHUDatapoint class methodsFor: 'instance creation'!
+
+date: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger recovered: aRecoveredInteger
+	| inst |
+	inst := self new.
+	inst initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger recovered: aRecoveredInteger.
+	^inst
 !
 
 fromJson: aJson
@@ -612,6 +721,117 @@ fromJson: aJson
 		confirmed: aJson confirmed 
 		deaths: aJson deaths 
 		recovered: aJson recovered
+!
+
+newZero
+	^self 
+		date: (Date d: 1 m: 1 y: 2020) 
+		confirmed: 0 
+		deaths: 0 
+		recovered: 0
+! !
+
+Datapoint subclass: #RKIDatapoint
+	slots: {#byAge. #bySex}
+	package: 'Covid19view'!
+
+!RKIDatapoint methodsFor: 'accessing'!
+
+byAge
+	"<Dictionary key: String value: Integer>"
+	
+	^byAge
+!
+
+bySex
+	"<Dictionary key: String value: Integer>"
+	
+	^bySex
+! !
+
+!RKIDatapoint methodsFor: 'arithmetic'!
+
++ aRKIDatapoint
+	"<RKIDatapoint>"
+	
+	self date = aRKIDatapoint date ifFalse: [
+		self error: 'the dates are not the same'].
+	^self class 
+		date: self date 
+		confirmed: self confirmed + aRKIDatapoint confirmed 
+		deaths: self deaths + aRKIDatapoint deaths 
+		byAge: (self addToDictionary: self byAge from: aRKIDatapoint byAge)
+		bySex: (self addToDictionary: self bySex from: aRKIDatapoint bySex)
+!
+
+differenceTo: aRKIDatapoint
+	^self class 
+		date: self date
+		confirmed: self confirmed - aRKIDatapoint confirmed
+		deaths: self deaths - aRKIDatapoint deaths
+		byAge: (self dictionary: self byAge minus: aRKIDatapoint byAge)
+		bySex: (self dictionary: self bySex minus: aRKIDatapoint bySex)
+! !
+
+!RKIDatapoint methodsFor: 'copying'!
+
+copyWithDate: aDate
+	^self class 
+		date: aDate 
+		confirmed: self confirmed 
+		deaths: self deaths 
+		byAge: self byAge 
+		bySex: self bySex
+! !
+
+!RKIDatapoint methodsFor: 'html'!
+
+asSpans
+	"<Array of: <span>"
+	
+	^super asSpans, { 
+		Silk SPAN: {'class' -> 'ByAge'. self byAge}.
+		Silk SPAN: {'class' -> 'BySex'. self bySex}}
+! !
+
+!RKIDatapoint methodsFor: 'initialization'!
+
+initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger byAge: aByAgeDictionary bySex: aBySexDictionary
+	self initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger.
+	byAge := aByAgeDictionary.
+	bySex := aBySexDictionary
+! !
+
+!RKIDatapoint class methodsFor: 'instance creation'!
+
+date: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger byAge: aByAgeDictionary bySex: aBySexDictionary
+	| inst |
+	inst := self new.
+	inst 
+		initializeDate: aDate 
+		confirmed: aConfirmedInteger 
+		deaths: aDeathsInteger 
+		byAge: aByAgeDictionary 
+		bySex: aBySexDictionary.
+	^inst
+!
+
+fromJson: aJson
+	^self 
+		date: (self dateFromJson: aJson date)
+		confirmed: aJson confirmed 
+		deaths: aJson deaths 
+		byAge: aJson byAge
+		bySex: aJson bySex
+!
+
+newZero
+	^self 
+		date: (Date d: 1 m: 1 y: 2020) 
+		confirmed: 0 
+		deaths: 0
+		byAge: Dictionary new
+		bySex: Dictionary new
 ! !
 
 Object subclass: #Dataseries
@@ -709,6 +929,27 @@ series
 	^self class series: newDatapoints
 ! !
 
+!Dataseries methodsFor: 'copying'!
+
+normalizedLike: aDataseries
+	"<Dataseries>"
+	"create a dataseries with the same dates as aDataseries to match the JHU ones"
+	
+	| wst refRst rst lastPoint |
+	wst := Array new writeStream.
+	refRst := aDataseries series readStream.
+	rst := self series readStream.
+	lastPoint := rst peek class newZero.
+	[refRst atEnd] whileFalse: [
+		| refDatapoint |
+		refDatapoint := refRst next.
+		lastPoint := (rst atEnd not and: [rst peek date = refDatapoint date])
+			ifTrue: [rst next]
+			ifFalse: [lastPoint copyWithDate: refDatapoint date].
+		wst nextPut: lastPoint].
+	^self class series: wst contents
+! !
+
 !Dataseries methodsFor: 'initialization'!
 
 initializeSeries: someDatapoints
@@ -717,9 +958,14 @@ initializeSeries: someDatapoints
 
 !Dataseries class methodsFor: 'instance creation'!
 
-fromJson: someJson
+fromJHUJson: someJson
 	^self series: (someJson collect: [:json |
-			Datapoint fromJson: json])
+			JHUDatapoint fromJson: json])
+!
+
+fromRKIJson: someJson
+	^self series: (someJson collect: [:json |
+			RKIDatapoint fromJson: json])
 !
 
 series: someDatapoints
@@ -795,12 +1041,24 @@ showInfo
 		(Barchart on: self changes) svg}
 ! !
 
+!GeographicArea methodsFor: 'copying'!
+
+normalizedLike: aDataseries
+	^self class
+		name: self name
+		series: (self series normalizedLike: aDataseries)
+! !
+
 !GeographicArea methodsFor: 'html'!
+
+addPartToList: anElement
+	self addToList: anElement
+!
 
 addToList: anElement
 	"add html elements to anElement"
 	
-	anElement << {self emptySpan. self asNameSpan. self asValueSpan}
+	anElement << {self emptySpan. self emptySubspan. self asNameSpan. self asValueSpan}
 !
 
 asNameSpan
@@ -813,7 +1071,6 @@ asNameSpan
 		(Silk SPAN: {'class' -> 'StateName'. self name})}.
 	item on: #click bind: [:event |
 		('#CountryList' asSilk allAt: '.selected') do: [:selected |
-			console log: selected.
 			selected attrAt: 'class' put: 'ListItem'].
 		item attrAt: 'class' put: 'ListItem selected'. 
 		self showInfo].
@@ -834,6 +1091,13 @@ emptySpan
 	in place of a +/- button"
 	
 	^Silk SPAN: 'class' -> 'treeSpan'
+!
+
+emptySubspan
+	"<span>
+	in place of a +/- button"
+	
+	^Silk SPAN: 'class' -> 'subtreeSpan'
 ! !
 
 !GeographicArea methodsFor: 'initialization'!
@@ -844,6 +1108,12 @@ initializeName: aString series: aDataseries
 ! !
 
 !GeographicArea class methodsFor: 'instance creation'!
+
+allFromRKISeries: someSeries
+	"<Array of: GeographicArea>"
+	
+	^self subclassResponsability
+!
 
 allFromSeries: someSeries
 	"<Array of: GeographicArea>"
@@ -863,6 +1133,17 @@ GeographicArea subclass: #Country
 	package: 'Covid19view'!
 
 !Country methodsFor: 'accessing'!
+
+addGermanStates: someCountries
+	"the Dataseries of someCountries have to be normalized to the JHU period"
+	
+	| normalized |
+	normalized := OrderedCollection new.
+	someCountries do: [:land |
+		land parts ifNotEmpty: [
+			normalized add: (land copyWithParts: (land parts collect: [:kreis | kreis normalizedLike: self series]))]].
+	self parts addAll: (normalized sorted: [:a :b | a lastConfirmed > b lastConfirmed])
+!
 
 parts
 	"<Collection of: State>"
@@ -886,45 +1167,107 @@ seriesFromParts
 	^self parts allButFirst inject: firstSeries into: [:sum :partSeries | sum + partSeries series]
 ! !
 
+!Country methodsFor: 'copying'!
+
+copyWithParts: someParts
+	^self class name: self name parts: someParts
+! !
+
 !Country methodsFor: 'html'!
+
+addPartToList: anElement
+	"add html elements to anElement"
+	
+	| plusAction minusAction plusButton |
+	self parts ifEmpty: [
+		anElement << {self emptySpan. self emptySubspan. self asSubnameSpan. self asValueSpan}.
+		^self].
+	plusAction := [:event |
+		| button after next2 insert |
+		button := Silk fromElement: event target.
+		button resetContents.
+		button off: #click unbind: plusAction.
+		button << '–'.
+		button on: #click bind: minusAction.
+		after := button setToAfter.
+		after next.
+		next2 := after next.
+		insert := next2 setToAfter.
+		self parts do: [:part | part addPartToList: insert]].
+	minusAction := [:event |
+		| button after next2 insert last |
+		button := Silk fromElement: event target.
+		button resetContents.
+		button off: #click unbind: minusAction.
+		button attrAt: 'class' put: 'subtreeButton'.
+		button << '+'.
+		button on: #click bind: plusAction.
+		after := button setToAfter.
+		after next.
+		next2 := after next.
+		insert := next2 setToAfter.
+		self parts size * 4 timesRepeat: [last := after next].
+		insert cutUpTo: last setToAfter].
+	plusButton := (Silk BUTTON: {'class' -> 'subtreeButton'. 'type' -> 'button'. '+'}) on: #click bind: plusAction.
+	anElement << {self emptySpan. plusButton. self asSubnameSpan. self asValueSpan}.
+!
 
 addToList: anElement
 	"add html elements to anElement"
 	
 	| plusButton minusButton plusAction minusAction |
 	self parts ifEmpty: [
-		anElement << {self emptySpan. self asNameSpan. self asValueSpan}.
+		anElement << {self emptySpan. self emptySubspan. self asNameSpan. self asValueSpan}.
 		^self].
 	plusButton := Silk BUTTON: {'class' -> 'treeButton'. 'type' -> 'button'. '+'}.
-	minusButton := Silk BUTTON: {'class' -> 'treeButton'. 'type' -> 'button'. '-'}.
+	minusButton := Silk BUTTON: {'class' -> 'treeButton'. 'type' -> 'button'. '–'}.
 	plusAction := [:event |
-		| element after next2 insert |
-		element := Silk fromElement: event target.
-		element resetContents.
-		element off: #click unbind: plusAction.
-		element << '-'.
-		element on: #click bind: minusAction.
-		after := element setToAfter.
+		| button after next2 insert |
+		button := Silk fromElement: event target.
+		button resetContents.
+		button off: #click unbind: plusAction.
+		button << '–'.
+		button on: #click bind: minusAction.
+		after := button setToAfter.
+		after next.
 		after next.
 		next2 := after next.
 		insert := next2 setToAfter.
-		self parts do: [:part | part addToList: insert]].
+		self parts do: [:part | part addPartToList: insert]].
 	minusAction := [:event |
-		| element after next2 insert last |
-		element := Silk fromElement: event target.
-		element resetContents.
-		element off: #click unbind: minusAction.
-		element << '+'.
-		element on: #click bind: plusAction.
-		after := element setToAfter.
+		| button after next2 insert last |
+		button := Silk fromElement: event target.
+		button resetContents.
+		button off: #click unbind: minusAction.
+		button << '+'.
+		button on: #click bind: plusAction.
+		after := button setToAfter.
+		after next.
 		after next.
 		next2 := after next.
 		insert := next2 setToAfter.
-		self parts size * 3 timesRepeat: [last := after next].
+		self parts size * 4 timesRepeat: [
+			last := after next.
+			((last attrAt: 'class') = 'subtreeButton' and: [
+			last element innerText = '–']) ifTrue: [
+				| after2 eol line |
+				after2 := last setToAfter.
+				after2 next.
+				eol := after2 next setToAfter.
+				line := {after2 next. after2 next. after2 next. after2 next}.
+				[[:first :second :third :forth |
+					first isEmpty and: [
+					second isEmpty and: [
+					(third attrAt: 'class') = 'ListItem' and: [
+					(third at: '.StateName') notNil]]]
+				] valueWithPossibleArguments: line] whileTrue: [
+					line := {after2 next. after2 next. after2 next. after2 next}].
+				after2 back; back; back; back.
+				eol cutUpTo: after2]].
 		insert cutUpTo: last setToAfter].
 	plusButton on: #click bind: plusAction.
 	minusButton on: #click bind: minusAction.
-	anElement << {plusButton. self asNameSpan. self asValueSpan}.
+	anElement << {plusButton. self emptySubspan. self asNameSpan. self asValueSpan}
 !
 
 asNameSpan
@@ -937,7 +1280,22 @@ asNameSpan
 		(Silk SPAN: {'class' -> 'CountryName'. self name})}.
 	item on: #click bind: [:event |
 		('#CountryList' asSilk allAt: '.selected') do: [:selected |
-			console log: selected.
+			selected attrAt: 'class' put: 'ListItem'].
+		item attrAt: 'class' put: 'ListItem selected'. 
+		self showInfo].
+	^item
+!
+
+asSubnameSpan
+	"<span>
+	the name of the list item when on the second level"
+	
+	| item |
+	item := Silk SPAN: {
+		'class' -> 'ListItem'. 
+		(Silk SPAN: {'class' -> 'LandName'. self name})}.
+	item on: #click bind: [:event |
+		('#CountryList' asSilk allAt: '.selected') do: [:selected |
 			selected attrAt: 'class' put: 'ListItem'].
 		item attrAt: 'class' put: 'ListItem selected'. 
 		self showInfo].
@@ -952,6 +1310,21 @@ initializeName: aString parts: someParts
 ! !
 
 !Country class methodsFor: 'instance creation'!
+
+allFromRKISeries: someSeries
+	"<Array of: Country>"
+	
+	| byState stateList |
+	byState := Dictionary new.
+	someSeries do: [:series |
+		(byState at: series bundesland ifAbsentPut: [OrderedCollection new]) add: series].
+	stateList := OrderedCollection new.
+	byState keysAndValuesDo: [:stateName :listOfSeries |
+		stateList add: (listOfSeries size = 1
+			ifTrue: [self name: stateName series: listOfSeries first series]
+			ifFalse: [self name: stateName parts: (State allFromRKISeries: (listOfSeries sorted: [:a :b | a lastConfirmed > b lastConfirmed]))])].
+	^stateList
+!
 
 allFromSeries: someSeries
 	"<Array of: Country>"
@@ -981,6 +1354,15 @@ GeographicArea subclass: #State
 	package: 'Covid19view'!
 
 !State class methodsFor: 'instance creation'!
+
+allFromRKISeries: someSeries
+	"<Array of: State>"
+	
+	^someSeries collect: [:rawSeries |
+		self 
+			name: rawSeries landkreis
+			series: rawSeries series]
+!
 
 allFromSeries: someSeries
 	"<Array of: State>"
@@ -1128,16 +1510,10 @@ logarithmic
 ! !
 
 Object subclass: #Series
-	slots: {#country. #state. #latLong. #series}
+	slots: {#series}
 	package: 'Covid19view'!
 
 !Series methodsFor: 'accessing'!
-
-country
-	"<String>"
-	
-	^country
-!
 
 lastConfirmed
 	"<Integer>"
@@ -1157,16 +1533,57 @@ lastRecovered
 	^self series lastRecovered
 !
 
-latLong
-	"<Point>"
-	
-	^latLong
-!
-
 series
 	"<Dataseries>"
 	
 	^series
+! !
+
+!Series methodsFor: 'initialization'!
+
+initializeSeries: aDataseries
+	series := aDataseries
+! !
+
+!Series methodsFor: 'printing'!
+
+printOn: stream
+	stream
+		nextPutAll: self class name asString;
+		nextPut: $(;
+		nextPutAll: self lastConfirmed printString;
+		nextPut: $)
+! !
+
+!Series class methodsFor: 'instance creation'!
+
+fromJson: aJson
+	^self subclassResponibility
+!
+
+series: aDataseries
+	| inst |
+	inst := self new.
+	inst initializeSeries: aDataseries.
+	^inst
+! !
+
+Series subclass: #JHUSeries
+	slots: {#country. #state. #latLong}
+	package: 'Covid19view'!
+
+!JHUSeries methodsFor: 'accessing'!
+
+country
+	"<String>"
+	
+	^country
+!
+
+latLong
+	"<Point>"
+	
+	^latLong
 !
 
 state
@@ -1175,16 +1592,16 @@ state
 	^state
 ! !
 
-!Series methodsFor: 'initialization'!
+!JHUSeries methodsFor: 'initialization'!
 
 initializeCountry: aCountryString state: aStateString latLong: aLatLongPoint series: aDataseries
+	self initializeSeries: aDataseries.
 	country := aCountryString.
 	state := aStateString.
-	latLong := aLatLongPoint.
-	series := aDataseries
+	latLong := aLatLongPoint
 ! !
 
-!Series methodsFor: 'printing'!
+!JHUSeries methodsFor: 'printing'!
 
 printOn: stream
 	stream
@@ -1196,7 +1613,7 @@ printOn: stream
 		nextPut: $)
 ! !
 
-!Series class methodsFor: 'instance creation'!
+!JHUSeries class methodsFor: 'instance creation'!
 
 country: aCountryString state: aStateString latLong: aLatLongPoint series: aDataseries
 	| inst |
@@ -1214,7 +1631,82 @@ fromJson: aJson
 		country: aJson country 
 		state: aJson state 
 		latLong: aJson latLong 
-		series: (Dataseries fromJson: aJson series)
+		series: (Dataseries fromJHUJson: aJson series)
+! !
+
+Series subclass: #RKISeries
+	slots: {#idBundesland. #bundesland. #idLandkreis. #landkreis}
+	package: 'Covid19view'!
+
+!RKISeries methodsFor: 'accessing'!
+
+bundesland
+	"<String>"
+	
+	^bundesland
+!
+
+idBundesland
+	"<Integer>"
+	
+	^idBundesland
+!
+
+idLandkreis
+	"<String>"
+	
+	^idLandkreis
+!
+
+landkreis
+	"<String>"
+	
+	^landkreis
+! !
+
+!RKISeries methodsFor: 'initialization'!
+
+initializeIdBundesland: anIdBundeslandInteger bundesland: aBundeslandString idLandkreis: anIdLandkreisString landkreis: aLandkreisString series: aDataseries
+	self initializeSeries: aDataseries.
+	idBundesland := anIdBundeslandInteger.
+	bundesland := aBundeslandString.
+	idLandkreis := anIdLandkreisString.
+	landkreis := aLandkreisString
+! !
+
+!RKISeries methodsFor: 'printing'!
+
+printOn: stream
+	stream
+		nextPutAll: self bundesland;
+		nextPut: $ ;
+		nextPutAll: self landkreis;
+		nextPut: $(;
+		nextPutAll: self lastConfirmed printString;
+		nextPut: $)
+! !
+
+!RKISeries class methodsFor: 'instance creation'!
+
+fromJson: aJson
+	^self 
+		idBundesland: aJson idBundesland
+		bundesland: aJson bundesland
+		idLandkreis: aJson idLandkreis
+		landkreis: aJson landkreis
+		series: (Dataseries fromRKIJson: aJson series)
+!
+
+idBundesland: anIdBundeslandInteger bundesland: aBundeslandString idLandkreis: anIdLandkreisString landkreis: aLandkreisString series: aDataseries
+	| inst |
+	inst := self new.
+	inst 
+		initializeIdBundesland: anIdBundeslandInteger 
+		bundesland: aBundeslandString 
+		idLandkreis: anIdLandkreisString 
+		landkreis: aLandkreisString 
+		series: aDataseries.
+	^inst
 ! !
 
 !Date methodsFor: '*Covid19view'!

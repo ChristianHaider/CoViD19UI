@@ -353,9 +353,7 @@ Object subclass: #CoViD19
 countries
 	"<Array of: Country>"
 	
-	^countries ifNil: [
-		self getData.
-		#()]
+	^countries ifNil: [#()]
 !
 
 lastDate

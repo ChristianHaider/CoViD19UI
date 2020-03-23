@@ -1733,11 +1733,11 @@ selector: "countries",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "countries\x0a\x09\x22<Array of: Country>\x22\x0a\x09\x0a\x09^countries ifNil: [\x0a\x09\x09self getData.\x0a\x09\x09#()]",
+source: "countries\x0a\x09\x22<Array of: Country>\x22\x0a\x09\x0a\x09^countries ifNil: [#()]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifNil:", "getData"]
+messageSends: ["ifNil:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -1746,7 +1746,6 @@ return $core.withContext(function($ctx1) {
 var $1,$receiver;
 $1=$self.countries;
 if(($receiver = $1) == null || $receiver.a$nil){
-$self._getData();
 return [];
 } else {
 return $1;

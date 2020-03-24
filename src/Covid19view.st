@@ -1138,8 +1138,11 @@ addGermanStates: someCountries
 	| normalized |
 	normalized := OrderedCollection new.
 	someCountries do: [:land |
-		land parts ifNotEmpty: [
-			normalized add: (land copyWithParts: (land parts collect: [:kreis | kreis normalizedLike: self series]))]].
+		normalized add: (land parts 
+			ifEmpty: [
+				land normalizedLike: self series] 
+			ifNotEmpty: [
+				land copyWithParts: (land parts collect: [:kreis | kreis normalizedLike: self series])])].
 	self parts addAll: (normalized sorted: [:a :b | a lastConfirmed > b lastConfirmed])
 !
 

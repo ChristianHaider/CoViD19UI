@@ -4306,51 +4306,66 @@ selector: "addGermanStates:",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["someCountries"],
-source: "addGermanStates: someCountries\x0a\x09\x22the Dataseries of someCountries have to be normalized to the JHU period\x22\x0a\x09\x0a\x09| normalized |\x0a\x09normalized := OrderedCollection new.\x0a\x09someCountries do: [:land |\x0a\x09\x09land parts ifNotEmpty: [\x0a\x09\x09\x09normalized add: (land copyWithParts: (land parts collect: [:kreis | kreis normalizedLike: self series]))]].\x0a\x09self parts addAll: (normalized sorted: [:a :b | a lastConfirmed > b lastConfirmed])",
+source: "addGermanStates: someCountries\x0a\x09\x22the Dataseries of someCountries have to be normalized to the JHU period\x22\x0a\x09\x0a\x09| normalized |\x0a\x09normalized := OrderedCollection new.\x0a\x09someCountries do: [:land |\x0a\x09\x09normalized add: (land parts \x0a\x09\x09\x09ifEmpty: [\x0a\x09\x09\x09\x09land normalizedLike: self series] \x0a\x09\x09\x09ifNotEmpty: [\x0a\x09\x09\x09\x09land copyWithParts: (land parts collect: [:kreis | kreis normalizedLike: self series])])].\x0a\x09self parts addAll: (normalized sorted: [:a :b | a lastConfirmed > b lastConfirmed])",
 referencedClasses: ["OrderedCollection"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["new", "do:", "ifNotEmpty:", "parts", "add:", "copyWithParts:", "collect:", "normalizedLike:", "series", "addAll:", "sorted:", ">", "lastConfirmed"]
+messageSends: ["new", "do:", "add:", "ifEmpty:ifNotEmpty:", "parts", "normalizedLike:", "series", "copyWithParts:", "collect:", "addAll:", "sorted:", ">", "lastConfirmed"]
 }, function ($methodClass){ return function (someCountries){
 var self=this,$self=this;
 var normalized;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1,$2,$5,$4,$3,$6;
+var $1,$3,$4,$6,$5,$2,$7;
 normalized=$recv($globals.OrderedCollection)._new();
 $recv(someCountries)._do_((function(land){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-$1=$recv(land)._parts();
+$1=normalized;
+$3=$recv(land)._parts();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["parts"]=1;
 //>>excludeEnd("ctx");
-return $recv($1)._ifNotEmpty_((function(){
+$2=$recv($3)._ifEmpty_ifNotEmpty_((function(){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx3) {
 //>>excludeEnd("ctx");
-$2=normalized;
-$5=$recv(land)._parts();
+$4=$self._series();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx3.sendIdx["series"]=1;
+//>>excludeEnd("ctx");
+return $recv(land)._normalizedLike_($4);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx3.sendIdx["normalizedLike:"]=1;
+//>>excludeEnd("ctx");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({},$ctx2,2)});
+//>>excludeEnd("ctx");
+}),(function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
+$6=$recv(land)._parts();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx3.sendIdx["parts"]=2;
 //>>excludeEnd("ctx");
-$4=$recv($5)._collect_((function(kreis){
+$5=$recv($6)._collect_((function(kreis){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx4) {
 //>>excludeEnd("ctx");
 return $recv(kreis)._normalizedLike_($self._series());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx4) {$ctx4.fillBlock({kreis:kreis},$ctx3,3)});
+}, function($ctx4) {$ctx4.fillBlock({kreis:kreis},$ctx3,4)});
 //>>excludeEnd("ctx");
 }));
-$3=$recv(land)._copyWithParts_($4);
-return $recv($2)._add_($3);
+return $recv(land)._copyWithParts_($5);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({},$ctx2,2)});
+}, function($ctx3) {$ctx3.fillBlock({},$ctx2,3)});
 //>>excludeEnd("ctx");
 }));
+return $recv($1)._add_($2);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx2) {$ctx2.fillBlock({land:land},$ctx1,1)});
 //>>excludeEnd("ctx");
@@ -4359,13 +4374,13 @@ $recv($self._parts())._addAll_($recv(normalized)._sorted_((function(a,b){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-$6=$recv(a)._lastConfirmed();
+$7=$recv(a)._lastConfirmed();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["lastConfirmed"]=1;
 //>>excludeEnd("ctx");
-return $recv($6).__gt($recv(b)._lastConfirmed());
+return $recv($7).__gt($recv(b)._lastConfirmed());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({a:a,b:b},$ctx1,4)});
+}, function($ctx2) {$ctx2.fillBlock({a:a,b:b},$ctx1,5)});
 //>>excludeEnd("ctx");
 })));
 return self;

@@ -3,6 +3,9 @@ Smalltalk createPackage: 'Covid19view'!
 Object subclass: #Barchart
 	slots: {#series. #valuescale. #datescale}
 	package: 'Covid19view'!
+!Barchart commentStamp!
+A bar chart with decent date and value scale.
+Datapoints are shown as bars with a tooltip showing details!
 
 !Barchart methodsFor: 'accessing'!
 
@@ -25,6 +28,12 @@ firstDate
 
 lastDate
 	^self series lastDate
+!
+
+linearValuescale
+	"<LinearValuescale>"
+	
+	^LinearValuescale from: 0 to: self maxValue
 !
 
 maxValue
@@ -55,38 +64,21 @@ series
 	^series
 !
 
-svgNamespace
-	^'http://www.w3.org/2000/svg'
-!
-
 valuescale
 	"<Valuescale>"
 	
-	^valuescale ifNil: [
-		valuescale := Valuescale from: 0 to: self maxValue]
-! !
-
-!Barchart methodsFor: 'actions'!
-
-setLinearScale
-	self valuescale beLinear.
-	console log: 'linear'
-!
-
-setLogarithmicScale
-	self valuescale beLogarithmic.
-	console log: 'logarithmic'
+	^valuescale ifNil: [valuescale := self linearValuescale]
 ! !
 
 !Barchart methodsFor: 'events'!
 
 mouseout: anEvent datapoint: aDatapoint
-	'#CasebarTooltip' asSilk << {'style' -> ('visibility: hidden;')}
+	'#Tooltip' asSilk << {'style' -> ('visibility: hidden;')}
 !
 
 mouseover: anEvent datapoint: aDatapoint
 	| tooltip svg |
-	tooltip := '#CasebarTooltip' asSilk.
+	tooltip := '#Tooltip' asSilk.
 	tooltip resetContents.
 	tooltip << {
 		'style' -> (
@@ -106,16 +98,6 @@ mouseover: anEvent datapoint: aDatapoint
 					'width' -> '100%'. 'height' -> '100%'}}}.
 		Silk SPAN: {'class' -> 'LegendLabel'. 'confirmed'}.
 		Silk SPAN: {'class' -> 'LegendValue'. aDatapoint confirmed separatedThousandsString}.
-		Silk SPAN: {
-			'class' -> 'LegendBar'.
-			SVG SVG: {
-				'viewBox' -> '0 0 10 5'.
-				SVG RECT: {
-					'class' -> 'BarRecovered'.
-					'x' -> 0. 'y' -> 0. 
-					'width' -> '100%'. 'height' -> '100%'}}}.
-		Silk SPAN: {'class' -> 'LegendLabel'. 'recovered'}.
-		Silk SPAN: {'class' -> 'LegendValue'. aDatapoint recovered separatedThousandsString}.
 		Silk SPAN: {
 			'class' -> 'LegendBar'.
 			SVG SVG: {
@@ -294,7 +276,7 @@ svg
 	| svg valueAxis dateAxis buttons lin log |
 	svg := SVG SVG: {
 		'viewBox' -> '0 0 200 100'.
-		SVG RECT: {'x' -> 0. 'y' -> 0. 'width' -> '100%'. 'height' -> '100%'. 'fill' -> '#eee'}}.
+		SVG RECT: {'x' -> 0. 'y' -> 0. 'width' -> '100%'. 'height' -> '100%'}}.
 	self valueAxisIn: svg.
 	self dateAxisIn: svg.
 	self chartAreaIn: svg.
@@ -344,6 +326,67 @@ on: aDataseries
 	^inst
 ! !
 
+Barchart subclass: #Casechart
+	slots: {#logarithmic}
+	package: 'Covid19view'!
+!Casechart commentStamp!
+A chart for case data
+
+Case data only grow, therefore, a logarithmic scale is most appropriate!
+
+!Casechart methodsFor: 'accessing'!
+
+logarithmic
+	"<Boolean>"
+	
+	^logarithmic
+!
+
+logarithmicValuescale
+	"<LogarithmicValuescale>"
+	
+	^LogarithmicValuescale from: 1 to: self maxValue
+!
+
+valuescale
+	"<Valuescale>"
+	
+	^valuescale ifNil: [valuescale := self logarithmic 
+		ifTrue: [self logarithmicValuescale] 
+		ifFalse: [self linearValuescale]]
+! !
+
+!Casechart methodsFor: 'initialization'!
+
+initializeSeries: aDataseries logarithmic: aBoolean
+	self initializeSeries: aDataseries.
+	logarithmic := aBoolean
+! !
+
+!Casechart class methodsFor: 'instance creation'!
+
+linearOn: aDataseries
+	| inst |
+	inst := self new.
+	inst initializeSeries: aDataseries logarithmic: false.
+	^inst
+!
+
+logarithmicOn: aDataseries
+	| inst |
+	inst := self new.
+	inst initializeSeries: aDataseries logarithmic: true.
+	^inst
+! !
+
+Barchart subclass: #Changechart
+	slots: {}
+	package: 'Covid19view'!
+!Changechart commentStamp!
+A chart for changes
+
+changes go up and down and should, therefore, be shown with a linear scale!
+
 Object subclass: #CoViD19
 	slots: {#countries}
 	package: 'Covid19view'!
@@ -365,16 +408,27 @@ lastDate
 
 !CoViD19 methodsFor: 'action'!
 
+countriesFromJHUData: someData
+	"<Array of: Country>"
+	
+	^Country allFromJHUSeries: (someData collect: [:data | JHUSeries fromJson: data])
+!
+
+countriesFromRKIData: aClientData
+	| states modificationDate |
+	states := Country allFromRKISeries: (aClientData data collect: [:data | RKISeries fromJson: data]).
+	modificationDate := Date fromISO: aClientData meta modificationDate.
+	states do: [:state | state modificationDate: modificationDate].
+	^states
+!
+
 getData
 	self withSeriesDo: [:jsons | 
-		| seriesJHU seriesRKI germany states |
-		seriesJHU := (jsons first value collect: [:data | JHUSeries fromJson: data]).
-		countries := Country allFromSeries: seriesJHU.
+		| germany states |
+		countries := self countriesFromJHUData: jsons first.
 		germany := countries detect: [:country | country name = 'Germany'].
-		seriesRKI := (jsons last value collect: [:data | RKISeries fromJson: data]).
-		states := Country allFromRKISeries: seriesRKI.
+		states := self countriesFromRKIData: jsons last.
 		germany addGermanStates: states.
-		self showDate.
 		self showCountries]
 !
 
@@ -386,14 +440,8 @@ showCountries
 	| list |
 	list := '#CountryList' asSilk.
 	list resetContents.
-	self countries do: [:country | country addToList: list]
-!
-
-showDate
-	| element |
-	element := '#Date' asSilk.
-	element resetContents.
-	element << self lastDate asLocaleDateString
+	self countries do: [:country | country addToList: list].
+	self countries first selectWorld
 !
 
 withSeriesDo: aOneArgumentBlock
@@ -420,10 +468,7 @@ addContentsTo: aDiv
 			Silk DIV: {
 				'id' -> 'CountryList'.
 				'Loading data... Your browser will smoke... After that it will be fine...'}}.
-		Silk DIV: 'id' -> 'Graphics'.
-		self footer.
-		"self casebarTooltip."
-		self changebarTooltip}
+		Silk DIV: 'id' -> 'Graphics'}
 !
 
 augmentPage
@@ -443,37 +488,12 @@ buttonsForDevelopment
 		(Silk BUTTON: 'Helios') on: #click bind: [self openHelios]}
 !
 
-casebarTooltip
-	^Silk DIV: 'id' -> 'CasebarTooltip'
-!
-
-changebarTooltip
-	^Silk DIV: 'id' -> 'ChangebarTooltip'
-!
-
-footer
-	"<Silk>"
-	
-	^Silk FOOTER: {
-		'Done in Amber Smalltalk by Christian Haider'.
-		Silk SPAN: (Silk A: {
-			'href' -> 'https://github.com/CSSEGISandData/COVID-19'.
-			'target' -> '_blank'.
-			'rel' -> 'noopener'.
-			'Data'}).
-		Silk SPAN: (Silk A: {
-			'href' -> 'https://github.com/ChristianHaider/CoViD19UI'.
-			'target' -> '_blank'.
-			'rel' -> 'noopener'.
-			'Source'})}
-!
-
 header
 	^Silk HEADER: {
 		Silk H1: 'CoViD-19 Charts'.
 		Silk SPAN: {
-			'id' -> 'Date'.
-			self lastDate asLocaleDateString}}
+			'id' -> 'Versions'.
+			self class softwareVersionInfo}}
 !
 
 newContents
@@ -501,6 +521,30 @@ isDevelopment
 	^(window location host tokenize: ':') first = '127.0.0.1'
 ! !
 
+!CoViD19 class methodsFor: 'accessing'!
+
+programModificationDate
+	"<Date>
+	timestamp of the 'the.js' file on the server - doesn't work. The server also doesn't return #modification-date"
+	"CoViD19 programModificationDate"
+	
+	^Date d: 25 m: 3 y: 2020
+!
+
+softwareNameAnchor
+	^Silk A: {
+		'href' -> 'https://github.com/ChristianHaider/CoViD19UI'.
+		'target' -> '_blank'.
+		'rel' -> 'noopener'.
+		'CoViD-19 Charts'}
+!
+
+softwareVersionInfo
+	^{	Silk SPAN: {'class' -> 'VersionLabel'. 'Software:'}.
+		Silk SPAN: {'class' -> 'VersionName'. self softwareNameAnchor}.
+		Silk SPAN: {'class' -> 'VersionDate'. self programModificationDate asLocaleDateString}}
+! !
+
 !CoViD19 class methodsFor: 'starting'!
 
 start
@@ -517,6 +561,12 @@ confirmed
 	"<Integer>"
 
 	^confirmed
+!
+
+dataProvider
+	"<String>"
+	
+	^self subclassResponsibility
 !
 
 date
@@ -650,6 +700,20 @@ Datapoint subclass: #JHUDatapoint
 
 !JHUDatapoint methodsFor: 'accessing'!
 
+dataProvider
+	"<String>"
+	
+	^'Johns Hopkins University'
+!
+
+dataProviderAnchor
+	^Silk A: {
+		'href' -> 'https://github.com/CSSEGISandData/COVID-19'.
+		'target' -> '_blank'.
+		'rel' -> 'noopener'.
+		self dataProvider}
+!
+
 recovered
 	"<Integer>"
 	
@@ -745,6 +809,18 @@ bySex
 	"<Dictionary key: String value: Integer>"
 	
 	^bySex
+!
+
+dataProvider
+	^'Robert Koch Institut'
+!
+
+dataProviderAnchor
+	^Silk A: {
+		'href' -> 'https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0/data'.
+		'target' -> '_blank'.
+		'rel' -> 'noopener'.
+		self dataProvider}
 ! !
 
 !RKIDatapoint methodsFor: 'arithmetic'!
@@ -852,6 +928,14 @@ changes
 			wst nextPut: (datapoint differenceTo: last)].
 		last := datapoint].
 	^self class series: wst contents
+!
+
+dataProvider
+	^self series first dataProvider
+!
+
+dataProviderAnchor
+	^self series first dataProviderAnchor
 !
 
 firstDate
@@ -974,7 +1058,7 @@ series: someDatapoints
 ! !
 
 Object subclass: #GeographicArea
-	slots: {#name. #series}
+	slots: {#name. #series. #properties}
 	package: 'Covid19view'!
 
 !GeographicArea methodsFor: 'accessing'!
@@ -983,6 +1067,18 @@ changes
 	"<Dataseries>"
 	
 	^self series changes
+!
+
+dataDateString
+	^self modificationDate 
+		ifNotNil: #asLocaleString
+		ifNil: [self series lastDate asLocaleDateString]
+!
+
+dataVersionInfo
+	^{	Silk SPAN: {'class' -> 'VersionLabel'. 'Data:'}.
+		Silk SPAN: {'class' -> 'VersionName'. self series dataProviderAnchor}.
+		Silk SPAN: {'class' -> 'VersionDate'. self dataDateString}}
 !
 
 lastConfirmed
@@ -1009,10 +1105,26 @@ lastRecovered
 	^self series lastRecovered
 !
 
+modificationDate
+	"<Date | nil>"
+	
+	^self properties at: #modificationDate ifAbsent: [nil]
+!
+
+modificationDate: aDate
+	self properties at: #modificationDate put: aDate
+!
+
 name
 	"<String>"
 	
 	^name
+!
+
+properties
+	"<Dictionary>"
+	
+	^properties ifNil: [properties := Dictionary new]
 !
 
 series
@@ -1023,20 +1135,36 @@ series
 
 !GeographicArea methodsFor: 'actions'!
 
+addVersionInfo
+	| versions |
+	versions := '#Versions' asSilk.
+	versions resetContents.
+	versions << {
+		CoViD19 softwareVersionInfo.
+	 	self dataVersionInfo}
+!
+
 showInfo
 	"add nice info graphics"
 	
 	| graphics |
 	graphics := '#Graphics' asSilk.
 	graphics resetContents.
-	graphics H2: self name.
-	graphics DIV: {
-		Silk H3: 'Cases'.
-		(Barchart on: self series) svg.
-		Silk DIV: 'id' -> 'CasebarTooltip'}.
-	graphics DIV: {
-		Silk H3: 'Change'.
-		(Barchart on: self changes) svg}
+	graphics << {
+		Silk H2: self name.
+	 	self casechart.
+	 	self changechart}.
+	self addVersionInfo
+!
+
+toggleValuescale
+	| chart |
+	chart := '#Casechart' asSilk.
+	((chart at: 'button') attrAt: 'class') = 'linear' ifTrue: [
+		chart resetContents.
+		^chart << self logarithmicChart].
+	chart resetContents.
+	chart << self linearChart
 ! !
 
 !GeographicArea methodsFor: 'copying'!
@@ -1045,6 +1173,7 @@ normalizedLike: aDataseries
 	^self class
 		name: self name
 		series: (self series normalizedLike: aDataseries)
+		properties: self properties
 ! !
 
 !GeographicArea methodsFor: 'html'!
@@ -1084,6 +1213,24 @@ asValueSpan
 		self lastConfirmed separatedThousandsString}
 !
 
+casechart
+	^Silk DIV: {
+		'id' -> 'Casechart'.
+		self logarithmicChart}
+!
+
+changechart
+	^Silk DIV: {
+		'id' -> 'Changechart'.
+		Silk H3: {
+			'Change'.
+			Silk SPAN: {
+				'class' -> 'subtitle'.
+				'Differences from the day before'}}.
+		(Changechart on: self changes) svg.
+		Silk DIV: 'id' -> 'Tooltip'}
+!
+
 emptySpan
 	"<span>
 	in place of a +/- button"
@@ -1096,16 +1243,45 @@ emptySubspan
 	in place of a +/- button"
 	
 	^Silk SPAN: 'class' -> 'subtreeSpan'
+!
+
+linearChart
+		^{
+		Silk H3: {
+			'Cases'.
+			(Silk BUTTON: {
+				'class' -> 'linear'.
+				'logarithmic'}) on: #click bind: [self toggleValuescale]}.
+		(Casechart linearOn: self series) svg.
+		Silk DIV: 'id' -> 'Tooltip'}
+!
+
+logarithmicChart
+		^{
+		Silk H3: {
+			'Cases'.
+			(Silk BUTTON: {
+				'class' -> 'logarithmic'.
+				'linear'}) on: #click bind: [self toggleValuescale]}.
+		(Casechart logarithmicOn: self series) svg.
+		Silk DIV: 'id' -> 'Tooltip'}
 ! !
 
 !GeographicArea methodsFor: 'initialization'!
 
-initializeName: aString series: aDataseries
+initializeName: aString series: aDataseries properties: aDictionary
 	name := aString.
-	series := aDataseries
+	series := aDataseries.
+	properties := aDictionary
 ! !
 
 !GeographicArea class methodsFor: 'instance creation'!
+
+allFromJHUSeries: someSeries
+	"<Array of: GeographicArea>"
+	
+	^self subclassResponsability
+!
 
 allFromRKISeries: someSeries
 	"<Array of: GeographicArea>"
@@ -1113,16 +1289,14 @@ allFromRKISeries: someSeries
 	^self subclassResponsability
 !
 
-allFromSeries: someSeries
-	"<Array of: GeographicArea>"
-	
-	^self subclassResponsability
+name: aString series: aDataseries
+	^self name: aString series: aDataseries properties: nil
 !
 
-name: aString series: aDataseries
+name: aString series: aDataseries properties: aDictionary
 	| inst |
 	inst := self new.
-	inst initializeName: aString series: aDataseries.
+	inst initializeName: aString series: aDataseries properties: aDictionary.
 	^inst
 ! !
 
@@ -1144,6 +1318,11 @@ addGermanStates: someCountries
 			ifNotEmpty: [
 				land copyWithParts: (land parts collect: [:kreis | kreis normalizedLike: self series])])].
 	self parts addAll: (normalized sorted: [:a :b | a lastConfirmed > b lastConfirmed])
+!
+
+modificationDate: aDate
+	super modificationDate: aDate.
+	self parts do: [:part | part modificationDate: aDate]
 !
 
 parts
@@ -1171,7 +1350,11 @@ seriesFromParts
 !Country methodsFor: 'copying'!
 
 copyWithParts: someParts
-	^self class name: self name parts: someParts
+	^self class 
+		name: self name 
+		series: nil
+		properties: self properties 
+		parts: someParts
 ! !
 
 !Country methodsFor: 'html'!
@@ -1279,6 +1462,8 @@ asNameSpan
 	item := Silk SPAN: {
 		'class' -> 'ListItem'. 
 		(Silk SPAN: {'class' -> 'CountryName'. self name})}.
+	self name = 'World' ifTrue: [
+		item << ('id' -> 'World')].
 	item on: #click bind: [:event |
 		('#CountryList' asSilk allAt: '.selected') do: [:selected |
 			selected attrAt: 'class' put: 'ListItem'].
@@ -1301,16 +1486,43 @@ asSubnameSpan
 		item attrAt: 'class' put: 'ListItem selected'. 
 		self showInfo].
 	^item
+!
+
+selectWorld
+	"mark the World list item as selected and show the infos"
+	
+	'#World' asSilk attrAt: 'class' put: 'ListItem selected'. 
+	self showInfo
 ! !
 
 !Country methodsFor: 'initialization'!
 
-initializeName: aString parts: someParts
+initializeName: aString series: aDataseries properties: aDictionary parts: someParts
 	name := aString.
+	series := aDataseries.
+	properties := aDictionary.
 	parts := someParts
 ! !
 
 !Country class methodsFor: 'instance creation'!
+
+allFromJHUSeries: someSeries
+	"<Array of: Country>"
+	
+	| byCountry globalSeries countryList sortblock |
+	byCountry := Dictionary new.
+	globalSeries := nil.
+	someSeries do: [:series |
+		(byCountry at: series country ifAbsentPut: [OrderedCollection new]) add: series.
+		globalSeries := globalSeries ifNil: [series series] ifNotNil: [globalSeries + series series]].
+	countryList := OrderedCollection with: (self name: 'World' series: globalSeries).
+	sortblock := [:a :b | a lastConfirmed > b lastConfirmed].
+	byCountry keysAndValuesDo: [:countryName :listOfSeries |
+		countryList add: (listOfSeries size = 1
+			ifTrue: [self name: countryName series: listOfSeries first series]
+			ifFalse: [self name: countryName parts: (State allFromJHUSeries: (listOfSeries sorted: sortblock))])].
+	^countryList sorted: sortblock
+!
 
 allFromRKISeries: someSeries
 	"<Array of: Country>"
@@ -1327,26 +1539,14 @@ allFromRKISeries: someSeries
 	^stateList
 !
 
-allFromSeries: someSeries
-	"<Array of: Country>"
-	
-	| byCountry countryList sortblock |
-	byCountry := Dictionary new.
-	someSeries do: [:series |
-		(byCountry at: series country ifAbsentPut: [OrderedCollection new]) add: series].
-	countryList := OrderedCollection new.
-	sortblock := [:a :b | a lastConfirmed > b lastConfirmed].
-	byCountry keysAndValuesDo: [:countryName :listOfSeries |
-		countryList add: (listOfSeries size = 1
-			ifTrue: [self name: countryName series: listOfSeries first series]
-			ifFalse: [self name: countryName parts: (State allFromSeries: (listOfSeries sorted: sortblock))])].
-	^countryList sorted: sortblock
+name: aString parts: someSeries
+	^self name: aString series: nil properties: nil parts: someSeries
 !
 
-name: aString parts: someSeries
+name: aString series: aDataseries properties: aDictionary parts: someSeries
 	| inst |
 	inst := self new.
-	inst initializeName: aString parts: someSeries.
+	inst initializeName: aString series: aDataseries properties: aDictionary parts: someSeries.
 	^inst
 ! !
 
@@ -1356,21 +1556,21 @@ GeographicArea subclass: #State
 
 !State class methodsFor: 'instance creation'!
 
+allFromJHUSeries: someSeries
+	"<Array of: State>"
+	
+	^someSeries collect: [:rawSeries |
+		self 
+			name: rawSeries state
+			series: rawSeries series]
+!
+
 allFromRKISeries: someSeries
 	"<Array of: State>"
 	
 	^someSeries collect: [:rawSeries |
 		self 
 			name: rawSeries landkreis
-			series: rawSeries series]
-!
-
-allFromSeries: someSeries
-	"<Array of: State>"
-	
-	^someSeries collect: [:rawSeries |
-		self 
-			name: rawSeries state
 			series: rawSeries series]
 ! !
 
@@ -1445,9 +1645,10 @@ Scale subclass: #Valuescale
 !Valuescale methodsFor: 'accessing'!
 
 at: aDomainValue
-	self logarithmic ifFalse: [
-		^aDomainValue - self from / self range].
-	^aDomainValue - self from / self range
+	"<Number>
+	fraction on the value axis"
+	
+	^self subclassResponsibility
 !
 
 normTicks
@@ -1484,30 +1685,49 @@ tickFactor
 !
 
 ticks
-	"<Array[2] of: (Array of: Number)>"
+	"<Array with: (Array of: Number) with: (Array of: Number)>
+	major ticks and minor ticks"
 	
+	^self subclassResponsibility
+! !
+
+Valuescale subclass: #LinearValuescale
+	slots: {}
+	package: 'Covid19view'!
+
+!LinearValuescale methodsFor: 'accessing'!
+
+at: aDomainValue
+	^aDomainValue - self from / self range
+!
+
+ticks
 	| f |
 	f := self tickFactor.
 	^self normTicks collect: [:ticks |
 		ticks collect: [:n | n * f]]
 ! !
 
-!Valuescale methodsFor: 'actions'!
+Valuescale subclass: #LogarithmicValuescale
+	slots: {}
+	package: 'Covid19view'!
 
-beLinear
-	logarithmic := false
+!LogarithmicValuescale methodsFor: 'accessing'!
+
+at: aDomainValue
+	^(aDomainValue ln - self from ln max: 0) / self range ln
 !
 
-beLogarithmic
-	logarithmic := true
-! !
-
-!Valuescale methodsFor: 'testing'!
-
-logarithmic
-	"<Boolean>"
-	
-	^logarithmic ifNil: [true]
+ticks
+	| exponent majors minors topFactor |
+	exponent := (self to log: 10) floor.
+	majors := (1 to: exponent) collect: [:exp | 10 raisedTo: exp].
+	minors := OrderedCollection new.
+	topFactor := (self to / (10 raisedTo: exponent)) floor.
+	minors addAll: ((3 to: topFactor by: 2) collect: [:i | (10 raisedTo: exponent) * i]).
+	0 to: exponent - 1 do: [:exp | 
+		minors addAll: (#(3 5 7 9) collect: [:i | (10 raisedTo: exp) * i])].
+	^{majors. minors}
 ! !
 
 Object subclass: #Series
@@ -1720,15 +1940,57 @@ max: aDate
 	aDate > self ifTrue: [
 		^aDate].
 	^self
+!
+
+plusMinutes: aNumber
+	^Date fromMilliseconds: self time + (aNumber * 60 * 1000)
 ! !
 
 !Date class methodsFor: '*Covid19view'!
 
 d: dayInteger m: monthInteger y: yearInteger
 	<inlineJS: 'return new Date(yearInteger, monthInteger - 1, dayInteger)'>
+!
+
+d: dayInteger m: monthInteger y: yearInteger h: hourInteger m: minutesInteger s: secondsInteger
+	<inlineJS: 'return new Date(yearInteger, monthInteger - 1, dayInteger, hourInteger, minutesInteger, secondsInteger)'>
+!
+
+dUTC: dayInteger m: monthInteger y: yearInteger h: hourInteger m: minutesInteger s: secondsInteger
+	<inlineJS: 'return new Date(Date.UTC(yearInteger, monthInteger - 1, dayInteger, hourInteger, minutesInteger, secondsInteger))'>
+!
+
+fromISO: aString
+	"<Date>
+	a UTC date"
+	"Date fromISO: '2020-03-24T15:39:53.000Z' "
+	
+	^[:dateString :timeString |
+		[:year :month :day :hour :minutes :secondsAndMilliSeconds |
+			| seconds |
+			seconds := (secondsAndMilliSeconds tokenize: '.') first.
+			Date 
+				dUTC: day asNumber
+				m: month asNumber
+				y: year asNumber
+				h: hour asNumber
+				m: minutes asNumber
+				s: seconds asNumber
+		] valueWithPossibleArguments: (dateString tokenize: '-'), (timeString tokenize: ':').
+	] valueWithPossibleArguments: (aString tokenize: 'T')
+!
+
+timezoneOffset
+	"<Number> in minutes"
+	
+	<inlineJS: 'return new Date().getTimezoneOffset()'>
 ! !
 
 !Number methodsFor: '*Covid19view'!
+
+exp
+	<inlineJS: 'return Math.exp(self);'>
+!
 
 separatedThousandsString
 	"<String>

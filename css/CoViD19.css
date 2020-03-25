@@ -22,9 +22,22 @@ header {
 	right: 0.5em;
 }
 
-#Date {
+#Versions {
 	justify-self: end;
 	align-self: end;
+	display: grid;
+	grid-template-columns: auto auto auto;
+}
+
+.VersionLabel {
+	margin-right: 0.5em;
+}
+
+.VersionName {
+	margin-right: 0.5em;
+}
+
+.VersionDate {
 }
 
 li {
@@ -131,6 +144,32 @@ li {
 	background: #ffede0;		
 }
 
+#Casechart {
+	
+}
+
+#Changechart {
+	
+}
+
+#Casechart button {
+	float: right;
+}
+
+svg {
+	fill: #f3f3f3;
+}
+
+.LinLogButtons > .active {
+	background-color: #eee;
+}
+
+.subtitle {
+	margin-left: 1em;
+	font-size: smaller;
+	font-weight: lighter;
+}
+
 .ValueAxis {
 	fill: none;
 }
@@ -233,7 +272,7 @@ li {
 	margin-right: 0.5em;
 }
 
-#CasebarTooltip {
+#Tooltip {
 	display: grid;
 	grid-template-columns: auto auto auto;
 	
@@ -249,16 +288,6 @@ li {
 	border-color: blue;
 }
 
-#ChangebarTooltip {
-	visibility: hidden;
-	position: absolute;
-	z-index: 1;
-	background-color: orange;
-	color: #ff0;
-	padding: 1em 0;
-	border-radius: 1em;
-}
-
 .LinearButton {
 	cursor: pointer;
 	fill: lightgray;	
@@ -269,20 +298,9 @@ li {
 	fill: gray;	
 }
 
-footer {
-	background: #e4ebf2;
-	grid-column: 1 / span 2;
-	grid-row:    3;					
-}
-
-footer a {
-	margin-left: 1em;				
-}
-
 header,
 #CountryList,
-#Graphics,
-footer {
+#Graphics {
 	border-radius: 0px 0.5em 0.5em;
 	border: 1px solid;
 	padding: .5em;

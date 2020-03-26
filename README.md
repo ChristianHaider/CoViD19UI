@@ -14,7 +14,7 @@ For gathering data , I use [VisualWorks](http://www.cincomsmalltalk.com/main/pro
 
 The 3 data files (confirmed, deaths and recovered) are downloaded and combined into series of datapoints, each with the 3 attributes confirmed, deaths and recovered. The result is a list of all countries or states with its data series. This list is then written as JSON to a file which I copy manually into the GitHub directory and onto the server where the amber app sits (I am working on automating this). 
 
-The latest change to the data structure is that I put the list into an envelop together with metadata (currently just the modification timestamp).
+The latest change to the data structure is that I put the list into an envelop together with metadata (currently just the modification timestamp). Data (#meta #data).
 
 This JSON is then read by the Amber app.
 

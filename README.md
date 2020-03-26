@@ -10,7 +10,7 @@ After solving all kinds of issues with the tool stack, I started with the app an
 
 ## Data
 
-For gathering data , I use [VisualWorks](http://www.cincomsmalltalk.com/main/products/visualworks/), since it is my home environment with all my tools. Besides, I think that it is one of the most productive development environments available on this planet.
+For gathering data, I use [VisualWorks](http://www.cincomsmalltalk.com/main/products/visualworks/), since it is my home environment with all my tools. Besides, I think that it is one of the most productive development environments available on this planet.
 
 The 3 data files (confirmed, deaths and recovered) are downloaded and combined into series of datapoints, each with the 3 attributes confirmed, deaths and recovered. The result is a list of all countries or states with its data series. This list is then written as JSON to a file which I copy manually into the GitHub directory and onto the server where the amber app sits (I am working on automating this). 
 
@@ -24,7 +24,7 @@ Now I want the code to be so flexible so that other data sources can be added ea
 
 ## App
 
-
+...to be written...
 
 ## Getting Started
 

@@ -845,18 +845,18 @@ selector: "mouseover:datapoint:",
 protocol: "events",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["anEvent", "aDatapoint"],
-source: "mouseover: anEvent datapoint: aDatapoint\x0a\x09| tooltip svg |\x0a\x09tooltip := '#Tooltip' asSilk.\x0a\x09tooltip resetContents.\x0a\x09tooltip << {\x0a\x09\x09'style' -> (\x0a\x09\x09\x09'right: ', (window innerWidth - anEvent x) printString, 'px; ',\x0a\x09\x09\x09'top: ', anEvent y printString, 'px; ',\x0a\x09\x09\x09'visibility: visible;').\x0a\x09\x09Silk SPAN: {'class' -> 'LegendBar'}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. aDatapoint date asLocaleDateString}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'}.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'class' -> 'LegendBar'.\x0a\x09\x09\x09SVG SVG: {\x0a\x09\x09\x09\x09'viewBox' -> '0 0 10 5'.\x0a\x09\x09\x09\x09SVG RECT: {\x0a\x09\x09\x09\x09\x09'class' -> 'BarConfirmed'.\x0a\x09\x09\x09\x09\x09'x' -> 0. 'y' -> 0. \x0a\x09\x09\x09\x09\x09'width' -> '100%'. 'height' -> '100%'}}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. 'confirmed'}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'. aDatapoint confirmed separatedThousandsString}.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'class' -> 'LegendBar'.\x0a\x09\x09\x09SVG SVG: {\x0a\x09\x09\x09\x09'viewBox' -> '0 0 10 5'.\x0a\x09\x09\x09\x09SVG RECT: {\x0a\x09\x09\x09\x09\x09'class' -> 'BarDeaths'.\x0a\x09\x09\x09\x09\x09'x' -> 0. 'y' -> 0. \x0a\x09\x09\x09\x09\x09'width' -> '100%'. 'height' -> '100%'}}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. 'deaths'}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'. aDatapoint deaths separatedThousandsString}\x0a\x09}",
+source: "mouseover: anEvent datapoint: aDatapoint\x0a\x09| tooltip svg |\x0a\x09tooltip := '#Tooltip' asSilk.\x0a\x09tooltip resetContents.\x0a\x09tooltip << {\x0a\x09\x09'style' -> (\x0a\x09\x09\x09'right: ', (window innerWidth - anEvent x) printString, 'px; ',\x0a\x09\x09\x09'top: ', anEvent y printString, 'px; ',\x0a\x09\x09\x09'visibility: visible;').\x0a\x09\x09Silk SPAN: {'class' -> 'LegendBar'}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. aDatapoint date asLocaleDateString}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'}.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'class' -> 'LegendBar'.\x0a\x09\x09\x09SVG SVG: {\x0a\x09\x09\x09\x09'viewBox' -> '0 0 10 5'.\x0a\x09\x09\x09\x09SVG RECT: {\x0a\x09\x09\x09\x09\x09'class' -> 'BarConfirmed'.\x0a\x09\x09\x09\x09\x09'x' -> 0. 'y' -> 0. \x0a\x09\x09\x09\x09\x09'width' -> '100%'. 'height' -> '100%'}}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. 'confirmed'}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'. aDatapoint confirmed separatedThousandsString}.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'class' -> 'LegendBar'.\x0a\x09\x09\x09SVG SVG: {\x0a\x09\x09\x09\x09'viewBox' -> '0 0 10 5'.\x0a\x09\x09\x09\x09SVG RECT: {\x0a\x09\x09\x09\x09\x09'class' -> 'BarRecovered'.\x0a\x09\x09\x09\x09\x09'x' -> 0. 'y' -> 0. \x0a\x09\x09\x09\x09\x09'width' -> '100%'. 'height' -> '100%'}}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. 'recovered'}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'. aDatapoint recovered separatedThousandsString}.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'class' -> 'LegendBar'.\x0a\x09\x09\x09SVG SVG: {\x0a\x09\x09\x09\x09'viewBox' -> '0 0 10 5'.\x0a\x09\x09\x09\x09SVG RECT: {\x0a\x09\x09\x09\x09\x09'class' -> 'BarDeaths'.\x0a\x09\x09\x09\x09\x09'x' -> 0. 'y' -> 0. \x0a\x09\x09\x09\x09\x09'width' -> '100%'. 'height' -> '100%'}}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. 'deaths'}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'. aDatapoint deaths separatedThousandsString}\x0a\x09}",
 referencedClasses: ["Silk", "SVG"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["asSilk", "resetContents", "<<", "->", ",", "printString", "-", "innerWidth", "x", "y", "SPAN:", "asLocaleDateString", "date", "SVG:", "RECT:", "separatedThousandsString", "confirmed", "deaths"]
+messageSends: ["asSilk", "resetContents", "<<", "->", ",", "printString", "-", "innerWidth", "x", "y", "SPAN:", "asLocaleDateString", "date", "SVG:", "RECT:", "separatedThousandsString", "confirmed", "recovered", "deaths"]
 }, function ($methodClass){ return function (anEvent,aDatapoint){
 var self=this,$self=this;
 var tooltip,svg;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1,$10,$9,$8,$7,$6,$5,$4,$3,$13,$12,$11,$16,$15,$14,$19,$18,$17,$22,$25,$28,$29,$30,$31,$32,$27,$26,$24,$23,$21,$20,$35,$34,$33,$38,$39,$37,$36,$42,$45,$48,$49,$50,$51,$52,$47,$46,$44,$43,$41,$40,$55,$54,$53,$2;
+var $1,$10,$9,$8,$7,$6,$5,$4,$3,$13,$12,$11,$16,$15,$14,$19,$18,$17,$22,$25,$28,$29,$30,$31,$32,$27,$26,$24,$23,$21,$20,$35,$34,$33,$38,$39,$37,$36,$42,$45,$48,$49,$50,$51,$52,$47,$46,$44,$43,$41,$40,$55,$54,$53,$58,$59,$57,$56,$62,$65,$68,$69,$70,$71,$72,$67,$66,$64,$63,$61,$60,$75,$74,$73,$2;
 tooltip="#Tooltip"._asSilk();
 $recv(tooltip)._resetContents();
 $1=tooltip;
@@ -989,7 +989,7 @@ $45="viewBox".__minus_gt("0 0 10 5");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["->"]=15;
 //>>excludeEnd("ctx");
-$48="class".__minus_gt("BarDeaths");
+$48="class".__minus_gt("BarRecovered");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["->"]=16;
 //>>excludeEnd("ctx");
@@ -1011,8 +1011,14 @@ $ctx1.sendIdx["->"]=20;
 //>>excludeEnd("ctx");
 $47=[$48,$49,$50,$51,$52];
 $46=$recv($globals.SVG)._RECT_($47);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["RECT:"]=2;
+//>>excludeEnd("ctx");
 $44=[$45,$46];
 $43=$recv($globals.SVG)._SVG_($44);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SVG:"]=2;
+//>>excludeEnd("ctx");
 $41=[$42,$43];
 $40=$recv($globals.Silk)._SPAN_($41);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -1022,12 +1028,71 @@ $55="class".__minus_gt("LegendLabel");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["->"]=21;
 //>>excludeEnd("ctx");
-$54=[$55,"deaths"];
+$54=[$55,"recovered"];
 $53=$recv($globals.Silk)._SPAN_($54);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["SPAN:"]=8;
 //>>excludeEnd("ctx");
-$2=[$3,$11,$14,$17,$20,$33,$36,$40,$53,$recv($globals.Silk)._SPAN_(["class".__minus_gt("LegendValue"),$recv($recv(aDatapoint)._deaths())._separatedThousandsString()])];
+$58="class".__minus_gt("LegendValue");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=22;
+//>>excludeEnd("ctx");
+$59=$recv($recv(aDatapoint)._recovered())._separatedThousandsString();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["separatedThousandsString"]=2;
+//>>excludeEnd("ctx");
+$57=[$58,$59];
+$56=$recv($globals.Silk)._SPAN_($57);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=9;
+//>>excludeEnd("ctx");
+$62="class".__minus_gt("LegendBar");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=23;
+//>>excludeEnd("ctx");
+$65="viewBox".__minus_gt("0 0 10 5");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=24;
+//>>excludeEnd("ctx");
+$68="class".__minus_gt("BarDeaths");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=25;
+//>>excludeEnd("ctx");
+$69="x".__minus_gt((0));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=26;
+//>>excludeEnd("ctx");
+$70="y".__minus_gt((0));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=27;
+//>>excludeEnd("ctx");
+$71="width".__minus_gt("100%");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=28;
+//>>excludeEnd("ctx");
+$72="height".__minus_gt("100%");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=29;
+//>>excludeEnd("ctx");
+$67=[$68,$69,$70,$71,$72];
+$66=$recv($globals.SVG)._RECT_($67);
+$64=[$65,$66];
+$63=$recv($globals.SVG)._SVG_($64);
+$61=[$62,$63];
+$60=$recv($globals.Silk)._SPAN_($61);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=10;
+//>>excludeEnd("ctx");
+$75="class".__minus_gt("LegendLabel");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=30;
+//>>excludeEnd("ctx");
+$74=[$75,"deaths"];
+$73=$recv($globals.Silk)._SPAN_($74);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=11;
+//>>excludeEnd("ctx");
+$2=[$3,$11,$14,$17,$20,$33,$36,$40,$53,$56,$60,$73,$recv($globals.Silk)._SPAN_(["class".__minus_gt("LegendValue"),$recv($recv(aDatapoint)._deaths())._separatedThousandsString()])];
 $recv($1).__lt_lt($2);
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -1769,18 +1834,20 @@ $core.method({
 selector: "countriesFromJHUData:",
 protocol: "action",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["someData"],
-source: "countriesFromJHUData: someData\x0a\x09\x22<Array of: Country>\x22\x0a\x09\x0a\x09^Country allFromJHUSeries: (someData collect: [:data | JHUSeries fromJson: data])",
-referencedClasses: ["Country", "JHUSeries"],
+args: ["aData"],
+source: "countriesFromJHUData: aData\x0a\x09\x22<Array of: Country>\x22\x0a\x09\x0a\x09| states modificationDate |\x0a\x09states := Country allFromJHUSeries: (aData data collect: [:data | JHUSeries fromJson: data]).\x0a\x09modificationDate := (aData meta at: modificationDate)\x0a\x09\x09ifNotNil: [:date | Date fromISO: date]\x0a\x09\x09ifNil: [states first lastDate].\x0a\x09states do: [:state | state modificationDate: modificationDate].\x0a\x09^states",
+referencedClasses: ["Country", "JHUSeries", "Date"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["allFromJHUSeries:", "collect:", "fromJson:"]
-}, function ($methodClass){ return function (someData){
+messageSends: ["allFromJHUSeries:", "collect:", "data", "fromJson:", "ifNotNil:ifNil:", "at:", "meta", "fromISO:", "lastDate", "first", "do:", "modificationDate:"]
+}, function ($methodClass){ return function (aData){
 var self=this,$self=this;
+var states,modificationDate;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($globals.Country)._allFromJHUSeries_($recv(someData)._collect_((function(data){
+var $1,$receiver;
+states=$recv($globals.Country)._allFromJHUSeries_($recv($recv(aData)._data())._collect_((function(data){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
@@ -1789,8 +1856,26 @@ return $recv($globals.JHUSeries)._fromJson_(data);
 }, function($ctx2) {$ctx2.fillBlock({data:data},$ctx1,1)});
 //>>excludeEnd("ctx");
 })));
+$1=$recv($recv(aData)._meta())._at_(modificationDate);
+if(($receiver = $1) == null || $receiver.a$nil){
+modificationDate=$recv($recv(states)._first())._lastDate();
+} else {
+var date;
+date=$receiver;
+modificationDate=$recv($globals.Date)._fromISO_(date);
+}
+$recv(states)._do_((function(state){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"countriesFromJHUData:",{someData:someData})});
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv(state)._modificationDate_(modificationDate);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({state:state},$ctx1,4)});
+//>>excludeEnd("ctx");
+}));
+return states;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"countriesFromJHUData:",{aData:aData,states:states,modificationDate:modificationDate})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19);
@@ -1800,19 +1885,19 @@ $core.method({
 selector: "countriesFromRKIData:",
 protocol: "action",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aClientData"],
-source: "countriesFromRKIData: aClientData\x0a\x09| states modificationDate |\x0a\x09states := Country allFromRKISeries: (aClientData data collect: [:data | RKISeries fromJson: data]).\x0a\x09modificationDate := Date fromISO: aClientData meta modificationDate.\x0a\x09states do: [:state | state modificationDate: modificationDate].\x0a\x09^states",
+args: ["aData"],
+source: "countriesFromRKIData: aData\x0a\x09| states modificationDate |\x0a\x09states := Country allFromRKISeries: (aData data collect: [:data | RKISeries fromJson: data]).\x0a\x09modificationDate := Date fromISO: aData meta modificationDate.\x0a\x09states do: [:state | state modificationDate: modificationDate].\x0a\x09^states",
 referencedClasses: ["Country", "RKISeries", "Date"],
 //>>excludeEnd("ide");
 pragmas: [],
 messageSends: ["allFromRKISeries:", "collect:", "data", "fromJson:", "fromISO:", "modificationDate", "meta", "do:", "modificationDate:"]
-}, function ($methodClass){ return function (aClientData){
+}, function ($methodClass){ return function (aData){
 var self=this,$self=this;
 var states,modificationDate;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-states=$recv($globals.Country)._allFromRKISeries_($recv($recv(aClientData)._data())._collect_((function(data){
+states=$recv($globals.Country)._allFromRKISeries_($recv($recv(aData)._data())._collect_((function(data){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
@@ -1821,7 +1906,7 @@ return $recv($globals.RKISeries)._fromJson_(data);
 }, function($ctx2) {$ctx2.fillBlock({data:data},$ctx1,1)});
 //>>excludeEnd("ctx");
 })));
-modificationDate=$recv($globals.Date)._fromISO_($recv($recv(aClientData)._meta())._modificationDate());
+modificationDate=$recv($globals.Date)._fromISO_($recv($recv(aData)._meta())._modificationDate());
 $recv(states)._do_((function(state){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
@@ -1833,7 +1918,7 @@ return $recv(state)._modificationDate_(modificationDate);
 }));
 return states;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"countriesFromRKIData:",{aClientData:aClientData,states:states,modificationDate:modificationDate})});
+}, function($ctx1) {$ctx1.fill(self,"countriesFromRKIData:",{aData:aData,states:states,modificationDate:modificationDate})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19);
@@ -2085,7 +2170,7 @@ selector: "withSeriesDo:",
 protocol: "action",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aOneArgumentBlock"],
-source: "withSeriesDo: aOneArgumentBlock\x0a\x09(Promise all: {\x0a\x09\x09(Platform fetch: 'CoViD-19.json'). \x0a\x09\x09(Platform fetch: 'RKI_COVID19.json')}) then: [:responses |\x0a\x09\x09\x09(Promise all: (responses collect: #json)) then: [:jsons |\x0a\x09\x09\x09\x09aOneArgumentBlock value: jsons]]\x0a\x09\x09catch: [:ex | \x0a\x09\x09\x09(ErrorHandler current respondsTo: #debugError:) \x0a\x09\x09\x09\x09ifTrue: [ErrorHandler current debugError: ex] \x0a\x09\x09\x09\x09ifFalse:[ErrorHandler handleError: ex]]",
+source: "withSeriesDo: aOneArgumentBlock\x0a\x09(Promise all: {\x0a\x09\x09(Platform fetch: 'CoViD-19_JHU.json'). \x0a\x09\x09(Platform fetch: 'CoViD-19_RKI.json')}) then: [:responses |\x0a\x09\x09\x09(Promise all: (responses collect: #json)) then: [:jsons |\x0a\x09\x09\x09\x09aOneArgumentBlock value: jsons]]\x0a\x09\x09catch: [:ex | \x0a\x09\x09\x09(ErrorHandler current respondsTo: #debugError:) \x0a\x09\x09\x09\x09ifTrue: [ErrorHandler current debugError: ex] \x0a\x09\x09\x09\x09ifFalse:[ErrorHandler handleError: ex]]",
 referencedClasses: ["Promise", "Platform", "ErrorHandler"],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -2096,11 +2181,11 @@ var self=this,$self=this;
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 var $3,$2,$1,$5,$4;
-$3=$recv($globals.Platform)._fetch_("CoViD-19.json");
+$3=$recv($globals.Platform)._fetch_("CoViD-19_JHU.json");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["fetch:"]=1;
 //>>excludeEnd("ctx");
-$2=[$3,$recv($globals.Platform)._fetch_("RKI_COVID19.json")];
+$2=[$3,$recv($globals.Platform)._fetch_("CoViD-19_RKI.json")];
 $1=$recv($globals.Promise)._all_($2);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["all:"]=1;
@@ -2153,7 +2238,7 @@ selector: "programModificationDate",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "programModificationDate\x0a\x09\x22<Date>\x0a\x09timestamp of the 'the.js' file on the server - doesn't work. The server also doesn't return #modification-date\x22\x0a\x09\x22CoViD19 programModificationDate\x22\x0a\x09\x0a\x09^Date d: 25 m: 3 y: 2020",
+source: "programModificationDate\x0a\x09\x22<Date>\x0a\x09timestamp of the 'the.js' file on the server - doesn't work. The server also doesn't return #modification-date\x22\x0a\x09\x22CoViD19 programModificationDate\x22\x0a\x09\x0a\x09^Date d: 27 m: 3 y: 2020",
 referencedClasses: ["Date"],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -2163,7 +2248,7 @@ var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($globals.Date)._d_m_y_((25),(3),(2020));
+return $recv($globals.Date)._d_m_y_((27),(3),(2020));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"programModificationDate",{})});
 //>>excludeEnd("ctx");

@@ -103,6 +103,16 @@ mouseover: anEvent datapoint: aDatapoint
 			SVG SVG: {
 				'viewBox' -> '0 0 10 5'.
 				SVG RECT: {
+					'class' -> 'BarRecovered'.
+					'x' -> 0. 'y' -> 0. 
+					'width' -> '100%'. 'height' -> '100%'}}}.
+		Silk SPAN: {'class' -> 'LegendLabel'. 'recovered'}.
+		Silk SPAN: {'class' -> 'LegendValue'. aDatapoint recovered separatedThousandsString}.
+		Silk SPAN: {
+			'class' -> 'LegendBar'.
+			SVG SVG: {
+				'viewBox' -> '0 0 10 5'.
+				SVG RECT: {
 					'class' -> 'BarDeaths'.
 					'x' -> 0. 'y' -> 0. 
 					'width' -> '100%'. 'height' -> '100%'}}}.
@@ -408,16 +418,22 @@ lastDate
 
 !CoViD19 methodsFor: 'action'!
 
-countriesFromJHUData: someData
+countriesFromJHUData: aData
 	"<Array of: Country>"
 	
-	^Country allFromJHUSeries: (someData collect: [:data | JHUSeries fromJson: data])
+	| states modificationDate |
+	states := Country allFromJHUSeries: (aData data collect: [:data | JHUSeries fromJson: data]).
+	modificationDate := (aData meta at: modificationDate)
+		ifNotNil: [:date | Date fromISO: date]
+		ifNil: [states first lastDate].
+	states do: [:state | state modificationDate: modificationDate].
+	^states
 !
 
-countriesFromRKIData: aClientData
+countriesFromRKIData: aData
 	| states modificationDate |
-	states := Country allFromRKISeries: (aClientData data collect: [:data | RKISeries fromJson: data]).
-	modificationDate := Date fromISO: aClientData meta modificationDate.
+	states := Country allFromRKISeries: (aData data collect: [:data | RKISeries fromJson: data]).
+	modificationDate := Date fromISO: aData meta modificationDate.
 	states do: [:state | state modificationDate: modificationDate].
 	^states
 !
@@ -446,8 +462,8 @@ showCountries
 
 withSeriesDo: aOneArgumentBlock
 	(Promise all: {
-		(Platform fetch: 'CoViD-19.json'). 
-		(Platform fetch: 'RKI_COVID19.json')}) then: [:responses |
+		(Platform fetch: 'CoViD-19_JHU.json'). 
+		(Platform fetch: 'CoViD-19_RKI.json')}) then: [:responses |
 			(Promise all: (responses collect: #json)) then: [:jsons |
 				aOneArgumentBlock value: jsons]]
 		catch: [:ex | 
@@ -528,7 +544,7 @@ programModificationDate
 	timestamp of the 'the.js' file on the server - doesn't work. The server also doesn't return #modification-date"
 	"CoViD19 programModificationDate"
 	
-	^Date d: 25 m: 3 y: 2020
+	^Date d: 27 m: 3 y: 2020
 !
 
 softwareNameAnchor

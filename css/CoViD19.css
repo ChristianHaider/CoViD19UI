@@ -10,11 +10,20 @@ body {
 }
 
 header {
-	background: #F1F3F4;
 	grid-column: 1 / span 2;
 	grid-row:    1;	
 	display: grid;
 	grid-template-columns: auto auto;
+	background: #F1F3F4;
+}
+
+h1 {
+	margin-bottom: 0em;
+}
+
+.Subtitle {
+	font-size: smaller;
+	font-weight: lighter;
 }
 
 #Buttons {
@@ -153,7 +162,8 @@ li {
 }
 
 #Casechart button {
-	float: right;
+	grid-column: 3;
+	width: auto;
 }
 
 svg {
@@ -184,16 +194,8 @@ svg {
 	stroke-width: 0.5;
 }
 
-.ValueText {
-	font-family: sans-serif;
-	font-size: 7px;
-	font-weight: bold;
-	fill: black;
-}
-
 .MajorText {
-	font-family: sans-serif;
-	font-size: 7px;
+	font-size: 6px;
 	fill: gray;
 }
 
@@ -253,23 +255,61 @@ svg {
 	fill: black;
 }
 
+#Casechart h3 {
+	display: grid;
+	grid-template-columns: auto auto auto;
+}
+
+.HeaderLegend {
+	grid-column: 2;	
+	display: grid;
+	grid-template-columns: auto auto auto;
+	padding: 0 0.5em;
+}
+
+.LegendConfirmed {
+	grid-column: 1;
+	display: grid;
+	align-self: end;
+	padding: 0 0.3em;
+	font-size: smaller;
+	font-weight: lighter;
+}
+
+.LegendRecovered {
+	grid-column: 2;	
+	display: grid;
+	align-self: end;
+	padding: 0 0.3em;
+	font-size: smaller;
+	font-weight: lighter;
+}
+
+.LegendDeaths {
+	grid-column: 3;
+	display: grid;
+	align-self: end;
+	padding: 0 0.3em;
+	font-size: smaller;
+	font-weight: lighter;
+}
+
 .LegendBar {
 	width: 1em;
 	height: 0.7em;
 	grid-column: 1;
-	margin-left: 0.5em;
 }
 
 .LegendLabel {
 	grid-column: 2;
-	margin-left: 0.5em;
+	margin-left: 0.3em;
 }
 
 .LegendValue {
 	grid-column: 3;
 	justify-self: end;
-	margin-left: 0.5em;
-	margin-right: 0.5em;
+	margin-left: 0.3em;
+	font-weight: bolder;
 }
 
 #Tooltip {
@@ -281,7 +321,7 @@ svg {
 	
 	z-index: 1;
 	background-color: white;
-	padding: 0.3em 0;
+	padding: 0.3em;
 	border-style: solid;
 	border-radius: 0.4em;
 	border-width: 2px;

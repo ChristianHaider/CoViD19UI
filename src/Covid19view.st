@@ -77,7 +77,7 @@ mouseout: anEvent datapoint: aDatapoint
 !
 
 mouseover: anEvent datapoint: aDatapoint
-	| tooltip svg |
+	| tooltip |
 	tooltip := '#Tooltip' asSilk.
 	tooltip resetContents.
 	tooltip << {
@@ -88,37 +88,9 @@ mouseover: anEvent datapoint: aDatapoint
 		Silk SPAN: {'class' -> 'LegendBar'}.
 		Silk SPAN: {'class' -> 'LegendLabel'. aDatapoint date asLocaleDateString}.
 		Silk SPAN: {'class' -> 'LegendValue'}.
-		Silk SPAN: {
-			'class' -> 'LegendBar'.
-			SVG SVG: {
-				'viewBox' -> '0 0 10 5'.
-				SVG RECT: {
-					'class' -> 'BarConfirmed'.
-					'x' -> 0. 'y' -> 0. 
-					'width' -> '100%'. 'height' -> '100%'}}}.
-		Silk SPAN: {'class' -> 'LegendLabel'. 'confirmed'}.
-		Silk SPAN: {'class' -> 'LegendValue'. aDatapoint confirmed separatedThousandsString}.
-		Silk SPAN: {
-			'class' -> 'LegendBar'.
-			SVG SVG: {
-				'viewBox' -> '0 0 10 5'.
-				SVG RECT: {
-					'class' -> 'BarRecovered'.
-					'x' -> 0. 'y' -> 0. 
-					'width' -> '100%'. 'height' -> '100%'}}}.
-		Silk SPAN: {'class' -> 'LegendLabel'. 'recovered'}.
-		Silk SPAN: {'class' -> 'LegendValue'. aDatapoint recovered separatedThousandsString}.
-		Silk SPAN: {
-			'class' -> 'LegendBar'.
-			SVG SVG: {
-				'viewBox' -> '0 0 10 5'.
-				SVG RECT: {
-					'class' -> 'BarDeaths'.
-					'x' -> 0. 'y' -> 0. 
-					'width' -> '100%'. 'height' -> '100%'}}}.
-		Silk SPAN: {'class' -> 'LegendLabel'. 'deaths'}.
-		Silk SPAN: {'class' -> 'LegendValue'. aDatapoint deaths separatedThousandsString}
-	}
+		self legendClass: 'BarConfirmed' label: 'confirmed' value: aDatapoint confirmed.
+		self legendClass: 'BarRecovered' label: 'recovered' value: aDatapoint recovered.
+		self legendClass: 'BarDeaths' label: 'deaths' value: aDatapoint deaths}
 ! !
 
 !Barchart methodsFor: 'geometry'!
@@ -150,7 +122,7 @@ chartRight
 chartTop
 	"<Number>"
 	
-	^0
+	^3
 !
 
 chartWidth
@@ -173,7 +145,7 @@ valuescaleWidth
 
 xAt: aDate
 	"<Number>
-	y value in the svg coordinate system"
+	x value in the svg coordinate system"
 	
 	^self chartLeft + ((self datescale at: aDate) * self chartWidth)
 !
@@ -182,6 +154,12 @@ yAt: aDomainValue
 	"<Number>
 	y value in the svg coordinate system"
 	
+	| offset |
+	self isLogarithmic ifTrue: [
+		aDomainValue isZero ifTrue: [
+			^self chartBottom].
+		offset := 5.
+		^(self chartBottom - offset) - ((self valuescale at: aDomainValue) * (self chartHeight - offset))].
 	^self chartBottom - ((self valuescale at: aDomainValue) * self chartHeight)
 ! !
 
@@ -261,6 +239,13 @@ dateAxisIn: aSVG
 	^dateAxis
 !
 
+fullBoxClassed: aClassString
+	^SVG RECT: {
+		'class' -> aClassString.
+		'x' -> 0. 'y' -> 0. 
+		'width' -> '100%'. 'height' -> '100%'}
+!
+
 graphicsArea
 	"<g>"
 	
@@ -271,13 +256,11 @@ graphicsArea
 			'width' -> self chartWidth. 'height' -> self chartHeight}}
 !
 
-lastValueText
-	^SVG TEXT: {
-		'class' -> 'ValueText'.
-		'text-anchor' -> 'end'.
-		SVG TITLE: 'The last value of the data series'.
-		'x' -> (self chartRight + self valuescaleWidth - 2). 'y' -> (self chartTop + 6).
-		self series lastConfirmed separatedThousandsString}
+legendClass: aClassString label: aString value: aNumber
+	^{
+		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 5'. self fullBoxClassed: aClassString}}.
+		Silk SPAN: {'class' -> 'LegendLabel'. aString}.
+		Silk SPAN: {'class' -> 'LegendValue'. aNumber separatedThousandsString}}
 !
 
 svg
@@ -294,37 +277,41 @@ svg
 !
 
 valueAxisIn: aSVG
-	| ticks majorTicks minorTicks valueAxis |
-	ticks := self valuescale ticks.
-	majorTicks := ticks first.
-	minorTicks := ticks last.
-	valueAxis := aSVG G: {
-		'class' -> 'ValueAxis'.
-		SVG RECT: {
-			'x' -> self chartRight. 'y' -> self chartTop. 
-			'width' -> self valuescaleWidth. 'height' -> self chartHeight}}.
-	minorTicks do: [:value |
-		| y |
-		y := self yAt: value.
-		valueAxis LINE: {
-			'class' -> 'Minorline'.
-			'x1' -> self chartLeft. 'y1' -> y.
-			'x2' -> self chartRight. 'y2' -> y}].
-	majorTicks do: [:value |
-		| y |
-		y := self yAt: value.
-		valueAxis LINE: {
-			'class' -> 'Majorline'.
-			'x1' -> self chartLeft. 'y1' -> y.
-			'x2' -> self chartRight. 'y2' -> y}.
-		y > 10 ifTrue: [
+	^self valuescale ticks asArgumentsIn: [:majorTicks :minorTicks |
+		| valueAxis |
+		valueAxis := aSVG G: {
+			'class' -> 'ValueAxis'.
+			SVG RECT: {
+				'x' -> self chartRight. 'y' -> self chartTop. 
+				'width' -> self valuescaleWidth. 'height' -> self chartHeight}}.
+		minorTicks do: [:value |
+			| y |
+			y := self yAt: value.
+			valueAxis LINE: {
+				'class' -> 'Minorline'.
+				'x1' -> self chartLeft. 'y1' -> y.
+				'x2' -> self chartRight. 'y2' -> y}].
+		majorTicks do: [:value |
+			| y |
+			y := self yAt: value.
+			valueAxis LINE: {
+				'class' -> 'Majorline'.
+				'x1' -> self chartLeft. 'y1' -> y.
+				'x2' -> self chartRight. 'y2' -> y}.
 			valueAxis TEXT: {
 				'class' -> 'MajorText'.
 				'text-anchor' -> 'end'.
 				'x' -> (self chartRight + self valuescaleWidth - 2). 'y' -> (y + 2).
-				value separatedThousandsString}]].
-	valueAxis << self lastValueText.
-	^valueAxis
+				value separatedThousandsString}].
+		valueAxis]
+! !
+
+!Barchart methodsFor: 'testing'!
+
+isLogarithmic
+	"<Boolean>"
+	
+	^false
 ! !
 
 !Barchart class methodsFor: 'instance creation'!
@@ -346,12 +333,6 @@ Case data only grow, therefore, a logarithmic scale is most appropriate!
 
 !Casechart methodsFor: 'accessing'!
 
-logarithmic
-	"<Boolean>"
-	
-	^logarithmic
-!
-
 logarithmicValuescale
 	"<LogarithmicValuescale>"
 	
@@ -361,7 +342,7 @@ logarithmicValuescale
 valuescale
 	"<Valuescale>"
 	
-	^valuescale ifNil: [valuescale := self logarithmic 
+	^valuescale ifNil: [valuescale := self isLogarithmic 
 		ifTrue: [self logarithmicValuescale] 
 		ifFalse: [self linearValuescale]]
 ! !
@@ -373,19 +354,20 @@ initializeSeries: aDataseries logarithmic: aBoolean
 	logarithmic := aBoolean
 ! !
 
+!Casechart methodsFor: 'testing'!
+
+isLogarithmic
+	"<Boolean>"
+	
+	^logarithmic
+! !
+
 !Casechart class methodsFor: 'instance creation'!
 
-linearOn: aDataseries
+series: aDataseries logarithmic: aBoolean
 	| inst |
 	inst := self new.
-	inst initializeSeries: aDataseries logarithmic: false.
-	^inst
-!
-
-logarithmicOn: aDataseries
-	| inst |
-	inst := self new.
-	inst initializeSeries: aDataseries logarithmic: true.
+	inst initializeSeries: aDataseries logarithmic: aBoolean.
 	^inst
 ! !
 
@@ -398,10 +380,22 @@ A chart for changes
 changes go up and down and should, therefore, be shown with a linear scale!
 
 Object subclass: #CoViD19
-	slots: {#countries}
+	slots: {#countries. #properties}
 	package: 'Covid19view'!
 
 !CoViD19 methodsFor: 'accessing'!
+
+caseScaleLogarithmic
+	"<Boolean>
+	the global default for the scale of the case chart.
+	This allows to keep the scale type when clicking throu countries"
+	
+	^self propertyAt: #CaseScaleLogarithmic ifAbsent: [true]
+!
+
+caseScaleLogarithmic: aBoolean
+	self propertyAt: #CaseScaleLogarithmic put: aBoolean
+!
 
 countries
 	"<Array of: Country>"
@@ -416,36 +410,73 @@ lastDate
 	^self countries inject: (Date d: 1 m: 1 y: 2020) into: [:latest :country | latest max: country lastDate]
 ! !
 
-!CoViD19 methodsFor: 'action'!
+!CoViD19 methodsFor: 'accessing properties'!
 
-countriesFromJHUData: aData
-	"<Array of: Country>"
+properties
+	"<Dictionary key: Symbol value: Object>"
 	
-	| states modificationDate |
-	states := Country allFromJHUSeries: (aData data collect: [:data | JHUSeries fromJson: data]).
-	modificationDate := (aData meta at: modificationDate)
-		ifNotNil: [:date | Date fromISO: date]
-		ifNil: [states first lastDate].
-	states do: [:state | state modificationDate: modificationDate].
-	^states
+	^properties ifNil: [properties := Dictionary new]
 !
 
-countriesFromRKIData: aData
+propertyAt: aSymbol
+	"<Object | nil>"
+	
+	^self propertyAt: aSymbol ifAbsent: [nil]
+!
+
+propertyAt: aSymbol ifAbsent: aBlock
+	"<Object>"
+	
+	^self properties at: aSymbol ifAbsent: aBlock
+!
+
+propertyAt: aSymbol ifAbsentPut: aBlock
+	"<Object>"
+	
+	(self properties includesKey: aSymbol) ifTrue: [
+		^self propertyAt: aSymbol].
+	^self propertyAt: aSymbol put: aBlock value
+!
+
+propertyAt: aSymbol put: anObject
+	"<Object>"
+	
+	^self properties at: aSymbol put: anObject
+!
+
+removeProperty: aSymbol
+	"<Object | nil>"
+	
+	^self removeProperty: aSymbol ifAbsent: [nil]
+!
+
+removeProperty: aSymbol ifAbsent: aBlock
+	"<Object>"
+	
+	^self properties removeKey: aSymbol ifAbsent: aBlock
+! !
+
+!CoViD19 methodsFor: 'action'!
+
+addModificationTime: aDateOrNil to: someCountries
 	| states modificationDate |
-	states := Country allFromRKISeries: (aData data collect: [:data | RKISeries fromJson: data]).
-	modificationDate := Date fromISO: aData meta modificationDate.
-	states do: [:state | state modificationDate: modificationDate].
-	^states
+	modificationDate := aDateOrNil
+		ifNotNil: [:date | Date fromString: date]
+		ifNil: [someCountries first lastDate].
+	someCountries do: [:country | country modificationDate: modificationDate]
 !
 
 getData
-	self withSeriesDo: [:jsons | 
-		| germany states |
-		countries := self countriesFromJHUData: jsons first.
-		germany := countries detect: [:country | country name = 'Germany'].
-		states := self countriesFromRKIData: jsons last.
-		germany addGermanStates: states.
-		self showCountries]
+	self withSeriesDo: [:jsons |
+		jsons asArgumentsIn: [:jhuJson :rkiJson |
+			| germany states |
+			countries := Country allFromJHUJson: jhuJson data.
+			self addModificationTime: (jhuJson meta at: #modificationDate) to: countries.
+			germany := countries detect: [:country | country name = 'Germany'].
+			states := Country allFromRKIJson: rkiJson data.
+			self addModificationTime: (rkiJson meta at: #modificationDate) to: states.
+			germany addGermanStates: states.
+			self showCountries]]
 !
 
 openHelios
@@ -462,8 +493,8 @@ showCountries
 
 withSeriesDo: aOneArgumentBlock
 	(Promise all: {
-		(Platform fetch: 'CoViD-19_JHU.json'). 
-		(Platform fetch: 'CoViD-19_RKI.json')}) then: [:responses |
+		(Platform fetch: 'data/CoViD-19_JHU.json'). 
+		(Platform fetch: 'data/CoViD-19_RKI.json')}) then: [:responses |
 			(Promise all: (responses collect: #json)) then: [:jsons |
 				aOneArgumentBlock value: jsons]]
 		catch: [:ex | 
@@ -506,7 +537,9 @@ buttonsForDevelopment
 
 header
 	^Silk HEADER: {
-		Silk H1: 'CoViD-19 Charts'.
+		Silk H1: {
+			Silk DIV: 'CoViD-19 Charts'. 
+			Silk DIV: {'class' -> 'Subtitle'. 'Do not trust the numbers!!'}}.
 		Silk SPAN: {
 			'id' -> 'Versions'.
 			self class softwareVersionInfo}}
@@ -537,7 +570,16 @@ isDevelopment
 	^(window location host tokenize: ':') first = '127.0.0.1'
 ! !
 
+CoViD19 class slots: {#current}!
+
 !CoViD19 class methodsFor: 'accessing'!
+
+current
+	"<CoViD19>
+	singleton"
+	
+	^current ifNil: [current := self new]
+!
 
 programModificationDate
 	"<Date>
@@ -1056,16 +1098,6 @@ initializeSeries: someDatapoints
 
 !Dataseries class methodsFor: 'instance creation'!
 
-fromJHUJson: someJson
-	^self series: (someJson collect: [:json |
-			JHUDatapoint fromJson: json])
-!
-
-fromRKIJson: someJson
-	^self series: (someJson collect: [:json |
-			RKIDatapoint fromJson: json])
-!
-
 series: someDatapoints
 	| inst |
 	inst := self new.
@@ -1175,12 +1207,28 @@ showInfo
 
 toggleValuescale
 	| chart |
+	CoViD19 current caseScaleLogarithmic: CoViD19 current caseScaleLogarithmic not.
 	chart := '#Casechart' asSilk.
-	((chart at: 'button') attrAt: 'class') = 'linear' ifTrue: [
-		chart resetContents.
-		^chart << self logarithmicChart].
 	chart resetContents.
-	chart << self linearChart
+	chart << (self newChartLogarithmic: CoViD19 current caseScaleLogarithmic)
+! !
+
+!GeographicArea methodsFor: 'comparing'!
+
+< aGeographicArea
+	^self lastConfirmed < aGeographicArea lastConfirmed
+!
+
+<= aGeographicArea
+	^self lastConfirmed <= aGeographicArea lastConfirmed
+!
+
+> aGeographicArea
+	^self lastConfirmed > aGeographicArea lastConfirmed
+!
+
+>= aGeographicArea
+	^self lastConfirmed >= aGeographicArea lastConfirmed
 ! !
 
 !GeographicArea methodsFor: 'copying'!
@@ -1232,7 +1280,7 @@ asValueSpan
 casechart
 	^Silk DIV: {
 		'id' -> 'Casechart'.
-		self logarithmicChart}
+		self newChartLogarithmic: CoViD19 current caseScaleLogarithmic}
 !
 
 changechart
@@ -1261,26 +1309,38 @@ emptySubspan
 	^Silk SPAN: 'class' -> 'subtreeSpan'
 !
 
-linearChart
-		^{
+newButtonLogarithmic: aBoolean
+	^(Silk BUTTON: {
+		'class' -> (self stringLogarithmic: aBoolean).
+		(self stringLogarithmic: aBoolean not)}) on: #click bind: [self toggleValuescale]
+!
+
+newChartLogarithmic: aBoolean
+	| chart |
+	chart := Casechart series: self series logarithmic: aBoolean.
+	^{
 		Silk H3: {
 			'Cases'.
-			(Silk BUTTON: {
-				'class' -> 'linear'.
-				'logarithmic'}) on: #click bind: [self toggleValuescale]}.
-		(Casechart linearOn: self series) svg.
+			Silk SPAN: {
+				'class' -> 'HeaderLegend'.
+				Silk SPAN: {
+					'class' -> 'LegendConfirmed'.
+					(chart legendClass: 'BarConfirmed' label: 'confirmed' value: self lastConfirmed)}.
+				Silk SPAN: {
+					'class' -> 'LegendRecovered'.
+					(chart legendClass: 'BarRecovered' label: 'recovered' value: self lastRecovered)}.
+				Silk SPAN: {
+					'class' -> 'LegendDeaths'.
+					(chart legendClass: 'BarDeaths' label: 'deaths' value: self lastDeaths)}}.
+			self newButtonLogarithmic: aBoolean}.
+		chart svg.
 		Silk DIV: 'id' -> 'Tooltip'}
 !
 
-logarithmicChart
-		^{
-		Silk H3: {
-			'Cases'.
-			(Silk BUTTON: {
-				'class' -> 'logarithmic'.
-				'linear'}) on: #click bind: [self toggleValuescale]}.
-		(Casechart logarithmicOn: self series) svg.
-		Silk DIV: 'id' -> 'Tooltip'}
+stringLogarithmic: aBoolean
+	^aBoolean
+		ifTrue: ['logarithmic']
+		ifFalse: ['linear']
 ! !
 
 !GeographicArea methodsFor: 'initialization'!
@@ -1293,10 +1353,22 @@ initializeName: aString series: aDataseries properties: aDictionary
 
 !GeographicArea class methodsFor: 'instance creation'!
 
+allFromJHUJson: aJson
+	"<Array of: GeographicArea>"
+	
+	^self allFromJHUSeries: (aJson collect: [:countryJson | JHUSeries fromJson: countryJson])
+!
+
 allFromJHUSeries: someSeries
 	"<Array of: GeographicArea>"
 	
 	^self subclassResponsability
+!
+
+allFromRKIJson: aJson
+	"<Array of: GeographicArea>"
+	
+	^self allFromRKISeries: (aJson collect: [:countryJson | RKISeries fromJson: countryJson])
 !
 
 allFromRKISeries: someSeries
@@ -1333,7 +1405,7 @@ addGermanStates: someCountries
 				land normalizedLike: self series] 
 			ifNotEmpty: [
 				land copyWithParts: (land parts collect: [:kreis | kreis normalizedLike: self series])])].
-	self parts addAll: (normalized sorted: [:a :b | a lastConfirmed > b lastConfirmed])
+	self parts addAll: (normalized sort: [:a :b | a > b])
 !
 
 modificationDate: aDate
@@ -1522,22 +1594,21 @@ initializeName: aString series: aDataseries properties: aDictionary parts: someP
 
 !Country class methodsFor: 'instance creation'!
 
-allFromJHUSeries: someSeries
+allFromJHUSeries: someJHUSeries
 	"<Array of: Country>"
 	
-	| byCountry globalSeries countryList sortblock |
+	| byCountry globalSeries countryList |
 	byCountry := Dictionary new.
 	globalSeries := nil.
-	someSeries do: [:series |
+	someJHUSeries do: [:series |
 		(byCountry at: series country ifAbsentPut: [OrderedCollection new]) add: series.
 		globalSeries := globalSeries ifNil: [series series] ifNotNil: [globalSeries + series series]].
 	countryList := OrderedCollection with: (self name: 'World' series: globalSeries).
-	sortblock := [:a :b | a lastConfirmed > b lastConfirmed].
 	byCountry keysAndValuesDo: [:countryName :listOfSeries |
 		countryList add: (listOfSeries size = 1
 			ifTrue: [self name: countryName series: listOfSeries first series]
-			ifFalse: [self name: countryName parts: (State allFromJHUSeries: (listOfSeries sorted: sortblock))])].
-	^countryList sorted: sortblock
+			ifFalse: [self name: countryName parts: (State allFromJHUSeries: (listOfSeries sort: [:a :b | a > b]))])].
+	^countryList sort: [:a :b | a > b]
 !
 
 allFromRKISeries: someSeries
@@ -1551,7 +1622,7 @@ allFromRKISeries: someSeries
 	byState keysAndValuesDo: [:stateName :listOfSeries |
 		stateList add: (listOfSeries size = 1
 			ifTrue: [self name: stateName series: listOfSeries first series]
-			ifFalse: [self name: stateName parts: (State allFromRKISeries: (listOfSeries sorted: [:a :b | a lastConfirmed > b lastConfirmed]))])].
+			ifFalse: [self name: stateName parts: (State allFromRKISeries: (listOfSeries sort: [:a :b | a > b]))])].
 	^stateList
 !
 
@@ -1572,22 +1643,22 @@ GeographicArea subclass: #State
 
 !State class methodsFor: 'instance creation'!
 
-allFromJHUSeries: someSeries
+allFromJHUSeries: someJHUSeries
 	"<Array of: State>"
 	
-	^someSeries collect: [:rawSeries |
+	^someJHUSeries collect: [:series |
 		self 
-			name: rawSeries state
-			series: rawSeries series]
+			name: series state
+			series: series series]
 !
 
 allFromRKISeries: someSeries
 	"<Array of: State>"
 	
-	^someSeries collect: [:rawSeries |
+	^someSeries collect: [:series |
 		self 
-			name: rawSeries landkreis
-			series: rawSeries series]
+			name: series landkreis
+			series: series series]
 ! !
 
 Silk subclass: #SVG
@@ -1607,8 +1678,8 @@ Object subclass: #Scale
 !Scale methodsFor: 'accessing'!
 
 at: aDomainValue
-	"<Number>
-	fraction on the scale"
+	"<Number[0..1]>
+	Fraction of the range"
 	
 	^aDomainValue - self from / self range
 !
@@ -1636,9 +1707,16 @@ to
 
 !Scale methodsFor: 'initialization'!
 
+goodTopFor: aMaxValue
+	"<Number>
+	a good top value for the chart is the next tick above the maximal value"
+	
+	^aMaxValue
+!
+
 initializeFrom: aStart to: anEnd
 	from := aStart.
-	to := anEnd
+	to := self goodTopFor: anEnd
 ! !
 
 !Scale class methodsFor: 'instance creation'!
@@ -1660,46 +1738,6 @@ Scale subclass: #Valuescale
 
 !Valuescale methodsFor: 'accessing'!
 
-at: aDomainValue
-	"<Number>
-	fraction on the value axis"
-	
-	^self subclassResponsibility
-!
-
-normTicks
-	"<Array[2] of: (Array of: Number)>"
-	
-	| f normed ticks |
-	f := self tickFactor.
-	normed := self normedTo.
-	ticks := 1 to: normed floor.
-	ticks size >= 8 ifTrue: [
-		^#(#(2 4 6 8) #())].
-	ticks size >= 6 ifTrue: [
-		^#(#(2 4 6) #())].
-	ticks size >= 4 ifTrue: [
-		^#(#(2 4) #())].
-	ticks size = 1 ifTrue: [
-		normed >= 1.5 ifTrue: [
-			^#(#(1) #(0.5 1.5))].
-		^#(#(1) #(0.5))].
-	^Array with: ticks with: #()
-!
-
-normedTo
-	"<Number [1..9.x]>
-	the highest value as number between 1 and less than 10; i.e. a one digit number (can have decimals)"
-	
-	^self to / self tickFactor
-!
-
-tickFactor
-	"<Number>"
-	
-	^10 raisedTo: (self to log: 10) floor
-!
-
 ticks
 	"<Array with: (Array of: Number) with: (Array of: Number)>
 	major ticks and minor ticks"
@@ -1713,8 +1751,48 @@ Valuescale subclass: #LinearValuescale
 
 !LinearValuescale methodsFor: 'accessing'!
 
-at: aDomainValue
-	^aDomainValue - self from / self range
+goodTopFor: aMaxValue
+	| f normed |
+	f := 10 raisedTo: aMaxValue exponent.
+	normed := aMaxValue / f.
+	normed >= 3 ifTrue: [
+		^normed ceiling * f].
+	normed >= 2 ifTrue: [
+		^(normed * 2) ceiling * 0.5 * f].
+	normed >= 1 ifTrue: [
+		^(normed * 5) ceiling * 0.2 * f].
+	self halt
+!
+
+normTicks
+	"<Array[2] of: (Array of: Number)>"
+	
+	| dict normed |
+	dict := Dictionary new
+		at: 10 put: [#(#(2 4 6 8 10) #(1 3 5 7 9))];
+		at: 9 put: [#(#(2 4 6 8) #(1 3 5 7 9))];
+		at: 8 put: [#(#(2 4 6 8) #(1 3 5 7))];
+		at: 7 put: [#(#(2 4 6) #(1 3 5 7))];
+		at: 6 put: [#(#(2 4 6) #(1 3 5))];
+		at: 5 put: [#(#(2 4) #(1 3 5))];
+		at: 4 put: [:n | {{1. 2. 3. 4}. 0 to: n by: 0.5}];
+		at: 3 put: [:n | {{1. 2. 3}. 0 to: n by: 0.5}];
+		at: 2 put: [:n | {{1. 2}. 0 to: n by: 0.2}];
+		at: 1 put: [:n | {{1}. 0 to: n by: 0.2}];
+		yourself.
+	normed := self to / self tickFactor.
+	^(dict at: normed ceiling) cull: normed
+!
+
+tickFactor
+	"<Number>
+	decimal factor to divide the max value so that the result is below 10.
+	Examples: 
+		47 tickFactor => 10
+		3577 tickFactor => 1000
+		5 tickFactor => 1 "
+	
+	^10 raisedTo: self to exponent
 !
 
 ticks
@@ -1731,13 +1809,17 @@ Valuescale subclass: #LogarithmicValuescale
 !LogarithmicValuescale methodsFor: 'accessing'!
 
 at: aDomainValue
-	^(aDomainValue ln - self from ln max: 0) / self range ln
+	^(aDomainValue ln max: 0) / self range ln
+!
+
+goodTopFor: aMaxValue
+	^10 raisedTo: aMaxValue exponent + 1
 !
 
 ticks
 	| exponent majors minors topFactor |
-	exponent := (self to log: 10) floor.
-	majors := (1 to: exponent) collect: [:exp | 10 raisedTo: exp].
+	exponent := self to exponent.
+	majors := (0 to: exponent + 1) collect: [:exp | 10 raisedTo: exp].
 	minors := OrderedCollection new.
 	topFactor := (self to / (10 raisedTo: exponent)) floor.
 	minors addAll: ((3 to: topFactor by: 2) collect: [:i | (10 raisedTo: exponent) * i]).
@@ -1774,6 +1856,24 @@ series
 	"<Dataseries>"
 	
 	^series
+! !
+
+!Series methodsFor: 'comparing'!
+
+< aSeries
+	^self lastConfirmed < aSeries lastConfirmed
+!
+
+<= aSeries
+	^self lastConfirmed <= aSeries lastConfirmed
+!
+
+> aSeries
+	^self lastConfirmed > aSeries lastConfirmed
+!
+
+>= aSeries
+	^self lastConfirmed >= aSeries lastConfirmed
 ! !
 
 !Series methodsFor: 'initialization'!
@@ -1868,7 +1968,7 @@ fromJson: aJson
 		country: aJson country 
 		state: aJson state 
 		latLong: aJson latLong 
-		series: (Dataseries fromJHUJson: aJson series)
+		series: (Dataseries series: (aJson series collect: [:json | JHUDatapoint fromJson: json]))
 ! !
 
 Series subclass: #RKISeries
@@ -1931,7 +2031,7 @@ fromJson: aJson
 		bundesland: aJson bundesland
 		idLandkreis: aJson idLandkreis
 		landkreis: aJson landkreis
-		series: (Dataseries fromRKIJson: aJson series)
+		series: (Dataseries series: (aJson series collect: [:json | RKIDatapoint fromJson: json]))
 !
 
 idBundesland: anIdBundeslandInteger bundesland: aBundeslandString idLandkreis: anIdLandkreisString landkreis: aLandkreisString series: aDataseries
@@ -1946,6 +2046,24 @@ idBundesland: anIdBundeslandInteger bundesland: aBundeslandString idLandkreis: a
 	^inst
 ! !
 
+!BlockClosure methodsFor: '*Covid19view'!
+
+cull: anObject
+	^self cullWithArguments: {anObject}
+!
+
+cull: anObject cull: anotherObject
+	^self cullWithArguments: {anObject. anotherObject}
+!
+
+cull: anObject cull: anotherObject cull: andAnotherObject
+	^self cullWithArguments: {anObject. anotherObject. andAnotherObject}
+!
+
+cullWithArguments: aCollection
+	^self valueWithPossibleArguments: aCollection
+! !
+
 !Date methodsFor: '*Covid19view'!
 
 asLocaleDateString
@@ -1956,10 +2074,6 @@ max: aDate
 	aDate > self ifTrue: [
 		^aDate].
 	^self
-!
-
-plusMinutes: aNumber
-	^Date fromMilliseconds: self time + (aNumber * 60 * 1000)
 ! !
 
 !Date class methodsFor: '*Covid19view'!
@@ -1970,36 +2084,6 @@ d: dayInteger m: monthInteger y: yearInteger
 
 d: dayInteger m: monthInteger y: yearInteger h: hourInteger m: minutesInteger s: secondsInteger
 	<inlineJS: 'return new Date(yearInteger, monthInteger - 1, dayInteger, hourInteger, minutesInteger, secondsInteger)'>
-!
-
-dUTC: dayInteger m: monthInteger y: yearInteger h: hourInteger m: minutesInteger s: secondsInteger
-	<inlineJS: 'return new Date(Date.UTC(yearInteger, monthInteger - 1, dayInteger, hourInteger, minutesInteger, secondsInteger))'>
-!
-
-fromISO: aString
-	"<Date>
-	a UTC date"
-	"Date fromISO: '2020-03-24T15:39:53.000Z' "
-	
-	^[:dateString :timeString |
-		[:year :month :day :hour :minutes :secondsAndMilliSeconds |
-			| seconds |
-			seconds := (secondsAndMilliSeconds tokenize: '.') first.
-			Date 
-				dUTC: day asNumber
-				m: month asNumber
-				y: year asNumber
-				h: hour asNumber
-				m: minutes asNumber
-				s: seconds asNumber
-		] valueWithPossibleArguments: (dateString tokenize: '-'), (timeString tokenize: ':').
-	] valueWithPossibleArguments: (aString tokenize: 'T')
-!
-
-timezoneOffset
-	"<Number> in minutes"
-	
-	<inlineJS: 'return new Date().getTimezoneOffset()'>
 ! !
 
 !Number methodsFor: '*Covid19view'!
@@ -2008,10 +2092,34 @@ exp
 	<inlineJS: 'return Math.exp(self);'>
 !
 
+exponent
+	"<Integer>
+	the power of 10 below the receiver"
+	
+	^self log floor
+!
+
 separatedThousandsString
 	"<String>
 	String with thousands separator every third insertin point"
 	
 	<inlineJS: 'return self.toLocaleString()'>
+! !
+
+!SequenceableCollection methodsFor: '*Covid19view'!
+
+asArgumentsIn: aBlock
+	"Evaluate aBlock with the receiver's elements as parameters.
+	aBlock takes its arguments from the receiver.
+	'ok'
+	#(1 2 3) asArgumentsIn: [:a :b :c | a + b + c]
+	#(1 2 3) asArgumentsIn: [:a :b | a + b]
+	#(1 2 3) asArgumentsIn: [:a | a]
+	#(1 2 3) asArgumentsIn: [42]
+	'not ok'
+	#(1 2 3) asArgumentsIn: [:a :b :c :d | a + b + c + d]
+	"
+
+	^aBlock valueWithPossibleArguments: self
 ! !
 

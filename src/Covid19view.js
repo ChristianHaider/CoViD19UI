@@ -2,9 +2,10 @@ define(["amber/boot", "require", "amber/core/Kernel-Collections", "amber/core/Ke
 var $core=$boot.api,nil=$boot.nilAsValue,$nil=$boot.nilAsReceiver,$recv=$boot.asReceiver,$globals=$boot.globals;
 var $pkg = $core.addPackage("Covid19view");
 $pkg.innerEval = function (expr) { return eval(expr); };
-$pkg.imports = ["silk/Silk"];
+$pkg.imports = ["appTimestamp=app/timestamp", "silk/Silk"];
 //>>excludeStart("imports", pragmas.excludeImports);
-$pkg.isReady = new Promise(function (resolve, reject) { requirejs(["silk/Silk"], function () {resolve();}, reject); });
+var appTimestamp;
+$pkg.isReady = new Promise(function (resolve, reject) { requirejs(["app/timestamp", "silk/Silk"], function ($1) {appTimestamp=$1; resolve();}, reject); });
 //>>excludeEnd("imports");
 $pkg.transport = {"type":"amd","amdNamespace":"amber-covid19view"};
 
@@ -1570,45 +1571,38 @@ selector: "addContentsTo:",
 protocol: "html",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aDiv"],
-source: "addContentsTo: aDiv\x0a\x09self isDevelopment ifTrue: [\x0a\x09\x09aDiv << self buttonsForDevelopment].\x0a\x09aDiv << {\x0a\x09\x09self header.\x0a\x09\x09Silk DIV: {\x0a\x09\x09\x09'id' -> 'CountryList'.\x0a\x09\x09\x09Silk DIV: {\x0a\x09\x09\x09\x09'id' -> 'CountryList'.\x0a\x09\x09\x09\x09'Loading data... Your browser will smoke... After that it will be fine...'}}.\x0a\x09\x09Silk DIV: 'id' -> 'Graphics'}",
+source: "addContentsTo: aDiv\x0a\x09aDiv << {\x0a\x09\x09self header.\x0a\x09\x09Silk DIV: {\x0a\x09\x09\x09'id' -> 'CountryList'.\x0a\x09\x09\x09Silk DIV: {\x0a\x09\x09\x09\x09'id' -> 'CountryList'.\x0a\x09\x09\x09\x09'Loading data...'}}.\x0a\x09\x09Silk DIV: 'id' -> 'Graphics'}",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifTrue:", "isDevelopment", "<<", "buttonsForDevelopment", "header", "DIV:", "->"]
+messageSends: ["<<", "header", "DIV:", "->"]
 }, function ($methodClass){ return function (aDiv){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1,$3,$6,$9,$8,$7,$5,$4,$2;
-$1=$self._isDevelopment();
-if($core.assert($1)){
-$recv(aDiv).__lt_lt($self._buttonsForDevelopment());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["<<"]=1;
-//>>excludeEnd("ctx");
-}
-$3=$self._header();
-$6="id".__minus_gt("CountryList");
+var $2,$5,$8,$7,$6,$4,$3,$1;
+$2=$self._header();
+$5="id".__minus_gt("CountryList");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["->"]=1;
 //>>excludeEnd("ctx");
-$9="id".__minus_gt("CountryList");
+$8="id".__minus_gt("CountryList");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["->"]=2;
 //>>excludeEnd("ctx");
-$8=[$9,"Loading data... Your browser will smoke... After that it will be fine..."];
-$7=$recv($globals.Silk)._DIV_($8);
+$7=[$8,"Loading data..."];
+$6=$recv($globals.Silk)._DIV_($7);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["DIV:"]=2;
 //>>excludeEnd("ctx");
-$5=[$6,$7];
-$4=$recv($globals.Silk)._DIV_($5);
+$4=[$5,$6];
+$3=$recv($globals.Silk)._DIV_($4);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["DIV:"]=1;
 //>>excludeEnd("ctx");
-$2=[$3,$4,$recv($globals.Silk)._DIV_("id".__minus_gt("Graphics"))];
-$recv(aDiv).__lt_lt($2);
+$1=[$2,$3,$recv($globals.Silk)._DIV_("id".__minus_gt("Graphics"))];
+$recv(aDiv).__lt_lt($1);
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"addContentsTo:",{aDiv:aDiv})});
@@ -1681,72 +1675,6 @@ $self._getData();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"augmentPage",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.CoViD19);
-
-$core.addMethod(
-$core.method({
-selector: "buttonsForDevelopment",
-protocol: "html",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "buttonsForDevelopment\x0a\x09\x22<Silk>\x22\x0a\x09\x0a\x09^Silk SPAN: {\x0a\x09\x09'id' -> 'Buttons'.\x0a\x09\x09(Silk BUTTON: 'reset') on: #click bind: [self resetContents].\x0a\x09\x09(Silk BUTTON: 'get data') on: #click bind: [self getData].\x0a\x09\x09(Silk BUTTON: 'Helios') on: #click bind: [self openHelios]}",
-referencedClasses: ["Silk"],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["SPAN:", "->", "on:bind:", "BUTTON:", "resetContents", "getData", "openHelios"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-var $2,$4,$3,$6,$5,$1;
-$2="id".__minus_gt("Buttons");
-$4=$recv($globals.Silk)._BUTTON_("reset");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["BUTTON:"]=1;
-//>>excludeEnd("ctx");
-$3=$recv($4)._on_bind_("click",(function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $self._resetContents();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["on:bind:"]=1;
-//>>excludeEnd("ctx");
-$6=$recv($globals.Silk)._BUTTON_("get data");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["BUTTON:"]=2;
-//>>excludeEnd("ctx");
-$5=$recv($6)._on_bind_("click",(function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $self._getData();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,2)});
-//>>excludeEnd("ctx");
-}));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["on:bind:"]=2;
-//>>excludeEnd("ctx");
-$1=[$2,$3,$5,$recv($recv($globals.Silk)._BUTTON_("Helios"))._on_bind_("click",(function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $self._openHelios();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,3)});
-//>>excludeEnd("ctx");
-}))];
-return $recv($globals.Silk)._SPAN_($1);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"buttonsForDevelopment",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19);
@@ -1940,29 +1868,6 @@ $globals.CoViD19);
 
 $core.addMethod(
 $core.method({
-selector: "isDevelopment",
-protocol: "testing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "isDevelopment\x0a\x09^(window location host tokenize: ':') first = '127.0.0.1'",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["=", "first", "tokenize:", "host", "location"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return $recv($recv($recv($recv($recv(window)._location())._host())._tokenize_(":"))._first()).__eq("127.0.0.1");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"isDevelopment",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.CoViD19);
-
-$core.addMethod(
-$core.method({
 selector: "lastDate",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -2014,30 +1919,6 @@ $self._addContentsTo_(contents);
 return contents;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"newContents",{contents:contents})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.CoViD19);
-
-$core.addMethod(
-$core.method({
-selector: "openHelios",
-protocol: "action",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "openHelios\x0a\x09<inlineJS: 'require(''amber/helpers'').popupHelios()'>",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [["inlineJS:", ["require('amber/helpers').popupHelios()"]]],
-messageSends: []
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-require('amber/helpers').popupHelios();
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"openHelios",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19);
@@ -2395,17 +2276,17 @@ selector: "programModificationDate",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "programModificationDate\x0a\x09\x22<Date>\x0a\x09timestamp of the 'the.js' file on the server - doesn't work. The server also doesn't return #modification-date\x22\x0a\x09\x22CoViD19 programModificationDate\x22\x0a\x09\x0a\x09^Date d: 27 m: 3 y: 2020",
+source: "programModificationDate\x0a\x09\x22<Date>\x0a\x09creation timestamp of the 'the.js' file\x22\x0a\x09\x22CoViD19 programModificationDate\x22\x0a\x09\x0a\x09^Date fromMilliseconds: appTimestamp",
 referencedClasses: ["Date"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["d:m:y:"]
+messageSends: ["fromMilliseconds:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($globals.Date)._d_m_y_((27),(3),(2020));
+return $recv($globals.Date)._fromMilliseconds_(appTimestamp);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"programModificationDate",{})});
 //>>excludeEnd("ctx");
@@ -2451,11 +2332,11 @@ selector: "softwareVersionInfo",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "softwareVersionInfo\x0a\x09^{\x09Silk SPAN: {'class' -> 'VersionLabel'. 'Software:'}.\x0a\x09\x09Silk SPAN: {'class' -> 'VersionName'. self softwareNameAnchor}.\x0a\x09\x09Silk SPAN: {'class' -> 'VersionDate'. self programModificationDate asLocaleDateString}}",
+source: "softwareVersionInfo\x0a\x09^{\x09Silk SPAN: {'class' -> 'VersionLabel'. 'Software:'}.\x0a\x09\x09Silk SPAN: {'class' -> 'VersionName'. self softwareNameAnchor}.\x0a\x09\x09Silk SPAN: {'class' -> 'VersionDate'. self programModificationDate asLocaleString}}",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["SPAN:", "->", "softwareNameAnchor", "asLocaleDateString", "programModificationDate"]
+messageSends: ["SPAN:", "->", "softwareNameAnchor", "asLocaleString", "programModificationDate"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -2480,7 +2361,7 @@ $4=$recv($globals.Silk)._SPAN_($5);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["SPAN:"]=2;
 //>>excludeEnd("ctx");
-return [$1,$4,$recv($globals.Silk)._SPAN_(["class".__minus_gt("VersionDate"),$recv($self._programModificationDate())._asLocaleDateString()])];
+return [$1,$4,$recv($globals.Silk)._SPAN_(["class".__minus_gt("VersionDate"),$recv($self._programModificationDate())._asLocaleString()])];
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"softwareVersionInfo",{})});
 //>>excludeEnd("ctx");

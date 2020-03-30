@@ -69,6 +69,7 @@ module.exports = function (grunt) {
                 options: {
                     rawText: {
                         "helios/index": "",
+						"app/timestamp": mkDefine([], Date.now()),
                         "app": mkDefine(["require", "es6-promise/auto"], cbRequireAndPromiseMain),
                         "app/main": mkDefine(["deploy", "amber/core/Platform-Browser"], id)
                     },
@@ -76,7 +77,7 @@ module.exports = function (grunt) {
                         excludeIdeData: true,
                         excludeDebugContexts: true
                     },
-                    include: ['config', 'node_modules/requirejs/require', 'app'],
+                    include: ['config', 'app/timestamp', 'node_modules/requirejs/require', 'app'],
                     findNestedDependencies: true,
                     exclude: ['helios/index'],
                     optimize: "uglify2",
@@ -87,9 +88,10 @@ module.exports = function (grunt) {
                 options: {
                     rawText: {
                         "app": mkDefine(["require", "es6-promise/auto"], cbRequireAndPromiseMain),
+						"app/timestamp": mkDefine([], Date.now()),
                         "app/main": mkDefine(["devel", "amber/core/Platform-Browser"], id)
                     },
-                    include: ['config', 'node_modules/requirejs/require', 'app', 'app/main'],
+                    include: ['config', 'app/timestamp', 'node_modules/requirejs/require', 'app', 'app/main'],
                     exclude: ['devel', 'amber/core/Platform-Browser'],
                     out: "the.js"
                 }

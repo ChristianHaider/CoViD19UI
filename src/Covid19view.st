@@ -1,5 +1,5 @@
 Smalltalk createPackage: 'Covid19view'!
-(Smalltalk packageAt: 'Covid19view' ifAbsent: [ self error: 'Package not created: Covid19view' ]) imports: {'silk/Silk'}!
+(Smalltalk packageAt: 'Covid19view' ifAbsent: [ self error: 'Package not created: Covid19view' ]) imports: {'appTimestamp' -> 'app/timestamp'. 'silk/Silk'}!
 Object subclass: #Barchart
 	slots: {#series. #valuescale. #datescale}
 	package: 'Covid19view'!
@@ -479,10 +479,6 @@ getData
 			self showCountries]]
 !
 
-openHelios
-	<inlineJS: 'require(''amber/helpers'').popupHelios()'>
-!
-
 showCountries
 	| list |
 	list := '#CountryList' asSilk.
@@ -506,15 +502,13 @@ withSeriesDo: aOneArgumentBlock
 !CoViD19 methodsFor: 'html'!
 
 addContentsTo: aDiv
-	self isDevelopment ifTrue: [
-		aDiv << self buttonsForDevelopment].
 	aDiv << {
 		self header.
 		Silk DIV: {
 			'id' -> 'CountryList'.
 			Silk DIV: {
 				'id' -> 'CountryList'.
-				'Loading data... Your browser will smoke... After that it will be fine...'}}.
+				'Loading data...'}}.
 		Silk DIV: 'id' -> 'Graphics'}
 !
 
@@ -523,16 +517,6 @@ augmentPage
 		reset;
 		DIV: self newContents.
 	self getData
-!
-
-buttonsForDevelopment
-	"<Silk>"
-	
-	^Silk SPAN: {
-		'id' -> 'Buttons'.
-		(Silk BUTTON: 'reset') on: #click bind: [self resetContents].
-		(Silk BUTTON: 'get data') on: #click bind: [self getData].
-		(Silk BUTTON: 'Helios') on: #click bind: [self openHelios]}
 !
 
 header
@@ -564,12 +548,6 @@ resetContents
 	self showCountries
 ! !
 
-!CoViD19 methodsFor: 'testing'!
-
-isDevelopment
-	^(window location host tokenize: ':') first = '127.0.0.1'
-! !
-
 CoViD19 class slots: {#current}!
 
 !CoViD19 class methodsFor: 'accessing'!
@@ -583,10 +561,10 @@ current
 
 programModificationDate
 	"<Date>
-	timestamp of the 'the.js' file on the server - doesn't work. The server also doesn't return #modification-date"
+	creation timestamp of the 'the.js' file"
 	"CoViD19 programModificationDate"
 	
-	^Date d: 27 m: 3 y: 2020
+	^Date fromMilliseconds: appTimestamp
 !
 
 softwareNameAnchor
@@ -600,7 +578,7 @@ softwareNameAnchor
 softwareVersionInfo
 	^{	Silk SPAN: {'class' -> 'VersionLabel'. 'Software:'}.
 		Silk SPAN: {'class' -> 'VersionName'. self softwareNameAnchor}.
-		Silk SPAN: {'class' -> 'VersionDate'. self programModificationDate asLocaleDateString}}
+		Silk SPAN: {'class' -> 'VersionDate'. self programModificationDate asLocaleString}}
 ! !
 
 !CoViD19 class methodsFor: 'starting'!

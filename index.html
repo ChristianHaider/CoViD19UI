@@ -33,6 +33,9 @@
             //used for all new packages in IDE
             'transport.defaultAmdNamespace': "amber-covid19view"
         }).then(function () {
+            require(["amber-ide-starter-dialog"], function (dlg) {
+                dlg.start();
+            });
             amber.globals.CoViD19._start();
         });
     });

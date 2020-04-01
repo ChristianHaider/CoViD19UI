@@ -1,4 +1,6 @@
 /node_modules/
 
+/test_runner.js
+
 /config.js
 /the.js

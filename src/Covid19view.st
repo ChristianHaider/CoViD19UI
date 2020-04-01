@@ -1,13 +1,27 @@
 Smalltalk createPackage: 'Covid19view'!
 (Smalltalk packageAt: 'Covid19view' ifAbsent: [ self error: 'Package not created: Covid19view' ]) imports: {'appTimestamp' -> 'app/timestamp'. 'silk/Silk'}!
 Object subclass: #Barchart
-	slots: {#series. #valuescale. #datescale}
+	slots: {#country. #series. #aspects. #valuescale. #datescale}
 	package: 'Covid19view'!
 !Barchart commentStamp!
 A bar chart with decent date and value scale.
 Datapoints are shown as bars with a tooltip showing details!
 
 !Barchart methodsFor: 'accessing'!
+
+aspects
+	"<Array of: Symbol>
+	selectors of datapoint instances in the series.
+	When the list is empty, all aspects are shown"
+	
+	^aspects ifNil: [#()]
+!
+
+country
+	"<GeographicArea>"
+	
+	^country
+!
 
 datapoints
 	"<Array of: Datapoint>"
@@ -36,10 +50,17 @@ linearValuescale
 	^LinearValuescale from: 0 to: self maxValue
 !
 
+logarithmicValuescale
+	"<LogarithmicValuescale>"
+	
+	^LogarithmicValuescale from: 1 to: self maxValue
+!
+
 maxValue
 	"<Integer>"
 	
-	^self datapoints inject: 0 into: [:max :datapoint | max max: datapoint confirmed]
+	^self datapoints inject: 0 into: [:max :datapoint | 
+		max max: (datapoint maxValueForAspects: self aspects)]
 !
 
 monthnameAt: aDate
@@ -64,10 +85,35 @@ series
 	^series
 !
 
+silk
+	"Silk object corresponding to the receiver"
+	
+	^('#', self class name) asSilk.
+!
+
+stringLogarithmic: aBoolean
+	^aBoolean
+		ifTrue: ['logarithmic']
+		ifFalse: ['linear']
+!
+
 valuescale
 	"<Valuescale>"
 	
-	^valuescale ifNil: [valuescale := self linearValuescale]
+	^valuescale ifNil: [valuescale := self isLogarithmic 
+		ifTrue: [self logarithmicValuescale] 
+		ifFalse: [self linearValuescale]]
+! !
+
+!Barchart methodsFor: 'actions'!
+
+recreate
+	self country recreateCharts
+!
+
+toggleValuescale
+	self class logarithmic: self class logarithmic not.
+	self recreate
 ! !
 
 !Barchart methodsFor: 'events'!
@@ -88,9 +134,9 @@ mouseover: anEvent datapoint: aDatapoint
 		Silk SPAN: {'class' -> 'LegendBar'}.
 		Silk SPAN: {'class' -> 'LegendLabel'. aDatapoint date asLocaleDateString}.
 		Silk SPAN: {'class' -> 'LegendValue'}.
-		self legendClass: 'BarConfirmed' label: 'confirmed' value: aDatapoint confirmed.
-		self legendClass: 'BarRecovered' label: 'recovered' value: aDatapoint recovered.
-		self legendClass: 'BarDeaths' label: 'deaths' value: aDatapoint deaths}
+		self tooltipClass: 'confirmed' label: 'confirmed' value: aDatapoint confirmed.
+		self tooltipClass: 'recovered' label: 'recovered' value: aDatapoint recovered.
+		self tooltipClass: 'deaths' label: 'deaths' value: aDatapoint deaths}
 ! !
 
 !Barchart methodsFor: 'geometry'!
@@ -165,8 +211,10 @@ yAt: aDomainValue
 
 !Barchart methodsFor: 'initialization'!
 
-initializeSeries: aDataseries
-	series := aDataseries
+initializeCountry: aCountry series: aDataseries aspects: someSymbols
+	country := aCountry.
+	series := aDataseries.
+	aspects := someSymbols
 ! !
 
 !Barchart methodsFor: 'svg'!
@@ -174,28 +222,42 @@ initializeSeries: aDataseries
 barForDatapoint: aDatapoint width: aWidth
 	"<g>"
 	
-	| barLeft barTopConfirmed barConfirmed barTopRecovered barRecovered barTopDeaths barDeaths g |
+	| barLeft bars barTopConfirmed barConfirmed barTopRecovered barRecovered barTopDeaths barDeaths g |
 	barLeft := (self xAt: aDatapoint date) - aWidth.
-	barTopConfirmed := self yAt: aDatapoint confirmed.
-	barConfirmed := SVG RECT: {
-		'class' -> 'BarConfirmed'.
-		'x' -> barLeft. 'y' -> barTopConfirmed. 
-		'width' -> aWidth. 'height' -> (self chartBottom - barTopConfirmed)}.
-	barTopRecovered := self yAt: aDatapoint decided.
-	barRecovered := SVG RECT: {
-		'class' -> 'BarRecovered'.
-		'x' -> barLeft. 'y' -> barTopRecovered. 
-		'width' -> aWidth. 'height' -> (self chartBottom - barTopRecovered)}.
-	barTopDeaths := self yAt: aDatapoint deaths.
-	barDeaths := SVG RECT: {
-		'class' -> 'BarDeaths'.
-		'x' -> barLeft. 'y' -> barTopDeaths. 
-		'width' -> aWidth. 'height' -> (self chartBottom - barTopDeaths)}.
+	bars :=OrderedCollection new.
+	(self aspects isEmpty or: [
+	self aspects includes: #confirmed]) ifTrue: [
+		| top |
+		top := self yAt: (aDatapoint perform: #confirmed).
+		bars add: (SVG RECT: {
+			'class' -> 'confirmed'.
+			'x' -> barLeft. 'y' -> top. 
+			'width' -> aWidth. 'height' -> (self chartBottom - top)})].
+	self aspects isEmpty ifTrue: [
+		| top |
+		top := self yAt: (aDatapoint perform: #decided).
+		bars add: (SVG RECT: {
+			'class' -> 'recovered'.
+			'x' -> barLeft. 'y' -> top. 
+			'width' -> aWidth. 'height' -> (self chartBottom - top)})].
+	(self aspects includes: #recovered) ifTrue: [
+		| top |
+		top := self yAt: (aDatapoint perform: #recovered).
+		bars add: (SVG RECT: {
+			'class' -> 'recovered'.
+			'x' -> barLeft. 'y' -> top. 
+			'width' -> aWidth. 'height' -> (self chartBottom - top)})].
+	(self aspects isEmpty or: [
+	self aspects includes: #deaths]) ifTrue: [
+		| top |
+		top := self yAt: (aDatapoint perform: #deaths).
+		bars add: (SVG RECT: {
+			'class' -> 'deaths'.
+			'x' -> barLeft. 'y' -> top. 
+			'width' -> aWidth. 'height' -> (self chartBottom - top)})].
 	g := SVG G: {
 		'class' -> 'Bar'.
-		barConfirmed.
-		barRecovered.
-		barDeaths}.
+		bars}.
 	g on: #mouseover bind: [:event | self mouseover: event datapoint: aDatapoint].
 	g on: #mouseout bind: [:event | self mouseout: event datapoint: aDatapoint].
 	^g
@@ -258,9 +320,9 @@ graphicsArea
 
 legendClass: aClassString label: aString value: aNumber
 	^{
-		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 5'. self fullBoxClassed: aClassString}}.
-		Silk SPAN: {'class' -> 'LegendLabel'. aString}.
-		Silk SPAN: {'class' -> 'LegendValue'. aNumber separatedThousandsString}}
+		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: aClassString}}.
+		Silk SPAN: {'class' -> 'LegendValue'. aNumber separatedThousandsString}.
+		Silk SPAN: {'class' -> 'LegendLabel'. aString}}
 !
 
 svg
@@ -274,6 +336,13 @@ svg
 	self dateAxisIn: svg.
 	self chartAreaIn: svg.
 	^svg
+!
+
+tooltipClass: aClassString label: aString value: aNumber
+	^{
+		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 5'. self fullBoxClassed: aClassString}}.
+		Silk SPAN: {'class' -> 'LegendLabel'. aString}.
+		Silk SPAN: {'class' -> 'LegendValue'. aNumber separatedThousandsString}}
 !
 
 valueAxisIn: aSVG
@@ -311,16 +380,37 @@ valueAxisIn: aSVG
 isLogarithmic
 	"<Boolean>"
 	
-	^false
+	^self class logarithmic
 ! !
 
 !Barchart class methodsFor: 'instance creation'!
 
-on: aDataseries
+currentAspects
+	"<Array of: Symbol>
+	selectors of Datapoints to be shown"
+	
+	^#()
+!
+
+for: aCountry on: aDataseries aspects: someSymbols
 	| inst |
 	inst := self new.
-	inst initializeSeries: aDataseries.
+	inst initializeCountry: aCountry series: aDataseries aspects: someSymbols.
 	^inst
+! !
+
+!Barchart class methodsFor: 'settings'!
+
+logarithmic
+	"<Boolean>
+	the global default for the scale of the case chart.
+	This allows to keep the scale type when clicking throu countries"
+	
+	^self name asString, '.', #logarithmic asString settingValueIfAbsent: true
+!
+
+logarithmic: aBoolean
+	self name asString, '.', #logarithmic asString settingValue: aBoolean
 ! !
 
 Barchart subclass: #Casechart
@@ -331,44 +421,124 @@ A chart for case data
 
 Case data only grow, therefore, a logarithmic scale is most appropriate!
 
-!Casechart methodsFor: 'accessing'!
+!Casechart methodsFor: 'actions'!
 
-logarithmicValuescale
-	"<LogarithmicValuescale>"
-	
-	^LogarithmicValuescale from: 1 to: self maxValue
+toggleConfirmed
+	self class showConfirmed: self class showConfirmed not.
+	self recreate
 !
 
-valuescale
-	"<Valuescale>"
+toggleDeaths
+	self class showDeaths: self class showDeaths not.
+	self recreate
+!
+
+toggleRecovered
+	self class showRecovered: self class showRecovered not.
+	self recreate
+! !
+
+!Casechart methodsFor: 'html'!
+
+html
+	^{	Silk DIV: {
+			'class' -> 'ChartHeader'.
+			Silk SPAN: {
+				'class' -> 'ChartButtons'.
+				self legendButtonConfirmed.
+				self legendButtonRecovered.
+				self legendButtonDeaths}.
+			(Silk BUTTON: {
+				'class' -> 'ScalingButton'.
+				'type' -> 'button'.
+				(self stringLogarithmic: self class logarithmic not)}) on: #click bind: [self toggleValuescale]}.
+		self svg.
+		Silk DIV: 'id' -> 'Tooltip'}
+!
+
+legendButtonConfirmed
+	"<Silk BUTTON>"
 	
-	^valuescale ifNil: [valuescale := self isLogarithmic 
-		ifTrue: [self logarithmicValuescale] 
-		ifFalse: [self linearValuescale]]
+	| selectedString button |
+	selectedString := ''.
+	(self aspects includes: #confirmed) ifTrue: [selectedString := ' selected'].
+	button := Silk BUTTON: {
+		'class' -> ('LegendButton', selectedString).
+		'type' -> 'button'. 
+		self legendClass: 'confirmed' label: 'confirmed' value: self series lastConfirmed}.
+	button on: #click bind: [self toggleConfirmed].
+	^button
+!
+
+legendButtonDeaths
+	"<Silk BUTTON>"
+	
+	| selectedString button |
+	selectedString := ''.
+	(self aspects includes: #deaths) ifTrue: [selectedString := ' selected'].
+	button := Silk BUTTON: {
+		'class' -> ('LegendButton', selectedString).
+		'type' -> 'button'. 
+		self legendClass: 'deaths' label: 'deaths' value: self series lastDeaths}.
+	button on: #click bind: [self toggleDeaths].
+	^button
+!
+
+legendButtonRecovered
+	"<Silk BUTTON>"
+	
+	| selectedString button |
+	selectedString := ''.
+	(self aspects includes: #recovered) ifTrue: [selectedString := ' selected'].
+	button := Silk BUTTON: {
+		'class' -> ('LegendButton', selectedString).
+		'type' -> 'button'. 
+		self legendClass: 'recovered' label: 'recovered' value: self series lastRecovered}.
+	button on: #click bind: [self toggleRecovered].
+	^button
 ! !
 
-!Casechart methodsFor: 'initialization'!
+!Casechart class methodsFor: 'accessing'!
 
-initializeSeries: aDataseries logarithmic: aBoolean
-	self initializeSeries: aDataseries.
-	logarithmic := aBoolean
+currentAspects
+	| aspects |
+	aspects := OrderedCollection new.
+	self showConfirmed ifTrue: [aspects add: #confirmed].
+	self showRecovered ifTrue: [aspects add: #recovered].
+	self showDeaths ifTrue: [aspects add: #deaths].
+	^aspects
 ! !
 
-!Casechart methodsFor: 'testing'!
+!Casechart class methodsFor: 'settings'!
 
-isLogarithmic
+showConfirmed
+	"<Boolean>"
+
+	^self name asString, '.', #showConfirmed asString settingValueIfAbsent: false
+!
+
+showConfirmed: aBoolean
+	self name asString, '.', #showConfirmed asString settingValue: aBoolean
+!
+
+showDeaths
 	"<Boolean>"
 	
-	^logarithmic
-! !
+	^self name asString, '.', #showDeaths asString settingValueIfAbsent: false
+!
 
-!Casechart class methodsFor: 'instance creation'!
+showDeaths: aBoolean
+	self name asString, '.', #showDeaths asString settingValue: aBoolean
+!
 
-series: aDataseries logarithmic: aBoolean
-	| inst |
-	inst := self new.
-	inst initializeSeries: aDataseries logarithmic: aBoolean.
-	^inst
+showRecovered
+	"<Boolean>"
+	
+	^self name asString, '.', #showRecovered asString settingValueIfAbsent: false
+!
+
+showRecovered: aBoolean
+	self name asString, '.', #showRecovered asString settingValue: aBoolean
 ! !
 
 Barchart subclass: #Changechart
@@ -379,28 +549,74 @@ A chart for changes
 
 changes go up and down and should, therefore, be shown with a linear scale!
 
+!Changechart methodsFor: 'actions'!
+
+toggleRelative
+	| chart |
+	self class showRelative: self class showRelative not.
+	self recreate
+! !
+
+!Changechart methodsFor: 'html'!
+
+html
+	^{	Silk DIV: {
+			'class' -> 'ChartHeader'.
+			'Change from the day before'.
+			"self legendButtonRelative".
+			(Silk BUTTON: {
+				'class' -> 'ScalingButton'.
+				'type' -> 'button'.
+				(self stringLogarithmic: self class logarithmic not)}) on: #click bind: [self toggleValuescale]}.
+		self svg.
+		Silk DIV: 'id' -> 'Tooltip'}
+!
+
+legendButtonRelative
+	"<Silk BUTTON>"
+	
+	| button |
+	button := Silk BUTTON: {
+		'class' -> 'LegendButton'.
+		'type' -> 'button'. 
+		'Relative'}.
+	button on: #click bind: [self toggleRelative].
+	^button
+! !
+
+!Changechart class methodsFor: 'settings'!
+
+currentAspects
+	^Casechart currentAspects
+!
+
+showRelative
+	"<Boolean>"
+	
+	^self name asString, '.', #showRelative asString settingValueIfAbsent: false
+!
+
+showRelative: aBoolean
+	self name asString, '.', #showRelative asString settingValue: aBoolean
+! !
+
 Object subclass: #CoViD19
-	slots: {#countries. #properties}
+	slots: {#countries}
 	package: 'Covid19view'!
 
 !CoViD19 methodsFor: 'accessing'!
-
-caseScaleLogarithmic
-	"<Boolean>
-	the global default for the scale of the case chart.
-	This allows to keep the scale type when clicking throu countries"
-	
-	^self propertyAt: #CaseScaleLogarithmic ifAbsent: [true]
-!
-
-caseScaleLogarithmic: aBoolean
-	self propertyAt: #CaseScaleLogarithmic put: aBoolean
-!
 
 countries
 	"<Array of: Country>"
 	
 	^countries ifNil: [#()]
+!
+
+dataHome
+	"<String>
+	the directory with all data files"
+	
+	^'https://covidcrt.uber.space/data/'
 !
 
 lastDate
@@ -410,72 +626,15 @@ lastDate
 	^self countries inject: (Date d: 1 m: 1 y: 2020) into: [:latest :country | latest max: country lastDate]
 ! !
 
-!CoViD19 methodsFor: 'accessing properties'!
-
-properties
-	"<Dictionary key: Symbol value: Object>"
-	
-	^properties ifNil: [properties := Dictionary new]
-!
-
-propertyAt: aSymbol
-	"<Object | nil>"
-	
-	^self propertyAt: aSymbol ifAbsent: [nil]
-!
-
-propertyAt: aSymbol ifAbsent: aBlock
-	"<Object>"
-	
-	^self properties at: aSymbol ifAbsent: aBlock
-!
-
-propertyAt: aSymbol ifAbsentPut: aBlock
-	"<Object>"
-	
-	(self properties includesKey: aSymbol) ifTrue: [
-		^self propertyAt: aSymbol].
-	^self propertyAt: aSymbol put: aBlock value
-!
-
-propertyAt: aSymbol put: anObject
-	"<Object>"
-	
-	^self properties at: aSymbol put: anObject
-!
-
-removeProperty: aSymbol
-	"<Object | nil>"
-	
-	^self removeProperty: aSymbol ifAbsent: [nil]
-!
-
-removeProperty: aSymbol ifAbsent: aBlock
-	"<Object>"
-	
-	^self properties removeKey: aSymbol ifAbsent: aBlock
-! !
-
 !CoViD19 methodsFor: 'action'!
 
-addModificationTime: aDateOrNil to: someCountries
-	| states modificationDate |
-	modificationDate := aDateOrNil
-		ifNotNil: [:date | Date fromString: date]
-		ifNil: [someCountries first lastDate].
-	someCountries do: [:country | country modificationDate: modificationDate]
-!
-
 getData
-	self withSeriesDo: [:jsons |
+	self withAllJsons: #('CoViD-19_JHU.json' 'CoViD-19_RKI.json') do: [:jsons |
 		jsons asArgumentsIn: [:jhuJson :rkiJson |
-			| germany states |
-			countries := Country allFromJHUJson: jhuJson data.
-			self addModificationTime: (jhuJson meta at: #modificationDate) to: countries.
+			| germany |
+			countries := Country allFromJHUJson: jhuJson.
 			germany := countries detect: [:country | country name = 'Germany'].
-			states := Country allFromRKIJson: rkiJson data.
-			self addModificationTime: (rkiJson meta at: #modificationDate) to: states.
-			germany addGermanStates: states.
+			germany addGermanStates: (Country allFromRKIJson: rkiJson).
 			self showCountries]]
 !
 
@@ -487,10 +646,9 @@ showCountries
 	self countries first selectWorld
 !
 
-withSeriesDo: aOneArgumentBlock
-	(Promise all: {
-		(Platform fetch: 'data/CoViD-19_JHU.json'). 
-		(Platform fetch: 'data/CoViD-19_RKI.json')}) then: [:responses |
+withAllJsons: someFilenames do: aOneArgumentBlock
+	(Promise all: (someFilenames collect: [:file |
+		Platform fetch: self dataHome, file])) then: [:responses |
 			(Promise all: (responses collect: #json)) then: [:jsons |
 				aOneArgumentBlock value: jsons]]
 		catch: [:ex | 
@@ -593,6 +751,12 @@ Object subclass: #Datapoint
 
 !Datapoint methodsFor: 'accessing'!
 
+aspects
+	"<Array of: Symbol>"
+	
+	^#(#confirmed #deaths)
+!
+
 confirmed
 	"<Integer>"
 
@@ -621,6 +785,20 @@ decided
 	"<Integer>"
 	
 	^self recovered + self deaths
+!
+
+maxValue
+	"<Integer>"
+	
+	^self aspects inject: 0 into: [:max :aspect | max max: (self perform:  aspect)]
+!
+
+maxValueForAspects: someAspects
+	"<Integer>"
+	
+	someAspects isEmpty ifTrue: [
+		^self maxValue].
+	^someAspects inject: 0 into: [:max :aspect | max max: (self perform:  aspect)]
 !
 
 recovered
@@ -668,6 +846,12 @@ differenceTo: aDatapoint
 ! !
 
 !Datapoint methodsFor: 'copying'!
+
+copyDeaths
+	"<Datapoint>"
+	
+	^self class date: self date confirmed: 0 deaths: self deaths
+!
 
 copyWithDate: aDate
 	"<Datapoint>"
@@ -736,6 +920,10 @@ Datapoint subclass: #JHUDatapoint
 
 !JHUDatapoint methodsFor: 'accessing'!
 
+aspects
+	^super aspects, #(#recovered)
+!
+
 dataProvider
 	"<String>"
 	
@@ -779,6 +967,14 @@ differenceTo: aJHUDatapoint
 ! !
 
 !JHUDatapoint methodsFor: 'copying'!
+
+copyDeaths
+	^self class 
+		date: self date 
+		confirmed: 0
+		deaths: self deaths 
+		recovered: 0
+!
 
 copyWithDate: aDate
 	^self class 
@@ -835,6 +1031,10 @@ Datapoint subclass: #RKIDatapoint
 
 !RKIDatapoint methodsFor: 'accessing'!
 
+aspects
+	^super aspects, #(#male #female)
+!
+
 byAge
 	"<Dictionary key: String value: Integer>"
 	
@@ -857,6 +1057,18 @@ dataProviderAnchor
 		'target' -> '_blank'.
 		'rel' -> 'noopener'.
 		self dataProvider}
+!
+
+female
+	"<Integer>"
+	
+	^self bySex at: 'F' ifAbsent: [0]
+!
+
+male
+	"<Integer>"
+	
+	^self bySex at: 'M' ifAbsent: [0]
 ! !
 
 !RKIDatapoint methodsFor: 'arithmetic'!
@@ -884,6 +1096,15 @@ differenceTo: aRKIDatapoint
 ! !
 
 !RKIDatapoint methodsFor: 'copying'!
+
+copyDeaths
+	^self class 
+		date: self date 
+		confirmed: 0
+		deaths: self deaths 
+		byAge: nil
+		bySex: nil
+!
 
 copyWithDate: aDate
 	^self class 
@@ -1049,6 +1270,13 @@ series
 
 !Dataseries methodsFor: 'copying'!
 
+copyDeaths
+	"<Dataseries>"
+	"create a dataseries with only the numbers for deaths"
+	
+	^self class series: (self series collect: #copyDeaths)
+!
+
 normalizedLike: aDataseries
 	"<Dataseries>"
 	"create a dataseries with the same dates as aDataseries to match the JHU ones"
@@ -1157,6 +1385,12 @@ series
 	"<Dataseries>"
 	
 	^series
+!
+
+seriesDeaths
+	"<Dataseries>"
+	
+	^self series
 ! !
 
 !GeographicArea methodsFor: 'actions'!
@@ -1170,25 +1404,21 @@ addVersionInfo
 	 	self dataVersionInfo}
 !
 
-showInfo
-	"add nice info graphics"
-	
+recreateCharts
 	| graphics |
 	graphics := '#Graphics' asSilk.
 	graphics resetContents.
 	graphics << {
 		Silk H2: self name.
 	 	self casechart.
-	 	self changechart}.
-	self addVersionInfo
+	 	self changechart}
 !
 
-toggleValuescale
-	| chart |
-	CoViD19 current caseScaleLogarithmic: CoViD19 current caseScaleLogarithmic not.
-	chart := '#Casechart' asSilk.
-	chart resetContents.
-	chart << (self newChartLogarithmic: CoViD19 current caseScaleLogarithmic)
+showInfo
+	"add nice info graphics"
+	
+	self recreateCharts.
+	self addVersionInfo
 ! !
 
 !GeographicArea methodsFor: 'comparing'!
@@ -1258,19 +1488,13 @@ asValueSpan
 casechart
 	^Silk DIV: {
 		'id' -> 'Casechart'.
-		self newChartLogarithmic: CoViD19 current caseScaleLogarithmic}
+		(Casechart for: self on: self series aspects: Casechart currentAspects) html}
 !
 
 changechart
 	^Silk DIV: {
 		'id' -> 'Changechart'.
-		Silk H3: {
-			'Change'.
-			Silk SPAN: {
-				'class' -> 'subtitle'.
-				'Differences from the day before'}}.
-		(Changechart on: self changes) svg.
-		Silk DIV: 'id' -> 'Tooltip'}
+		(Changechart for: self on: self changes aspects: Changechart currentAspects) html}
 !
 
 emptySpan
@@ -1285,40 +1509,6 @@ emptySubspan
 	in place of a +/- button"
 	
 	^Silk SPAN: 'class' -> 'subtreeSpan'
-!
-
-newButtonLogarithmic: aBoolean
-	^(Silk BUTTON: {
-		'class' -> (self stringLogarithmic: aBoolean).
-		(self stringLogarithmic: aBoolean not)}) on: #click bind: [self toggleValuescale]
-!
-
-newChartLogarithmic: aBoolean
-	| chart |
-	chart := Casechart series: self series logarithmic: aBoolean.
-	^{
-		Silk H3: {
-			'Cases'.
-			Silk SPAN: {
-				'class' -> 'HeaderLegend'.
-				Silk SPAN: {
-					'class' -> 'LegendConfirmed'.
-					(chart legendClass: 'BarConfirmed' label: 'confirmed' value: self lastConfirmed)}.
-				Silk SPAN: {
-					'class' -> 'LegendRecovered'.
-					(chart legendClass: 'BarRecovered' label: 'recovered' value: self lastRecovered)}.
-				Silk SPAN: {
-					'class' -> 'LegendDeaths'.
-					(chart legendClass: 'BarDeaths' label: 'deaths' value: self lastDeaths)}}.
-			self newButtonLogarithmic: aBoolean}.
-		chart svg.
-		Silk DIV: 'id' -> 'Tooltip'}
-!
-
-stringLogarithmic: aBoolean
-	^aBoolean
-		ifTrue: ['logarithmic']
-		ifFalse: ['linear']
 ! !
 
 !GeographicArea methodsFor: 'initialization'!
@@ -1333,8 +1523,14 @@ initializeName: aString series: aDataseries properties: aDictionary
 
 allFromJHUJson: aJson
 	"<Array of: GeographicArea>"
-	
-	^self allFromJHUSeries: (aJson collect: [:countryJson | JHUSeries fromJson: countryJson])
+
+	| modificationDate countries |
+	modificationDate := (aJson meta at: #modificationDate)
+		ifNotNil: [:date | Date fromString: date]
+		ifNil: [Date now].
+	countries := self allFromJHUSeries: (aJson data collect: [:countryJson | JHUSeries fromJson: countryJson]).
+	countries do: [:country | country modificationDate: modificationDate].
+	^countries
 !
 
 allFromJHUSeries: someSeries
@@ -1346,7 +1542,13 @@ allFromJHUSeries: someSeries
 allFromRKIJson: aJson
 	"<Array of: GeographicArea>"
 	
-	^self allFromRKISeries: (aJson collect: [:countryJson | RKISeries fromJson: countryJson])
+	| modificationDate countries |
+	modificationDate := (aJson meta at: #modificationDate)
+		ifNotNil: [:date | Date fromString: date]
+		ifNil: [Date now].
+	countries := self allFromRKISeries: (aJson data collect: [:countryJson | RKISeries fromJson: countryJson]).
+	countries do: [:country | country modificationDate: modificationDate].
+	^countries
 !
 
 allFromRKISeries: someSeries
@@ -1942,6 +2144,14 @@ country: aCountryString state: aStateString latLong: aLatLongPoint series: aData
 !
 
 fromJson: aJson
+	^self 
+		country: aJson country 
+		state: aJson state 
+		latLong: aJson latLong 
+		series: (Dataseries series: (aJson series collect: [:json | JHUDatapoint fromJson: json]))
+!
+
+fromJson: aJson at: aDate
 	^self 
 		country: aJson country 
 		state: aJson state 

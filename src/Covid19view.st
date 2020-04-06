@@ -33,15 +33,21 @@ datescale
 	"<Datescale>"
 	
 	^datescale ifNil: [
-		datescale := Datescale from: self firstDate to: self lastDate]
+		datescale := Datescale from: self firstDate to: CoViD19 lastDate]
+!
+
+days
+	"<Integer>"
+	
+	^self datescale days
 !
 
 firstDate
-	^self series firstDate
+	^Date fromMilliseconds: self series firstDate asMilliseconds - (24 * 60 * 60 * 1000)
 !
 
 lastDate
-	^self series lastDate
+	^self datescale to
 !
 
 linearValuescale
@@ -268,7 +274,7 @@ chartAreaIn: aSVG
 	
 	| chartArea barWidth |
 	chartArea := self graphicsArea.
-	barWidth := self chartWidth / self datapoints size.
+	barWidth := self chartWidth / self days.
 	self datapoints do: [:datapoint |
 		chartArea << (self barForDatapoint: datapoint width: barWidth)].
 	aSVG << chartArea.
@@ -452,8 +458,7 @@ html
 				'class' -> 'ScalingButton'.
 				'type' -> 'button'.
 				(self stringLogarithmic: self class logarithmic not)}) on: #click bind: [self toggleValuescale]}.
-		self svg.
-		Silk DIV: 'id' -> 'Tooltip'}
+		self svg}
 !
 
 legendButtonConfirmed
@@ -568,8 +573,7 @@ html
 				'class' -> 'ScalingButton'.
 				'type' -> 'button'.
 				(self stringLogarithmic: self class logarithmic not)}) on: #click bind: [self toggleValuescale]}.
-		self svg.
-		Silk DIV: 'id' -> 'Tooltip'}
+		self svg}
 !
 
 legendButtonRelative
@@ -691,7 +695,7 @@ lastDate
 	"<Date>
 	the most recent date in the data"
 	
-	^self countries inject: (Date d: 1 m: 1 y: 2020) into: [:latest :country | latest max: country lastDate]
+	^self world lastDate
 !
 
 metadata
@@ -700,6 +704,13 @@ metadata
 	self countries isEmpty ifTrue: [
 		^Dictionary new].
 	^self countries first metadata
+!
+
+world
+	"<Country>
+	the root of the country tree"
+	
+	^self countries first
 ! !
 
 !CoViD19 methodsFor: 'action'!
@@ -798,6 +809,13 @@ current
 	^current ifNil: [current := self new]
 !
 
+lastDate
+	"<Date>
+	the last date in the data"
+	
+	^self current lastDate
+!
+
 metadata
 	"<Dictionary>"
 	
@@ -827,11 +845,7 @@ serverName
 !
 
 serverNameAnchor
-	^Silk A: {
-		'href' -> 'https://github.com/ChristianHaider/CoViD19UI'.
-		'target' -> '_blank'.
-		'rel' -> 'noopener'.
-		self serverName, ' ', self serverVersion}
+	^Silk SPAN: self serverName, ' ', self serverVersion
 !
 
 serverVersion
@@ -949,6 +963,14 @@ changeFrom: aDatapoint
 	new Datapoint with the change from aDatapoint"
 	
 	^self subclassResponsibility
+! !
+
+!Datapoint methodsFor: 'converting'!
+
+asZero
+	"<Datapoint>"
+	
+	^self class date: self date confirmed: 0 deaths: 0
 ! !
 
 !Datapoint methodsFor: 'copying'!
@@ -1113,6 +1135,12 @@ changeFrom: aDatapoint
 		recovered: self recovered - aDatapoint recovered
 ! !
 
+!JHUDatapoint methodsFor: 'converting'!
+
+asZero
+	^self class date: self date confirmed: 0 deaths: 0 recovered: 0
+! !
+
 !JHUDatapoint methodsFor: 'copying'!
 
 copyWithDate: aDate
@@ -1246,6 +1274,12 @@ changeFrom: aDatapoint
 	^self class date: self date byAge: newByAge
 ! !
 
+!RKIDatapoint methodsFor: 'converting'!
+
+asZero
+	^self class date: self date byAge: Dictionary new
+! !
+
 !RKIDatapoint methodsFor: 'copying'!
 
 copyWithDate: aDate
@@ -1301,7 +1335,13 @@ Object subclass: #Dataseries
 
 !Dataseries methodsFor: 'accessing'!
 
-changes
+caseSeries
+	"<Dataseries>"
+	
+	^self
+!
+
+changeSeries
 	"<Dataseries>"
 	
 	| wst rst last |
@@ -1311,8 +1351,9 @@ changes
 	[rst atEnd] whileFalse: [
 		| datapoint | 
 		datapoint := rst next.
-		last ifNotNil: [
-			wst nextPut: (datapoint changeFrom: last)].
+		wst nextPut: (last 
+			ifNil: [datapoint]
+			ifNotNil: [datapoint changeFrom: last]).
 		last := datapoint].
 	^self class series: wst contents
 !
@@ -1391,13 +1432,26 @@ series
 + aDataseries
 	"<Dataseries>"
 
-	| wst |
+	| wst lastSelf lastArg |
 	wst := OrderedCollection new writeStream.
+	lastSelf := nil.
+	lastArg := nil.
 	self
 		with: aDataseries
-		onlyInSelf: [:datapoint | wst nextPut: datapoint]
-		onlyInArg: [:datapoint | wst nextPut: datapoint]
-		inBoth: [:datapoint1 :datapoint2 | wst nextPut: datapoint1 + datapoint2].
+		onlyInSelf: [:datapoint | 
+			| lastOther |
+			lastOther := lastArg ifNil: [datapoint asZero].
+			wst nextPut: datapoint + (lastOther copyWithDate: datapoint date). 
+			lastSelf := datapoint]
+		onlyInArg: [:datapoint | 
+			| lastOther |
+			lastOther := lastSelf ifNil: [datapoint asZero].
+			wst nextPut: datapoint + (lastOther copyWithDate: datapoint date). 
+			lastArg := datapoint]
+		inBoth: [:datapoint1 :datapoint2 | 
+			wst nextPut: datapoint1 + datapoint2.
+			lastSelf := datapoint1.
+			lastArg := datapoint2].
 	^self class series: wst contents
 !
 
@@ -1449,10 +1503,16 @@ Object subclass: #GeographicArea
 
 !GeographicArea methodsFor: 'accessing'!
 
-changes
+caseSeries
 	"<Dataseries>"
 	
-	^self series changes
+	^self series caseSeries
+!
+
+changeSeries
+	"<Dataseries>"
+	
+	^self series changeSeries
 !
 
 dataDateString
@@ -1574,7 +1634,8 @@ recreateCharts
 	graphics << {
 		self graphicsHeader.
 	 	self casechart.
-	 	self changechart}
+	 	self changechart.
+		Silk DIV: 'id' -> 'Tooltip'}
 !
 
 showInfo
@@ -1650,13 +1711,13 @@ asValueSpan
 casechart
 	^Silk DIV: {
 		'id' -> 'Casechart'.
-		(Casechart for: self on: self series aspects: Casechart currentAspects) html}
+		(Casechart for: self on: self caseSeries aspects: Casechart currentAspects) html}
 !
 
 changechart
 	^Silk DIV: {
 		'id' -> 'Changechart'.
-		(Changechart for: self on: self changes aspects: Changechart currentAspects) html}
+		(Changechart for: self on: self changeSeries aspects: Changechart currentAspects) html}
 !
 
 emptySpan
@@ -2093,6 +2154,14 @@ Scale subclass: #Datescale
 	slots: {}
 	package: 'Covid19view'!
 
+!Datescale methodsFor: 'accessing'!
+
+days
+	"<Integer>"
+	
+	^(self range / Date new millisecondsInDay) rounded
+! !
+
 Scale subclass: #Valuescale
 	slots: {#logarithmic}
 	package: 'Covid19view'!
@@ -2507,10 +2576,22 @@ asLocaleDateString
 	<inlineJS: 'return self.toLocaleDateString()'>
 !
 
+dayBefore
+	^self class fromMilliseconds: self asMilliseconds - self millisecondsInDay
+!
+
 max: aDate
 	aDate > self ifTrue: [
 		^aDate].
 	^self
+!
+
+millisecondsInDay
+	^1000 * 60 * 60 * 24
+!
+
+nextDay
+	^self class fromMilliseconds: self asMilliseconds + self millisecondsInDay
 ! !
 
 !Date class methodsFor: '*Covid19view'!

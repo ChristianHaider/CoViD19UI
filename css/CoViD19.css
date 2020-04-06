@@ -148,6 +148,8 @@ li {
 }
 
 #Graphics {
+	overflow-x: auto;
+	overflow-y: hidden;
 	background: #ffede0;		
 }
 
@@ -162,6 +164,7 @@ li {
 }
 
 #Casechart {
+	
 }
 
 #Changechart {

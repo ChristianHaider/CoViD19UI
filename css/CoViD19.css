@@ -3,9 +3,9 @@ body {
 
 #Contents {
 	display: grid;
-	grid-template-columns: auto 1fr;
+	grid-template-columns: auto auto;
 	grid-template-rows: min-content 1fr min-content;
-	min-height: 98vh;
+	height: 98vh;
 	margin: 0em;
 }
 
@@ -15,6 +15,18 @@ header {
 	display: grid;
 	grid-template-columns: auto auto;
 	background: #F1F3F4;
+}
+
+footer {
+	grid-column: 1 / span 2;
+	grid-row:    3;	
+	display: grid;
+	grid-template-columns: auto auto;
+	background: #e4ebf2;
+}
+
+#ServerVersion {
+	justify-self: end;
 }
 
 h1 {
@@ -53,6 +65,7 @@ li {
 	grid-column: 1;
 	display: grid;
 	grid-template-columns: auto auto auto auto;
+	overflow-y: auto;
 }
 
 #CountryList button {
@@ -136,6 +149,16 @@ li {
 
 #Graphics {
 	background: #ffede0;		
+}
+
+.GraphicsHeader {
+	display: grid;
+	grid-template-columns: auto auto;
+}
+
+.AreaInfo {
+	justify-self: end;
+	align-self: center;
 }
 
 #Casechart {
@@ -302,6 +325,7 @@ svg {
 }
 
 header,
+footer,
 #CountryList,
 #Graphics {
 	border-radius: 0px 0.5em 0.5em;

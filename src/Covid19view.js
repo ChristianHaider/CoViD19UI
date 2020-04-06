@@ -2636,63 +2636,254 @@ return self;
 $globals.Changechart.a$cls);
 
 
-$core.addClass("CoViD19", $globals.Object, ["countries"], "Covid19view");
+$core.addClass("Casecount", $globals.Object, ["confirmed", "deaths"], "Covid19view");
 $core.addMethod(
 $core.method({
-selector: "addContentsTo:",
-protocol: "html",
+selector: "+",
+protocol: "arithmetic",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aDiv"],
-source: "addContentsTo: aDiv\x0a\x09aDiv << {\x0a\x09\x09self header.\x0a\x09\x09Silk DIV: {\x0a\x09\x09\x09'id' -> 'CountryList'.\x0a\x09\x09\x09Silk DIV: {\x0a\x09\x09\x09\x09'id' -> 'CountryList'.\x0a\x09\x09\x09\x09'Loading data...'}}.\x0a\x09\x09Silk DIV: 'id' -> 'Graphics'}",
-referencedClasses: ["Silk"],
+args: ["aCasecount"],
+source: "+ aCasecount\x0a\x09\x22<Casecount>\x22\x0a\x09\x0a\x09^self class \x0a\x09\x09confirmed: self confirmed + aCasecount confirmed\x0a\x09\x09deaths: self deaths + aCasecount deaths",
+referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["<<", "header", "DIV:", "->"]
-}, function ($methodClass){ return function (aDiv){
+messageSends: ["confirmed:deaths:", "class", "+", "confirmed", "deaths"]
+}, function ($methodClass){ return function (aCasecount){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $2,$5,$8,$7,$6,$4,$3,$1;
-$2=$self._header();
-$5="id".__minus_gt("CountryList");
+var $1,$3,$2,$5,$4;
+$1=$self._class();
+$3=$self._confirmed();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=1;
+$ctx1.sendIdx["confirmed"]=1;
 //>>excludeEnd("ctx");
-$8="id".__minus_gt("CountryList");
+$2=$recv($3).__plus($recv(aCasecount)._confirmed());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=2;
+$ctx1.sendIdx["+"]=1;
 //>>excludeEnd("ctx");
-$7=[$8,"Loading data..."];
-$6=$recv($globals.Silk)._DIV_($7);
+$5=$self._deaths();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["DIV:"]=2;
+$ctx1.sendIdx["deaths"]=1;
 //>>excludeEnd("ctx");
-$4=[$5,$6];
-$3=$recv($globals.Silk)._DIV_($4);
+$4=$recv($5).__plus($recv(aCasecount)._deaths());
+return $recv($1)._confirmed_deaths_($2,$4);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["DIV:"]=1;
-//>>excludeEnd("ctx");
-$1=[$2,$3,$recv($globals.Silk)._DIV_("id".__minus_gt("Graphics"))];
-$recv(aDiv).__lt_lt($1);
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"addContentsTo:",{aDiv:aDiv})});
+}, function($ctx1) {$ctx1.fill(self,"+",{aCasecount:aCasecount})});
 //>>excludeEnd("ctx");
 }; }),
-$globals.CoViD19);
+$globals.Casecount);
 
+$core.addMethod(
+$core.method({
+selector: "-",
+protocol: "arithmetic",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aCasecount"],
+source: "- aCasecount\x0a\x09\x22<Casecount>\x22\x0a\x09\x0a\x09^self class \x0a\x09\x09confirmed: self confirmed - aCasecount confirmed\x0a\x09\x09deaths: self deaths - aCasecount deaths",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["confirmed:deaths:", "class", "-", "confirmed", "deaths"]
+}, function ($methodClass){ return function (aCasecount){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$3,$2,$5,$4;
+$1=$self._class();
+$3=$self._confirmed();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["confirmed"]=1;
+//>>excludeEnd("ctx");
+$2=$recv($3).__minus($recv(aCasecount)._confirmed());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["-"]=1;
+//>>excludeEnd("ctx");
+$5=$self._deaths();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["deaths"]=1;
+//>>excludeEnd("ctx");
+$4=$recv($5).__minus($recv(aCasecount)._deaths());
+return $recv($1)._confirmed_deaths_($2,$4);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"-",{aCasecount:aCasecount})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Casecount);
+
+$core.addMethod(
+$core.method({
+selector: "aspects",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "aspects\x0a\x09\x22<Array of: Symbol>\x22\x0a\x09\x0a\x09^#(#confirmed #deaths)",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return ["confirmed", "deaths"];
+
+}; }),
+$globals.Casecount);
+
+$core.addMethod(
+$core.method({
+selector: "confirmed",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "confirmed\x0a\x09\x22<Integer>\x22\x0a\x0a\x09^confirmed",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return $self.confirmed;
+
+}; }),
+$globals.Casecount);
+
+$core.addMethod(
+$core.method({
+selector: "deaths",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "deaths\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09^deaths",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return $self.deaths;
+
+}; }),
+$globals.Casecount);
+
+$core.addMethod(
+$core.method({
+selector: "initializeConfirmed:deaths:",
+protocol: "initialization",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aConfirmedInteger", "aDeathsInteger"],
+source: "initializeConfirmed: aConfirmedInteger deaths: aDeathsInteger\x0a\x09confirmed := aConfirmedInteger.\x0a\x09deaths := aDeathsInteger",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (aConfirmedInteger,aDeathsInteger){
+var self=this,$self=this;
+$self.confirmed=aConfirmedInteger;
+$self.deaths=aDeathsInteger;
+return self;
+
+}; }),
+$globals.Casecount);
+
+
+$core.addMethod(
+$core.method({
+selector: "confirmed:deaths:",
+protocol: "instance creation",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aConfirmedInteger", "aDeathsInteger"],
+source: "confirmed: aConfirmedInteger deaths: aDeathsInteger\x0a\x09| inst |\x0a\x09inst := self new.\x0a\x09inst initializeConfirmed: aConfirmedInteger deaths: aDeathsInteger.\x0a\x09^inst",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["new", "initializeConfirmed:deaths:"]
+}, function ($methodClass){ return function (aConfirmedInteger,aDeathsInteger){
+var self=this,$self=this;
+var inst;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+inst=$self._new();
+$recv(inst)._initializeConfirmed_deaths_(aConfirmedInteger,aDeathsInteger);
+return inst;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"confirmed:deaths:",{aConfirmedInteger:aConfirmedInteger,aDeathsInteger:aDeathsInteger,inst:inst})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Casecount.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "fromJson:",
+protocol: "instance creation",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aJson"],
+source: "fromJson: aJson\x0a\x09^self \x0a\x09\x09confirmed: (aJson at: #c ifAbsent: [0])\x0a\x09\x09deaths: (aJson at: #d ifAbsent: [0])",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["confirmed:deaths:", "at:ifAbsent:"]
+}, function ($methodClass){ return function (aJson){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1;
+$1=$recv(aJson)._at_ifAbsent_("c",(function(){
+return (0);
+
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["at:ifAbsent:"]=1;
+//>>excludeEnd("ctx");
+return $self._confirmed_deaths_($1,$recv(aJson)._at_ifAbsent_("d",(function(){
+return (0);
+
+})));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"fromJson:",{aJson:aJson})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Casecount.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "zero",
+protocol: "instance creation",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "zero\x0a\x09^self confirmed: 0 deaths: 0",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["confirmed:deaths:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $self._confirmed_deaths_((0),(0));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"zero",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Casecount.a$cls);
+
+
+$core.addClass("CoViD19", $globals.Object, ["countries"], "Covid19view");
 $core.addMethod(
 $core.method({
 selector: "augmentPage",
 protocol: "html",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "augmentPage\x0a\x09Silk new \x0a\x09\x09reset;\x0a\x09\x09DIV: self newContents.\x0a\x09self getData",
+source: "augmentPage\x0a\x09Silk new \x0a\x09\x09reset;\x0a\x09\x09DIV: {'id' -> 'Contents'. self pageContent}.\x0a\x09self getData",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["reset", "new", "DIV:", "newContents", "getData"]
+messageSends: ["reset", "new", "DIV:", "->", "pageContent", "getData"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -2701,7 +2892,7 @@ return $core.withContext(function($ctx1) {
 var $1;
 $1=$recv($globals.Silk)._new();
 $recv($1)._reset();
-$recv($1)._DIV_($self._newContents());
+$recv($1)._DIV_(["id".__minus_gt("Contents"),$self._pageContent()]);
 $self._getData();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -2745,7 +2936,7 @@ selector: "dataHome",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "dataHome\x0a\x09\x22<String>\x0a\x09the directory with all data files\x22\x0a\x09\x0a\x09^'https://covidcrt.uber.space/data/'",
+source: "dataHome\x0a\x09\x22<String>\x0a\x09the directory with all data files\x22\x0a\x0a\x09^'https://covidcrt.uber.space/data/'",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -2759,26 +2950,62 @@ $globals.CoViD19);
 
 $core.addMethod(
 $core.method({
-selector: "getData",
-protocol: "action",
+selector: "footer",
+protocol: "html",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "getData\x0a\x09self withAllJsons: #('CoViD-19_JHU.json' 'CoViD-19_RKI.json') do: [:jsons |\x0a\x09\x09jsons asArgumentsIn: [:jhuJson :rkiJson |\x0a\x09\x09\x09| germany |\x0a\x09\x09\x09countries := Country allFromJHUJson: jhuJson.\x0a\x09\x09\x09germany := countries detect: [:country | country name = 'Germany'].\x0a\x09\x09\x09germany addGermanStates: (Country allFromRKIJson: rkiJson).\x0a\x09\x09\x09self showCountries]]",
-referencedClasses: ["Country"],
+source: "footer\x0a\x09^Silk FOOTER: {\x0a\x09\x09Silk SPAN: {self class softwareVersionInfo}.\x0a\x09\x09Silk SPAN: {'id' -> 'ServerVersion'. self class serverVersionInfo}}",
+referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["withAllJsons:do:", "asArgumentsIn:", "allFromJHUJson:", "detect:", "=", "name", "addGermanStates:", "allFromRKIJson:", "showCountries"]
+messageSends: ["FOOTER:", "SPAN:", "softwareVersionInfo", "class", "->", "serverVersionInfo"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-$self._withAllJsons_do_(["CoViD-19_JHU.json", "CoViD-19_RKI.json"],(function(jsons){
+var $5,$4,$3,$2,$1;
+$5=$self._class();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["class"]=1;
+//>>excludeEnd("ctx");
+$4=$recv($5)._softwareVersionInfo();
+$3=[$4];
+$2=$recv($globals.Silk)._SPAN_($3);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=1;
+//>>excludeEnd("ctx");
+$1=[$2,$recv($globals.Silk)._SPAN_(["id".__minus_gt("ServerVersion"),$recv($self._class())._serverVersionInfo()])];
+return $recv($globals.Silk)._FOOTER_($1);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"footer",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19);
+
+$core.addMethod(
+$core.method({
+selector: "getData",
+protocol: "action",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "getData\x0a\x09self withAllJsons: #('CoViD-19_JHU.json' 'CoViD-19_US_JHU.json' 'CoViD-19_RKI.json') do: [:jsons |\x0a\x09\x09jsons asArgumentsIn: [:jhuJson :jhuUSJson :rkiJson |\x0a\x09\x09\x09| us germany |\x0a\x09\x09\x09countries := Country allFromJHUJson: jhuJson.\x0a\x09\x09\x09germany := countries detect: [:country | country name = 'Germany'].\x0a\x09\x09\x09germany parts addAll: ((Country allFromRKIJson: rkiJson) sort: [:a :b | a > b]).\x0a\x09\x09\x09us := countries detect: [:country | country name = 'US'].\x0a\x09\x09\x09us parts addAll: (Country allFromUSJHUJson: jhuUSJson).\x0a\x09\x09\x09self showCountries.\x0a\x09\x09\x09self updateFooter]]",
+referencedClasses: ["Country"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["withAllJsons:do:", "asArgumentsIn:", "allFromJHUJson:", "detect:", "=", "name", "addAll:", "parts", "sort:", "allFromRKIJson:", ">", "allFromUSJHUJson:", "showCountries", "updateFooter"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$2;
+$self._withAllJsons_do_(["CoViD-19_JHU.json", "CoViD-19_US_JHU.json", "CoViD-19_RKI.json"],(function(jsons){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-return $recv(jsons)._asArgumentsIn_((function(jhuJson,rkiJson){
-var germany;
+return $recv(jsons)._asArgumentsIn_((function(jhuJson,jhuUSJson,rkiJson){
+var us,germany;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx3) {
 //>>excludeEnd("ctx");
@@ -2787,15 +3014,51 @@ germany=$recv($self.countries)._detect_((function(country){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx4) {
 //>>excludeEnd("ctx");
-return $recv($recv(country)._name()).__eq("Germany");
+$1=$recv(country)._name();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx4.sendIdx["name"]=1;
+//>>excludeEnd("ctx");
+return $recv($1).__eq("Germany");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx4.sendIdx["="]=1;
+//>>excludeEnd("ctx");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx4) {$ctx4.fillBlock({country:country},$ctx3,3)});
 //>>excludeEnd("ctx");
 }));
-$recv(germany)._addGermanStates_($recv($globals.Country)._allFromRKIJson_(rkiJson));
-return $self._showCountries();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({jhuJson:jhuJson,rkiJson:rkiJson,germany:germany},$ctx2,2)});
+$ctx3.sendIdx["detect:"]=1;
+//>>excludeEnd("ctx");
+$2=$recv(germany)._parts();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx3.sendIdx["parts"]=1;
+//>>excludeEnd("ctx");
+$recv($2)._addAll_($recv($recv($globals.Country)._allFromRKIJson_(rkiJson))._sort_((function(a,b){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx4) {
+//>>excludeEnd("ctx");
+return $recv(a).__gt(b);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx4) {$ctx4.fillBlock({a:a,b:b},$ctx3,4)});
+//>>excludeEnd("ctx");
+})));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx3.sendIdx["addAll:"]=1;
+//>>excludeEnd("ctx");
+us=$recv($self.countries)._detect_((function(country){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx4) {
+//>>excludeEnd("ctx");
+return $recv($recv(country)._name()).__eq("US");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx4) {$ctx4.fillBlock({country:country},$ctx3,5)});
+//>>excludeEnd("ctx");
+}));
+$recv($recv(us)._parts())._addAll_($recv($globals.Country)._allFromUSJHUJson_(jhuUSJson));
+$self._showCountries();
+return $self._updateFooter();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({jhuJson:jhuJson,jhuUSJson:jhuUSJson,rkiJson:rkiJson,us:us,germany:germany},$ctx2,2)});
 //>>excludeEnd("ctx");
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -2815,11 +3078,11 @@ selector: "header",
 protocol: "html",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "header\x0a\x09^Silk HEADER: {\x0a\x09\x09Silk H1: {\x0a\x09\x09\x09Silk DIV: 'CoViD-19 Charts'. \x0a\x09\x09\x09Silk DIV: {'class' -> 'Subtitle'. 'Do not trust the numbers!'}}.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'id' -> 'Versions'.\x0a\x09\x09\x09self class softwareVersionInfo}}",
+source: "header\x0a\x09^Silk HEADER: {\x0a\x09\x09Silk H1: {\x0a\x09\x09\x09Silk DIV: 'CoViD-19 Charts'. \x0a\x09\x09\x09Silk DIV: {'class' -> 'Subtitle'. 'Do not trust the numbers!'}}.\x0a\x09\x09Silk SPAN: 'id' -> 'Versions'}",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["HEADER:", "H1:", "DIV:", "->", "SPAN:", "softwareVersionInfo", "class"]
+messageSends: ["HEADER:", "H1:", "DIV:", "->", "SPAN:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -2838,7 +3101,7 @@ $6=[$7,"Do not trust the numbers!"];
 $5=$recv($globals.Silk)._DIV_($6);
 $3=[$4,$5];
 $2=$recv($globals.Silk)._H1_($3);
-$1=[$2,$recv($globals.Silk)._SPAN_(["id".__minus_gt("Versions"),$recv($self._class())._softwareVersionInfo()])];
+$1=[$2,$recv($globals.Silk)._SPAN_("id".__minus_gt("Versions"))];
 return $recv($globals.Silk)._HEADER_($1);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"header",{})});
@@ -2879,26 +3142,70 @@ $globals.CoViD19);
 
 $core.addMethod(
 $core.method({
-selector: "newContents",
-protocol: "html",
+selector: "metadata",
+protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "newContents\x0a\x09\x22<DIV>\x22\x0a\x09\x0a\x09| contents |\x0a\x09contents := Silk DIV: {'id' -> 'Contents'}.\x0a\x09self addContentsTo: contents.\x0a\x09^contents",
-referencedClasses: ["Silk"],
+source: "metadata\x0a\x09\x22<Dictionary>\x22\x0a\x09\x0a\x09self countries isEmpty ifTrue: [\x0a\x09\x09^Dictionary new].\x0a\x09^self countries first metadata",
+referencedClasses: ["Dictionary"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["DIV:", "->", "addContentsTo:"]
+messageSends: ["ifTrue:", "isEmpty", "countries", "new", "metadata", "first"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
-var contents;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-contents=$recv($globals.Silk)._DIV_(["id".__minus_gt("Contents")]);
-$self._addContentsTo_(contents);
-return contents;
+var $2,$1;
+$2=$self._countries();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"newContents",{contents:contents})});
+$ctx1.sendIdx["countries"]=1;
+//>>excludeEnd("ctx");
+$1=$recv($2)._isEmpty();
+if($core.assert($1)){
+return $recv($globals.Dictionary)._new();
+}
+return $recv($recv($self._countries())._first())._metadata();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"metadata",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19);
+
+$core.addMethod(
+$core.method({
+selector: "pageContent",
+protocol: "html",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "pageContent\x0a\x09^{\x09self header.\x0a\x09\x09Silk DIV: {\x0a\x09\x09\x09'id' -> 'CountryList'.\x0a\x09\x09\x09Silk DIV: {\x0a\x09\x09\x09\x09'Loading data... the World, US, Germany... hold on...'.\x0a\x09\x09\x09\x09'(can your browser make it?)'}}.\x0a\x09\x09Silk DIV: 'id' -> 'Graphics'.\x0a\x09\x09self footer}",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["header", "DIV:", "->", "footer"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$4,$5,$3,$2;
+$1=$self._header();
+$4="id".__minus_gt("CountryList");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=1;
+//>>excludeEnd("ctx");
+$5=$recv($globals.Silk)._DIV_(["Loading data... the World, US, Germany... hold on...","(can your browser make it?)"]);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["DIV:"]=2;
+//>>excludeEnd("ctx");
+$3=[$4,$5];
+$2=$recv($globals.Silk)._DIV_($3);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["DIV:"]=1;
+//>>excludeEnd("ctx");
+return [$1,$2,$recv($globals.Silk)._DIV_("id".__minus_gt("Graphics")),$self._footer()];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"pageContent",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19);
@@ -2909,11 +3216,11 @@ selector: "resetContents",
 protocol: "initialize / release",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "resetContents\x0a\x09| contents |\x0a\x09contents := '#Contents' asSilk.\x0a\x09contents resetContents.\x0a\x09self addContentsTo: contents.\x0a\x09self showCountries",
+source: "resetContents\x0a\x09| contents |\x0a\x09contents := '#Contents' asSilk.\x0a\x09contents resetContents.\x0a\x09contents << self pageContent.\x0a\x09self showCountries",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["asSilk", "resetContents", "addContentsTo:", "showCountries"]
+messageSends: ["asSilk", "resetContents", "<<", "pageContent", "showCountries"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 var contents;
@@ -2922,7 +3229,7 @@ return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 contents="#Contents"._asSilk();
 $recv(contents)._resetContents();
-$self._addContentsTo_(contents);
+$recv(contents).__lt_lt($self._pageContent());
 $self._showCountries();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -2968,6 +3275,33 @@ $recv($recv($self._countries())._first())._selectWorld();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"showCountries",{list:list})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19);
+
+$core.addMethod(
+$core.method({
+selector: "updateFooter",
+protocol: "html",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "updateFooter\x0a\x09| element |\x0a\x09element := '#ServerVersion' asSilk.\x0a\x09element resetContents.\x0a\x09element << self class serverVersionInfo",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["asSilk", "resetContents", "<<", "serverVersionInfo", "class"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+var element;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+element="#ServerVersion"._asSilk();
+$recv(element)._resetContents();
+$recv(element).__lt_lt($recv($self._class())._serverVersionInfo());
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"updateFooter",{element:element})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19);
@@ -3080,6 +3414,29 @@ $globals.CoViD19.a$cls);
 
 $core.addMethod(
 $core.method({
+selector: "metadata",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "metadata\x0a\x09\x22<Dictionary>\x22\x0a\x09\x0a\x09^self current metadata",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["metadata", "current"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._current())._metadata();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"metadata",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19.a$cls);
+
+$core.addMethod(
+$core.method({
 selector: "programModificationDate",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -3097,6 +3454,173 @@ return $core.withContext(function($ctx1) {
 return $recv($globals.Date)._fromMilliseconds_(appTimestamp);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"programModificationDate",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "serverModificationDate",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "serverModificationDate\x0a\x09\x22<Date>\x22\x0a\x09\x0a\x09(self metadata at: #softwareTimestamp ifAbsent: [nil]) ifNotNil: [:date | \x0a\x09\x09^Date fromString: date].\x0a\x09^Date now",
+referencedClasses: ["Date"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifNotNil:", "at:ifAbsent:", "metadata", "fromString:", "now"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$receiver;
+$1=$recv($self._metadata())._at_ifAbsent_("softwareTimestamp",(function(){
+return nil;
+
+}));
+if(($receiver = $1) == null || $receiver.a$nil){
+$1;
+} else {
+var date;
+date=$receiver;
+return $recv($globals.Date)._fromString_(date);
+}
+return $recv($globals.Date)._now();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"serverModificationDate",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "serverName",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "serverName\x0a\x09\x22<String>\x22\x0a\x09\x0a\x09^self metadata at: #softwareName ifAbsent: ['']",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["at:ifAbsent:", "metadata"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._metadata())._at_ifAbsent_("softwareName",(function(){
+return "";
+
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"serverName",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "serverNameAnchor",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "serverNameAnchor\x0a\x09^Silk A: {\x0a\x09\x09'href' -> 'https://github.com/ChristianHaider/CoViD19UI'.\x0a\x09\x09'target' -> '_blank'.\x0a\x09\x09'rel' -> 'noopener'.\x0a\x09\x09self serverName, ' ', self serverVersion}",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["A:", "->", ",", "serverName", "serverVersion"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $2,$3,$4,$5,$1;
+$2="href".__minus_gt("https://github.com/ChristianHaider/CoViD19UI");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=1;
+//>>excludeEnd("ctx");
+$3="target".__minus_gt("_blank");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=2;
+//>>excludeEnd("ctx");
+$4="rel".__minus_gt("noopener");
+$5=$recv($recv($self._serverName()).__comma(" ")).__comma($self._serverVersion());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx[","]=1;
+//>>excludeEnd("ctx");
+$1=[$2,$3,$4,$5];
+return $recv($globals.Silk)._A_($1);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"serverNameAnchor",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "serverVersion",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "serverVersion\x0a\x09\x22<String>\x22\x0a\x09\x0a\x09^self metadata at: #softwareVersion ifAbsent: ['']",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["at:ifAbsent:", "metadata"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._metadata())._at_ifAbsent_("softwareVersion",(function(){
+return "";
+
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"serverVersion",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "serverVersionInfo",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "serverVersionInfo\x0a\x09^{\x09Silk SPAN: {'class' -> 'VersionLabel'. 'Data collector:'}.\x0a\x09\x09Silk SPAN: {'class' -> 'VersionName'. self serverNameAnchor}.\x0a\x09\x09Silk SPAN: {'class' -> 'VersionDate'. self serverModificationDate asLocaleString}}",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["SPAN:", "->", "serverNameAnchor", "asLocaleString", "serverModificationDate"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $3,$2,$1,$6,$5,$4;
+$3="class".__minus_gt("VersionLabel");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=1;
+//>>excludeEnd("ctx");
+$2=[$3,"Data collector:"];
+$1=$recv($globals.Silk)._SPAN_($2);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=1;
+//>>excludeEnd("ctx");
+$6="class".__minus_gt("VersionName");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=2;
+//>>excludeEnd("ctx");
+$5=[$6,$self._serverNameAnchor()];
+$4=$recv($globals.Silk)._SPAN_($5);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=2;
+//>>excludeEnd("ctx");
+return [$1,$4,$recv($globals.Silk)._SPAN_(["class".__minus_gt("VersionDate"),$recv($self._serverModificationDate())._asLocaleString()])];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"serverVersionInfo",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19.a$cls);
@@ -3140,7 +3664,7 @@ selector: "softwareVersionInfo",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "softwareVersionInfo\x0a\x09^{\x09Silk SPAN: {'class' -> 'VersionLabel'. 'Software:'}.\x0a\x09\x09Silk SPAN: {'class' -> 'VersionName'. self softwareNameAnchor}.\x0a\x09\x09Silk SPAN: {'class' -> 'VersionDate'. self programModificationDate asLocaleString}}",
+source: "softwareVersionInfo\x0a\x09^{\x09Silk SPAN: {'class' -> 'VersionLabel'. 'Browser app:'}.\x0a\x09\x09Silk SPAN: {'class' -> 'VersionName'. self softwareNameAnchor}.\x0a\x09\x09Silk SPAN: {'class' -> 'VersionDate'. self programModificationDate asLocaleString}}",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -3155,7 +3679,7 @@ $3="class".__minus_gt("VersionLabel");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["->"]=1;
 //>>excludeEnd("ctx");
-$2=[$3,"Software:"];
+$2=[$3,"Browser app:"];
 $1=$recv($globals.Silk)._SPAN_($2);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["SPAN:"]=1;
@@ -3182,17 +3706,17 @@ selector: "start",
 protocol: "starting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "start\x0a  self new augmentPage",
+source: "start\x0a\x09  self current augmentPage",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["augmentPage", "new"]
+messageSends: ["augmentPage", "current"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-$recv($self._new())._augmentPage();
+$recv($self._current())._augmentPage();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"start",{})});
@@ -3221,58 +3745,6 @@ return $core.withContext(function($ctx1) {
 return $self._subclassResponsibility();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"+",{aDatapoint:aDatapoint})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Datapoint);
-
-$core.addMethod(
-$core.method({
-selector: "addToDictionary:from:",
-protocol: "arithmetic",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aDictionary", "anotherDictionary"],
-source: "addToDictionary: aDictionary from: anotherDictionary\x0a\x09\x22<Dictionary>\x22\x0a\x09\x0a\x09| dict |\x0a\x09dict := Dictionary new.\x0a\x09aDictionary keysAndValuesDo: [:string :number |\x0a\x09\x09dict at: string put: number].\x0a\x09anotherDictionary keysAndValuesDo: [:string :number |\x0a\x09\x09dict at: string put: (dict at: string ifAbsent: [0]) + number].\x0a\x09^dict",
-referencedClasses: ["Dictionary"],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["new", "keysAndValuesDo:", "at:put:", "+", "at:ifAbsent:"]
-}, function ($methodClass){ return function (aDictionary,anotherDictionary){
-var self=this,$self=this;
-var dict;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-dict=$recv($globals.Dictionary)._new();
-$recv(aDictionary)._keysAndValuesDo_((function(string,number){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $recv(dict)._at_put_(string,number);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["at:put:"]=1;
-//>>excludeEnd("ctx");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({string:string,number:number},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["keysAndValuesDo:"]=1;
-//>>excludeEnd("ctx");
-$recv(anotherDictionary)._keysAndValuesDo_((function(string,number){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $recv(dict)._at_put_(string,$recv($recv(dict)._at_ifAbsent_(string,(function(){
-return (0);
-
-}))).__plus(number));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({string:string,number:number},$ctx1,2)});
-//>>excludeEnd("ctx");
-}));
-return dict;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"addToDictionary:from:",{aDictionary:aDictionary,anotherDictionary:anotherDictionary,dict:dict})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Datapoint);
@@ -3330,6 +3802,29 @@ $globals.Datapoint);
 
 $core.addMethod(
 $core.method({
+selector: "changeFrom:",
+protocol: "arithmetic",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aDatapoint"],
+source: "changeFrom: aDatapoint\x0a\x09\x22<Datapoint>\x0a\x09new Datapoint with the change from aDatapoint\x22\x0a\x09\x0a\x09^self subclassResponsibility",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["subclassResponsibility"]
+}, function ($methodClass){ return function (aDatapoint){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $self._subclassResponsibility();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"changeFrom:",{aDatapoint:aDatapoint})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Datapoint);
+
+$core.addMethod(
+$core.method({
 selector: "confirmed",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -3343,29 +3838,6 @@ messageSends: []
 var self=this,$self=this;
 return $self.confirmed;
 
-}; }),
-$globals.Datapoint);
-
-$core.addMethod(
-$core.method({
-selector: "copyDeaths",
-protocol: "copying",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "copyDeaths\x0a\x09\x22<Datapoint>\x22\x0a\x09\x0a\x09^self class date: self date confirmed: 0 deaths: self deaths",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["date:confirmed:deaths:", "class", "date", "deaths"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return $recv($self._class())._date_confirmed_deaths_($self._date(),(0),$self._deaths());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"copyDeaths",{})});
-//>>excludeEnd("ctx");
 }; }),
 $globals.Datapoint);
 
@@ -3398,7 +3870,7 @@ selector: "dataProvider",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "dataProvider\x0a\x09\x22<String>\x22\x0a\x09\x0a\x09^self subclassResponsibility",
+source: "dataProvider\x0a\x09\x22<String>\x0a\x09name of the data provider\x22\x0a\x09\x0a\x09^self subclassResponsibility",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -3411,6 +3883,29 @@ return $core.withContext(function($ctx1) {
 return $self._subclassResponsibility();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"dataProvider",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Datapoint);
+
+$core.addMethod(
+$core.method({
+selector: "dataProviderAnchor",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "dataProviderAnchor\x0a\x09\x22<a>\x0a\x09link to the data provider\x22\x0a\x09\x0a\x09^self subclassResponsibility",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["subclassResponsibility"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $self._subclassResponsibility();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"dataProviderAnchor",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Datapoint);
@@ -3470,81 +3965,6 @@ return $core.withContext(function($ctx1) {
 return $recv($self._recovered()).__plus($self._deaths());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"decided",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Datapoint);
-
-$core.addMethod(
-$core.method({
-selector: "dictionary:minus:",
-protocol: "arithmetic",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aDictionary", "anotherDictionary"],
-source: "dictionary: aDictionary minus: anotherDictionary\x0a\x09\x22<Dictionary>\x22\x0a\x09\x0a\x09| dict |\x0a\x09dict := Dictionary new.\x0a\x09aDictionary keysAndValuesDo: [:string :number |\x0a\x09\x09dict at: string put: number].\x0a\x09anotherDictionary keysAndValuesDo: [:string :number |\x0a\x09\x09dict at: string put: (dict at: string ifAbsent: [0]) - number].\x0a\x09^dict",
-referencedClasses: ["Dictionary"],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["new", "keysAndValuesDo:", "at:put:", "-", "at:ifAbsent:"]
-}, function ($methodClass){ return function (aDictionary,anotherDictionary){
-var self=this,$self=this;
-var dict;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-dict=$recv($globals.Dictionary)._new();
-$recv(aDictionary)._keysAndValuesDo_((function(string,number){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $recv(dict)._at_put_(string,number);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["at:put:"]=1;
-//>>excludeEnd("ctx");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({string:string,number:number},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["keysAndValuesDo:"]=1;
-//>>excludeEnd("ctx");
-$recv(anotherDictionary)._keysAndValuesDo_((function(string,number){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $recv(dict)._at_put_(string,$recv($recv(dict)._at_ifAbsent_(string,(function(){
-return (0);
-
-}))).__minus(number));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({string:string,number:number},$ctx1,2)});
-//>>excludeEnd("ctx");
-}));
-return dict;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"dictionary:minus:",{aDictionary:aDictionary,anotherDictionary:anotherDictionary,dict:dict})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Datapoint);
-
-$core.addMethod(
-$core.method({
-selector: "differenceTo:",
-protocol: "arithmetic",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aDatapoint"],
-source: "differenceTo: aDatapoint\x0a\x09\x22<Datapoint>\x22\x0a\x09\x0a\x09^self subclassResponsibility",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["subclassResponsibility"]
-}, function ($methodClass){ return function (aDatapoint){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return $self._subclassResponsibility();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"differenceTo:",{aDatapoint:aDatapoint})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Datapoint);
@@ -3639,6 +4059,60 @@ $globals.Datapoint);
 
 $core.addMethod(
 $core.method({
+selector: "printOn:",
+protocol: "printing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aStream"],
+source: "printOn: aStream\x0a\x09aStream \x0a\x09\x09nextPutAll: self class name;\x0a\x09\x09nextPut: $(;\x0a\x09\x09nextPutAll: self date asDateString;\x0a\x09\x09nextPutAll: ' ';\x0a\x09\x09nextPutAll: self deaths printString;\x0a\x09\x09nextPutAll: '/';\x0a\x09\x09nextPutAll: self confirmed printString;\x0a\x09\x09nextPut: $)",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["nextPutAll:", "name", "class", "nextPut:", "asDateString", "date", "printString", "deaths", "confirmed"]
+}, function ($methodClass){ return function (aStream){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1;
+$recv(aStream)._nextPutAll_($recv($self._class())._name());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["nextPutAll:"]=1;
+//>>excludeEnd("ctx");
+$recv(aStream)._nextPut_("(");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["nextPut:"]=1;
+//>>excludeEnd("ctx");
+$recv(aStream)._nextPutAll_($recv($self._date())._asDateString());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["nextPutAll:"]=2;
+//>>excludeEnd("ctx");
+$recv(aStream)._nextPutAll_(" ");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["nextPutAll:"]=3;
+//>>excludeEnd("ctx");
+$1=$recv($self._deaths())._printString();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["printString"]=1;
+//>>excludeEnd("ctx");
+$recv(aStream)._nextPutAll_($1);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["nextPutAll:"]=4;
+//>>excludeEnd("ctx");
+$recv(aStream)._nextPutAll_("/");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["nextPutAll:"]=5;
+//>>excludeEnd("ctx");
+$recv(aStream)._nextPutAll_($recv($self._confirmed())._printString());
+$recv(aStream)._nextPut_(")");
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"printOn:",{aStream:aStream})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Datapoint);
+
+$core.addMethod(
+$core.method({
 selector: "recovered",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -3688,72 +4162,19 @@ selector: "dateFromJson:",
 protocol: "reading",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aJson"],
-source: "dateFromJson: aJson\x0a\x09| days year mst month |\x0a\x09days := aJson day.\x0a\x09year := aJson year.\x0a\x09mst := #(31 29 31 30 31 30 31 31 30 31 30 31) readStream.\x0a\x09month  := 0.\x0a\x09[(days - mst peek) negative] whileFalse: [\x0a\x09\x09month := month + 1.\x0a\x09\x09days := days - mst next].\x0a\x09^self dateYear: year month: month day: days",
-referencedClasses: [],
+source: "dateFromJson: aJson\x0a\x09^Date d: aJson d m: aJson m y: aJson y",
+referencedClasses: ["Date"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["day", "year", "readStream", "whileFalse:", "negative", "-", "peek", "+", "next", "dateYear:month:day:"]
+messageSends: ["d:m:y:", "d", "m", "y"]
 }, function ($methodClass){ return function (aJson){
 var self=this,$self=this;
-var days,year,mst,month;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1;
-days=$recv(aJson)._day();
-year=$recv(aJson)._year();
-mst=[(31), (29), (31), (30), (31), (30), (31), (31), (30), (31), (30), (31)]._readStream();
-month=(0);
-$recv((function(){
+return $recv($globals.Date)._d_m_y_($recv(aJson)._d(),$recv(aJson)._m(),$recv(aJson)._y());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-$1=$recv(days).__minus($recv(mst)._peek());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["-"]=1;
-//>>excludeEnd("ctx");
-return $recv($1)._negative();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
-//>>excludeEnd("ctx");
-}))._whileFalse_((function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-month=$recv(month).__plus((1));
-days=$recv(days).__minus($recv(mst)._next());
-return days;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,2)});
-//>>excludeEnd("ctx");
-}));
-return $self._dateYear_month_day_(year,month,days);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"dateFromJson:",{aJson:aJson,days:days,year:year,mst:mst,month:month})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Datapoint.a$cls);
-
-$core.addMethod(
-$core.method({
-selector: "dateYear:month:day:",
-protocol: "reading",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aYearInteger", "aMonthInteger", "aDayInteger"],
-source: "dateYear: aYearInteger month: aMonthInteger day: aDayInteger\x0a\x09<inlineJS: 'return new Date(aYearInteger, aMonthInteger, aDayInteger)'>",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [["inlineJS:", ["return new Date(aYearInteger, aMonthInteger, aDayInteger)"]]],
-messageSends: []
-}, function ($methodClass){ return function (aYearInteger,aMonthInteger,aDayInteger){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return new Date(aYearInteger, aMonthInteger, aDayInteger);
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"dateYear:month:day:",{aYearInteger:aYearInteger,aMonthInteger:aMonthInteger,aDayInteger:aDayInteger})});
+}, function($ctx1) {$ctx1.fill(self,"dateFromJson:",{aJson:aJson})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Datapoint.a$cls);
@@ -3783,11 +4204,11 @@ $globals.Datapoint.a$cls);
 
 $core.addMethod(
 $core.method({
-selector: "newZero",
+selector: "zero",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "newZero\x0a\x09^self \x0a\x09\x09date: (Date d: 1 m: 1 y: 2020) \x0a\x09\x09confirmed: 0 \x0a\x09\x09deaths: 0",
+source: "zero\x0a\x09^self \x0a\x09\x09date: (Date d: 1 m: 1 y: 2020) \x0a\x09\x09confirmed: 0 \x0a\x09\x09deaths: 0",
 referencedClasses: ["Date"],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -3799,35 +4220,35 @@ return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 return $self._date_confirmed_deaths_($recv($globals.Date)._d_m_y_((1),(1),(2020)),(0),(0));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"newZero",{})});
+}, function($ctx1) {$ctx1.fill(self,"zero",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Datapoint.a$cls);
 
 
-$core.addClass("JHUDatapoint", $globals.Datapoint, ["recovered"], "Covid19view");
+$core.addClass("ConfirmedAndDeathsDatapoint", $globals.Datapoint, [], "Covid19view");
 $core.addMethod(
 $core.method({
 selector: "+",
 protocol: "arithmetic",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aJHUDatapoint"],
-source: "+ aJHUDatapoint\x0a\x09\x22<JHUDatapoint>\x22\x0a\x09\x0a\x09self date = aJHUDatapoint date ifFalse: [\x0a\x09\x09self error: 'the dates are not the same'].\x0a\x09^self class \x0a\x09\x09date: self date \x0a\x09\x09confirmed: self confirmed + aJHUDatapoint confirmed \x0a\x09\x09deaths: self deaths + aJHUDatapoint deaths \x0a\x09\x09recovered: self recovered + aJHUDatapoint recovered",
+args: ["aDatapoint"],
+source: "+ aDatapoint\x0a\x09\x22<JHUDatapoint>\x22\x0a\x09\x0a\x09self date = aDatapoint date ifFalse: [\x0a\x09\x09self error: 'the dates are not the same'].\x0a\x09^self class \x0a\x09\x09date: self date \x0a\x09\x09confirmed: self confirmed + aDatapoint confirmed \x0a\x09\x09deaths: self deaths + aDatapoint deaths",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifFalse:", "=", "date", "error:", "date:confirmed:deaths:recovered:", "class", "+", "confirmed", "deaths", "recovered"]
-}, function ($methodClass){ return function (aJHUDatapoint){
+messageSends: ["ifFalse:", "=", "date", "error:", "date:confirmed:deaths:", "class", "+", "confirmed", "deaths"]
+}, function ($methodClass){ return function (aDatapoint){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $2,$3,$1,$4,$5,$7,$6,$9,$8,$11,$10;
+var $2,$3,$1,$4,$5,$7,$6,$9,$8;
 $2=$self._date();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["date"]=1;
 //>>excludeEnd("ctx");
-$3=$recv(aJHUDatapoint)._date();
+$3=$recv(aDatapoint)._date();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["date"]=2;
 //>>excludeEnd("ctx");
@@ -3841,7 +4262,7 @@ $7=$self._confirmed();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["confirmed"]=1;
 //>>excludeEnd("ctx");
-$6=$recv($7).__plus($recv(aJHUDatapoint)._confirmed());
+$6=$recv($7).__plus($recv(aDatapoint)._confirmed());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["+"]=1;
 //>>excludeEnd("ctx");
@@ -3849,7 +4270,186 @@ $9=$self._deaths();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["deaths"]=1;
 //>>excludeEnd("ctx");
-$8=$recv($9).__plus($recv(aJHUDatapoint)._deaths());
+$8=$recv($9).__plus($recv(aDatapoint)._deaths());
+return $recv($4)._date_confirmed_deaths_($5,$6,$8);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"+",{aDatapoint:aDatapoint})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.ConfirmedAndDeathsDatapoint);
+
+$core.addMethod(
+$core.method({
+selector: "changeFrom:",
+protocol: "arithmetic",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aDatapoint"],
+source: "changeFrom: aDatapoint\x0a\x09^self class \x0a\x09\x09date: self date\x0a\x09\x09confirmed: self confirmed - aDatapoint confirmed\x0a\x09\x09deaths: self deaths - aDatapoint deaths",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["date:confirmed:deaths:", "class", "date", "-", "confirmed", "deaths"]
+}, function ($methodClass){ return function (aDatapoint){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$2,$4,$3,$6,$5;
+$1=$self._class();
+$2=$self._date();
+$4=$self._confirmed();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["confirmed"]=1;
+//>>excludeEnd("ctx");
+$3=$recv($4).__minus($recv(aDatapoint)._confirmed());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["-"]=1;
+//>>excludeEnd("ctx");
+$6=$self._deaths();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["deaths"]=1;
+//>>excludeEnd("ctx");
+$5=$recv($6).__minus($recv(aDatapoint)._deaths());
+return $recv($1)._date_confirmed_deaths_($2,$3,$5);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"changeFrom:",{aDatapoint:aDatapoint})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.ConfirmedAndDeathsDatapoint);
+
+$core.addMethod(
+$core.method({
+selector: "dataProvider",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "dataProvider\x0a\x09^'Johns Hopkins University'",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return "Johns Hopkins University";
+
+}; }),
+$globals.ConfirmedAndDeathsDatapoint);
+
+$core.addMethod(
+$core.method({
+selector: "dataProviderAnchor",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "dataProviderAnchor\x0a\x09^Silk A: {\x0a\x09\x09'href' -> 'https://github.com/CSSEGISandData/COVID-19'.\x0a\x09\x09'target' -> '_blank'.\x0a\x09\x09'rel' -> 'noopener'.\x0a\x09\x09self dataProvider}",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["A:", "->", "dataProvider"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $2,$3,$1;
+$2="href".__minus_gt("https://github.com/CSSEGISandData/COVID-19");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=1;
+//>>excludeEnd("ctx");
+$3="target".__minus_gt("_blank");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["->"]=2;
+//>>excludeEnd("ctx");
+$1=[$2,$3,"rel".__minus_gt("noopener"),$self._dataProvider()];
+return $recv($globals.Silk)._A_($1);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"dataProviderAnchor",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.ConfirmedAndDeathsDatapoint);
+
+
+$core.addMethod(
+$core.method({
+selector: "fromJson:",
+protocol: "instance creation",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aJson"],
+source: "fromJson: aJson\x0a\x09^self \x0a\x09\x09date: (self dateFromJson: aJson date)\x0a\x09\x09confirmed: (aJson at: #c ifAbsent: [0])\x0a\x09\x09deaths: (aJson at: #d ifAbsent: [0])",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["date:confirmed:deaths:", "dateFromJson:", "date", "at:ifAbsent:"]
+}, function ($methodClass){ return function (aJson){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$2;
+$1=$self._dateFromJson_($recv(aJson)._date());
+$2=$recv(aJson)._at_ifAbsent_("c",(function(){
+return (0);
+
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["at:ifAbsent:"]=1;
+//>>excludeEnd("ctx");
+return $self._date_confirmed_deaths_($1,$2,$recv(aJson)._at_ifAbsent_("d",(function(){
+return (0);
+
+})));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"fromJson:",{aJson:aJson})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.ConfirmedAndDeathsDatapoint.a$cls);
+
+
+$core.addClass("JHUDatapoint", $globals.Datapoint, ["recovered"], "Covid19view");
+$core.addMethod(
+$core.method({
+selector: "+",
+protocol: "arithmetic",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aDatapoint"],
+source: "+ aDatapoint\x0a\x09\x22<JHUDatapoint>\x22\x0a\x09\x0a\x09self date = aDatapoint date ifFalse: [\x0a\x09\x09self error: 'the dates are not the same'].\x0a\x09^self class \x0a\x09\x09date: self date \x0a\x09\x09confirmed: self confirmed + aDatapoint confirmed \x0a\x09\x09deaths: self deaths + aDatapoint deaths \x0a\x09\x09recovered: self recovered + aDatapoint recovered",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifFalse:", "=", "date", "error:", "date:confirmed:deaths:recovered:", "class", "+", "confirmed", "deaths", "recovered"]
+}, function ($methodClass){ return function (aDatapoint){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $2,$3,$1,$4,$5,$7,$6,$9,$8,$11,$10;
+$2=$self._date();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["date"]=1;
+//>>excludeEnd("ctx");
+$3=$recv(aDatapoint)._date();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["date"]=2;
+//>>excludeEnd("ctx");
+$1=$recv($2).__eq($3);
+if(!$core.assert($1)){
+$self._error_("the dates are not the same");
+}
+$4=$self._class();
+$5=$self._date();
+$7=$self._confirmed();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["confirmed"]=1;
+//>>excludeEnd("ctx");
+$6=$recv($7).__plus($recv(aDatapoint)._confirmed());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["+"]=1;
+//>>excludeEnd("ctx");
+$9=$self._deaths();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["deaths"]=1;
+//>>excludeEnd("ctx");
+$8=$recv($9).__plus($recv(aDatapoint)._deaths());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["+"]=2;
 //>>excludeEnd("ctx");
@@ -3857,10 +4457,10 @@ $11=$self._recovered();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["recovered"]=1;
 //>>excludeEnd("ctx");
-$10=$recv($11).__plus($recv(aJHUDatapoint)._recovered());
+$10=$recv($11).__plus($recv(aDatapoint)._recovered());
 return $recv($4)._date_confirmed_deaths_recovered_($5,$6,$8,$10);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"+",{aJHUDatapoint:aJHUDatapoint})});
+}, function($ctx1) {$ctx1.fill(self,"+",{aDatapoint:aDatapoint})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.JHUDatapoint);
@@ -3931,23 +4531,47 @@ $globals.JHUDatapoint);
 
 $core.addMethod(
 $core.method({
-selector: "copyDeaths",
-protocol: "copying",
+selector: "changeFrom:",
+protocol: "arithmetic",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "copyDeaths\x0a\x09^self class \x0a\x09\x09date: self date \x0a\x09\x09confirmed: 0\x0a\x09\x09deaths: self deaths \x0a\x09\x09recovered: 0",
+args: ["aDatapoint"],
+source: "changeFrom: aDatapoint\x0a\x09^self class \x0a\x09\x09date: self date\x0a\x09\x09confirmed: self confirmed - aDatapoint confirmed\x0a\x09\x09deaths: self deaths - aDatapoint deaths\x0a\x09\x09recovered: self recovered - aDatapoint recovered",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["date:confirmed:deaths:recovered:", "class", "date", "deaths"]
-}, function ($methodClass){ return function (){
+messageSends: ["date:confirmed:deaths:recovered:", "class", "date", "-", "confirmed", "deaths", "recovered"]
+}, function ($methodClass){ return function (aDatapoint){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($self._class())._date_confirmed_deaths_recovered_($self._date(),(0),$self._deaths(),(0));
+var $1,$2,$4,$3,$6,$5,$8,$7;
+$1=$self._class();
+$2=$self._date();
+$4=$self._confirmed();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"copyDeaths",{})});
+$ctx1.sendIdx["confirmed"]=1;
+//>>excludeEnd("ctx");
+$3=$recv($4).__minus($recv(aDatapoint)._confirmed());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["-"]=1;
+//>>excludeEnd("ctx");
+$6=$self._deaths();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["deaths"]=1;
+//>>excludeEnd("ctx");
+$5=$recv($6).__minus($recv(aDatapoint)._deaths());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["-"]=2;
+//>>excludeEnd("ctx");
+$8=$self._recovered();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["recovered"]=1;
+//>>excludeEnd("ctx");
+$7=$recv($8).__minus($recv(aDatapoint)._recovered());
+return $recv($1)._date_confirmed_deaths_recovered_($2,$3,$5,$7);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"changeFrom:",{aDatapoint:aDatapoint})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.JHUDatapoint);
@@ -3981,7 +4605,7 @@ selector: "dataProvider",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "dataProvider\x0a\x09\x22<String>\x22\x0a\x09\x0a\x09^'Johns Hopkins University'",
+source: "dataProvider\x0a\x09^'Johns Hopkins University'",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -4028,53 +4652,6 @@ $globals.JHUDatapoint);
 
 $core.addMethod(
 $core.method({
-selector: "differenceTo:",
-protocol: "arithmetic",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aJHUDatapoint"],
-source: "differenceTo: aJHUDatapoint\x0a\x09^self class \x0a\x09\x09date: self date\x0a\x09\x09confirmed: self confirmed - aJHUDatapoint confirmed\x0a\x09\x09deaths: self deaths - aJHUDatapoint deaths\x0a\x09\x09recovered: self recovered - aJHUDatapoint recovered",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["date:confirmed:deaths:recovered:", "class", "date", "-", "confirmed", "deaths", "recovered"]
-}, function ($methodClass){ return function (aJHUDatapoint){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-var $1,$2,$4,$3,$6,$5,$8,$7;
-$1=$self._class();
-$2=$self._date();
-$4=$self._confirmed();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["confirmed"]=1;
-//>>excludeEnd("ctx");
-$3=$recv($4).__minus($recv(aJHUDatapoint)._confirmed());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["-"]=1;
-//>>excludeEnd("ctx");
-$6=$self._deaths();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["deaths"]=1;
-//>>excludeEnd("ctx");
-$5=$recv($6).__minus($recv(aJHUDatapoint)._deaths());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["-"]=2;
-//>>excludeEnd("ctx");
-$8=$self._recovered();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["recovered"]=1;
-//>>excludeEnd("ctx");
-$7=$recv($8).__minus($recv(aJHUDatapoint)._recovered());
-return $recv($1)._date_confirmed_deaths_recovered_($2,$3,$5,$7);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"differenceTo:",{aJHUDatapoint:aJHUDatapoint})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.JHUDatapoint);
-
-$core.addMethod(
-$core.method({
 selector: "initializeDate:confirmed:deaths:recovered:",
 protocol: "initialization",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -4104,15 +4681,26 @@ selector: "recovered",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "recovered\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09^recovered",
+source: "recovered\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09^recovered ifNil: [0]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: []
+messageSends: ["ifNil:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
-return $self.recovered;
-
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$receiver;
+$1=$self.recovered;
+if(($receiver = $1) == null || $receiver.a$nil){
+return (0);
+} else {
+return $1;
+}
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"recovered",{})});
+//>>excludeEnd("ctx");
 }; }),
 $globals.JHUDatapoint);
 
@@ -4149,17 +4737,36 @@ selector: "fromJson:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aJson"],
-source: "fromJson: aJson\x0a\x09^self \x0a\x09\x09date: (self dateFromJson: aJson date)\x0a\x09\x09confirmed: aJson confirmed \x0a\x09\x09deaths: aJson deaths \x0a\x09\x09recovered: aJson recovered",
+source: "fromJson: aJson\x0a\x09^self \x0a\x09\x09date: (self dateFromJson: aJson date)\x0a\x09\x09confirmed: (aJson at: #c ifAbsent: [0])\x0a\x09\x09deaths: (aJson at: #d ifAbsent: [0])\x0a\x09\x09recovered: (aJson at: #r ifAbsent: [0])",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["date:confirmed:deaths:recovered:", "dateFromJson:", "date", "confirmed", "deaths", "recovered"]
+messageSends: ["date:confirmed:deaths:recovered:", "dateFromJson:", "date", "at:ifAbsent:"]
 }, function ($methodClass){ return function (aJson){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $self._date_confirmed_deaths_recovered_($self._dateFromJson_($recv(aJson)._date()),$recv(aJson)._confirmed(),$recv(aJson)._deaths(),$recv(aJson)._recovered());
+var $1,$2,$3;
+$1=$self._dateFromJson_($recv(aJson)._date());
+$2=$recv(aJson)._at_ifAbsent_("c",(function(){
+return (0);
+
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["at:ifAbsent:"]=1;
+//>>excludeEnd("ctx");
+$3=$recv(aJson)._at_ifAbsent_("d",(function(){
+return (0);
+
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["at:ifAbsent:"]=2;
+//>>excludeEnd("ctx");
+return $self._date_confirmed_deaths_recovered_($1,$2,$3,$recv(aJson)._at_ifAbsent_("r",(function(){
+return (0);
+
+})));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"fromJson:",{aJson:aJson})});
 //>>excludeEnd("ctx");
@@ -4168,11 +4775,11 @@ $globals.JHUDatapoint.a$cls);
 
 $core.addMethod(
 $core.method({
-selector: "newZero",
+selector: "zero",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "newZero\x0a\x09^self \x0a\x09\x09date: (Date d: 1 m: 1 y: 2020) \x0a\x09\x09confirmed: 0 \x0a\x09\x09deaths: 0 \x0a\x09\x09recovered: 0",
+source: "zero\x0a\x09^self \x0a\x09\x09date: (Date d: 1 m: 1 y: 2020) \x0a\x09\x09confirmed: 0 \x0a\x09\x09deaths: 0 \x0a\x09\x09recovered: 0",
 referencedClasses: ["Date"],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -4184,35 +4791,36 @@ return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 return $self._date_confirmed_deaths_recovered_($recv($globals.Date)._d_m_y_((1),(1),(2020)),(0),(0),(0));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"newZero",{})});
+}, function($ctx1) {$ctx1.fill(self,"zero",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.JHUDatapoint.a$cls);
 
 
-$core.addClass("RKIDatapoint", $globals.Datapoint, ["byAge", "bySex"], "Covid19view");
+$core.addClass("RKIDatapoint", $globals.Datapoint, ["byAge"], "Covid19view");
 $core.addMethod(
 $core.method({
 selector: "+",
 protocol: "arithmetic",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aRKIDatapoint"],
-source: "+ aRKIDatapoint\x0a\x09\x22<RKIDatapoint>\x22\x0a\x09\x0a\x09self date = aRKIDatapoint date ifFalse: [\x0a\x09\x09self error: 'the dates are not the same'].\x0a\x09^self class \x0a\x09\x09date: self date \x0a\x09\x09confirmed: self confirmed + aRKIDatapoint confirmed \x0a\x09\x09deaths: self deaths + aRKIDatapoint deaths \x0a\x09\x09byAge: (self addToDictionary: self byAge from: aRKIDatapoint byAge)\x0a\x09\x09bySex: (self addToDictionary: self bySex from: aRKIDatapoint bySex)",
-referencedClasses: [],
+args: ["aDatapoint"],
+source: "+ aDatapoint\x0a\x09\x22<RKIDatapoint>\x22\x0a\x09\x0a\x09| newByAge |\x0a\x09self date = aDatapoint date ifFalse: [\x0a\x09\x09self error: 'the dates are not the same'].\x0a\x09newByAge := self byAge copy.\x0a\x09aDatapoint byAge keysAndValuesDo: [:age :sexDict |\x0a\x09\x09| newSexDict |\x0a\x09\x09newSexDict := (newByAge at: age ifAbsent: [Dictionary new]) copy.\x0a\x09\x09sexDict keysAndValuesDo: [:sex :count |\x0a\x09\x09\x09newSexDict at: sex put: (newSexDict at: sex ifAbsent: [Casecount zero]) + count].\x0a\x09\x09newByAge at: age put: newSexDict].\x0a\x09^self class date: self date byAge: newByAge",
+referencedClasses: ["Dictionary", "Casecount"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifFalse:", "=", "date", "error:", "date:confirmed:deaths:byAge:bySex:", "class", "+", "confirmed", "deaths", "addToDictionary:from:", "byAge", "bySex"]
-}, function ($methodClass){ return function (aRKIDatapoint){
+messageSends: ["ifFalse:", "=", "date", "error:", "copy", "byAge", "keysAndValuesDo:", "at:ifAbsent:", "new", "at:put:", "+", "zero", "date:byAge:", "class"]
+}, function ($methodClass){ return function (aDatapoint){
 var self=this,$self=this;
+var newByAge;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $2,$3,$1,$4,$5,$7,$6,$9,$8,$11,$10,$13,$12;
+var $2,$3,$1,$4,$5;
 $2=$self._date();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["date"]=1;
 //>>excludeEnd("ctx");
-$3=$recv(aRKIDatapoint)._date();
+$3=$recv(aDatapoint)._date();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["date"]=2;
 //>>excludeEnd("ctx");
@@ -4220,37 +4828,63 @@ $1=$recv($2).__eq($3);
 if(!$core.assert($1)){
 $self._error_("the dates are not the same");
 }
-$4=$self._class();
-$5=$self._date();
-$7=$self._confirmed();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["confirmed"]=1;
-//>>excludeEnd("ctx");
-$6=$recv($7).__plus($recv(aRKIDatapoint)._confirmed());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["+"]=1;
-//>>excludeEnd("ctx");
-$9=$self._deaths();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["deaths"]=1;
-//>>excludeEnd("ctx");
-$8=$recv($9).__plus($recv(aRKIDatapoint)._deaths());
-$11=$self._byAge();
+$4=$self._byAge();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["byAge"]=1;
 //>>excludeEnd("ctx");
-$10=$self._addToDictionary_from_($11,$recv(aRKIDatapoint)._byAge());
+newByAge=$recv($4)._copy();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["addToDictionary:from:"]=1;
+$ctx1.sendIdx["copy"]=1;
 //>>excludeEnd("ctx");
-$13=$self._bySex();
+$recv($recv(aDatapoint)._byAge())._keysAndValuesDo_((function(age,sexDict){
+var newSexDict;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["bySex"]=1;
+return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-$12=$self._addToDictionary_from_($13,$recv(aRKIDatapoint)._bySex());
-return $recv($4)._date_confirmed_deaths_byAge_bySex_($5,$6,$8,$10,$12);
+$5=$recv(newByAge)._at_ifAbsent_(age,(function(){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"+",{aRKIDatapoint:aRKIDatapoint})});
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
+return $recv($globals.Dictionary)._new();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({},$ctx2,3)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["at:ifAbsent:"]=1;
+//>>excludeEnd("ctx");
+newSexDict=$recv($5)._copy();
+$recv(sexDict)._keysAndValuesDo_((function(sex,count){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
+return $recv(newSexDict)._at_put_(sex,$recv($recv(newSexDict)._at_ifAbsent_(sex,(function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx4) {
+//>>excludeEnd("ctx");
+return $recv($globals.Casecount)._zero();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx4) {$ctx4.fillBlock({},$ctx3,5)});
+//>>excludeEnd("ctx");
+}))).__plus(count));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx3.sendIdx["at:put:"]=1;
+//>>excludeEnd("ctx");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({sex:sex,count:count},$ctx2,4)});
+//>>excludeEnd("ctx");
+}));
+return $recv(newByAge)._at_put_(age,newSexDict);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({age:age,sexDict:sexDict,newSexDict:newSexDict},$ctx1,2)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["keysAndValuesDo:"]=1;
+//>>excludeEnd("ctx");
+return $recv($self._class())._date_byAge_($self._date(),newByAge);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"+",{aDatapoint:aDatapoint,newByAge:newByAge})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.RKIDatapoint);
@@ -4261,53 +4895,11 @@ selector: "asSpans",
 protocol: "html",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "asSpans\x0a\x09\x22<Array of: <span>\x22\x0a\x09\x0a\x09^super asSpans, { \x0a\x09\x09Silk SPAN: {'class' -> 'ByAge'. self byAge}.\x0a\x09\x09Silk SPAN: {'class' -> 'BySex'. self bySex}}",
+source: "asSpans\x0a\x09\x22<Array of: <span>\x22\x0a\x09\x0a\x09^super asSpans, { \x0a\x09\x09Silk SPAN: {'class' -> 'ByAge'. self byAge}}",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: [",", "asSpans", "SPAN:", "->", "byAge", "bySex"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-var $1,$5,$4,$3,$2;
-$1=(
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.supercall = true,
-//>>excludeEnd("ctx");
-($methodClass.superclass||$boot.nilAsClass).fn.prototype._asSpans.call($self));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.supercall = false;
-//>>excludeEnd("ctx");;
-$5="class".__minus_gt("ByAge");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["->"]=1;
-//>>excludeEnd("ctx");
-$4=[$5,$self._byAge()];
-$3=$recv($globals.Silk)._SPAN_($4);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["SPAN:"]=1;
-//>>excludeEnd("ctx");
-$2=[$3,$recv($globals.Silk)._SPAN_(["class".__minus_gt("BySex"),$self._bySex()])];
-return $recv($1).__comma($2);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"asSpans",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.RKIDatapoint);
-
-$core.addMethod(
-$core.method({
-selector: "aspects",
-protocol: "accessing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "aspects\x0a\x09^super aspects, #(#male #female)",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: [",", "aspects"]
+messageSends: [",", "asSpans", "SPAN:", "->", "byAge"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -4318,13 +4910,13 @@ $1=(
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.supercall = true,
 //>>excludeEnd("ctx");
-($methodClass.superclass||$boot.nilAsClass).fn.prototype._aspects.call($self));
+($methodClass.superclass||$boot.nilAsClass).fn.prototype._asSpans.call($self));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.supercall = false;
 //>>excludeEnd("ctx");;
-return $recv($1).__comma(["male", "female"]);
+return $recv($1).__comma([$recv($globals.Silk)._SPAN_(["class".__minus_gt("ByAge"),$self._byAge()])]);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"aspects",{})});
+}, function($ctx1) {$ctx1.fill(self,"asSpans",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.RKIDatapoint);
@@ -4349,41 +4941,157 @@ $globals.RKIDatapoint);
 
 $core.addMethod(
 $core.method({
-selector: "bySex",
+selector: "casecount",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "bySex\x0a\x09\x22<Dictionary key: String value: Integer>\x22\x0a\x09\x0a\x09^bySex",
-referencedClasses: [],
+source: "casecount\x0a\x09\x22<Casecount>\x22\x0a\x09\x0a\x09^self byAge values inject: Casecount zero into: [:sum :sexDict |\x0a\x09\x09sexDict values  inject: sum into: [:count :casecount |\x0a\x09\x09\x09count + casecount]]",
+referencedClasses: ["Casecount"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: []
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-return $self.bySex;
-
-}; }),
-$globals.RKIDatapoint);
-
-$core.addMethod(
-$core.method({
-selector: "copyDeaths",
-protocol: "copying",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "copyDeaths\x0a\x09^self class \x0a\x09\x09date: self date \x0a\x09\x09confirmed: 0\x0a\x09\x09deaths: self deaths \x0a\x09\x09byAge: nil\x0a\x09\x09bySex: nil",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["date:confirmed:deaths:byAge:bySex:", "class", "date", "deaths"]
+messageSends: ["inject:into:", "values", "byAge", "zero", "+"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($self._class())._date_confirmed_deaths_byAge_bySex_($self._date(),(0),$self._deaths(),nil,nil);
+var $2,$1;
+$2=$recv($self._byAge())._values();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"copyDeaths",{})});
+$ctx1.sendIdx["values"]=1;
+//>>excludeEnd("ctx");
+$1=$recv($2)._inject_into_($recv($globals.Casecount)._zero(),(function(sum,sexDict){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv($recv(sexDict)._values())._inject_into_(sum,(function(count,casecount){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
+return $recv(count).__plus(casecount);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({count:count,casecount:casecount},$ctx2,2)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({sum:sum,sexDict:sexDict},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["inject:into:"]=1;
+//>>excludeEnd("ctx");
+return $1;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"casecount",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.RKIDatapoint);
+
+$core.addMethod(
+$core.method({
+selector: "changeFrom:",
+protocol: "arithmetic",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aDatapoint"],
+source: "changeFrom: aDatapoint\x0a\x09| newByAge |\x0a\x09newByAge := self byAge copy.\x0a\x09aDatapoint byAge keysAndValuesDo: [:age :sexDict |\x0a\x09\x09| newSexDict |\x0a\x09\x09newSexDict := (newByAge at: age ifAbsent: [Dictionary new]) copy.\x0a\x09\x09sexDict keysAndValuesDo: [:sex :count |\x0a\x09\x09\x09newSexDict at: sex put: (newSexDict at: sex ifAbsent: [Casecount zero]) - count].\x0a\x09\x09newByAge at: age put: newSexDict].\x0a\x09^self class date: self date byAge: newByAge",
+referencedClasses: ["Dictionary", "Casecount"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["copy", "byAge", "keysAndValuesDo:", "at:ifAbsent:", "new", "at:put:", "-", "zero", "date:byAge:", "class", "date"]
+}, function ($methodClass){ return function (aDatapoint){
+var self=this,$self=this;
+var newByAge;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$2;
+$1=$self._byAge();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["byAge"]=1;
+//>>excludeEnd("ctx");
+newByAge=$recv($1)._copy();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["copy"]=1;
+//>>excludeEnd("ctx");
+$recv($recv(aDatapoint)._byAge())._keysAndValuesDo_((function(age,sexDict){
+var newSexDict;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+$2=$recv(newByAge)._at_ifAbsent_(age,(function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
+return $recv($globals.Dictionary)._new();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({},$ctx2,2)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["at:ifAbsent:"]=1;
+//>>excludeEnd("ctx");
+newSexDict=$recv($2)._copy();
+$recv(sexDict)._keysAndValuesDo_((function(sex,count){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
+return $recv(newSexDict)._at_put_(sex,$recv($recv(newSexDict)._at_ifAbsent_(sex,(function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx4) {
+//>>excludeEnd("ctx");
+return $recv($globals.Casecount)._zero();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx4) {$ctx4.fillBlock({},$ctx3,4)});
+//>>excludeEnd("ctx");
+}))).__minus(count));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx3.sendIdx["at:put:"]=1;
+//>>excludeEnd("ctx");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({sex:sex,count:count},$ctx2,3)});
+//>>excludeEnd("ctx");
+}));
+return $recv(newByAge)._at_put_(age,newSexDict);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({age:age,sexDict:sexDict,newSexDict:newSexDict},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["keysAndValuesDo:"]=1;
+//>>excludeEnd("ctx");
+return $recv($self._class())._date_byAge_($self._date(),newByAge);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"changeFrom:",{aDatapoint:aDatapoint,newByAge:newByAge})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.RKIDatapoint);
+
+$core.addMethod(
+$core.method({
+selector: "confirmed",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "confirmed\x0a\x09^confirmed ifNil: [confirmed := self casecount confirmed]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifNil:", "confirmed", "casecount"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$receiver;
+$1=$self.confirmed;
+if(($receiver = $1) == null || $receiver.a$nil){
+$self.confirmed=$recv($self._casecount())._confirmed();
+return $self.confirmed;
+} else {
+return $1;
+}
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"confirmed",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.RKIDatapoint);
@@ -4394,17 +5102,17 @@ selector: "copyWithDate:",
 protocol: "copying",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aDate"],
-source: "copyWithDate: aDate\x0a\x09^self class \x0a\x09\x09date: aDate \x0a\x09\x09confirmed: self confirmed \x0a\x09\x09deaths: self deaths \x0a\x09\x09byAge: self byAge \x0a\x09\x09bySex: self bySex",
+source: "copyWithDate: aDate\x0a\x09^self class date: aDate byAge: self byAge ",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["date:confirmed:deaths:byAge:bySex:", "class", "confirmed", "deaths", "byAge", "bySex"]
+messageSends: ["date:byAge:", "class", "byAge"]
 }, function ($methodClass){ return function (aDate){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($self._class())._date_confirmed_deaths_byAge_bySex_(aDate,$self._confirmed(),$self._deaths(),$self._byAge(),$self._bySex());
+return $recv($self._class())._date_byAge_(aDate,$self._byAge());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"copyWithDate:",{aDate:aDate})});
 //>>excludeEnd("ctx");
@@ -4464,52 +5172,30 @@ $globals.RKIDatapoint);
 
 $core.addMethod(
 $core.method({
-selector: "differenceTo:",
-protocol: "arithmetic",
+selector: "deaths",
+protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aRKIDatapoint"],
-source: "differenceTo: aRKIDatapoint\x0a\x09^self class \x0a\x09\x09date: self date\x0a\x09\x09confirmed: self confirmed - aRKIDatapoint confirmed\x0a\x09\x09deaths: self deaths - aRKIDatapoint deaths\x0a\x09\x09byAge: (self dictionary: self byAge minus: aRKIDatapoint byAge)\x0a\x09\x09bySex: (self dictionary: self bySex minus: aRKIDatapoint bySex)",
+args: [],
+source: "deaths\x0a\x09^deaths ifNil: [deaths := self casecount deaths]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["date:confirmed:deaths:byAge:bySex:", "class", "date", "-", "confirmed", "deaths", "dictionary:minus:", "byAge", "bySex"]
-}, function ($methodClass){ return function (aRKIDatapoint){
+messageSends: ["ifNil:", "deaths", "casecount"]
+}, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1,$2,$4,$3,$6,$5,$8,$7,$10,$9;
-$1=$self._class();
-$2=$self._date();
-$4=$self._confirmed();
+var $1,$receiver;
+$1=$self.deaths;
+if(($receiver = $1) == null || $receiver.a$nil){
+$self.deaths=$recv($self._casecount())._deaths();
+return $self.deaths;
+} else {
+return $1;
+}
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["confirmed"]=1;
-//>>excludeEnd("ctx");
-$3=$recv($4).__minus($recv(aRKIDatapoint)._confirmed());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["-"]=1;
-//>>excludeEnd("ctx");
-$6=$self._deaths();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["deaths"]=1;
-//>>excludeEnd("ctx");
-$5=$recv($6).__minus($recv(aRKIDatapoint)._deaths());
-$8=$self._byAge();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["byAge"]=1;
-//>>excludeEnd("ctx");
-$7=$self._dictionary_minus_($8,$recv(aRKIDatapoint)._byAge());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["dictionary:minus:"]=1;
-//>>excludeEnd("ctx");
-$10=$self._bySex();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["bySex"]=1;
-//>>excludeEnd("ctx");
-$9=$self._dictionary_minus_($10,$recv(aRKIDatapoint)._bySex());
-return $recv($1)._date_confirmed_deaths_byAge_bySex_($2,$3,$5,$7,$9);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"differenceTo:",{aRKIDatapoint:aRKIDatapoint})});
+}, function($ctx1) {$ctx1.fill(self,"deaths",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.RKIDatapoint);
@@ -4520,19 +5206,24 @@ selector: "female",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "female\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09^self bySex at: 'F' ifAbsent: [0]",
+source: "female\x0a\x09\x22<Casecount>\x22\x0a\x09\x0a\x09^self byAge values inject: 0 into: [:sum :sexDict | sum + (sexDict at: 'W')]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["at:ifAbsent:", "bySex"]
+messageSends: ["inject:into:", "values", "byAge", "+", "at:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($self._bySex())._at_ifAbsent_("F",(function(){
-return (0);
-
+return $recv($recv($self._byAge())._values())._inject_into_((0),(function(sum,sexDict){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv(sum).__plus($recv(sexDict)._at_("W"));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({sum:sum,sexDict:sexDict},$ctx1,1)});
+//>>excludeEnd("ctx");
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"female",{})});
@@ -4542,27 +5233,21 @@ $globals.RKIDatapoint);
 
 $core.addMethod(
 $core.method({
-selector: "initializeDate:confirmed:deaths:byAge:bySex:",
+selector: "initializeDate:byAge:",
 protocol: "initialization",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aDate", "aConfirmedInteger", "aDeathsInteger", "aByAgeDictionary", "aBySexDictionary"],
-source: "initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger byAge: aByAgeDictionary bySex: aBySexDictionary\x0a\x09self initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger.\x0a\x09byAge := aByAgeDictionary.\x0a\x09bySex := aBySexDictionary",
+args: ["aDate", "aByAgeDictionary"],
+source: "initializeDate: aDate byAge: aByAgeDictionary\x0a\x09date := aDate.\x0a\x09byAge := aByAgeDictionary",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["initializeDate:confirmed:deaths:"]
-}, function ($methodClass){ return function (aDate,aConfirmedInteger,aDeathsInteger,aByAgeDictionary,aBySexDictionary){
+messageSends: []
+}, function ($methodClass){ return function (aDate,aByAgeDictionary){
 var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-$self._initializeDate_confirmed_deaths_(aDate,aConfirmedInteger,aDeathsInteger);
+$self.date=aDate;
 $self.byAge=aByAgeDictionary;
-$self.bySex=aBySexDictionary;
 return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"initializeDate:confirmed:deaths:byAge:bySex:",{aDate:aDate,aConfirmedInteger:aConfirmedInteger,aDeathsInteger:aDeathsInteger,aByAgeDictionary:aByAgeDictionary,aBySexDictionary:aBySexDictionary})});
-//>>excludeEnd("ctx");
+
 }; }),
 $globals.RKIDatapoint);
 
@@ -4572,19 +5257,24 @@ selector: "male",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "male\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09^self bySex at: 'M' ifAbsent: [0]",
+source: "male\x0a\x09\x22<Casecount>\x22\x0a\x09\x0a\x09^self byAge values inject: 0 into: [:sum :sexDict | sum + (sexDict at: 'M')]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["at:ifAbsent:", "bySex"]
+messageSends: ["inject:into:", "values", "byAge", "+", "at:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($self._bySex())._at_ifAbsent_("M",(function(){
-return (0);
-
+return $recv($recv($self._byAge())._values())._inject_into_((0),(function(sum,sexDict){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv(sum).__plus($recv(sexDict)._at_("M"));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({sum:sum,sexDict:sexDict},$ctx1,1)});
+//>>excludeEnd("ctx");
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"male",{})});
@@ -4595,26 +5285,26 @@ $globals.RKIDatapoint);
 
 $core.addMethod(
 $core.method({
-selector: "date:confirmed:deaths:byAge:bySex:",
+selector: "date:byAge:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aDate", "aConfirmedInteger", "aDeathsInteger", "aByAgeDictionary", "aBySexDictionary"],
-source: "date: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger byAge: aByAgeDictionary bySex: aBySexDictionary\x0a\x09| inst |\x0a\x09inst := self new.\x0a\x09inst \x0a\x09\x09initializeDate: aDate \x0a\x09\x09confirmed: aConfirmedInteger \x0a\x09\x09deaths: aDeathsInteger \x0a\x09\x09byAge: aByAgeDictionary \x0a\x09\x09bySex: aBySexDictionary.\x0a\x09^inst",
+args: ["aDate", "aByAgeDictionary"],
+source: "date: aDate byAge: aByAgeDictionary\x0a\x09| inst |\x0a\x09inst := self new.\x0a\x09inst initializeDate: aDate byAge: aByAgeDictionary.\x0a\x09^inst",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["new", "initializeDate:confirmed:deaths:byAge:bySex:"]
-}, function ($methodClass){ return function (aDate,aConfirmedInteger,aDeathsInteger,aByAgeDictionary,aBySexDictionary){
+messageSends: ["new", "initializeDate:byAge:"]
+}, function ($methodClass){ return function (aDate,aByAgeDictionary){
 var self=this,$self=this;
 var inst;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 inst=$self._new();
-$recv(inst)._initializeDate_confirmed_deaths_byAge_bySex_(aDate,aConfirmedInteger,aDeathsInteger,aByAgeDictionary,aBySexDictionary);
+$recv(inst)._initializeDate_byAge_(aDate,aByAgeDictionary);
 return inst;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"date:confirmed:deaths:byAge:bySex:",{aDate:aDate,aConfirmedInteger:aConfirmedInteger,aDeathsInteger:aDeathsInteger,aByAgeDictionary:aByAgeDictionary,aBySexDictionary:aBySexDictionary,inst:inst})});
+}, function($ctx1) {$ctx1.fill(self,"date:byAge:",{aDate:aDate,aByAgeDictionary:aByAgeDictionary,inst:inst})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.RKIDatapoint.a$cls);
@@ -4625,48 +5315,73 @@ selector: "fromJson:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aJson"],
-source: "fromJson: aJson\x0a\x09^self \x0a\x09\x09date: (self dateFromJson: aJson date)\x0a\x09\x09confirmed: aJson confirmed \x0a\x09\x09deaths: aJson deaths \x0a\x09\x09byAge: aJson byAge\x0a\x09\x09bySex: aJson bySex",
-referencedClasses: [],
+source: "fromJson: aJson\x0a\x09| newByAge |\x0a\x09newByAge := Dictionary new.\x0a\x09aJson byAge keysAndValuesDo: [:age :sexDict |\x0a\x09\x09| dict |\x0a\x09\x09dict := Dictionary new.\x0a\x09\x09sexDict keysAndValuesDo: [:sex :value |\x0a\x09\x09\x09dict at: sex put: (Casecount fromJson: value)].\x0a\x09\x09newByAge at: age put: dict].\x0a\x09^self date: (self dateFromJson: aJson date) byAge: newByAge",
+referencedClasses: ["Dictionary", "Casecount"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["date:confirmed:deaths:byAge:bySex:", "dateFromJson:", "date", "confirmed", "deaths", "byAge", "bySex"]
+messageSends: ["new", "keysAndValuesDo:", "byAge", "at:put:", "fromJson:", "date:byAge:", "dateFromJson:", "date"]
 }, function ($methodClass){ return function (aJson){
 var self=this,$self=this;
+var newByAge;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $self._date_confirmed_deaths_byAge_bySex_($self._dateFromJson_($recv(aJson)._date()),$recv(aJson)._confirmed(),$recv(aJson)._deaths(),$recv(aJson)._byAge(),$recv(aJson)._bySex());
+newByAge=$recv($globals.Dictionary)._new();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"fromJson:",{aJson:aJson})});
+$ctx1.sendIdx["new"]=1;
+//>>excludeEnd("ctx");
+$recv($recv(aJson)._byAge())._keysAndValuesDo_((function(age,sexDict){
+var dict;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+dict=$recv($globals.Dictionary)._new();
+$recv(sexDict)._keysAndValuesDo_((function(sex,value){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
+return $recv(dict)._at_put_(sex,$recv($globals.Casecount)._fromJson_(value));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx3.sendIdx["at:put:"]=1;
+//>>excludeEnd("ctx");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({sex:sex,value:value},$ctx2,2)});
+//>>excludeEnd("ctx");
+}));
+return $recv(newByAge)._at_put_(age,dict);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({age:age,sexDict:sexDict,dict:dict},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["keysAndValuesDo:"]=1;
+//>>excludeEnd("ctx");
+return $self._date_byAge_($self._dateFromJson_($recv(aJson)._date()),newByAge);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"fromJson:",{aJson:aJson,newByAge:newByAge})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.RKIDatapoint.a$cls);
 
 $core.addMethod(
 $core.method({
-selector: "newZero",
+selector: "zero",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "newZero\x0a\x09^self \x0a\x09\x09date: (Date d: 1 m: 1 y: 2020) \x0a\x09\x09confirmed: 0 \x0a\x09\x09deaths: 0\x0a\x09\x09byAge: Dictionary new\x0a\x09\x09bySex: Dictionary new",
+source: "zero\x0a\x09^self \x0a\x09\x09date: (Date d: 1 m: 1 y: 2020) \x0a\x09\x09byAge: Dictionary new",
 referencedClasses: ["Date", "Dictionary"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["date:confirmed:deaths:byAge:bySex:", "d:m:y:", "new"]
+messageSends: ["date:byAge:", "d:m:y:", "new"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1,$2;
-$1=$recv($globals.Date)._d_m_y_((1),(1),(2020));
-$2=$recv($globals.Dictionary)._new();
+return $self._date_byAge_($recv($globals.Date)._d_m_y_((1),(1),(2020)),$recv($globals.Dictionary)._new());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["new"]=1;
-//>>excludeEnd("ctx");
-return $self._date_confirmed_deaths_byAge_bySex_($1,(0),(0),$2,$recv($globals.Dictionary)._new());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"newZero",{})});
+}, function($ctx1) {$ctx1.fill(self,"zero",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.RKIDatapoint.a$cls);
@@ -4679,35 +5394,52 @@ selector: "+",
 protocol: "arithmetic",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aDataseries"],
-source: "+ aDataseries\x0a\x09\x22<Dataseries>\x22\x0a\x09\x0a\x09| newDatapoints |\x0a\x09newDatapoints := OrderedCollection new.\x0a\x09self series with: aDataseries series do: [:myDatapoint :otherDatapoint |\x0a\x09\x09newDatapoints add: myDatapoint + otherDatapoint].\x0a\x09^self class series: newDatapoints",
+source: "+ aDataseries\x0a\x09\x22<Dataseries>\x22\x0a\x0a\x09| wst |\x0a\x09wst := OrderedCollection new writeStream.\x0a\x09self\x0a\x09\x09with: aDataseries\x0a\x09\x09onlyInSelf: [:datapoint | wst nextPut: datapoint]\x0a\x09\x09onlyInArg: [:datapoint | wst nextPut: datapoint]\x0a\x09\x09inBoth: [:datapoint1 :datapoint2 | wst nextPut: datapoint1 + datapoint2].\x0a\x09^self class series: wst contents",
 referencedClasses: ["OrderedCollection"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["new", "with:do:", "series", "add:", "+", "series:", "class"]
+messageSends: ["writeStream", "new", "with:onlyInSelf:onlyInArg:inBoth:", "nextPut:", "+", "series:", "class", "contents"]
 }, function ($methodClass){ return function (aDataseries){
 var self=this,$self=this;
-var newDatapoints;
+var wst;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1;
-newDatapoints=$recv($globals.OrderedCollection)._new();
-$1=$self._series();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["series"]=1;
-//>>excludeEnd("ctx");
-$recv($1)._with_do_($recv(aDataseries)._series(),(function(myDatapoint,otherDatapoint){
+wst=$recv($recv($globals.OrderedCollection)._new())._writeStream();
+$self._with_onlyInSelf_onlyInArg_inBoth_(aDataseries,(function(datapoint){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-return $recv(newDatapoints)._add_($recv(myDatapoint).__plus(otherDatapoint));
+return $recv(wst)._nextPut_(datapoint);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({myDatapoint:myDatapoint,otherDatapoint:otherDatapoint},$ctx1,1)});
+$ctx2.sendIdx["nextPut:"]=1;
+//>>excludeEnd("ctx");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({datapoint:datapoint},$ctx1,1)});
+//>>excludeEnd("ctx");
+}),(function(datapoint){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv(wst)._nextPut_(datapoint);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["nextPut:"]=2;
+//>>excludeEnd("ctx");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({datapoint:datapoint},$ctx1,2)});
+//>>excludeEnd("ctx");
+}),(function(datapoint1,datapoint2){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv(wst)._nextPut_($recv(datapoint1).__plus(datapoint2));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({datapoint1:datapoint1,datapoint2:datapoint2},$ctx1,3)});
 //>>excludeEnd("ctx");
 }));
-return $recv($self._class())._series_(newDatapoints);
+return $recv($self._class())._series_($recv(wst)._contents());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"+",{aDataseries:aDataseries,newDatapoints:newDatapoints})});
+}, function($ctx1) {$ctx1.fill(self,"+",{aDataseries:aDataseries,wst:wst})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Dataseries);
@@ -4718,11 +5450,11 @@ selector: "changes",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "changes\x0a\x09\x22<Dataseries>\x22\x0a\x09\x0a\x09| wst rst last |\x0a\x09wst := OrderedCollection new writeStream.\x0a\x09rst := self series readStream.\x0a\x09last := nil.\x0a\x09[rst atEnd] whileFalse: [\x0a\x09\x09| datapoint | \x0a\x09\x09datapoint := rst next.\x0a\x09\x09last ifNotNil: [\x0a\x09\x09\x09wst nextPut: (datapoint differenceTo: last)].\x0a\x09\x09last := datapoint].\x0a\x09^self class series: wst contents",
+source: "changes\x0a\x09\x22<Dataseries>\x22\x0a\x09\x0a\x09| wst rst last |\x0a\x09wst := OrderedCollection new writeStream.\x0a\x09rst := self series readStream.\x0a\x09last := nil.\x0a\x09[rst atEnd] whileFalse: [\x0a\x09\x09| datapoint | \x0a\x09\x09datapoint := rst next.\x0a\x09\x09last ifNotNil: [\x0a\x09\x09\x09wst nextPut: (datapoint changeFrom: last)].\x0a\x09\x09last := datapoint].\x0a\x09^self class series: wst contents",
 referencedClasses: ["OrderedCollection"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["writeStream", "new", "readStream", "series", "whileFalse:", "atEnd", "next", "ifNotNil:", "nextPut:", "differenceTo:", "series:", "class", "contents"]
+messageSends: ["writeStream", "new", "readStream", "series", "whileFalse:", "atEnd", "next", "ifNotNil:", "nextPut:", "changeFrom:", "series:", "class", "contents"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 var wst,rst,last;
@@ -4751,7 +5483,7 @@ $1=last;
 if(($receiver = $1) == null || $receiver.a$nil){
 $1;
 } else {
-$recv(wst)._nextPut_($recv(datapoint)._differenceTo_(last));
+$recv(wst)._nextPut_($recv(datapoint)._changeFrom_(last));
 }
 last=datapoint;
 return last;
@@ -4762,29 +5494,6 @@ return last;
 return $recv($self._class())._series_($recv(wst)._contents());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"changes",{wst:wst,rst:rst,last:last})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Dataseries);
-
-$core.addMethod(
-$core.method({
-selector: "copyDeaths",
-protocol: "copying",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "copyDeaths\x0a\x09\x22<Dataseries>\x22\x0a\x09\x22create a dataseries with only the numbers for deaths\x22\x0a\x09\x0a\x09^self class series: (self series collect: #copyDeaths)",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["series:", "class", "collect:", "series"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return $recv($self._class())._series_($recv($self._series())._collect_("copyDeaths"));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"copyDeaths",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Dataseries);
@@ -5076,97 +5785,6 @@ $globals.Dataseries);
 
 $core.addMethod(
 $core.method({
-selector: "normalizedLike:",
-protocol: "copying",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aDataseries"],
-source: "normalizedLike: aDataseries\x0a\x09\x22<Dataseries>\x22\x0a\x09\x22create a dataseries with the same dates as aDataseries to match the JHU ones\x22\x0a\x09\x0a\x09| wst refRst rst lastPoint |\x0a\x09wst := Array new writeStream.\x0a\x09refRst := aDataseries series readStream.\x0a\x09rst := self series readStream.\x0a\x09lastPoint := rst peek class newZero.\x0a\x09[refRst atEnd] whileFalse: [\x0a\x09\x09| refDatapoint |\x0a\x09\x09refDatapoint := refRst next.\x0a\x09\x09lastPoint := (rst atEnd not and: [rst peek date = refDatapoint date])\x0a\x09\x09\x09ifTrue: [rst next]\x0a\x09\x09\x09ifFalse: [lastPoint copyWithDate: refDatapoint date].\x0a\x09\x09wst nextPut: lastPoint].\x0a\x09^self class series: wst contents",
-referencedClasses: ["Array"],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["writeStream", "new", "readStream", "series", "newZero", "class", "peek", "whileFalse:", "atEnd", "next", "ifTrue:ifFalse:", "and:", "not", "=", "date", "copyWithDate:", "nextPut:", "series:", "contents"]
-}, function ($methodClass){ return function (aDataseries){
-var self=this,$self=this;
-var wst,refRst,rst,lastPoint;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-var $1,$3,$2,$5,$6,$4;
-wst=$recv($recv($globals.Array)._new())._writeStream();
-$1=$recv(aDataseries)._series();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["series"]=1;
-//>>excludeEnd("ctx");
-refRst=$recv($1)._readStream();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["readStream"]=1;
-//>>excludeEnd("ctx");
-rst=$recv($self._series())._readStream();
-$3=$recv(rst)._peek();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["peek"]=1;
-//>>excludeEnd("ctx");
-$2=$recv($3)._class();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["class"]=1;
-//>>excludeEnd("ctx");
-lastPoint=$recv($2)._newZero();
-$recv((function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $recv(refRst)._atEnd();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["atEnd"]=1;
-//>>excludeEnd("ctx");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
-//>>excludeEnd("ctx");
-}))._whileFalse_((function(){
-var refDatapoint;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-refDatapoint=$recv(refRst)._next();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["next"]=1;
-//>>excludeEnd("ctx");
-$4=$recv($recv($recv(rst)._atEnd())._not())._and_((function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx3) {
-//>>excludeEnd("ctx");
-$5=$recv($recv(rst)._peek())._date();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx3.sendIdx["date"]=1;
-//>>excludeEnd("ctx");
-$6=$recv(refDatapoint)._date();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx3.sendIdx["date"]=2;
-//>>excludeEnd("ctx");
-return $recv($5).__eq($6);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({},$ctx2,3)});
-//>>excludeEnd("ctx");
-}));
-if($core.assert($4)){
-lastPoint=$recv(rst)._next();
-} else {
-lastPoint=$recv(lastPoint)._copyWithDate_($recv(refDatapoint)._date());
-}
-return $recv(wst)._nextPut_(lastPoint);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({refDatapoint:refDatapoint},$ctx1,2)});
-//>>excludeEnd("ctx");
-}));
-return $recv($self._class())._series_($recv(wst)._contents());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"normalizedLike:",{aDataseries:aDataseries,wst:wst,refRst:refRst,rst:rst,lastPoint:lastPoint})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Dataseries);
-
-$core.addMethod(
-$core.method({
 selector: "series",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -5180,6 +5798,134 @@ messageSends: []
 var self=this,$self=this;
 return $self.series;
 
+}; }),
+$globals.Dataseries);
+
+$core.addMethod(
+$core.method({
+selector: "with:onlyInSelf:onlyInArg:inBoth:",
+protocol: "arithmetic",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aSeries", "onlyInSelfBlock", "onlyInArgBlock", "inBothBlock"],
+source: "with: aSeries onlyInSelf: onlyInSelfBlock onlyInArg: onlyInArgBlock inBoth: inBothBlock\x0a\x09\x22iterates throu both collections of datapoints and processes them in date order\x22\x0a\x09\x0a\x09| rstSelf rstArg |\x0a\x09rstSelf := self series readStream.\x0a\x09rstArg := aSeries series readStream.\x0a\x09[\x0a\x09rstSelf atEnd and: [\x0a\x09rstArg atEnd]] whileFalse: [\x0a\x09\x09\x09rstSelf atEnd\x0a\x09\x09\x09\x09ifTrue: [onlyInArgBlock value: rstArg next]\x0a\x09\x09\x09\x09ifFalse: [\x0a\x09\x09\x09\x09rstArg atEnd\x0a\x09\x09\x09\x09\x09ifTrue: [onlyInSelfBlock value: rstSelf next]\x0a\x09\x09\x09\x09\x09ifFalse: [\x0a\x09\x09\x09\x09\x09| selfDate argDate |\x0a\x09\x09\x09\x09\x09selfDate := rstSelf peek date.\x0a\x09\x09\x09\x09\x09argDate := rstArg peek date.\x0a\x09\x09\x09\x09\x09selfDate = argDate\x0a\x09\x09\x09\x09\x09\x09ifTrue: [\x0a\x09\x09\x09\x09\x09\x09inBothBlock value: rstSelf next value: rstArg next]\x0a\x09\x09\x09\x09\x09\x09ifFalse: [\x0a\x09\x09\x09\x09\x09\x09selfDate < argDate\x0a\x09\x09\x09\x09\x09\x09\x09ifTrue: [onlyInSelfBlock value: rstSelf next]\x0a\x09\x09\x09\x09\x09\x09\x09ifFalse: [onlyInArgBlock value: rstArg next]]]]]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["readStream", "series", "whileFalse:", "and:", "atEnd", "ifTrue:ifFalse:", "value:", "next", "date", "peek", "=", "value:value:", "<"]
+}, function ($methodClass){ return function (aSeries,onlyInSelfBlock,onlyInArgBlock,inBothBlock){
+var self=this,$self=this;
+var rstSelf,rstArg;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12;
+$1=$self._series();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["series"]=1;
+//>>excludeEnd("ctx");
+rstSelf=$recv($1)._readStream();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["readStream"]=1;
+//>>excludeEnd("ctx");
+rstArg=$recv($recv(aSeries)._series())._readStream();
+$recv((function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+$2=$recv(rstSelf)._atEnd();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["atEnd"]=1;
+//>>excludeEnd("ctx");
+return $recv($2)._and_((function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
+return $recv(rstArg)._atEnd();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx3.sendIdx["atEnd"]=2;
+//>>excludeEnd("ctx");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({},$ctx2,2)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
+//>>excludeEnd("ctx");
+}))._whileFalse_((function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+$3=$recv(rstSelf)._atEnd();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["atEnd"]=3;
+//>>excludeEnd("ctx");
+if($core.assert($3)){
+$4=$recv(rstArg)._next();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["next"]=1;
+//>>excludeEnd("ctx");
+return $recv(onlyInArgBlock)._value_($4);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["value:"]=1;
+//>>excludeEnd("ctx");
+} else {
+$5=$recv(rstArg)._atEnd();
+if($core.assert($5)){
+$6=$recv(rstSelf)._next();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["next"]=2;
+//>>excludeEnd("ctx");
+return $recv(onlyInSelfBlock)._value_($6);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["value:"]=2;
+//>>excludeEnd("ctx");
+} else {
+var selfDate,argDate;
+$7=$recv(rstSelf)._peek();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["peek"]=1;
+//>>excludeEnd("ctx");
+selfDate=$recv($7)._date();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["date"]=1;
+//>>excludeEnd("ctx");
+argDate=$recv($recv(rstArg)._peek())._date();
+$8=$recv(selfDate).__eq(argDate);
+if($core.assert($8)){
+$9=$recv(rstSelf)._next();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["next"]=3;
+//>>excludeEnd("ctx");
+$10=$recv(rstArg)._next();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["next"]=4;
+//>>excludeEnd("ctx");
+return $recv(inBothBlock)._value_value_($9,$10);
+} else {
+$11=$recv(selfDate).__lt(argDate);
+if($core.assert($11)){
+$12=$recv(rstSelf)._next();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["next"]=5;
+//>>excludeEnd("ctx");
+return $recv(onlyInSelfBlock)._value_($12);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["value:"]=3;
+//>>excludeEnd("ctx");
+} else {
+return $recv(onlyInArgBlock)._value_($recv(rstArg)._next());
+}
+}
+}
+}
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,3)});
+//>>excludeEnd("ctx");
+}));
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"with:onlyInSelf:onlyInArg:inBoth:",{aSeries:aSeries,onlyInSelfBlock:onlyInSelfBlock,onlyInArgBlock:onlyInArgBlock,inBothBlock:inBothBlock,rstSelf:rstSelf,rstArg:rstArg})});
+//>>excludeEnd("ctx");
 }; }),
 $globals.Dataseries);
 
@@ -5378,11 +6124,11 @@ selector: "addVersionInfo",
 protocol: "actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "addVersionInfo\x0a\x09| versions |\x0a\x09versions := '#Versions' asSilk.\x0a\x09versions resetContents.\x0a\x09versions << {\x0a\x09\x09CoViD19 softwareVersionInfo.\x0a\x09 \x09self dataVersionInfo}",
-referencedClasses: ["CoViD19"],
+source: "addVersionInfo\x0a\x09| versions |\x0a\x09versions := '#Versions' asSilk.\x0a\x09versions resetContents.\x0a\x09versions << self dataVersionInfo",
+referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["asSilk", "resetContents", "<<", "softwareVersionInfo", "dataVersionInfo"]
+messageSends: ["asSilk", "resetContents", "<<", "dataVersionInfo"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 var versions;
@@ -5391,10 +6137,53 @@ return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 versions="#Versions"._asSilk();
 $recv(versions)._resetContents();
-$recv(versions).__lt_lt([$recv($globals.CoViD19)._softwareVersionInfo(),$self._dataVersionInfo()]);
+$recv(versions).__lt_lt($self._dataVersionInfo());
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"addVersionInfo",{versions:versions})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.GeographicArea);
+
+$core.addMethod(
+$core.method({
+selector: "areaInfo",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "areaInfo\x0a\x09| span |\x0a\x09span := Silk SPAN: 'class' -> 'AreaInfo'.\x0a\x09self population isZero ifFalse: [\x0a\x09\x09^span << {Silk SPAN: 'Population: '. Silk SPAN: self population separatedThousandsString}].\x0a\x09^span",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["SPAN:", "->", "ifFalse:", "isZero", "population", "<<", "separatedThousandsString"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+var span;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $2,$1,$3,$5,$4;
+span=$recv($globals.Silk)._SPAN_("class".__minus_gt("AreaInfo"));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=1;
+//>>excludeEnd("ctx");
+$2=$self._population();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["population"]=1;
+//>>excludeEnd("ctx");
+$1=$recv($2)._isZero();
+if(!$core.assert($1)){
+$3=span;
+$5=$recv($globals.Silk)._SPAN_("Population: ");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["SPAN:"]=2;
+//>>excludeEnd("ctx");
+$4=[$5,$recv($globals.Silk)._SPAN_($recv($self._population())._separatedThousandsString())];
+return $recv($3).__lt_lt($4);
+}
+return span;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"areaInfo",{span:span})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.GeographicArea);
@@ -5670,6 +6459,29 @@ $globals.GeographicArea);
 
 $core.addMethod(
 $core.method({
+selector: "graphicsHeader",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "graphicsHeader\x0a\x09^Silk DIV << {\x0a\x09\x09'class' -> 'GraphicsHeader'.\x0a\x09\x09Silk H2: self name.\x0a\x09\x09self areaInfo}",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["<<", "DIV", "->", "H2:", "name", "areaInfo"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($recv($globals.Silk)._DIV()).__lt_lt(["class".__minus_gt("GraphicsHeader"),$recv($globals.Silk)._H2_($self._name()),$self._areaInfo()]);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"graphicsHeader",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.GeographicArea);
+
+$core.addMethod(
+$core.method({
 selector: "initializeName:series:properties:",
 protocol: "initialization",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -5783,50 +6595,87 @@ $globals.GeographicArea);
 
 $core.addMethod(
 $core.method({
-selector: "modificationDate",
+selector: "metadata",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "modificationDate\x0a\x09\x22<Date | nil>\x22\x0a\x09\x0a\x09^self properties at: #modificationDate ifAbsent: [nil]",
-referencedClasses: [],
+source: "metadata\x0a\x09\x22<Dictionary>\x22\x0a\x09\x0a\x09^self properties at: #metadata ifAbsent: [Dictionary new]",
+referencedClasses: ["Dictionary"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["at:ifAbsent:", "properties"]
+messageSends: ["at:ifAbsent:", "properties", "new"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($self._properties())._at_ifAbsent_("modificationDate",(function(){
-return nil;
-
+return $recv($self._properties())._at_ifAbsent_("metadata",(function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv($globals.Dictionary)._new();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
+//>>excludeEnd("ctx");
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"modificationDate",{})});
+}, function($ctx1) {$ctx1.fill(self,"metadata",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.GeographicArea);
 
 $core.addMethod(
 $core.method({
-selector: "modificationDate:",
+selector: "metadata:",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aDate"],
-source: "modificationDate: aDate\x0a\x09self properties at: #modificationDate put: aDate",
+args: ["aDictionary"],
+source: "metadata: aDictionary\x0a\x09self properties at: #metadata put: aDictionary",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
 messageSends: ["at:put:", "properties"]
-}, function ($methodClass){ return function (aDate){
+}, function ($methodClass){ return function (aDictionary){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-$recv($self._properties())._at_put_("modificationDate",aDate);
+$recv($self._properties())._at_put_("metadata",aDictionary);
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"modificationDate:",{aDate:aDate})});
+}, function($ctx1) {$ctx1.fill(self,"metadata:",{aDictionary:aDictionary})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.GeographicArea);
+
+$core.addMethod(
+$core.method({
+selector: "modificationDate",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "modificationDate\x0a\x09\x22<Date>\x22\x0a\x0a\x09(self metadata at: #modificationDate) ifNotNil: [:date | \x0a\x09\x09^Date fromString: date].\x0a\x09^Date now",
+referencedClasses: ["Date"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifNotNil:", "at:", "metadata", "fromString:", "now"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$receiver;
+$1=$recv($self._metadata())._at_("modificationDate");
+if(($receiver = $1) == null || $receiver.a$nil){
+$1;
+} else {
+var date;
+date=$receiver;
+return $recv($globals.Date)._fromString_(date);
+}
+return $recv($globals.Date)._now();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"modificationDate",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.GeographicArea);
@@ -5851,23 +6700,88 @@ $globals.GeographicArea);
 
 $core.addMethod(
 $core.method({
-selector: "normalizedLike:",
-protocol: "copying",
+selector: "population",
+protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aDataseries"],
-source: "normalizedLike: aDataseries\x0a\x09^self class\x0a\x09\x09name: self name\x0a\x09\x09series: (self series normalizedLike: aDataseries)\x0a\x09\x09properties: self properties",
+args: [],
+source: "population\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09^self properties at: #population ifAbsent: [0]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["name:series:properties:", "class", "name", "normalizedLike:", "series", "properties"]
-}, function ($methodClass){ return function (aDataseries){
+messageSends: ["at:ifAbsent:", "properties"]
+}, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($self._class())._name_series_properties_($self._name(),$recv($self._series())._normalizedLike_(aDataseries),$self._properties());
+return $recv($self._properties())._at_ifAbsent_("population",(function(){
+return (0);
+
+}));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"normalizedLike:",{aDataseries:aDataseries})});
+}, function($ctx1) {$ctx1.fill(self,"population",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.GeographicArea);
+
+$core.addMethod(
+$core.method({
+selector: "population:",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anInteger"],
+source: "population: anInteger\x0a\x09self properties at: #population put: anInteger",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["at:put:", "properties"]
+}, function ($methodClass){ return function (anInteger){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv($self._properties())._at_put_("population",anInteger);
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"population:",{anInteger:anInteger})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.GeographicArea);
+
+$core.addMethod(
+$core.method({
+selector: "printOn:",
+protocol: "comparing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aStream"],
+source: "printOn: aStream\x0a\x09aStream \x0a\x09\x09nextPutAll: self class name;\x0a\x09\x09nextPut: $(;\x0a\x09\x09nextPutAll: self name;\x0a\x09\x09nextPut: $)",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["nextPutAll:", "name", "class", "nextPut:"]
+}, function ($methodClass){ return function (aStream){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1;
+$1=$recv($self._class())._name();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["name"]=1;
+//>>excludeEnd("ctx");
+$recv(aStream)._nextPutAll_($1);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["nextPutAll:"]=1;
+//>>excludeEnd("ctx");
+$recv(aStream)._nextPut_("(");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["nextPut:"]=1;
+//>>excludeEnd("ctx");
+$recv(aStream)._nextPutAll_($self._name());
+$recv(aStream)._nextPut_(")");
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"printOn:",{aStream:aStream})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.GeographicArea);
@@ -5908,11 +6822,11 @@ selector: "recreateCharts",
 protocol: "actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "recreateCharts\x0a\x09| graphics |\x0a\x09graphics := '#Graphics' asSilk.\x0a\x09graphics resetContents.\x0a\x09graphics << {\x0a\x09\x09Silk H2: self name.\x0a\x09 \x09self casechart.\x0a\x09 \x09self changechart}",
-referencedClasses: ["Silk"],
+source: "recreateCharts\x0a\x09| graphics |\x0a\x09graphics := '#Graphics' asSilk.\x0a\x09graphics resetContents.\x0a\x09graphics << {\x0a\x09\x09self graphicsHeader.\x0a\x09 \x09self casechart.\x0a\x09 \x09self changechart}",
+referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["asSilk", "resetContents", "<<", "H2:", "name", "casechart", "changechart"]
+messageSends: ["asSilk", "resetContents", "<<", "graphicsHeader", "casechart", "changechart"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 var graphics;
@@ -5921,7 +6835,7 @@ return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 graphics="#Graphics"._asSilk();
 $recv(graphics)._resetContents();
-$recv(graphics).__lt_lt([$recv($globals.Silk)._H2_($self._name()),$self._casechart(),$self._changechart()]);
+$recv(graphics).__lt_lt([$self._graphicsHeader(),$self._casechart(),$self._changechart()]);
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"recreateCharts",{graphics:graphics})});
@@ -6002,47 +6916,38 @@ selector: "allFromJHUJson:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aJson"],
-source: "allFromJHUJson: aJson\x0a\x09\x22<Array of: GeographicArea>\x22\x0a\x0a\x09| modificationDate countries |\x0a\x09modificationDate := (aJson meta at: #modificationDate)\x0a\x09\x09ifNotNil: [:date | Date fromString: date]\x0a\x09\x09ifNil: [Date now].\x0a\x09countries := self allFromJHUSeries: (aJson data collect: [:countryJson | JHUSeries fromJson: countryJson]).\x0a\x09countries do: [:country | country modificationDate: modificationDate].\x0a\x09^countries",
-referencedClasses: ["Date", "JHUSeries"],
+source: "allFromJHUJson: aJson\x0a\x09\x22<Array of: GeographicArea>\x22\x0a\x0a\x09| countries |\x0a\x09countries := self allFromJHUSeries: (aJson data collect: [:countryJson | JHUSeries fromJson: countryJson]).\x0a\x09countries do: [:country | country metadata: aJson meta].\x0a\x09^countries",
+referencedClasses: ["JHUSeries"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifNotNil:ifNil:", "at:", "meta", "fromString:", "now", "allFromJHUSeries:", "collect:", "data", "fromJson:", "do:", "modificationDate:"]
+messageSends: ["allFromJHUSeries:", "collect:", "data", "fromJson:", "do:", "metadata:", "meta"]
 }, function ($methodClass){ return function (aJson){
 var self=this,$self=this;
-var modificationDate,countries;
+var countries;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1,$receiver;
-$1=$recv($recv(aJson)._meta())._at_("modificationDate");
-if(($receiver = $1) == null || $receiver.a$nil){
-modificationDate=$recv($globals.Date)._now();
-} else {
-var date;
-date=$receiver;
-modificationDate=$recv($globals.Date)._fromString_(date);
-}
 countries=$self._allFromJHUSeries_($recv($recv(aJson)._data())._collect_((function(countryJson){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
 return $recv($globals.JHUSeries)._fromJson_(countryJson);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({countryJson:countryJson},$ctx1,3)});
+}, function($ctx2) {$ctx2.fillBlock({countryJson:countryJson},$ctx1,1)});
 //>>excludeEnd("ctx");
 })));
 $recv(countries)._do_((function(country){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-return $recv(country)._modificationDate_(modificationDate);
+return $recv(country)._metadata_($recv(aJson)._meta());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({country:country},$ctx1,4)});
+}, function($ctx2) {$ctx2.fillBlock({country:country},$ctx1,2)});
 //>>excludeEnd("ctx");
 }));
 return countries;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"allFromJHUJson:",{aJson:aJson,modificationDate:modificationDate,countries:countries})});
+}, function($ctx1) {$ctx1.fill(self,"allFromJHUJson:",{aJson:aJson,countries:countries})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.GeographicArea.a$cls);
@@ -6076,47 +6981,38 @@ selector: "allFromRKIJson:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aJson"],
-source: "allFromRKIJson: aJson\x0a\x09\x22<Array of: GeographicArea>\x22\x0a\x09\x0a\x09| modificationDate countries |\x0a\x09modificationDate := (aJson meta at: #modificationDate)\x0a\x09\x09ifNotNil: [:date | Date fromString: date]\x0a\x09\x09ifNil: [Date now].\x0a\x09countries := self allFromRKISeries: (aJson data collect: [:countryJson | RKISeries fromJson: countryJson]).\x0a\x09countries do: [:country | country modificationDate: modificationDate].\x0a\x09^countries",
-referencedClasses: ["Date", "RKISeries"],
+source: "allFromRKIJson: aJson\x0a\x09\x22<Array of: GeographicArea>\x22\x0a\x09\x0a\x09| countries |\x0a\x09countries := self allFromRKISeries: (aJson data collect: [:countryJson | RKISeries fromJson: countryJson]).\x0a\x09countries do: [:country | country metadata: aJson meta].\x0a\x09^countries",
+referencedClasses: ["RKISeries"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifNotNil:ifNil:", "at:", "meta", "fromString:", "now", "allFromRKISeries:", "collect:", "data", "fromJson:", "do:", "modificationDate:"]
+messageSends: ["allFromRKISeries:", "collect:", "data", "fromJson:", "do:", "metadata:", "meta"]
 }, function ($methodClass){ return function (aJson){
 var self=this,$self=this;
-var modificationDate,countries;
+var countries;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1,$receiver;
-$1=$recv($recv(aJson)._meta())._at_("modificationDate");
-if(($receiver = $1) == null || $receiver.a$nil){
-modificationDate=$recv($globals.Date)._now();
-} else {
-var date;
-date=$receiver;
-modificationDate=$recv($globals.Date)._fromString_(date);
-}
 countries=$self._allFromRKISeries_($recv($recv(aJson)._data())._collect_((function(countryJson){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
 return $recv($globals.RKISeries)._fromJson_(countryJson);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({countryJson:countryJson},$ctx1,3)});
+}, function($ctx2) {$ctx2.fillBlock({countryJson:countryJson},$ctx1,1)});
 //>>excludeEnd("ctx");
 })));
 $recv(countries)._do_((function(country){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-return $recv(country)._modificationDate_(modificationDate);
+return $recv(country)._metadata_($recv(aJson)._meta());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({country:country},$ctx1,4)});
+}, function($ctx2) {$ctx2.fillBlock({country:country},$ctx1,2)});
 //>>excludeEnd("ctx");
 }));
 return countries;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"allFromRKIJson:",{aJson:aJson,modificationDate:modificationDate,countries:countries})});
+}, function($ctx1) {$ctx1.fill(self,"allFromRKIJson:",{aJson:aJson,countries:countries})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.GeographicArea.a$cls);
@@ -6140,6 +7036,71 @@ return $core.withContext(function($ctx1) {
 return $self._subclassResponsability();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"allFromRKISeries:",{someSeries:someSeries})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.GeographicArea.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "allFromUSJHUJson:",
+protocol: "instance creation",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aJson"],
+source: "allFromUSJHUJson: aJson\x0a\x09\x22<Array of: GeographicArea>\x22\x0a\x0a\x09| countries |\x0a\x09countries := self allFromUSJHUSeries: (aJson data collect: [:countryJson | JHUUSSeries fromJson: countryJson]).\x0a\x09countries do: [:country | country metadata: aJson meta].\x0a\x09^countries",
+referencedClasses: ["JHUUSSeries"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["allFromUSJHUSeries:", "collect:", "data", "fromJson:", "do:", "metadata:", "meta"]
+}, function ($methodClass){ return function (aJson){
+var self=this,$self=this;
+var countries;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+countries=$self._allFromUSJHUSeries_($recv($recv(aJson)._data())._collect_((function(countryJson){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv($globals.JHUUSSeries)._fromJson_(countryJson);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({countryJson:countryJson},$ctx1,1)});
+//>>excludeEnd("ctx");
+})));
+$recv(countries)._do_((function(country){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv(country)._metadata_($recv(aJson)._meta());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({country:country},$ctx1,2)});
+//>>excludeEnd("ctx");
+}));
+return countries;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"allFromUSJHUJson:",{aJson:aJson,countries:countries})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.GeographicArea.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "allFromUSJHUSeries:",
+protocol: "instance creation",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["someSeries"],
+source: "allFromUSJHUSeries: someSeries\x0a\x09\x22<Array of: GeographicArea>\x22\x0a\x09\x0a\x09^self subclassResponsability",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["subclassResponsability"]
+}, function ($methodClass){ return function (someSeries){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $self._subclassResponsability();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"allFromUSJHUSeries:",{someSeries:someSeries})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.GeographicArea.a$cls);
@@ -6195,92 +7156,6 @@ $globals.GeographicArea.a$cls);
 
 
 $core.addClass("Country", $globals.GeographicArea, ["parts"], "Covid19view");
-$core.addMethod(
-$core.method({
-selector: "addGermanStates:",
-protocol: "accessing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["someCountries"],
-source: "addGermanStates: someCountries\x0a\x09\x22the Dataseries of someCountries have to be normalized to the JHU period\x22\x0a\x09\x0a\x09| normalized |\x0a\x09normalized := OrderedCollection new.\x0a\x09someCountries do: [:land |\x0a\x09\x09normalized add: (land parts \x0a\x09\x09\x09ifEmpty: [\x0a\x09\x09\x09\x09land normalizedLike: self series] \x0a\x09\x09\x09ifNotEmpty: [\x0a\x09\x09\x09\x09land copyWithParts: (land parts collect: [:kreis | kreis normalizedLike: self series])])].\x0a\x09self parts addAll: (normalized sort: [:a :b | a > b])",
-referencedClasses: ["OrderedCollection"],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["new", "do:", "add:", "ifEmpty:ifNotEmpty:", "parts", "normalizedLike:", "series", "copyWithParts:", "collect:", "addAll:", "sort:", ">"]
-}, function ($methodClass){ return function (someCountries){
-var self=this,$self=this;
-var normalized;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-var $1,$3,$4,$6,$5,$2;
-normalized=$recv($globals.OrderedCollection)._new();
-$recv(someCountries)._do_((function(land){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-$1=normalized;
-$3=$recv(land)._parts();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["parts"]=1;
-//>>excludeEnd("ctx");
-$2=$recv($3)._ifEmpty_ifNotEmpty_((function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx3) {
-//>>excludeEnd("ctx");
-$4=$self._series();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx3.sendIdx["series"]=1;
-//>>excludeEnd("ctx");
-return $recv(land)._normalizedLike_($4);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx3.sendIdx["normalizedLike:"]=1;
-//>>excludeEnd("ctx");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({},$ctx2,2)});
-//>>excludeEnd("ctx");
-}),(function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx3) {
-//>>excludeEnd("ctx");
-$6=$recv(land)._parts();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx3.sendIdx["parts"]=2;
-//>>excludeEnd("ctx");
-$5=$recv($6)._collect_((function(kreis){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx4) {
-//>>excludeEnd("ctx");
-return $recv(kreis)._normalizedLike_($self._series());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx4) {$ctx4.fillBlock({kreis:kreis},$ctx3,4)});
-//>>excludeEnd("ctx");
-}));
-return $recv(land)._copyWithParts_($5);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({},$ctx2,3)});
-//>>excludeEnd("ctx");
-}));
-return $recv($1)._add_($2);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({land:land},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-$recv($self._parts())._addAll_($recv(normalized)._sort_((function(a,b){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $recv(a).__gt(b);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({a:a,b:b},$ctx1,5)});
-//>>excludeEnd("ctx");
-})));
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"addGermanStates:",{someCountries:someCountries,normalized:normalized})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Country);
-
 $core.addMethod(
 $core.method({
 selector: "addPartToList:",
@@ -6985,16 +7860,16 @@ $globals.Country);
 
 $core.addMethod(
 $core.method({
-selector: "modificationDate:",
+selector: "metadata:",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aDate"],
-source: "modificationDate: aDate\x0a\x09super modificationDate: aDate.\x0a\x09self parts do: [:part | part modificationDate: aDate]",
+args: ["aDictionary"],
+source: "metadata: aDictionary\x0a\x09super metadata: aDictionary.\x0a\x09self parts do: [:part | part metadata: aDictionary]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["modificationDate:", "do:", "parts"]
-}, function ($methodClass){ return function (aDate){
+messageSends: ["metadata:", "do:", "parts"]
+}, function ($methodClass){ return function (aDictionary){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
@@ -7003,25 +7878,25 @@ return $core.withContext(function($ctx1) {
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.supercall = true,
 //>>excludeEnd("ctx");
-($methodClass.superclass||$boot.nilAsClass).fn.prototype._modificationDate_.call($self,aDate));
+($methodClass.superclass||$boot.nilAsClass).fn.prototype._metadata_.call($self,aDictionary));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.supercall = false;
 //>>excludeEnd("ctx");;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["modificationDate:"]=1;
+$ctx1.sendIdx["metadata:"]=1;
 //>>excludeEnd("ctx");
 $recv($self._parts())._do_((function(part){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-return $recv(part)._modificationDate_(aDate);
+return $recv(part)._metadata_(aDictionary);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx2) {$ctx2.fillBlock({part:part},$ctx1,1)});
 //>>excludeEnd("ctx");
 }));
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"modificationDate:",{aDate:aDate})});
+}, function($ctx1) {$ctx1.fill(self,"metadata:",{aDictionary:aDictionary})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Country);
@@ -7052,6 +7927,45 @@ return $1;
 }
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"parts",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Country);
+
+$core.addMethod(
+$core.method({
+selector: "population",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "population\x0a\x09\x22<Integer | nil>\x22\x0a\x09\x0a\x09^self properties at: #population ifAbsentPut: [\x0a\x09\x09self parts inject: 0 into: [:sum :area | sum + area population]]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["at:ifAbsentPut:", "properties", "inject:into:", "parts", "+", "population"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._properties())._at_ifAbsentPut_("population",(function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv($self._parts())._inject_into_((0),(function(sum,area){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
+return $recv(sum).__plus($recv(area)._population());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({sum:sum,area:area},$ctx2,2)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"population",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Country);
@@ -7168,74 +8082,56 @@ $core.method({
 selector: "allFromJHUSeries:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["someJHUSeries"],
-source: "allFromJHUSeries: someJHUSeries\x0a\x09\x22<Array of: Country>\x22\x0a\x09\x0a\x09| byCountry globalSeries countryList |\x0a\x09byCountry := Dictionary new.\x0a\x09globalSeries := nil.\x0a\x09someJHUSeries do: [:series |\x0a\x09\x09(byCountry at: series country ifAbsentPut: [OrderedCollection new]) add: series.\x0a\x09\x09globalSeries := globalSeries ifNil: [series series] ifNotNil: [globalSeries + series series]].\x0a\x09countryList := OrderedCollection with: (self name: 'World' series: globalSeries).\x0a\x09byCountry keysAndValuesDo: [:countryName :listOfSeries |\x0a\x09\x09countryList add: (listOfSeries size = 1\x0a\x09\x09\x09ifTrue: [self name: countryName series: listOfSeries first series]\x0a\x09\x09\x09ifFalse: [self name: countryName parts: (State allFromJHUSeries: (listOfSeries sort: [:a :b | a > b]))])].\x0a\x09^countryList sort: [:a :b | a > b]",
-referencedClasses: ["Dictionary", "OrderedCollection", "State"],
+args: ["someSeries"],
+source: "allFromJHUSeries: someSeries\x0a\x09\x22<Array of: Country>\x22\x0a\x09\x0a\x09| globalSeries countryList |\x0a\x09globalSeries := someSeries allButFirst inject: someSeries first series into: [:sum :series | sum + series series].\x0a\x09countryList := OrderedCollection with: (self name: 'World' series: globalSeries).\x0a\x09(someSeries groupedBy: #country) keysAndValuesDo: [:countryName :listOfSeries |\x0a\x09\x09countryList add: (listOfSeries size = 1\x0a\x09\x09\x09ifTrue: [self name: countryName series: listOfSeries first series]\x0a\x09\x09\x09ifFalse: [self name: countryName parts: (State allFromJHUSeries: (listOfSeries sort: [:a :b | a > b]))])].\x0a\x09^countryList sort: [:a :b | a > b]",
+referencedClasses: ["OrderedCollection", "State"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["new", "do:", "add:", "at:ifAbsentPut:", "country", "ifNil:ifNotNil:", "series", "+", "with:", "name:series:", "keysAndValuesDo:", "ifTrue:ifFalse:", "=", "size", "first", "name:parts:", "allFromJHUSeries:", "sort:", ">"]
-}, function ($methodClass){ return function (someJHUSeries){
+messageSends: ["inject:into:", "allButFirst", "series", "first", "+", "with:", "name:series:", "keysAndValuesDo:", "groupedBy:", "add:", "ifTrue:ifFalse:", "=", "size", "name:parts:", "allFromJHUSeries:", "sort:", ">"]
+}, function ($methodClass){ return function (someSeries){
 var self=this,$self=this;
-var byCountry,globalSeries,countryList;
+var globalSeries,countryList;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1,$2,$3,$4,$5,$7,$9,$8,$6,$receiver;
-byCountry=$recv($globals.Dictionary)._new();
+var $1,$3,$2,$4,$5,$6,$8,$10,$9,$7;
+$1=$recv(someSeries)._allButFirst();
+$3=$recv(someSeries)._first();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["new"]=1;
+$ctx1.sendIdx["first"]=1;
 //>>excludeEnd("ctx");
-globalSeries=nil;
-$recv(someJHUSeries)._do_((function(series){
+$2=$recv($3)._series();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["series"]=1;
+//>>excludeEnd("ctx");
+globalSeries=$recv($1)._inject_into_($2,(function(sum,series){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-$recv($recv(byCountry)._at_ifAbsentPut_($recv(series)._country(),(function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx3) {
-//>>excludeEnd("ctx");
-return $recv($globals.OrderedCollection)._new();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({},$ctx2,2)});
-//>>excludeEnd("ctx");
-})))._add_(series);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["add:"]=1;
-//>>excludeEnd("ctx");
-$1=globalSeries;
-if(($receiver = $1) == null || $receiver.a$nil){
-globalSeries=$recv(series)._series();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["series"]=1;
-//>>excludeEnd("ctx");
-} else {
-$2=globalSeries;
-$3=$recv(series)._series();
+$4=$recv(series)._series();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["series"]=2;
 //>>excludeEnd("ctx");
-globalSeries=$recv($2).__plus($3);
-}
-return globalSeries;
+return $recv(sum).__plus($4);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({series:series},$ctx1,1)});
+}, function($ctx2) {$ctx2.fillBlock({sum:sum,series:series},$ctx1,1)});
 //>>excludeEnd("ctx");
 }));
-$4=$self._name_series_("World",globalSeries);
+$5=$self._name_series_("World",globalSeries);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.sendIdx["name:series:"]=1;
 //>>excludeEnd("ctx");
-countryList=$recv($globals.OrderedCollection)._with_($4);
-$recv(byCountry)._keysAndValuesDo_((function(countryName,listOfSeries){
+countryList=$recv($globals.OrderedCollection)._with_($5);
+$recv($recv(someSeries)._groupedBy_("country"))._keysAndValuesDo_((function(countryName,listOfSeries){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-$5=countryList;
-$7=$recv($recv(listOfSeries)._size()).__eq((1));
-if($core.assert($7)){
-$6=$self._name_series_(countryName,$recv($recv(listOfSeries)._first())._series());
+$6=countryList;
+$8=$recv($recv(listOfSeries)._size()).__eq((1));
+if($core.assert($8)){
+$7=$self._name_series_(countryName,$recv($recv(listOfSeries)._first())._series());
 } else {
-$9=$recv(listOfSeries)._sort_((function(a,b){
+$10=$recv(listOfSeries)._sort_((function(a,b){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx3) {
 //>>excludeEnd("ctx");
@@ -7244,18 +8140,18 @@ return $recv(a).__gt(b);
 $ctx3.sendIdx[">"]=1;
 //>>excludeEnd("ctx");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({a:a,b:b},$ctx2,8)});
+}, function($ctx3) {$ctx3.fillBlock({a:a,b:b},$ctx2,5)});
 //>>excludeEnd("ctx");
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx2.sendIdx["sort:"]=1;
 //>>excludeEnd("ctx");
-$8=$recv($globals.State)._allFromJHUSeries_($9);
-$6=$self._name_parts_(countryName,$8);
+$9=$recv($globals.State)._allFromJHUSeries_($10);
+$7=$self._name_parts_(countryName,$9);
 }
-return $recv($5)._add_($6);
+return $recv($6)._add_($7);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({countryName:countryName,listOfSeries:listOfSeries},$ctx1,5)});
+}, function($ctx2) {$ctx2.fillBlock({countryName:countryName,listOfSeries:listOfSeries},$ctx1,2)});
 //>>excludeEnd("ctx");
 }));
 return $recv(countryList)._sort_((function(a,b){
@@ -7264,11 +8160,11 @@ return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
 return $recv(a).__gt(b);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({a:a,b:b},$ctx1,9)});
+}, function($ctx2) {$ctx2.fillBlock({a:a,b:b},$ctx1,6)});
 //>>excludeEnd("ctx");
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"allFromJHUSeries:",{someJHUSeries:someJHUSeries,byCountry:byCountry,globalSeries:globalSeries,countryList:countryList})});
+}, function($ctx1) {$ctx1.fill(self,"allFromJHUSeries:",{someSeries:someSeries,globalSeries:globalSeries,countryList:countryList})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Country.a$cls);
@@ -7279,73 +8175,112 @@ selector: "allFromRKISeries:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["someSeries"],
-source: "allFromRKISeries: someSeries\x0a\x09\x22<Array of: Country>\x22\x0a\x09\x0a\x09| byState stateList |\x0a\x09byState := Dictionary new.\x0a\x09someSeries do: [:series |\x0a\x09\x09(byState at: series bundesland ifAbsentPut: [OrderedCollection new]) add: series].\x0a\x09stateList := OrderedCollection new.\x0a\x09byState keysAndValuesDo: [:stateName :listOfSeries |\x0a\x09\x09stateList add: (listOfSeries size = 1\x0a\x09\x09\x09ifTrue: [self name: stateName series: listOfSeries first series]\x0a\x09\x09\x09ifFalse: [self name: stateName parts: (State allFromRKISeries: (listOfSeries sort: [:a :b | a > b]))])].\x0a\x09^stateList",
-referencedClasses: ["Dictionary", "OrderedCollection", "State"],
+source: "allFromRKISeries: someSeries\x0a\x09\x22<Array of: Country>\x22\x0a\x09\x0a\x09|  list |\x0a\x09list := OrderedCollection new.\x0a\x09(someSeries groupedBy: #bundesland) keysAndValuesDo: [:name :listOfSeries |\x0a\x09\x09list add: (listOfSeries size = 1\x0a\x09\x09\x09ifTrue: [self name: name series: listOfSeries first series]\x0a\x09\x09\x09ifFalse: [self name: name parts: (State allFromRKISeries: (listOfSeries sort: [:a :b | a > b]))])].\x0a\x09^list",
+referencedClasses: ["OrderedCollection", "State"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["new", "do:", "add:", "at:ifAbsentPut:", "bundesland", "keysAndValuesDo:", "ifTrue:ifFalse:", "=", "size", "name:series:", "series", "first", "name:parts:", "allFromRKISeries:", "sort:", ">"]
+messageSends: ["new", "keysAndValuesDo:", "groupedBy:", "add:", "ifTrue:ifFalse:", "=", "size", "name:series:", "series", "first", "name:parts:", "allFromRKISeries:", "sort:", ">"]
 }, function ($methodClass){ return function (someSeries){
 var self=this,$self=this;
-var byState,stateList;
+var list;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 var $1,$3,$2;
-byState=$recv($globals.Dictionary)._new();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.sendIdx["new"]=1;
-//>>excludeEnd("ctx");
-$recv(someSeries)._do_((function(series){
+list=$recv($globals.OrderedCollection)._new();
+$recv($recv(someSeries)._groupedBy_("bundesland"))._keysAndValuesDo_((function(name,listOfSeries){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-return $recv($recv(byState)._at_ifAbsentPut_($recv(series)._bundesland(),(function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx3) {
-//>>excludeEnd("ctx");
-return $recv($globals.OrderedCollection)._new();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx3.sendIdx["new"]=2;
-//>>excludeEnd("ctx");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({},$ctx2,2)});
-//>>excludeEnd("ctx");
-})))._add_(series);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx2.sendIdx["add:"]=1;
-//>>excludeEnd("ctx");
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({series:series},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-stateList=$recv($globals.OrderedCollection)._new();
-$recv(byState)._keysAndValuesDo_((function(stateName,listOfSeries){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-$1=stateList;
+$1=list;
 $3=$recv($recv(listOfSeries)._size()).__eq((1));
 if($core.assert($3)){
-$2=$self._name_series_(stateName,$recv($recv(listOfSeries)._first())._series());
+$2=$self._name_series_(name,$recv($recv(listOfSeries)._first())._series());
 } else {
-$2=$self._name_parts_(stateName,$recv($globals.State)._allFromRKISeries_($recv(listOfSeries)._sort_((function(a,b){
+$2=$self._name_parts_(name,$recv($globals.State)._allFromRKISeries_($recv(listOfSeries)._sort_((function(a,b){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx3) {
 //>>excludeEnd("ctx");
 return $recv(a).__gt(b);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({a:a,b:b},$ctx2,6)});
+}, function($ctx3) {$ctx3.fillBlock({a:a,b:b},$ctx2,4)});
 //>>excludeEnd("ctx");
 }))));
 }
 return $recv($1)._add_($2);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({stateName:stateName,listOfSeries:listOfSeries},$ctx1,3)});
+}, function($ctx2) {$ctx2.fillBlock({name:name,listOfSeries:listOfSeries},$ctx1,1)});
 //>>excludeEnd("ctx");
 }));
-return stateList;
+return list;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"allFromRKISeries:",{someSeries:someSeries,byState:byState,stateList:stateList})});
+}, function($ctx1) {$ctx1.fill(self,"allFromRKISeries:",{someSeries:someSeries,list:list})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Country.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "allFromUSJHUSeries:",
+protocol: "instance creation",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["someSeries"],
+source: "allFromUSJHUSeries: someSeries\x0a\x09\x22<Array of: Country>\x22\x0a\x09\x0a\x09| list |\x0a\x09list := OrderedCollection new.\x0a\x09(someSeries groupedBy: #state) keysAndValuesDo: [:name :listOfSeries |\x0a\x09\x09list add: (listOfSeries size = 1\x0a\x09\x09\x09ifTrue: [self name: name series: listOfSeries first series]\x0a\x09\x09\x09ifFalse: [self name: name parts: (State allFromUSJHUSeries: (listOfSeries sort: [:a :b | a > b]))])].\x0a\x09^list sort: [:a :b | a > b]",
+referencedClasses: ["OrderedCollection", "State"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["new", "keysAndValuesDo:", "groupedBy:", "add:", "ifTrue:ifFalse:", "=", "size", "name:series:", "series", "first", "name:parts:", "allFromUSJHUSeries:", "sort:", ">"]
+}, function ($methodClass){ return function (someSeries){
+var self=this,$self=this;
+var list;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$3,$5,$4,$2;
+list=$recv($globals.OrderedCollection)._new();
+$recv($recv(someSeries)._groupedBy_("state"))._keysAndValuesDo_((function(name,listOfSeries){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+$1=list;
+$3=$recv($recv(listOfSeries)._size()).__eq((1));
+if($core.assert($3)){
+$2=$self._name_series_(name,$recv($recv(listOfSeries)._first())._series());
+} else {
+$5=$recv(listOfSeries)._sort_((function(a,b){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
+return $recv(a).__gt(b);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx3.sendIdx[">"]=1;
+//>>excludeEnd("ctx");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({a:a,b:b},$ctx2,4)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["sort:"]=1;
+//>>excludeEnd("ctx");
+$4=$recv($globals.State)._allFromUSJHUSeries_($5);
+$2=$self._name_parts_(name,$4);
+}
+return $recv($1)._add_($2);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({name:name,listOfSeries:listOfSeries},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+return $recv(list)._sort_((function(a,b){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv(a).__gt(b);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({a:a,b:b},$ctx1,5)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"allFromUSJHUSeries:",{someSeries:someSeries,list:list})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Country.a$cls);
@@ -7407,18 +8342,18 @@ $core.method({
 selector: "allFromJHUSeries:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["someJHUSeries"],
-source: "allFromJHUSeries: someJHUSeries\x0a\x09\x22<Array of: State>\x22\x0a\x09\x0a\x09^someJHUSeries collect: [:series |\x0a\x09\x09self \x0a\x09\x09\x09name: series state\x0a\x09\x09\x09series: series series]",
+args: ["someSeries"],
+source: "allFromJHUSeries: someSeries\x0a\x09\x22<Array of: State>\x22\x0a\x09\x0a\x09^someSeries collect: [:series |\x0a\x09\x09self \x0a\x09\x09\x09name: series state\x0a\x09\x09\x09series: series series]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
 messageSends: ["collect:", "name:series:", "state", "series"]
-}, function ($methodClass){ return function (someJHUSeries){
+}, function ($methodClass){ return function (someSeries){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv(someJHUSeries)._collect_((function(series){
+return $recv(someSeries)._collect_((function(series){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
@@ -7428,7 +8363,7 @@ return $self._name_series_($recv(series)._state(),$recv(series)._series());
 //>>excludeEnd("ctx");
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"allFromJHUSeries:",{someJHUSeries:someJHUSeries})});
+}, function($ctx1) {$ctx1.fill(self,"allFromJHUSeries:",{someSeries:someSeries})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.State.a$cls);
@@ -7460,6 +8395,45 @@ return $self._name_series_($recv(series)._landkreis(),$recv(series)._series());
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"allFromRKISeries:",{someSeries:someSeries})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.State.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "allFromUSJHUSeries:",
+protocol: "instance creation",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["someSeries"],
+source: "allFromUSJHUSeries: someSeries\x0a\x09\x22<Array of: State>\x22\x0a\x09\x0a\x09^someSeries collect: [:series |\x0a\x09\x09self \x0a\x09\x09\x09name: series county\x0a\x09\x09\x09series: series series\x0a\x09\x09\x09properties: (Dictionary\x0a\x09\x09\x09\x09with: #uid -> series uid \x0a\x09\x09\x09\x09with: #population -> series population)]",
+referencedClasses: ["Dictionary"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["collect:", "name:series:properties:", "county", "series", "with:with:", "->", "uid", "population"]
+}, function ($methodClass){ return function (someSeries){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$2,$4,$3;
+return $recv(someSeries)._collect_((function(series){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+$1=$recv(series)._county();
+$2=$recv(series)._series();
+$4="uid".__minus_gt($recv(series)._uid());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx2.sendIdx["->"]=1;
+//>>excludeEnd("ctx");
+$3=$recv($globals.Dictionary)._with_with_($4,"population".__minus_gt($recv(series)._population()));
+return $self._name_series_properties_($1,$2,$3);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({series:series},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"allFromUSJHUSeries:",{someSeries:someSeries})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.State.a$cls);
@@ -8401,7 +9375,7 @@ return inst;
 $globals.Series.a$cls);
 
 
-$core.addClass("JHUSeries", $globals.Series, ["country", "state", "latLong"], "Covid19view");
+$core.addClass("JHUSeries", $globals.Series, ["country", "state"], "Covid19view");
 $core.addMethod(
 $core.method({
 selector: "country",
@@ -8422,16 +9396,16 @@ $globals.JHUSeries);
 
 $core.addMethod(
 $core.method({
-selector: "initializeCountry:state:latLong:series:",
+selector: "initializeCountry:state:series:",
 protocol: "initialization",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aCountryString", "aStateString", "aLatLongPoint", "aDataseries"],
-source: "initializeCountry: aCountryString state: aStateString latLong: aLatLongPoint series: aDataseries\x0a\x09self initializeSeries: aDataseries.\x0a\x09country := aCountryString.\x0a\x09state := aStateString.\x0a\x09latLong := aLatLongPoint",
+args: ["aCountryString", "aStateString", "aDataseries"],
+source: "initializeCountry: aCountryString state: aStateString series: aDataseries\x0a\x09self initializeSeries: aDataseries.\x0a\x09country := aCountryString.\x0a\x09state := aStateString",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
 messageSends: ["initializeSeries:"]
-}, function ($methodClass){ return function (aCountryString,aStateString,aLatLongPoint,aDataseries){
+}, function ($methodClass){ return function (aCountryString,aStateString,aDataseries){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
@@ -8439,29 +9413,10 @@ return $core.withContext(function($ctx1) {
 $self._initializeSeries_(aDataseries);
 $self.country=aCountryString;
 $self.state=aStateString;
-$self.latLong=aLatLongPoint;
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"initializeCountry:state:latLong:series:",{aCountryString:aCountryString,aStateString:aStateString,aLatLongPoint:aLatLongPoint,aDataseries:aDataseries})});
+}, function($ctx1) {$ctx1.fill(self,"initializeCountry:state:series:",{aCountryString:aCountryString,aStateString:aStateString,aDataseries:aDataseries})});
 //>>excludeEnd("ctx");
-}; }),
-$globals.JHUSeries);
-
-$core.addMethod(
-$core.method({
-selector: "latLong",
-protocol: "accessing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "latLong\x0a\x09\x22<Point>\x22\x0a\x09\x0a\x09^latLong",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: []
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-return $self.latLong;
-
 }; }),
 $globals.JHUSeries);
 
@@ -8527,26 +9482,26 @@ $globals.JHUSeries);
 
 $core.addMethod(
 $core.method({
-selector: "country:state:latLong:series:",
+selector: "country:state:series:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aCountryString", "aStateString", "aLatLongPoint", "aDataseries"],
-source: "country: aCountryString state: aStateString latLong: aLatLongPoint series: aDataseries\x0a\x09| inst |\x0a\x09inst := self new.\x0a\x09inst \x0a\x09\x09initializeCountry: aCountryString \x0a\x09\x09state: aStateString \x0a\x09\x09latLong: aLatLongPoint \x0a\x09\x09series: aDataseries.\x0a\x09^inst",
+args: ["aCountryString", "aStateString", "aDataseries"],
+source: "country: aCountryString state: aStateString series: aDataseries\x0a\x09| inst |\x0a\x09inst := self new.\x0a\x09inst \x0a\x09\x09initializeCountry: aCountryString \x0a\x09\x09state: aStateString \x0a\x09\x09series: aDataseries.\x0a\x09^inst",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["new", "initializeCountry:state:latLong:series:"]
-}, function ($methodClass){ return function (aCountryString,aStateString,aLatLongPoint,aDataseries){
+messageSends: ["new", "initializeCountry:state:series:"]
+}, function ($methodClass){ return function (aCountryString,aStateString,aDataseries){
 var self=this,$self=this;
 var inst;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 inst=$self._new();
-$recv(inst)._initializeCountry_state_latLong_series_(aCountryString,aStateString,aLatLongPoint,aDataseries);
+$recv(inst)._initializeCountry_state_series_(aCountryString,aStateString,aDataseries);
 return inst;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"country:state:latLong:series:",{aCountryString:aCountryString,aStateString:aStateString,aLatLongPoint:aLatLongPoint,aDataseries:aDataseries,inst:inst})});
+}, function($ctx1) {$ctx1.fill(self,"country:state:series:",{aCountryString:aCountryString,aStateString:aStateString,aDataseries:aDataseries,inst:inst})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.JHUSeries.a$cls);
@@ -8557,17 +9512,17 @@ selector: "fromJson:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aJson"],
-source: "fromJson: aJson\x0a\x09^self \x0a\x09\x09country: aJson country \x0a\x09\x09state: aJson state \x0a\x09\x09latLong: aJson latLong \x0a\x09\x09series: (Dataseries series: (aJson series collect: [:json | JHUDatapoint fromJson: json]))",
+source: "fromJson: aJson\x0a\x09^self \x0a\x09\x09country: aJson country \x0a\x09\x09state: aJson state \x0a\x09\x09series: (Dataseries series: (aJson series collect: [:json | JHUDatapoint fromJson: json]))",
 referencedClasses: ["Dataseries", "JHUDatapoint"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["country:state:latLong:series:", "country", "state", "latLong", "series:", "collect:", "series", "fromJson:"]
+messageSends: ["country:state:series:", "country", "state", "series:", "collect:", "series", "fromJson:"]
 }, function ($methodClass){ return function (aJson){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $self._country_state_latLong_series_($recv(aJson)._country(),$recv(aJson)._state(),$recv(aJson)._latLong(),$recv($globals.Dataseries)._series_($recv($recv(aJson)._series())._collect_((function(json){
+return $self._country_state_series_($recv(aJson)._country(),$recv(aJson)._state(),$recv($globals.Dataseries)._series_($recv($recv(aJson)._series())._collect_((function(json){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
@@ -8582,36 +9537,206 @@ return $recv($globals.JHUDatapoint)._fromJson_(json);
 }; }),
 $globals.JHUSeries.a$cls);
 
+
+$core.addClass("JHUUSSeries", $globals.Series, ["uid", "state", "county", "population"], "Covid19view");
 $core.addMethod(
 $core.method({
-selector: "fromJson:at:",
-protocol: "instance creation",
+selector: "county",
+protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aJson", "aDate"],
-source: "fromJson: aJson at: aDate\x0a\x09^self \x0a\x09\x09country: aJson country \x0a\x09\x09state: aJson state \x0a\x09\x09latLong: aJson latLong \x0a\x09\x09series: (Dataseries series: (aJson series collect: [:json | JHUDatapoint fromJson: json]))",
-referencedClasses: ["Dataseries", "JHUDatapoint"],
+args: [],
+source: "county\x0a\x09\x22<String>\x22\x0a\x09\x0a\x09^county",
+referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["country:state:latLong:series:", "country", "state", "latLong", "series:", "collect:", "series", "fromJson:"]
-}, function ($methodClass){ return function (aJson,aDate){
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return $self.county;
+
+}; }),
+$globals.JHUUSSeries);
+
+$core.addMethod(
+$core.method({
+selector: "initializeUid:state:county:population:series:",
+protocol: "initialization",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aUidString", "aStateString", "aCountyString", "aPopulationInteger", "aDataseries"],
+source: "initializeUid: aUidString state: aStateString county: aCountyString population: aPopulationInteger series: aDataseries\x0a\x09self initializeSeries: aDataseries.\x0a\x09uid := aUidString.\x0a\x09state := aStateString.\x0a\x09county := aCountyString.\x0a\x09population := aPopulationInteger",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["initializeSeries:"]
+}, function ($methodClass){ return function (aUidString,aStateString,aCountyString,aPopulationInteger,aDataseries){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $self._country_state_latLong_series_($recv(aJson)._country(),$recv(aJson)._state(),$recv(aJson)._latLong(),$recv($globals.Dataseries)._series_($recv($recv(aJson)._series())._collect_((function(json){
+$self._initializeSeries_(aDataseries);
+$self.uid=aUidString;
+$self.state=aStateString;
+$self.county=aCountyString;
+$self.population=aPopulationInteger;
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"initializeUid:state:county:population:series:",{aUidString:aUidString,aStateString:aStateString,aCountyString:aCountyString,aPopulationInteger:aPopulationInteger,aDataseries:aDataseries})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.JHUUSSeries);
+
+$core.addMethod(
+$core.method({
+selector: "population",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "population\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09^population",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return $self.population;
+
+}; }),
+$globals.JHUUSSeries);
+
+$core.addMethod(
+$core.method({
+selector: "printOn:",
+protocol: "printing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["stream"],
+source: "printOn: stream\x0a\x09stream\x0a\x09\x09nextPutAll: self state;\x0a\x09\x09nextPut: $ ;\x0a\x09\x09nextPutAll: self county;\x0a\x09\x09nextPut: $(;\x0a\x09\x09nextPutAll: self lastConfirmed printString;\x0a\x09\x09nextPut: $)",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["nextPutAll:", "state", "nextPut:", "county", "printString", "lastConfirmed"]
+}, function ($methodClass){ return function (stream){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv(stream)._nextPutAll_($self._state());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["nextPutAll:"]=1;
+//>>excludeEnd("ctx");
+$recv(stream)._nextPut_(" ");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["nextPut:"]=1;
+//>>excludeEnd("ctx");
+$recv(stream)._nextPutAll_($self._county());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["nextPutAll:"]=2;
+//>>excludeEnd("ctx");
+$recv(stream)._nextPut_("(");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["nextPut:"]=2;
+//>>excludeEnd("ctx");
+$recv(stream)._nextPutAll_($recv($self._lastConfirmed())._printString());
+$recv(stream)._nextPut_(")");
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"printOn:",{stream:stream})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.JHUUSSeries);
+
+$core.addMethod(
+$core.method({
+selector: "state",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "state\x0a\x09\x22<String>\x22\x0a\x09\x0a\x09^state",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return $self.state;
+
+}; }),
+$globals.JHUUSSeries);
+
+$core.addMethod(
+$core.method({
+selector: "uid",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "uid\x0a\x09\x22<String>\x22\x0a\x09\x0a\x09^uid",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return $self.uid;
+
+}; }),
+$globals.JHUUSSeries);
+
+
+$core.addMethod(
+$core.method({
+selector: "fromJson:",
+protocol: "instance creation",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aJson"],
+source: "fromJson: aJson\x0a\x09^self \x0a\x09\x09uid: aJson uid\x0a\x09\x09state: aJson state \x0a\x09\x09county: aJson county \x0a\x09\x09population: aJson population\x0a\x09\x09series: (Dataseries series: (aJson series collect: [:json | ConfirmedAndDeathsDatapoint fromJson: json]))",
+referencedClasses: ["Dataseries", "ConfirmedAndDeathsDatapoint"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["uid:state:county:population:series:", "uid", "state", "county", "population", "series:", "collect:", "series", "fromJson:"]
+}, function ($methodClass){ return function (aJson){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $self._uid_state_county_population_series_($recv(aJson)._uid(),$recv(aJson)._state(),$recv(aJson)._county(),$recv(aJson)._population(),$recv($globals.Dataseries)._series_($recv($recv(aJson)._series())._collect_((function(json){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-return $recv($globals.JHUDatapoint)._fromJson_(json);
+return $recv($globals.ConfirmedAndDeathsDatapoint)._fromJson_(json);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx2) {$ctx2.fillBlock({json:json},$ctx1,1)});
 //>>excludeEnd("ctx");
 }))));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"fromJson:at:",{aJson:aJson,aDate:aDate})});
+}, function($ctx1) {$ctx1.fill(self,"fromJson:",{aJson:aJson})});
 //>>excludeEnd("ctx");
 }; }),
-$globals.JHUSeries.a$cls);
+$globals.JHUUSSeries.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "uid:state:county:population:series:",
+protocol: "instance creation",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aUidString", "aStateString", "aCountyString", "aPopulationInteger", "aDataseries"],
+source: "uid: aUidString state: aStateString county: aCountyString population: aPopulationInteger series: aDataseries\x0a\x09| inst |\x0a\x09inst := self new.\x0a\x09inst \x0a\x09\x09initializeUid: aUidString \x0a\x09\x09state: aStateString \x0a\x09\x09county: aCountyString \x0a\x09\x09population: aPopulationInteger \x0a\x09\x09series: aDataseries.\x0a\x09^inst",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["new", "initializeUid:state:county:population:series:"]
+}, function ($methodClass){ return function (aUidString,aStateString,aCountyString,aPopulationInteger,aDataseries){
+var self=this,$self=this;
+var inst;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+inst=$self._new();
+$recv(inst)._initializeUid_state_county_population_series_(aUidString,aStateString,aCountyString,aPopulationInteger,aDataseries);
+return inst;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"uid:state:county:population:series:",{aUidString:aUidString,aStateString:aStateString,aCountyString:aCountyString,aPopulationInteger:aPopulationInteger,aDataseries:aDataseries,inst:inst})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.JHUUSSeries.a$cls);
 
 
 $core.addClass("RKISeries", $globals.Series, ["idBundesland", "bundesland", "idLandkreis", "landkreis"], "Covid19view");
@@ -8813,6 +9938,51 @@ return inst;
 //>>excludeEnd("ctx");
 }; }),
 $globals.RKISeries.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "groupedBy:",
+protocol: "*Covid19view",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aValuable"],
+source: "groupedBy: aValuable\x0a\x09| dict |\x0a\x09dict := Dictionary new.\x0a\x09self do: [:item | \x0a\x09\x09(dict at: (aValuable value: item) ifAbsentPut: [OrderedCollection new]) add: item].\x0a\x09^dict",
+referencedClasses: ["Dictionary", "OrderedCollection"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["new", "do:", "add:", "at:ifAbsentPut:", "value:"]
+}, function ($methodClass){ return function (aValuable){
+var self=this,$self=this;
+var dict;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+dict=$recv($globals.Dictionary)._new();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.sendIdx["new"]=1;
+//>>excludeEnd("ctx");
+$self._do_((function(item){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv($recv(dict)._at_ifAbsentPut_($recv(aValuable)._value_(item),(function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
+return $recv($globals.OrderedCollection)._new();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({},$ctx2,2)});
+//>>excludeEnd("ctx");
+})))._add_(item);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({item:item},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+return dict;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"groupedBy:",{aValuable:aValuable,dict:dict})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Array);
 
 $core.addMethod(
 $core.method({

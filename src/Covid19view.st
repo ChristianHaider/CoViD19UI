@@ -600,6 +600,74 @@ showRelative: aBoolean
 	self name asString, '.', #showRelative asString settingValue: aBoolean
 ! !
 
+Object subclass: #Casecount
+	slots: {#confirmed. #deaths}
+	package: 'Covid19view'!
+
+!Casecount methodsFor: 'accessing'!
+
+aspects
+	"<Array of: Symbol>"
+	
+	^#(#confirmed #deaths)
+!
+
+confirmed
+	"<Integer>"
+
+	^confirmed
+!
+
+deaths
+	"<Integer>"
+	
+	^deaths
+! !
+
+!Casecount methodsFor: 'arithmetic'!
+
++ aCasecount
+	"<Casecount>"
+	
+	^self class 
+		confirmed: self confirmed + aCasecount confirmed
+		deaths: self deaths + aCasecount deaths
+!
+
+- aCasecount
+	"<Casecount>"
+	
+	^self class 
+		confirmed: self confirmed - aCasecount confirmed
+		deaths: self deaths - aCasecount deaths
+! !
+
+!Casecount methodsFor: 'initialization'!
+
+initializeConfirmed: aConfirmedInteger deaths: aDeathsInteger
+	confirmed := aConfirmedInteger.
+	deaths := aDeathsInteger
+! !
+
+!Casecount class methodsFor: 'instance creation'!
+
+confirmed: aConfirmedInteger deaths: aDeathsInteger
+	| inst |
+	inst := self new.
+	inst initializeConfirmed: aConfirmedInteger deaths: aDeathsInteger.
+	^inst
+!
+
+fromJson: aJson
+	^self 
+		confirmed: (aJson at: #c ifAbsent: [0])
+		deaths: (aJson at: #d ifAbsent: [0])
+!
+
+zero
+	^self confirmed: 0 deaths: 0
+! !
+
 Object subclass: #CoViD19
 	slots: {#countries}
 	package: 'Covid19view'!
@@ -615,7 +683,7 @@ countries
 dataHome
 	"<String>
 	the directory with all data files"
-	
+
 	^'https://covidcrt.uber.space/data/'
 !
 
@@ -624,18 +692,29 @@ lastDate
 	the most recent date in the data"
 	
 	^self countries inject: (Date d: 1 m: 1 y: 2020) into: [:latest :country | latest max: country lastDate]
+!
+
+metadata
+	"<Dictionary>"
+	
+	self countries isEmpty ifTrue: [
+		^Dictionary new].
+	^self countries first metadata
 ! !
 
 !CoViD19 methodsFor: 'action'!
 
 getData
-	self withAllJsons: #('CoViD-19_JHU.json' 'CoViD-19_RKI.json') do: [:jsons |
-		jsons asArgumentsIn: [:jhuJson :rkiJson |
-			| germany |
+	self withAllJsons: #('CoViD-19_JHU.json' 'CoViD-19_US_JHU.json' 'CoViD-19_RKI.json') do: [:jsons |
+		jsons asArgumentsIn: [:jhuJson :jhuUSJson :rkiJson |
+			| us germany |
 			countries := Country allFromJHUJson: jhuJson.
 			germany := countries detect: [:country | country name = 'Germany'].
-			germany addGermanStates: (Country allFromRKIJson: rkiJson).
-			self showCountries]]
+			germany parts addAll: ((Country allFromRKIJson: rkiJson) sort: [:a :b | a > b]).
+			us := countries detect: [:country | country name = 'US'].
+			us parts addAll: (Country allFromUSJHUJson: jhuUSJson).
+			self showCountries.
+			self updateFooter]]
 !
 
 showCountries
@@ -659,22 +738,17 @@ withAllJsons: someFilenames do: aOneArgumentBlock
 
 !CoViD19 methodsFor: 'html'!
 
-addContentsTo: aDiv
-	aDiv << {
-		self header.
-		Silk DIV: {
-			'id' -> 'CountryList'.
-			Silk DIV: {
-				'id' -> 'CountryList'.
-				'Loading data...'}}.
-		Silk DIV: 'id' -> 'Graphics'}
-!
-
 augmentPage
 	Silk new 
 		reset;
-		DIV: self newContents.
+		DIV: {'id' -> 'Contents'. self pageContent}.
 	self getData
+!
+
+footer
+	^Silk FOOTER: {
+		Silk SPAN: {self class softwareVersionInfo}.
+		Silk SPAN: {'id' -> 'ServerVersion'. self class serverVersionInfo}}
 !
 
 header
@@ -682,18 +756,25 @@ header
 		Silk H1: {
 			Silk DIV: 'CoViD-19 Charts'. 
 			Silk DIV: {'class' -> 'Subtitle'. 'Do not trust the numbers!!'}}.
-		Silk SPAN: {
-			'id' -> 'Versions'.
-			self class softwareVersionInfo}}
+		Silk SPAN: 'id' -> 'Versions'}
 !
 
-newContents
-	"<DIV>"
-	
-	| contents |
-	contents := Silk DIV: {'id' -> 'Contents'}.
-	self addContentsTo: contents.
-	^contents
+pageContent
+	^{	self header.
+		Silk DIV: {
+			'id' -> 'CountryList'.
+			Silk DIV: {
+				'Loading data... the World, US, Germany... hold on...'.
+				'(can your browser make it?)'}}.
+		Silk DIV: 'id' -> 'Graphics'.
+		self footer}
+!
+
+updateFooter
+	| element |
+	element := '#ServerVersion' asSilk.
+	element resetContents.
+	element << self class serverVersionInfo
 ! !
 
 !CoViD19 methodsFor: 'initialize / release'!
@@ -702,7 +783,7 @@ resetContents
 	| contents |
 	contents := '#Contents' asSilk.
 	contents resetContents.
-	self addContentsTo: contents.
+	contents << self pageContent.
 	self showCountries
 ! !
 
@@ -717,12 +798,52 @@ current
 	^current ifNil: [current := self new]
 !
 
+metadata
+	"<Dictionary>"
+	
+	^self current metadata
+!
+
 programModificationDate
 	"<Date>
 	creation timestamp of the 'the.js' file"
 	"CoViD19 programModificationDate"
 	
 	^Date fromMilliseconds: appTimestamp
+!
+
+serverModificationDate
+	"<Date>"
+	
+	(self metadata at: #softwareTimestamp ifAbsent: [nil]) ifNotNil: [:date | 
+		^Date fromString: date].
+	^Date now
+!
+
+serverName
+	"<String>"
+	
+	^self metadata at: #softwareName ifAbsent: ['']
+!
+
+serverNameAnchor
+	^Silk A: {
+		'href' -> 'https://github.com/ChristianHaider/CoViD19UI'.
+		'target' -> '_blank'.
+		'rel' -> 'noopener'.
+		self serverName, ' ', self serverVersion}
+!
+
+serverVersion
+	"<String>"
+	
+	^self metadata at: #softwareVersion ifAbsent: ['']
+!
+
+serverVersionInfo
+	^{	Silk SPAN: {'class' -> 'VersionLabel'. 'Data collector:'}.
+		Silk SPAN: {'class' -> 'VersionName'. self serverNameAnchor}.
+		Silk SPAN: {'class' -> 'VersionDate'. self serverModificationDate asLocaleString}}
 !
 
 softwareNameAnchor
@@ -734,7 +855,7 @@ softwareNameAnchor
 !
 
 softwareVersionInfo
-	^{	Silk SPAN: {'class' -> 'VersionLabel'. 'Software:'}.
+	^{	Silk SPAN: {'class' -> 'VersionLabel'. 'Browser app:'}.
 		Silk SPAN: {'class' -> 'VersionName'. self softwareNameAnchor}.
 		Silk SPAN: {'class' -> 'VersionDate'. self programModificationDate asLocaleString}}
 ! !
@@ -742,7 +863,7 @@ softwareVersionInfo
 !CoViD19 class methodsFor: 'starting'!
 
 start
-  self new augmentPage
+	  self current augmentPage
 ! !
 
 Object subclass: #Datapoint
@@ -764,7 +885,15 @@ confirmed
 !
 
 dataProvider
-	"<String>"
+	"<String>
+	name of the data provider"
+	
+	^self subclassResponsibility
+!
+
+dataProviderAnchor
+	"<a>
+	link to the data provider"
 	
 	^self subclassResponsibility
 !
@@ -815,43 +944,14 @@ recovered
 	^self subclassResponsibility
 !
 
-addToDictionary: aDictionary from: anotherDictionary
-	"<Dictionary>"
-	
-	| dict |
-	dict := Dictionary new.
-	aDictionary keysAndValuesDo: [:string :number |
-		dict at: string put: number].
-	anotherDictionary keysAndValuesDo: [:string :number |
-		dict at: string put: (dict at: string ifAbsent: [0]) + number].
-	^dict
-!
-
-dictionary: aDictionary minus: anotherDictionary
-	"<Dictionary>"
-	
-	| dict |
-	dict := Dictionary new.
-	aDictionary keysAndValuesDo: [:string :number |
-		dict at: string put: number].
-	anotherDictionary keysAndValuesDo: [:string :number |
-		dict at: string put: (dict at: string ifAbsent: [0]) - number].
-	^dict
-!
-
-differenceTo: aDatapoint
-	"<Datapoint>"
+changeFrom: aDatapoint
+	"<Datapoint>
+	new Datapoint with the change from aDatapoint"
 	
 	^self subclassResponsibility
 ! !
 
 !Datapoint methodsFor: 'copying'!
-
-copyDeaths
-	"<Datapoint>"
-	
-	^self class date: self date confirmed: 0 deaths: self deaths
-!
 
 copyWithDate: aDate
 	"<Datapoint>"
@@ -876,6 +976,20 @@ initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger
 	deaths := aDeathsInteger
 ! !
 
+!Datapoint methodsFor: 'printing'!
+
+printOn: aStream
+	aStream 
+		nextPutAll: self class name;
+		nextPut: $(;
+		nextPutAll: self date asDateString;
+		nextPutAll: ' ';
+		nextPutAll: self deaths printString;
+		nextPutAll: '/';
+		nextPutAll: self confirmed printString;
+		nextPut: $)
+! !
+
 !Datapoint class methodsFor: 'instance creation'!
 
 date: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger
@@ -889,7 +1003,7 @@ fromJson: aJson
 	^self subclassResponsibility
 !
 
-newZero
+zero
 	^self 
 		date: (Date d: 1 m: 1 y: 2020) 
 		confirmed: 0 
@@ -899,19 +1013,54 @@ newZero
 !Datapoint class methodsFor: 'reading'!
 
 dateFromJson: aJson
-	| days year mst month |
-	days := aJson day.
-	year := aJson year.
-	mst := #(31 29 31 30 31 30 31 31 30 31 30 31) readStream.
-	month  := 0.
-	[(days - mst peek) negative] whileFalse: [
-		month := month + 1.
-		days := days - mst next].
-	^self dateYear: year month: month day: days
+	^Date d: aJson d m: aJson m y: aJson y
+! !
+
+Datapoint subclass: #ConfirmedAndDeathsDatapoint
+	slots: {}
+	package: 'Covid19view'!
+
+!ConfirmedAndDeathsDatapoint methodsFor: 'accessing'!
+
+dataProvider
+	^'Johns Hopkins University'
 !
 
-dateYear: aYearInteger month: aMonthInteger day: aDayInteger
-	<inlineJS: 'return new Date(aYearInteger, aMonthInteger, aDayInteger)'>
+dataProviderAnchor
+	^Silk A: {
+		'href' -> 'https://github.com/CSSEGISandData/COVID-19'.
+		'target' -> '_blank'.
+		'rel' -> 'noopener'.
+		self dataProvider}
+! !
+
+!ConfirmedAndDeathsDatapoint methodsFor: 'arithmetic'!
+
++ aDatapoint
+	"<JHUDatapoint>"
+	
+	self date = aDatapoint date ifFalse: [
+		self error: 'the dates are not the same'].
+	^self class 
+		date: self date 
+		confirmed: self confirmed + aDatapoint confirmed 
+		deaths: self deaths + aDatapoint deaths
+!
+
+changeFrom: aDatapoint
+	^self class 
+		date: self date
+		confirmed: self confirmed - aDatapoint confirmed
+		deaths: self deaths - aDatapoint deaths
+! !
+
+!ConfirmedAndDeathsDatapoint class methodsFor: 'instance creation'!
+
+fromJson: aJson
+	^self 
+		date: (self dateFromJson: aJson date)
+		confirmed: (aJson at: #c ifAbsent: [0])
+		deaths: (aJson at: #d ifAbsent: [0])
 ! !
 
 Datapoint subclass: #JHUDatapoint
@@ -925,8 +1074,6 @@ aspects
 !
 
 dataProvider
-	"<String>"
-	
 	^'Johns Hopkins University'
 !
 
@@ -941,40 +1088,32 @@ dataProviderAnchor
 recovered
 	"<Integer>"
 	
-	^recovered
+	^recovered ifNil: [0]
 ! !
 
 !JHUDatapoint methodsFor: 'arithmetic'!
 
-+ aJHUDatapoint
++ aDatapoint
 	"<JHUDatapoint>"
 	
-	self date = aJHUDatapoint date ifFalse: [
+	self date = aDatapoint date ifFalse: [
 		self error: 'the dates are not the same'].
 	^self class 
 		date: self date 
-		confirmed: self confirmed + aJHUDatapoint confirmed 
-		deaths: self deaths + aJHUDatapoint deaths 
-		recovered: self recovered + aJHUDatapoint recovered
+		confirmed: self confirmed + aDatapoint confirmed 
+		deaths: self deaths + aDatapoint deaths 
+		recovered: self recovered + aDatapoint recovered
 !
 
-differenceTo: aJHUDatapoint
+changeFrom: aDatapoint
 	^self class 
 		date: self date
-		confirmed: self confirmed - aJHUDatapoint confirmed
-		deaths: self deaths - aJHUDatapoint deaths
-		recovered: self recovered - aJHUDatapoint recovered
+		confirmed: self confirmed - aDatapoint confirmed
+		deaths: self deaths - aDatapoint deaths
+		recovered: self recovered - aDatapoint recovered
 ! !
 
 !JHUDatapoint methodsFor: 'copying'!
-
-copyDeaths
-	^self class 
-		date: self date 
-		confirmed: 0
-		deaths: self deaths 
-		recovered: 0
-!
 
 copyWithDate: aDate
 	^self class 
@@ -1012,12 +1151,12 @@ date: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger recovered: aReco
 fromJson: aJson
 	^self 
 		date: (self dateFromJson: aJson date)
-		confirmed: aJson confirmed 
-		deaths: aJson deaths 
-		recovered: aJson recovered
+		confirmed: (aJson at: #c ifAbsent: [0])
+		deaths: (aJson at: #d ifAbsent: [0])
+		recovered: (aJson at: #r ifAbsent: [0])
 !
 
-newZero
+zero
 	^self 
 		date: (Date d: 1 m: 1 y: 2020) 
 		confirmed: 0 
@@ -1026,14 +1165,10 @@ newZero
 ! !
 
 Datapoint subclass: #RKIDatapoint
-	slots: {#byAge. #bySex}
+	slots: {#byAge}
 	package: 'Covid19view'!
 
 !RKIDatapoint methodsFor: 'accessing'!
-
-aspects
-	^super aspects, #(#male #female)
-!
 
 byAge
 	"<Dictionary key: String value: Integer>"
@@ -1041,10 +1176,16 @@ byAge
 	^byAge
 !
 
-bySex
-	"<Dictionary key: String value: Integer>"
+casecount
+	"<Casecount>"
 	
-	^bySex
+	^self byAge values inject: Casecount zero into: [:sum :sexDict |
+		sexDict values  inject: sum into: [:count :casecount |
+			count + casecount]]
+!
+
+confirmed
+	^confirmed ifNil: [confirmed := self casecount confirmed]
 !
 
 dataProvider
@@ -1059,60 +1200,56 @@ dataProviderAnchor
 		self dataProvider}
 !
 
+deaths
+	^deaths ifNil: [deaths := self casecount deaths]
+!
+
 female
-	"<Integer>"
+	"<Casecount>"
 	
-	^self bySex at: 'F' ifAbsent: [0]
+	^self byAge values inject: 0 into: [:sum :sexDict | sum + (sexDict at: 'W')]
 !
 
 male
-	"<Integer>"
+	"<Casecount>"
 	
-	^self bySex at: 'M' ifAbsent: [0]
+	^self byAge values inject: 0 into: [:sum :sexDict | sum + (sexDict at: 'M')]
 ! !
 
 !RKIDatapoint methodsFor: 'arithmetic'!
 
-+ aRKIDatapoint
++ aDatapoint
 	"<RKIDatapoint>"
 	
-	self date = aRKIDatapoint date ifFalse: [
+	| newByAge |
+	self date = aDatapoint date ifFalse: [
 		self error: 'the dates are not the same'].
-	^self class 
-		date: self date 
-		confirmed: self confirmed + aRKIDatapoint confirmed 
-		deaths: self deaths + aRKIDatapoint deaths 
-		byAge: (self addToDictionary: self byAge from: aRKIDatapoint byAge)
-		bySex: (self addToDictionary: self bySex from: aRKIDatapoint bySex)
+	newByAge := self byAge copy.
+	aDatapoint byAge keysAndValuesDo: [:age :sexDict |
+		| newSexDict |
+		newSexDict := (newByAge at: age ifAbsent: [Dictionary new]) copy.
+		sexDict keysAndValuesDo: [:sex :count |
+			newSexDict at: sex put: (newSexDict at: sex ifAbsent: [Casecount zero]) + count].
+		newByAge at: age put: newSexDict].
+	^self class date: self date byAge: newByAge
 !
 
-differenceTo: aRKIDatapoint
-	^self class 
-		date: self date
-		confirmed: self confirmed - aRKIDatapoint confirmed
-		deaths: self deaths - aRKIDatapoint deaths
-		byAge: (self dictionary: self byAge minus: aRKIDatapoint byAge)
-		bySex: (self dictionary: self bySex minus: aRKIDatapoint bySex)
+changeFrom: aDatapoint
+	| newByAge |
+	newByAge := self byAge copy.
+	aDatapoint byAge keysAndValuesDo: [:age :sexDict |
+		| newSexDict |
+		newSexDict := (newByAge at: age ifAbsent: [Dictionary new]) copy.
+		sexDict keysAndValuesDo: [:sex :count |
+			newSexDict at: sex put: (newSexDict at: sex ifAbsent: [Casecount zero]) - count].
+		newByAge at: age put: newSexDict].
+	^self class date: self date byAge: newByAge
 ! !
 
 !RKIDatapoint methodsFor: 'copying'!
 
-copyDeaths
-	^self class 
-		date: self date 
-		confirmed: 0
-		deaths: self deaths 
-		byAge: nil
-		bySex: nil
-!
-
 copyWithDate: aDate
-	^self class 
-		date: aDate 
-		confirmed: self confirmed 
-		deaths: self deaths 
-		byAge: self byAge 
-		bySex: self bySex
+	^self class date: aDate byAge: self byAge
 ! !
 
 !RKIDatapoint methodsFor: 'html'!
@@ -1121,48 +1258,41 @@ asSpans
 	"<Array of: <span>"
 	
 	^super asSpans, { 
-		Silk SPAN: {'class' -> 'ByAge'. self byAge}.
-		Silk SPAN: {'class' -> 'BySex'. self bySex}}
+		Silk SPAN: {'class' -> 'ByAge'. self byAge}}
 ! !
 
 !RKIDatapoint methodsFor: 'initialization'!
 
-initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger byAge: aByAgeDictionary bySex: aBySexDictionary
-	self initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger.
-	byAge := aByAgeDictionary.
-	bySex := aBySexDictionary
+initializeDate: aDate byAge: aByAgeDictionary
+	date := aDate.
+	byAge := aByAgeDictionary
 ! !
 
 !RKIDatapoint class methodsFor: 'instance creation'!
 
-date: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger byAge: aByAgeDictionary bySex: aBySexDictionary
+date: aDate byAge: aByAgeDictionary
 	| inst |
 	inst := self new.
-	inst 
-		initializeDate: aDate 
-		confirmed: aConfirmedInteger 
-		deaths: aDeathsInteger 
-		byAge: aByAgeDictionary 
-		bySex: aBySexDictionary.
+	inst initializeDate: aDate byAge: aByAgeDictionary.
 	^inst
 !
 
 fromJson: aJson
-	^self 
-		date: (self dateFromJson: aJson date)
-		confirmed: aJson confirmed 
-		deaths: aJson deaths 
-		byAge: aJson byAge
-		bySex: aJson bySex
+	| newByAge |
+	newByAge := Dictionary new.
+	aJson byAge keysAndValuesDo: [:age :sexDict |
+		| dict |
+		dict := Dictionary new.
+		sexDict keysAndValuesDo: [:sex :value |
+			dict at: sex put: (Casecount fromJson: value)].
+		newByAge at: age put: dict].
+	^self date: (self dateFromJson: aJson date) byAge: newByAge
 !
 
-newZero
+zero
 	^self 
 		date: (Date d: 1 m: 1 y: 2020) 
-		confirmed: 0 
-		deaths: 0
 		byAge: Dictionary new
-		bySex: Dictionary new
 ! !
 
 Object subclass: #Dataseries
@@ -1182,7 +1312,7 @@ changes
 		| datapoint | 
 		datapoint := rst next.
 		last ifNotNil: [
-			wst nextPut: (datapoint differenceTo: last)].
+			wst nextPut: (datapoint changeFrom: last)].
 		last := datapoint].
 	^self class series: wst contents
 !
@@ -1260,40 +1390,42 @@ series
 
 + aDataseries
 	"<Dataseries>"
-	
-	| newDatapoints |
-	newDatapoints := OrderedCollection new.
-	self series with: aDataseries series do: [:myDatapoint :otherDatapoint |
-		newDatapoints add: myDatapoint + otherDatapoint].
-	^self class series: newDatapoints
-! !
 
-!Dataseries methodsFor: 'copying'!
-
-copyDeaths
-	"<Dataseries>"
-	"create a dataseries with only the numbers for deaths"
-	
-	^self class series: (self series collect: #copyDeaths)
+	| wst |
+	wst := OrderedCollection new writeStream.
+	self
+		with: aDataseries
+		onlyInSelf: [:datapoint | wst nextPut: datapoint]
+		onlyInArg: [:datapoint | wst nextPut: datapoint]
+		inBoth: [:datapoint1 :datapoint2 | wst nextPut: datapoint1 + datapoint2].
+	^self class series: wst contents
 !
 
-normalizedLike: aDataseries
-	"<Dataseries>"
-	"create a dataseries with the same dates as aDataseries to match the JHU ones"
+with: aSeries onlyInSelf: onlyInSelfBlock onlyInArg: onlyInArgBlock inBoth: inBothBlock
+	"iterates throu both collections of datapoints and processes them in date order"
 	
-	| wst refRst rst lastPoint |
-	wst := Array new writeStream.
-	refRst := aDataseries series readStream.
-	rst := self series readStream.
-	lastPoint := rst peek class newZero.
-	[refRst atEnd] whileFalse: [
-		| refDatapoint |
-		refDatapoint := refRst next.
-		lastPoint := (rst atEnd not and: [rst peek date = refDatapoint date])
-			ifTrue: [rst next]
-			ifFalse: [lastPoint copyWithDate: refDatapoint date].
-		wst nextPut: lastPoint].
-	^self class series: wst contents
+	| rstSelf rstArg |
+	rstSelf := self series readStream.
+	rstArg := aSeries series readStream.
+	[
+	rstSelf atEnd and: [
+	rstArg atEnd]] whileFalse: [
+			rstSelf atEnd
+				ifTrue: [onlyInArgBlock value: rstArg next]
+				ifFalse: [
+				rstArg atEnd
+					ifTrue: [onlyInSelfBlock value: rstSelf next]
+					ifFalse: [
+					| selfDate argDate |
+					selfDate := rstSelf peek date.
+					argDate := rstArg peek date.
+					selfDate = argDate
+						ifTrue: [
+						inBothBlock value: rstSelf next value: rstArg next]
+						ifFalse: [
+						selfDate < argDate
+							ifTrue: [onlyInSelfBlock value: rstSelf next]
+							ifFalse: [onlyInArgBlock value: rstArg next]]]]]
 ! !
 
 !Dataseries methodsFor: 'initialization'!
@@ -1359,20 +1491,38 @@ lastRecovered
 	^self series lastRecovered
 !
 
-modificationDate
-	"<Date | nil>"
+metadata
+	"<Dictionary>"
 	
-	^self properties at: #modificationDate ifAbsent: [nil]
+	^self properties at: #metadata ifAbsent: [Dictionary new]
 !
 
-modificationDate: aDate
-	self properties at: #modificationDate put: aDate
+metadata: aDictionary
+	self properties at: #metadata put: aDictionary
+!
+
+modificationDate
+	"<Date>"
+
+	(self metadata at: #modificationDate) ifNotNil: [:date | 
+		^Date fromString: date].
+	^Date now
 !
 
 name
 	"<String>"
 	
 	^name
+!
+
+population
+	"<Integer>"
+	
+	^self properties at: #population ifAbsent: [0]
+!
+
+population: anInteger
+	self properties at: #population put: anInteger
 !
 
 properties
@@ -1399,9 +1549,22 @@ addVersionInfo
 	| versions |
 	versions := '#Versions' asSilk.
 	versions resetContents.
-	versions << {
-		CoViD19 softwareVersionInfo.
-	 	self dataVersionInfo}
+	versions << self dataVersionInfo
+!
+
+areaInfo
+	| span |
+	span := Silk SPAN: 'class' -> 'AreaInfo'.
+	self population isZero ifFalse: [
+		^span << {Silk SPAN: 'Population: '. Silk SPAN: self population separatedThousandsString}].
+	^span
+!
+
+graphicsHeader
+	^Silk DIV << {
+		'class' -> 'GraphicsHeader'.
+		Silk H2: self name.
+		self areaInfo}
 !
 
 recreateCharts
@@ -1409,7 +1572,7 @@ recreateCharts
 	graphics := '#Graphics' asSilk.
 	graphics resetContents.
 	graphics << {
-		Silk H2: self name.
+		self graphicsHeader.
 	 	self casechart.
 	 	self changechart}
 !
@@ -1437,15 +1600,14 @@ showInfo
 
 >= aGeographicArea
 	^self lastConfirmed >= aGeographicArea lastConfirmed
-! !
+!
 
-!GeographicArea methodsFor: 'copying'!
-
-normalizedLike: aDataseries
-	^self class
-		name: self name
-		series: (self series normalizedLike: aDataseries)
-		properties: self properties
+printOn: aStream
+	aStream 
+		nextPutAll: self class name;
+		nextPut: $(;
+		nextPutAll: self name;
+		nextPut: $)
 ! !
 
 !GeographicArea methodsFor: 'html'!
@@ -1524,12 +1686,9 @@ initializeName: aString series: aDataseries properties: aDictionary
 allFromJHUJson: aJson
 	"<Array of: GeographicArea>"
 
-	| modificationDate countries |
-	modificationDate := (aJson meta at: #modificationDate)
-		ifNotNil: [:date | Date fromString: date]
-		ifNil: [Date now].
+	| countries |
 	countries := self allFromJHUSeries: (aJson data collect: [:countryJson | JHUSeries fromJson: countryJson]).
-	countries do: [:country | country modificationDate: modificationDate].
+	countries do: [:country | country metadata: aJson meta].
 	^countries
 !
 
@@ -1542,16 +1701,28 @@ allFromJHUSeries: someSeries
 allFromRKIJson: aJson
 	"<Array of: GeographicArea>"
 	
-	| modificationDate countries |
-	modificationDate := (aJson meta at: #modificationDate)
-		ifNotNil: [:date | Date fromString: date]
-		ifNil: [Date now].
+	| countries |
 	countries := self allFromRKISeries: (aJson data collect: [:countryJson | RKISeries fromJson: countryJson]).
-	countries do: [:country | country modificationDate: modificationDate].
+	countries do: [:country | country metadata: aJson meta].
 	^countries
 !
 
 allFromRKISeries: someSeries
+	"<Array of: GeographicArea>"
+	
+	^self subclassResponsability
+!
+
+allFromUSJHUJson: aJson
+	"<Array of: GeographicArea>"
+
+	| countries |
+	countries := self allFromUSJHUSeries: (aJson data collect: [:countryJson | JHUUSSeries fromJson: countryJson]).
+	countries do: [:country | country metadata: aJson meta].
+	^countries
+!
+
+allFromUSJHUSeries: someSeries
 	"<Array of: GeographicArea>"
 	
 	^self subclassResponsability
@@ -1574,29 +1745,22 @@ GeographicArea subclass: #Country
 
 !Country methodsFor: 'accessing'!
 
-addGermanStates: someCountries
-	"the Dataseries of someCountries have to be normalized to the JHU period"
-	
-	| normalized |
-	normalized := OrderedCollection new.
-	someCountries do: [:land |
-		normalized add: (land parts 
-			ifEmpty: [
-				land normalizedLike: self series] 
-			ifNotEmpty: [
-				land copyWithParts: (land parts collect: [:kreis | kreis normalizedLike: self series])])].
-	self parts addAll: (normalized sort: [:a :b | a > b])
-!
-
-modificationDate: aDate
-	super modificationDate: aDate.
-	self parts do: [:part | part modificationDate: aDate]
+metadata: aDictionary
+	super metadata: aDictionary.
+	self parts do: [:part | part metadata: aDictionary]
 !
 
 parts
 	"<Collection of: State>"
 	
 	^parts ifNil: [parts := OrderedCollection new]
+!
+
+population
+	"<Integer | nil>"
+	
+	^self properties at: #population ifAbsentPut: [
+		self parts inject: 0 into: [:sum :area | sum + area population]]
 !
 
 series
@@ -1774,17 +1938,13 @@ initializeName: aString series: aDataseries properties: aDictionary parts: someP
 
 !Country class methodsFor: 'instance creation'!
 
-allFromJHUSeries: someJHUSeries
+allFromJHUSeries: someSeries
 	"<Array of: Country>"
 	
-	| byCountry globalSeries countryList |
-	byCountry := Dictionary new.
-	globalSeries := nil.
-	someJHUSeries do: [:series |
-		(byCountry at: series country ifAbsentPut: [OrderedCollection new]) add: series.
-		globalSeries := globalSeries ifNil: [series series] ifNotNil: [globalSeries + series series]].
+	| globalSeries countryList |
+	globalSeries := someSeries allButFirst inject: someSeries first series into: [:sum :series | sum + series series].
 	countryList := OrderedCollection with: (self name: 'World' series: globalSeries).
-	byCountry keysAndValuesDo: [:countryName :listOfSeries |
+	(someSeries groupedBy: #country) keysAndValuesDo: [:countryName :listOfSeries |
 		countryList add: (listOfSeries size = 1
 			ifTrue: [self name: countryName series: listOfSeries first series]
 			ifFalse: [self name: countryName parts: (State allFromJHUSeries: (listOfSeries sort: [:a :b | a > b]))])].
@@ -1794,16 +1954,25 @@ allFromJHUSeries: someJHUSeries
 allFromRKISeries: someSeries
 	"<Array of: Country>"
 	
-	| byState stateList |
-	byState := Dictionary new.
-	someSeries do: [:series |
-		(byState at: series bundesland ifAbsentPut: [OrderedCollection new]) add: series].
-	stateList := OrderedCollection new.
-	byState keysAndValuesDo: [:stateName :listOfSeries |
-		stateList add: (listOfSeries size = 1
-			ifTrue: [self name: stateName series: listOfSeries first series]
-			ifFalse: [self name: stateName parts: (State allFromRKISeries: (listOfSeries sort: [:a :b | a > b]))])].
-	^stateList
+	|  list |
+	list := OrderedCollection new.
+	(someSeries groupedBy: #bundesland) keysAndValuesDo: [:name :listOfSeries |
+		list add: (listOfSeries size = 1
+			ifTrue: [self name: name series: listOfSeries first series]
+			ifFalse: [self name: name parts: (State allFromRKISeries: (listOfSeries sort: [:a :b | a > b]))])].
+	^list
+!
+
+allFromUSJHUSeries: someSeries
+	"<Array of: Country>"
+	
+	| list |
+	list := OrderedCollection new.
+	(someSeries groupedBy: #state) keysAndValuesDo: [:name :listOfSeries |
+		list add: (listOfSeries size = 1
+			ifTrue: [self name: name series: listOfSeries first series]
+			ifFalse: [self name: name parts: (State allFromUSJHUSeries: (listOfSeries sort: [:a :b | a > b]))])].
+	^list sort: [:a :b | a > b]
 !
 
 name: aString parts: someSeries
@@ -1823,10 +1992,10 @@ GeographicArea subclass: #State
 
 !State class methodsFor: 'instance creation'!
 
-allFromJHUSeries: someJHUSeries
+allFromJHUSeries: someSeries
 	"<Array of: State>"
 	
-	^someJHUSeries collect: [:series |
+	^someSeries collect: [:series |
 		self 
 			name: series state
 			series: series series]
@@ -1839,6 +2008,18 @@ allFromRKISeries: someSeries
 		self 
 			name: series landkreis
 			series: series series]
+!
+
+allFromUSJHUSeries: someSeries
+	"<Array of: State>"
+	
+	^someSeries collect: [:series |
+		self 
+			name: series county
+			series: series series
+			properties: (Dictionary
+				with: #uid -> series uid 
+				with: #population -> series population)]
 ! !
 
 Silk subclass: #SVG
@@ -2086,7 +2267,7 @@ series: aDataseries
 ! !
 
 Series subclass: #JHUSeries
-	slots: {#country. #state. #latLong}
+	slots: {#country. #state}
 	package: 'Covid19view'!
 
 !JHUSeries methodsFor: 'accessing'!
@@ -2097,12 +2278,6 @@ country
 	^country
 !
 
-latLong
-	"<Point>"
-	
-	^latLong
-!
-
 state
 	"<String>"
 	
@@ -2111,11 +2286,10 @@ state
 
 !JHUSeries methodsFor: 'initialization'!
 
-initializeCountry: aCountryString state: aStateString latLong: aLatLongPoint series: aDataseries
+initializeCountry: aCountryString state: aStateString series: aDataseries
 	self initializeSeries: aDataseries.
 	country := aCountryString.
-	state := aStateString.
-	latLong := aLatLongPoint
+	state := aStateString
 ! !
 
 !JHUSeries methodsFor: 'printing'!
@@ -2132,13 +2306,12 @@ printOn: stream
 
 !JHUSeries class methodsFor: 'instance creation'!
 
-country: aCountryString state: aStateString latLong: aLatLongPoint series: aDataseries
+country: aCountryString state: aStateString series: aDataseries
 	| inst |
 	inst := self new.
 	inst 
 		initializeCountry: aCountryString 
 		state: aStateString 
-		latLong: aLatLongPoint 
 		series: aDataseries.
 	^inst
 !
@@ -2147,16 +2320,82 @@ fromJson: aJson
 	^self 
 		country: aJson country 
 		state: aJson state 
-		latLong: aJson latLong 
 		series: (Dataseries series: (aJson series collect: [:json | JHUDatapoint fromJson: json]))
+! !
+
+Series subclass: #JHUUSSeries
+	slots: {#uid. #state. #county. #population}
+	package: 'Covid19view'!
+
+!JHUUSSeries methodsFor: 'accessing'!
+
+county
+	"<String>"
+	
+	^county
 !
 
-fromJson: aJson at: aDate
+population
+	"<Integer>"
+	
+	^population
+!
+
+state
+	"<String>"
+	
+	^state
+!
+
+uid
+	"<String>"
+	
+	^uid
+! !
+
+!JHUUSSeries methodsFor: 'initialization'!
+
+initializeUid: aUidString state: aStateString county: aCountyString population: aPopulationInteger series: aDataseries
+	self initializeSeries: aDataseries.
+	uid := aUidString.
+	state := aStateString.
+	county := aCountyString.
+	population := aPopulationInteger
+! !
+
+!JHUUSSeries methodsFor: 'printing'!
+
+printOn: stream
+	stream
+		nextPutAll: self state;
+		nextPut: $ ;
+		nextPutAll: self county;
+		nextPut: $(;
+		nextPutAll: self lastConfirmed printString;
+		nextPut: $)
+! !
+
+!JHUUSSeries class methodsFor: 'instance creation'!
+
+fromJson: aJson
 	^self 
-		country: aJson country 
+		uid: aJson uid
 		state: aJson state 
-		latLong: aJson latLong 
-		series: (Dataseries series: (aJson series collect: [:json | JHUDatapoint fromJson: json]))
+		county: aJson county 
+		population: aJson population
+		series: (Dataseries series: (aJson series collect: [:json | ConfirmedAndDeathsDatapoint fromJson: json]))
+!
+
+uid: aUidString state: aStateString county: aCountyString population: aPopulationInteger series: aDataseries
+	| inst |
+	inst := self new.
+	inst 
+		initializeUid: aUidString 
+		state: aStateString 
+		county: aCountyString 
+		population: aPopulationInteger 
+		series: aDataseries.
+	^inst
 ! !
 
 Series subclass: #RKISeries
@@ -2232,6 +2471,16 @@ idBundesland: anIdBundeslandInteger bundesland: aBundeslandString idLandkreis: a
 		landkreis: aLandkreisString 
 		series: aDataseries.
 	^inst
+! !
+
+!Array methodsFor: '*Covid19view'!
+
+groupedBy: aValuable
+	| dict |
+	dict := Dictionary new.
+	self do: [:item | 
+		(dict at: (aValuable value: item) ifAbsentPut: [OrderedCollection new]) add: item].
+	^dict
 ! !
 
 !BlockClosure methodsFor: '*Covid19view'!

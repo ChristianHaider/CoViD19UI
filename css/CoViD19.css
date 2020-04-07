@@ -64,7 +64,7 @@ li {
 	background: #fffbf0;
 	grid-column: 1;
 	display: grid;
-	grid-template-columns: auto auto auto auto;
+	grid-template-columns: min-content min-content auto auto;
 	overflow-y: auto;
 }
 
@@ -149,7 +149,7 @@ li {
 
 #Graphics {
 	overflow-x: auto;
-	overflow-y: hidden;
+	overflow-y: auto;
 	background: #ffede0;		
 }
 

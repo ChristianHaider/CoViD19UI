@@ -428,37 +428,6 @@ $globals.CoViD19Application);
 
 $core.addMethod(
 $core.method({
-selector: "handleError:",
-protocol: "data actions",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["anExeption"],
-source: "handleError: anExeption\x0a\x09(ErrorHandler current respondsTo: #debugError:) ifTrue: [\x0a\x09\x09^ErrorHandler current debugError: anExeption].\x0a\x09ErrorHandler handleError: anExeption",
-referencedClasses: ["ErrorHandler"],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["ifTrue:", "respondsTo:", "current", "debugError:", "handleError:"]
-}, function ($methodClass){ return function (anExeption){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-if($core.assert($recv([$recv($globals.ErrorHandler)._current()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["current"]=1
-//>>excludeEnd("ctx");
-][0])._respondsTo_("debugError:"))){
-return $recv($recv($globals.ErrorHandler)._current())._debugError_(anExeption);
-}
-$recv($globals.ErrorHandler)._handleError_(anExeption);
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"handleError:",{anExeption:anExeption})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.CoViD19Application);
-
-$core.addMethod(
-$core.method({
 selector: "lastDate",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -639,54 +608,6 @@ return $core.withContext(function($ctx1) {
 return $recv($recv($globals.Platform)._fetch_($recv($self._dataHome()).__comma(aFilename)))._then_("json");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"withJson:",{aFilename:aFilename})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.CoViD19Application);
-
-$core.addMethod(
-$core.method({
-selector: "withJson:do:",
-protocol: "data actions",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aFilename", "aOneArgumentBlock"],
-source: "withJson: aFilename do: aOneArgumentBlock\x0a\x09(Platform fetch: self dataHome, aFilename)\x0a\x09\x09then: [:response |\x0a\x09\x09\x09response json then: [:json | aOneArgumentBlock value: json]]\x0a\x09\x09catch: [:exception | \x0a\x09\x09\x09self handleError: exception]",
-referencedClasses: ["Platform"],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["then:catch:", "fetch:", ",", "dataHome", "then:", "json", "value:", "handleError:"]
-}, function ($methodClass){ return function (aFilename,aOneArgumentBlock){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-$recv($recv($globals.Platform)._fetch_($recv($self._dataHome()).__comma(aFilename)))._then_catch_((function(response){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $recv($recv(response)._json())._then_((function(json){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx3) {
-//>>excludeEnd("ctx");
-return $recv(aOneArgumentBlock)._value_(json);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({json:json},$ctx2,2)});
-//>>excludeEnd("ctx");
-}));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({response:response},$ctx1,1)});
-//>>excludeEnd("ctx");
-}),(function(exception){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $self._handleError_(exception);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({exception:exception},$ctx1,3)});
-//>>excludeEnd("ctx");
-}));
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"withJson:do:",{aFilename:aFilename,aOneArgumentBlock:aOneArgumentBlock})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19Application);

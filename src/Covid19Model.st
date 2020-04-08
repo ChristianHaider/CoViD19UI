@@ -162,22 +162,8 @@ getUSData
 		us parts addAll: (Country allFromUSJHUJson: json)]
 !
 
-handleError: anExeption
-	(ErrorHandler current respondsTo: #debugError:) ifTrue: [
-		^ErrorHandler current debugError: anExeption].
-	ErrorHandler handleError: anExeption
-!
-
 withJson: aFilename
 	^(Platform fetch: self dataHome, aFilename) then: #json
-!
-
-withJson: aFilename do: aOneArgumentBlock
-	(Platform fetch: self dataHome, aFilename)
-		then: [:response |
-			response json then: [:json | aOneArgumentBlock value: json]]
-		catch: [:exception | 
-			self handleError: exception]
 ! !
 
 CoViD19Application class slots: {#current}!

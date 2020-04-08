@@ -47,6 +47,7 @@ module.exports = function (grunt) {
             },
             all: {
                 src: [
+                    'src/Covid19Model.st', // list all sources in dependency order
                     'src/Covid19view.st', // list all sources in dependency order
                     'src/Covid19view-Tests.st' // list all tests in dependency order
                 ],

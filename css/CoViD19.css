@@ -12,8 +12,6 @@ body {
 header {
 	grid-column: 1 / span 2;
 	grid-row:    1;	
-	display: grid;
-	grid-template-columns: auto auto;
 	background: #F1F3F4;
 }
 
@@ -22,6 +20,7 @@ footer {
 	grid-row:    3;	
 	display: grid;
 	grid-template-columns: auto auto;
+	justify-content: space-between;
 	background: #e4ebf2;
 }
 
@@ -30,7 +29,13 @@ footer {
 }
 
 h1 {
+	margin-top: 0.5em;
 	margin-bottom: 0em;
+}
+
+h2 {
+	margin-top: 0.5em;
+	margin-bottom: 0;
 }
 
 .Subtitle {
@@ -56,78 +61,103 @@ h1 {
 .VersionDate {
 }
 
+ul {
+	padding-left: 0.7em;
+	margin: 0;
+}
+
+#WorldTree > ul {
+	padding: 0;
+}
+
 li {
 	list-style-type: none;
 }
 
-#CountryList {
+#WorldTree {
 	background: #fffbf0;
 	grid-column: 1;
-	display: grid;
-	grid-template-columns: min-content min-content auto auto;
 	overflow-y: auto;
 }
 
-#CountryList button {
-	background-color: #F1F3F4;
-	border: solid;
-	border-color: #ccc;
-	border-radius: 4px;
-	border-width: 0.1em;
-	text-align: center;
-	text-decoration: none;
-	display: inline-block;
-	font-family: monospace;
-	font-size: 12px;
-	font-weight: bold;
-	padding-top: 0.01em;
-	padding-bottom: 0.1em;
-	padding-left: 0.3em;
-	padding-right: 0.3em;
+div #WorldTree {
+	padding-left: 0;
 }
 
-.treeButton {
-	grid-column: 1;
+#WorldTree button {
 }
 
-.subtreeButton {
-	grid-column: 2;
+.Treeline {
+	/* One line in the tree with button and item */
+	display: grid;
+	grid-template-columns: min-content auto;
 }
 
-.treeSpan {
-	grid-column: 1;
+/* first element of a tree item: 
+	nothing (for the items without children), 
+	opener (for tree openable nodes) */
+
+.noButton {
+	visibility: hidden;
 }
 
-.subtreeSpan {
-	grid-column: 2;
+.opener, .noButton {
+	background: none;
+	border: none;
+	outline: none;
+	transition: transform 0.3s ease-in-out;
 }
 
-.selected {
-	background: #ddd9d0;
+.opener::after, .noButton::after {
+	font-size: 14px;
+	content: "▷";
 }
 
-.ListItem {
+.opener.open::after {
+	font-size: 14px;
+	content: "▶";
+}
+
+li.open > .Treeline > .opener {
+	transform: rotateZ(90deg);
+	transform-origin: 50% 50%;
+}
+
+.loader {
+	margin: 0 0.4em;
+	align-self: center;
+	border: 0.2em solid #cfcbc0; /* #f3f3f3; Light grey */
+	border-top: 0.2em solid black; /* #3498db; Blue */
+	border-radius: 50%;
+	width: 0.5em;
+	height: 0.5em;
+	animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+.Treeitem {
+	/* Span with a name and a number */
+	display: grid;
+	grid-template-columns: auto auto;
 	cursor: pointer;
-	grid-column: 3;
-	margin-left: 0.5em;
 }
 
-.CountryName {
+.Treeitem.selected {
+	background: #cfcbc0;
+}
+
+.TerritoryName {
 	font-weight: bold;
 }
 
-.LandName {
-	padding-left: 0.5em;
-}
-
-.StateName {
-	padding-left: 1em;
-}
-
-.ListValue {
+.TerritoryValue {
 	font-weight: bold;
+	align-self: end;
 	justify-self: end;
-	grid-column: 4;
 }
 
 .Confirmed {
@@ -148,31 +178,65 @@ li {
 }
 
 #Graphics {
-	overflow-x: auto;
-	overflow-y: auto;
-	background: #ffede0;		
+	background: #ffede0;
 }
 
 .GraphicsHeader {
 	display: grid;
 	grid-template-columns: auto auto;
+	margin-bottom: 0.5em;
 }
 
-.AreaInfo {
-	justify-self: end;
-	align-self: center;
+.TerritoryInfo {
+	font-size: small;
+	font-weight: normal;
 }
 
-#Casechart {
+.TerritoryInfo.empty {
+	visibility: hidden;
+}
+
+.DatasetInfo {
+	cursor: pointer;
+}
+
+.DatasetInfo.selected {
+	background: #cfbdb0;
+}
+
+.DatasetLabel {
+	font-weight: bold;
+	margin-left: 0.3em;
+	margin-right: 0.5em;
+}
+
+.DatasetDate {
+	float: right;
+}
+
+.Datasets {
+	align-self: end;
+}
+
+.Charts {
 	
 }
 
-#Changechart {
-	
+#Casechart > svg {
+	height: 30vh;
+}
+
+#Changechart > svg {
+	height: 30vh;
 }
 
 svg {
-	fill: #f3f3f3;
+	fill: #fff8ea;
+}
+
+svg > rect {
+	stroke-width: 0.3;
+	stroke: black;
 }
 
 .subtitle {
@@ -183,6 +247,34 @@ svg {
 
 .ValueAxis {
 	fill: none;
+}
+
+.ScalingButton {
+	cursor: pointer;
+}
+
+.ScalingButton.disabled {
+	cursor: default;
+}
+
+.ScalingRectangle {
+	stroke-width: 0.2;
+	stroke: darkslategray;
+	fill: lightgray;
+}
+
+.disabled > .ScalingRectangle {
+	stroke: gray;
+	fill: #ddd;
+}
+
+.ScalingText {
+	font-size: 5px;
+	fill: black;
+}
+
+.disabled > .ScalingText {
+	fill: gray;
 }
 
 .Majorline {
@@ -249,6 +341,10 @@ svg {
 	fill: green;
 }
 
+.decided {
+	fill: green;
+}
+
 .ButtonText {
 	font-family: sans-serif;
 	font-size: 6px;
@@ -267,11 +363,6 @@ svg {
 
 .ChartButtons {
 	justify-self: start;
-}
-
-.ScalingButton {
-	justify-self: end;
-	align-self: end;
 }
 
 .LegendButton {
@@ -329,7 +420,7 @@ svg {
 
 header,
 footer,
-#CountryList,
+#WorldTree,
 #Graphics {
 	border-radius: 0px 0.5em 0.5em;
 	border: 1px solid;

@@ -1,5 +1,5 @@
 /node_modules/
-/helios/
+/helios
 
 /data/
 
@@ -7,4 +7,3 @@
 
 /config.js
 /the.js
-helios

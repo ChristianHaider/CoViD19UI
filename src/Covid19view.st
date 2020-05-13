@@ -1,11 +1,219 @@
 Smalltalk createPackage: 'Covid19view'!
-(Smalltalk packageAt: 'Covid19view' ifAbsent: [ self error: 'Package not created: Covid19view' ]) imports: {'./Covid19Model'. 'silk/Silk'}!
-Object subclass: #Barchart
-	slots: {#country. #series. #aspects. #valuescale. #datescale}
+(Smalltalk packageAt: 'Covid19view' ifAbsent: [ self error: 'Package not created: Covid19view' ]) imports: {'./Covid19Model'. 'mini-mvp/MiniMVP'. 'silk/Silk'}!
+Object subclass: #CoViD19
+	slots: {#model. #tree. #graphics. #version}
+	package: 'Covid19view'!
+!CoViD19 commentStamp!
+The one page web application fro browsing CoViD-19 data!
+
+!CoViD19 methodsFor: 'accessing'!
+
+graphics
+	"<Graphics>
+	the graphics of a territory"
+	
+	^graphics ifNil: [
+		graphics := Graphics on: self tree in: (Silk DIV: 'id' -> 'Graphics')]
+!
+
+model
+	"the model with all data"
+	
+	^model ifNil: [model := CoViD19Application current]
+!
+
+tree
+	"<Tree>
+	the world tree"
+	
+	^tree ifNil: [
+		| component |
+		component := Tree on: self model world in: (Silk DIV: 'id' -> 'WorldTree').
+		component announcer on: TerritorySelected send: #territorySelected to: self.
+		component announcer on: DataReceived send: #dataReceived to: self.
+		tree := component]
+!
+
+version
+	"<Version>
+	shows a version with title, name and date"
+	
+	^version ifNil: [
+		version := SilkLeafPresenter shows: [self model] in: Silk SPAN do: [:application |
+			{Silk SPAN: {'class' -> 'VersionLabel'. 'Data collector:'}.
+			Silk SPAN: {'class' -> 'VersionName'. Silk SPAN: application serverName, ' ', application serverVersion}.
+			Silk SPAN: {'class' -> 'VersionDate'. application serverModificationDate asLocaleString}}]]
+! !
+
+!CoViD19 methodsFor: 'events'!
+
+dataReceived
+	self version refresh
+!
+
+territorySelected
+	self graphics refresh
+! !
+
+!CoViD19 methodsFor: 'presenting'!
+
+asSilk
+	^Silk DIV: {
+		'id' -> 'Contents'. 
+		self header.
+		self tree frame.
+		self graphics frame.
+		self footer}
+!
+
+augmentPage
+	Silk new << self asSilk.
+	self tree refresh.
+	self model getData
+!
+
+footer
+	^Silk FOOTER: {
+		self softwareVersionInfo.
+		self version refresh frame}
+!
+
+header
+	^Silk HEADER: {
+		Silk H1: {
+			Silk DIV: 'CoViD-19 Charts'. 
+			Silk DIV: {'class' -> 'Subtitle'. 'Do not trust the numbers!!'}}}
+!
+
+softwareNameAnchor
+	^Silk A: {'CoViD-19 Charts'.
+		'href' -> 'https://github.com/ChristianHaider/CoViD19UI'.
+		'target' -> '_blank'.
+		'rel' -> 'noopener'}
+!
+
+softwareVersionInfo
+	^Silk SPAN: {
+		Silk SPAN: {'class' -> 'VersionLabel'. 'Browser app:'}.
+		Silk SPAN: {'class' -> 'VersionName'. self softwareNameAnchor}.
+		Silk SPAN: {'class' -> 'VersionDate'. self model programModificationDate asLocaleString}}
+! !
+
+CoViD19 class slots: {#current}!
+
+!CoViD19 class methodsFor: 'accessing'!
+
+current
+	  ^current ifNil: [current := self new]
+! !
+
+!CoViD19 class methodsFor: 'starting'!
+
+start
+	  self current augmentPage
+! !
+
+Object subclass: #Component
+	slots: {#frame. #model. #announcer}
+	package: 'Covid19view'!
+!Component commentStamp!
+UI element presenting a model as Silk object
+
+The `model` is a domain object with an announcer. A component subscribes to changes of the domain object. 
+
+Two kind of changes are implemented by default: `#structureChanged` and `#appearanceChanged`.
+
+A component has `parts` in which child components are held.
+
+A component has a `frame` holding the Silk into which it is inserted with `#asSilk`. This allows for `#refresh`.!
+
+!Component methodsFor: 'accessing'!
+
+announcer
+	"<Announcer>
+	holds all subscriptions to changes of the receiver"
+	
+	^announcer ifNil: [announcer := Announcer new]
+!
+
+frame
+	"<Silk>
+	The HTML element into which the receiver inserted"
+	
+	^frame
+!
+
+frame: aSilk
+	frame := aSilk
+!
+
+model
+	"<Object>
+	Object responding to #announcer"
+	
+	^model
+! !
+
+!Component methodsFor: 'actions'!
+
+hide
+	(self frame asDomNode at: 'style') at: #display put: 'none'
+!
+
+refresh
+	self model ifNil: [
+		self hide.
+		^self].
+	self show.
+	self frame resetContents.
+	self frame << self asSilk
+!
+
+show
+	(self frame asDomNode at: 'style') removeProperty: 'display'
+! !
+
+!Component methodsFor: 'initialization'!
+
+initializeFrame: aSilk model: aModel
+	frame := aSilk.
+	model := aModel
+!
+
+initializeModel: aModel
+	model := aModel
+! !
+
+!Component methodsFor: 'presenting'!
+
+asSilk
+	"<Silk>
+	Web element to be inserted into the #frame"
+	
+	^self subclassResponsibility
+! !
+
+!Component class methodsFor: 'instance creation'!
+
+frame: aSilk model: aModel
+	| inst |
+	inst := self new.
+	inst initializeFrame: aSilk model: aModel.
+	^inst
+!
+
+on: aModel in: aSilk
+	^self frame: aSilk model: aModel
+! !
+
+Component subclass: #Barchart
+	slots: {#aspects. #valuescale. #datescale}
 	package: 'Covid19view'!
 !Barchart commentStamp!
 A bar chart with decent date and value scale.
-Datapoints are shown as bars with a tooltip showing details!
+Datapoints are shown as bars with a tooltip showing details
+
+The model of the chart component is a Graphics object holding all parameters used!
 
 !Barchart methodsFor: 'accessing'!
 
@@ -17,23 +225,23 @@ aspects
 	^aspects ifNil: [#()]
 !
 
-country
-	"<GeographicArea>"
-	
-	^country
-!
-
 datapoints
 	"<Array of: Datapoint>"
 	
-	^self series series
+	^self dataset series
+!
+
+dataset
+	"<Dataset>"
+	
+	^self subclassResponsibility
 !
 
 datescale
 	"<Datescale>"
 	
 	^datescale ifNil: [
-		datescale := Datescale from: self firstDate to: CoViD19Application current lastDate]
+		datescale := Datescale from: self firstDate to: self model lastDate]
 !
 
 days
@@ -43,17 +251,21 @@ days
 !
 
 firstDate
-	^Date fromMilliseconds: self series firstDate asMilliseconds - (24 * 60 * 60 * 1000)
+	"<Date>"
+	
+	^Date fromMilliseconds: self dataset firstDate asMilliseconds - (24 * 60 * 60 * 1000)
 !
 
 lastDate
+	"<Date>"
+	
 	^self datescale to
 !
 
 linearValuescale
 	"<LinearValuescale>"
 	
-	^LinearValuescale from: 0 to: self maxValue
+	^LinearValuescale from: self minValue to: self maxValue
 !
 
 logarithmicValuescale
@@ -69,57 +281,64 @@ maxValue
 		max max: (datapoint maxValueForAspects: self aspects)]
 !
 
-monthnameAt: aDate
+minValue
+	"<Integer>"
+	
+	| datapoints |
+	datapoints := self datapoints.
+	^datapoints allButFirst inject: (datapoints first minValueForAspects: self aspects) into: [:min :datapoint | 
+		min min: (datapoint minValueForAspects: self aspects)]
+!
+
+monthnameAt: anInteger
 	"<String>"
 	
 	| index |
-	index := aDate month + 1.
+	index := anInteger.
 	index > 12 ifTrue: [
 		index := 1].
 	^#('January' 'February' 'March' 'April' 'May' 'June' 'July' 'August' 'September' 'October' 'November' 'December') at: index
 !
 
-numberOfValues
-	"<Integer>"
+newValuescale
+	"<Valuescale>"
 	
-	^self series size
+	self isLogarithmic ifTrue: [
+		^self logarithmicValuescale].
+	^self linearValuescale
 !
 
-series
-	"<Dataseries>"
+nextMonthnameAt: aDate
+	"<String>"
 	
-	^series
-!
-
-silk
-	"Silk object corresponding to the receiver"
-	
-	^('#', self class name) asSilk.
+	^self monthnameAt: aDate month + 1
 !
 
 stringLogarithmic: aBoolean
+	"<String>"
+	
 	^aBoolean
-		ifTrue: ['logarithmic']
-		ifFalse: ['linear']
+		ifTrue: ['lin']
+		ifFalse: ['log']
 !
 
 valuescale
 	"<Valuescale>"
 	
-	^valuescale ifNil: [valuescale := self isLogarithmic 
-		ifTrue: [self logarithmicValuescale] 
-		ifFalse: [self linearValuescale]]
+	^valuescale ifNil: [valuescale := self newValuescale]
 ! !
 
 !Barchart methodsFor: 'actions'!
 
-recreate
-	self country recreateCharts
+refresh
+	valuescale := nil.
+	datescale := nil.
+	super refresh
 !
 
 toggleValuescale
 	self class logarithmic: self class logarithmic not.
-	self recreate
+	self refresh
 ! !
 
 !Barchart methodsFor: 'events'!
@@ -162,7 +381,7 @@ chartHeight
 chartLeft
 	"<Number>"
 	
-	^0
+	^3
 !
 
 chartRight
@@ -174,7 +393,7 @@ chartRight
 chartTop
 	"<Number>"
 	
-	^3
+	^4
 !
 
 chartWidth
@@ -186,13 +405,27 @@ chartWidth
 datescaleHeight
 	"<Number>"
 	
-	^100 - self chartHeight
+	^self viewHeight - self chartBottom
 !
 
 valuescaleWidth
 	"<Number>"
 	
-	^200 - self chartWidth
+	^self viewWidth - self chartRight
+!
+
+viewHeight
+	"<Number>
+	the height of the view(Box) in logical units"
+	
+	^100
+!
+
+viewWidth
+	"<Number>
+	the width of the view(Box) in logical units"
+	
+	^200
 !
 
 xAt: aDate
@@ -206,61 +439,56 @@ yAt: aDomainValue
 	"<Number>
 	y value in the svg coordinate system"
 	
-	| offset |
-	self isLogarithmic ifTrue: [
-		aDomainValue isZero ifTrue: [
-			^self chartBottom].
+	self valuescale isLogarithmic ifTrue: [
+		| offset zeroOffset |
 		offset := 5.
+		zeroOffset := 0.
+		self dataArePositive ifFalse: [
+			zeroOffset := offset].
+		aDomainValue negative ifTrue: [
+			^self chartBottom].
+		aDomainValue < 1 ifTrue: [
+			^self chartBottom - zeroOffset].
+		offset := offset + zeroOffset.
 		^(self chartBottom - offset) - ((self valuescale at: aDomainValue) * (self chartHeight - offset))].
 	^self chartBottom - ((self valuescale at: aDomainValue) * self chartHeight)
 ! !
 
-!Barchart methodsFor: 'initialization'!
+!Barchart methodsFor: 'presenting'!
 
-initializeCountry: aCountry series: aDataseries aspects: someSymbols
-	country := aCountry.
-	series := aDataseries.
-	aspects := someSymbols
-! !
-
-!Barchart methodsFor: 'svg'!
-
-barForDatapoint: aDatapoint width: aWidth
+bar: anAspectSymbol forDatapoint: aDatapoint at: aBarLeft width: aWidth
 	"<g>"
 	
-	| barLeft bars barTopConfirmed barConfirmed barTopRecovered barRecovered barTopDeaths barDeaths g |
-	barLeft := (self xAt: aDatapoint date) - aWidth.
+	| value zero top bottom |
+	value := self yAt: (aDatapoint perform: anAspectSymbol).
+	zero := self yAt: 0.
+	top := value.
+	bottom := zero.
+	top > bottom ifTrue: [
+		top := zero.
+		bottom := value].
+	^SVG RECT: {
+		'class' -> anAspectSymbol asString.
+		'x' -> aBarLeft. 'y' -> top. 
+		'width' -> aWidth. 'height' -> (bottom - top)}
+!
+
+barForDatapoint: aDatapoint at: aBarLeft width: aWidth
+	"<g>"
+	
+	| zero bars g |
+	zero := self yAt: 0.
 	bars :=OrderedCollection new.
 	(self aspects isEmpty or: [
 	self aspects includes: #confirmed]) ifTrue: [
-		| top |
-		top := self yAt: (aDatapoint perform: #confirmed).
-		bars add: (SVG RECT: {
-			'class' -> 'confirmed'.
-			'x' -> barLeft. 'y' -> top. 
-			'width' -> aWidth. 'height' -> (self chartBottom - top)})].
+		bars add: (self bar: #confirmed forDatapoint: aDatapoint at: aBarLeft width: aWidth)].
 	self aspects isEmpty ifTrue: [
-		| top |
-		top := self yAt: (aDatapoint perform: #decided).
-		bars add: (SVG RECT: {
-			'class' -> 'recovered'.
-			'x' -> barLeft. 'y' -> top. 
-			'width' -> aWidth. 'height' -> (self chartBottom - top)})].
+		bars add: (self bar: #decided forDatapoint: aDatapoint at: aBarLeft width: aWidth)].
 	(self aspects includes: #recovered) ifTrue: [
-		| top |
-		top := self yAt: (aDatapoint perform: #recovered).
-		bars add: (SVG RECT: {
-			'class' -> 'recovered'.
-			'x' -> barLeft. 'y' -> top. 
-			'width' -> aWidth. 'height' -> (self chartBottom - top)})].
+		bars add: (self bar: #recovered forDatapoint: aDatapoint at: aBarLeft width: aWidth)].
 	(self aspects isEmpty or: [
 	self aspects includes: #deaths]) ifTrue: [
-		| top |
-		top := self yAt: (aDatapoint perform: #deaths).
-		bars add: (SVG RECT: {
-			'class' -> 'deaths'.
-			'x' -> barLeft. 'y' -> top. 
-			'width' -> aWidth. 'height' -> (self chartBottom - top)})].
+		bars add: (self bar: #deaths forDatapoint: aDatapoint at: aBarLeft width: aWidth)].
 	g := SVG G: {
 		'class' -> 'Bar'.
 		bars}.
@@ -269,28 +497,52 @@ barForDatapoint: aDatapoint width: aWidth
 	^g
 !
 
-chartAreaIn: aSVG
-	"add the chart area"
+barForDatapoint: aDatapoint width: aWidth
+	"<g>"
+	
+	^self 
+		barForDatapoint: aDatapoint 
+		at: ((self xAt: aDatapoint date) - aWidth) 
+		width: aWidth
+!
+
+chartArea
+	"the chart"
 	
 	| chartArea barWidth |
-	chartArea := self graphicsArea.
+	chartArea := SVG G: {
+		'class' -> 'GraphicsArea'.
+		SVG RECT: {
+			'x' -> self chartLeft. 'y' -> self chartTop. 
+			'width' -> self chartWidth. 'height' -> self chartHeight}}.
 	barWidth := self chartWidth / self days.
 	self datapoints do: [:datapoint |
 		chartArea << (self barForDatapoint: datapoint width: barWidth)].
-	aSVG << chartArea.
 	^chartArea
 !
 
-dateAxisIn: aSVG
-	| dateAxis x |
-	dateAxis := aSVG G: 'class' -> 'DateAxis'.
-	self series lastDateOfWeeks do: [:date |
+dateAxis
+	| dateAxis lastOfMonths |
+	dateAxis := SVG G: {
+		'class' -> 'DateAxis'.
+		'clip-path' -> 'url(#datescaleClip)'}.
+	self dataset lastDateOfWeeks do: [:date |
+		| x |
 		x := self xAt: date.
 		dateAxis LINE: {
 			'class' -> 'Weekline'.
 			'x1' -> x. 'y1' -> self chartBottom.
 			'x2' -> x. 'y2' -> self chartTop}].
-	self series lastDateOfMonths do: [:date |
+	lastOfMonths := self dataset lastDateOfMonths.
+	lastOfMonths ifEmpty: [
+		| x |
+		x := self xAt: self firstDate.
+		dateAxis TEXT: {
+			'class' -> 'MonthText'.
+			'x' -> (x + 10). 'y' -> (self chartBottom + 8).
+			self monthnameAt: self firstDate month}].
+	lastOfMonths do: [:date |
+		| x |
 		x := self xAt: date.
 		dateAxis LINE: {
 			'class' -> 'Monthline'.
@@ -299,11 +551,7 @@ dateAxisIn: aSVG
 		dateAxis TEXT: {
 			'class' -> 'MonthText'.
 			'x' -> (x + 10). 'y' -> (self chartBottom + 8).
-			self monthnameAt: date}].
-	dateAxis LINE: {
-		'class' -> 'Baseline'.
-		'x1' -> self chartLeft. 'y1' -> self chartBottom.
-		'x2' -> self chartRight. 'y2' -> self chartBottom}.
+			self nextMonthnameAt: date}].
 	^dateAxis
 !
 
@@ -314,16 +562,6 @@ fullBoxClassed: aClassString
 		'width' -> '100%'. 'height' -> '100%'}
 !
 
-graphicsArea
-	"<g>"
-	
-	^SVG G: {
-		'class' -> 'GraphicsArea'.
-		SVG RECT: {
-			'x' -> self chartLeft. 'y' -> self chartTop. 
-			'width' -> self chartWidth. 'height' -> self chartHeight}}
-!
-
 legendClass: aClassString label: aString value: aNumber
 	^{
 		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: aClassString}}.
@@ -331,17 +569,35 @@ legendClass: aClassString label: aString value: aNumber
 		Silk SPAN: {'class' -> 'LegendLabel'. aString}}
 !
 
+scalingButton
+	^(SVG G: {
+		'class' -> 'ScalingButton'.
+		SVG RECT: {
+			'class' -> 'ScalingRectangle'.
+			'x' -> (self viewWidth - 15).
+			'y' -> (self viewHeight - 6).
+			'width' -> 15.
+			'height' -> 6}.
+		SVG TEXT: {
+			'class' -> 'ScalingText'.
+			'x' -> (self viewWidth - 11).
+			'y' -> (self viewHeight - 1.7).
+			self stringLogarithmic: self valuescale isLogarithmic not}}) 
+		on: #click bind: [self toggleValuescale]
+!
+
 svg
-	"<svg>"
-	
-	| svg valueAxis dateAxis buttons lin log |
-	svg := SVG SVG: {
-		'viewBox' -> '0 0 200 100'.
-		SVG RECT: {'x' -> 0. 'y' -> 0. 'width' -> '100%'. 'height' -> '100%'}}.
-	self valueAxisIn: svg.
-	self dateAxisIn: svg.
-	self chartAreaIn: svg.
-	^svg
+	^SVG SVG: {
+		'viewBox' -> {0. 0. self viewWidth. self viewHeight}.
+		SVG DEFS: {
+			(SVG newElementNamed: 'clipPath') <<  {
+				'id' -> 'datescaleClip'.
+				SVG RECT: {'x' -> self chartLeft. 'y' -> self chartTop. 'width' -> self chartWidth. 'height' -> self viewHeight}}}.
+		SVG RECT: {'x' -> 0. 'y' -> 0. 'width' -> '100%'. 'height' -> '100%'}.
+		self valueAxis.
+		self dateAxis.
+		self chartArea.
+		self scalingButton}
 !
 
 tooltipClass: aClassString label: aString value: aNumber
@@ -351,10 +607,10 @@ tooltipClass: aClassString label: aString value: aNumber
 		Silk SPAN: {'class' -> 'LegendValue'. aNumber separatedThousandsString}}
 !
 
-valueAxisIn: aSVG
+valueAxis
 	^self valuescale ticks allIn: [:majorTicks :minorTicks |
-		| valueAxis |
-		valueAxis := aSVG G: {
+		| valueAxis baseY |
+		valueAxis := SVG G: {
 			'class' -> 'ValueAxis'.
 			SVG RECT: {
 				'x' -> self chartRight. 'y' -> self chartTop. 
@@ -378,10 +634,22 @@ valueAxisIn: aSVG
 				'text-anchor' -> 'end'.
 				'x' -> (self chartRight + self valuescaleWidth - 2). 'y' -> (y + 2).
 				value separatedThousandsString}].
+		baseY := self yAt: 0.
+		valueAxis LINE: {
+			'class' -> 'Baseline'.
+			'x1' -> self chartLeft. 'y1' -> baseY.
+			'x2' -> self chartRight. 'y2' -> baseY}.
 		valueAxis]
 ! !
 
 !Barchart methodsFor: 'testing'!
+
+dataArePositive
+	"<Boolean>
+	true, if there are no negative numbers in the data"
+	
+	^self dataset positive
+!
 
 isLogarithmic
 	"<Boolean>"
@@ -396,13 +664,6 @@ currentAspects
 	selectors of Datapoints to be shown"
 	
 	^#()
-!
-
-for: aCountry on: aDataseries aspects: someSymbols
-	| inst |
-	inst := self new.
-	inst initializeCountry: aCountry series: aDataseries aspects: someSymbols.
-	^inst
 ! !
 
 !Barchart class methodsFor: 'settings'!
@@ -420,44 +681,46 @@ logarithmic: aBoolean
 ! !
 
 Barchart subclass: #Casechart
-	slots: {#logarithmic}
+	slots: {}
 	package: 'Covid19view'!
 !Casechart commentStamp!
 A chart for case data
 
 Case data only grow, therefore, a logarithmic scale is most appropriate!
 
+!Casechart methodsFor: 'accessing'!
+
+dataset
+	^self model dataset
+! !
+
 !Casechart methodsFor: 'actions'!
 
 toggleConfirmed
 	self class showConfirmed: self class showConfirmed not.
-	self recreate
+	self model refresh
 !
 
 toggleDeaths
 	self class showDeaths: self class showDeaths not.
-	self recreate
+	self model refresh
 !
 
 toggleRecovered
 	self class showRecovered: self class showRecovered not.
-	self recreate
+	self model refresh
 ! !
 
-!Casechart methodsFor: 'html'!
+!Casechart methodsFor: 'presenting'!
 
-html
+asSilk
 	^{	Silk DIV: {
 			'class' -> 'ChartHeader'.
 			Silk SPAN: {
 				'class' -> 'ChartButtons'.
 				self legendButtonConfirmed.
 				self legendButtonRecovered.
-				self legendButtonDeaths}.
-			(Silk BUTTON: {
-				'class' -> 'ScalingButton'.
-				'type' -> 'button'.
-				(self stringLogarithmic: self class logarithmic not)}) on: #click bind: [self toggleValuescale]}.
+				self legendButtonDeaths}}.
 		self svg}
 !
 
@@ -470,7 +733,7 @@ legendButtonConfirmed
 	button := Silk BUTTON: {
 		'class' -> ('LegendButton', selectedString).
 		'type' -> 'button'. 
-		self legendClass: 'confirmed' label: 'confirmed' value: self series lastConfirmed}.
+		self legendClass: 'confirmed' label: 'confirmed' value: self dataset lastConfirmed}.
 	button on: #click bind: [self toggleConfirmed].
 	^button
 !
@@ -484,7 +747,7 @@ legendButtonDeaths
 	button := Silk BUTTON: {
 		'class' -> ('LegendButton', selectedString).
 		'type' -> 'button'. 
-		self legendClass: 'deaths' label: 'deaths' value: self series lastDeaths}.
+		self legendClass: 'deaths' label: 'deaths' value: self dataset lastDeaths}.
 	button on: #click bind: [self toggleDeaths].
 	^button
 !
@@ -498,7 +761,7 @@ legendButtonRecovered
 	button := Silk BUTTON: {
 		'class' -> ('LegendButton', selectedString).
 		'type' -> 'button'. 
-		self legendClass: 'recovered' label: 'recovered' value: self series lastRecovered}.
+		self legendClass: 'recovered' label: 'recovered' value: self dataset lastRecovered}.
 	button on: #click bind: [self toggleRecovered].
 	^button
 ! !
@@ -547,32 +810,45 @@ showRecovered: aBoolean
 ! !
 
 Barchart subclass: #Changechart
-	slots: {}
+	slots: {#dataArePositive}
 	package: 'Covid19view'!
 !Changechart commentStamp!
 A chart for changes
 
 changes go up and down and should, therefore, be shown with a linear scale!
 
+!Changechart methodsFor: 'accessing'!
+
+dataArePositive
+	"caching for speed - the logarithmic valuescale uses this heavily"
+	
+	^dataArePositive ifNil: [dataArePositive := super dataArePositive]
+!
+
+dataset
+	^self model changeDataset
+! !
+
 !Changechart methodsFor: 'actions'!
+
+refresh
+	dataArePositive := nil.
+	super refresh
+!
 
 toggleRelative
 	| chart |
 	self class showRelative: self class showRelative not.
-	self recreate
+	self model refresh
 ! !
 
-!Changechart methodsFor: 'html'!
+!Changechart methodsFor: 'presenting'!
 
-html
+asSilk
 	^{	Silk DIV: {
 			'class' -> 'ChartHeader'.
-			'Change from the day before'.
-			"self legendButtonRelative".
-			(Silk BUTTON: {
-				'class' -> 'ScalingButton'.
-				'type' -> 'button'.
-				(self stringLogarithmic: self class logarithmic not)}) on: #click bind: [self toggleValuescale]}.
+			'Change'.
+			"self legendButtonRelative"}.
 		self svg}
 !
 
@@ -604,125 +880,472 @@ showRelative: aBoolean
 	self name asString, '.', #showRelative asString settingValue: aBoolean
 ! !
 
-Object subclass: #CoViD19
-	slots: {#model}
+Component subclass: #Graphics
+	slots: {#header. #dataset. #datasetId. #casesChart. #changesChart}
 	package: 'Covid19view'!
+!Graphics commentStamp!
+The details for the selected territory
 
-!CoViD19 methodsFor: 'actions'!
+The component has the tree as model and uses it's selection as model!
 
-showCountries
-	| list |
-	list := '#CountryList' asSilk.
-	list resetContents.
-	list << (self model countries collect: #asListItem).
-	self model countries first selectWorld
+!Graphics methodsFor: 'accessing'!
+
+casesChart
+	"<Component>"
+	
+	^casesChart ifNil: [
+		casesChart := Casechart on: self in: (Silk DIV: 'id' -> 'Casechart')]
 !
 
-updateCountries
-	self showCountries.
-	self updateFooter
-! !
-
-!CoViD19 methodsFor: 'error handling'!
-
-handleError: anExeption
-	(ErrorHandler current respondsTo: #debugError:) ifTrue: [
-		^ErrorHandler current debugError: anExeption].
-	ErrorHandler handleError: anExeption
-! !
-
-!CoViD19 methodsFor: 'html'!
-
-augmentPage
-	Silk new 
-		reset;
-		DIV: {'id' -> 'Contents'. self pageContent}.
-	self model getData then: [
-		self updateCountries.
-		self model getUSData then: [self updateCountries].
-		self model getGermanData then: [self updateCountries]]
-	catch: [:ex | self handleError: ex]
+changeDataset
+	"<Dataset>"
+	
+	^self dataset changeDataset
 !
 
-footer
-	^Silk FOOTER: {
-		Silk SPAN: {self softwareVersionInfo}.
-		Silk SPAN: {'id' -> 'ServerVersion'. self serverVersionInfo}}
+changesChart
+	"<Component>"
+	
+	^changesChart ifNil: [
+		changesChart := Changechart on: self in: (Silk DIV: 'id' -> 'Changechart')]
+!
+
+dataset
+	"<Dataset>"
+	
+	^(self territory datasetAt: self datasetId) ifNil: [
+		datasetId := nil.
+		self dataset]
+!
+
+datasetId
+	"<String>
+	the id of the datasource"
+	
+	^datasetId ifNil: [datasetId := self territory datasets first source]
+!
+
+datasetId: aString
+	datasetId := aString.
+	self refresh
 !
 
 header
-	^Silk HEADER: {
-		Silk H1: {
-			Silk DIV: 'CoViD-19 Charts'. 
-			Silk DIV: {'class' -> 'Subtitle'. 'Do not trust the numbers!!'}}.
-		Silk SPAN: 'id' -> 'Versions'}
-!
-
-model
-	"the model with all data"
+	"<Presenter>"
 	
-	^model ifNil: [model := CoViD19Application current]
+	^header ifNil: [
+		header := SilkLeafPresenter shows: [self territory] in: Silk DIV do: [:aTerritory |
+			{'class' -> 'GraphicsHeader'.
+				Silk H2: {
+					aTerritory name.
+					self territoryInfoPopulation: aTerritory population}.
+				Silk UL: {'class' -> 'Datasets'. self datasets}}]]
 !
 
-pageContent
-	^{	self header.
-		Silk DIV: {
-			'id' -> 'CountryList'.
-			Silk DIV: {
-				'Loading data... the World, US, Germany... hold on...'.
-				'(can your browser make it?)'}}.
-		Silk DIV: 'id' -> 'Graphics'.
-		self footer}
+lastDate
+	"<Date>"
+	
+	^CoViD19Application current lastDate
 !
 
-serverNameAnchor
-	^Silk SPAN: self model serverName, ' ', self model serverVersion
+territory
+	"<Territory | nil>"
+	
+	self model hasSelection ifFalse: [
+		^nil].
+	^self model selection model
 !
 
-serverVersionInfo
-	^{	Silk SPAN: {'class' -> 'VersionLabel'. 'Data collector:'}.
-		Silk SPAN: {'class' -> 'VersionName'. self serverNameAnchor}.
-		Silk SPAN: {'class' -> 'VersionDate'. self model serverModificationDate asLocaleString}}
-!
-
-softwareNameAnchor
-	^Silk A: {
-		'href' -> 'https://github.com/ChristianHaider/CoViD19UI'.
-		'target' -> '_blank'.
-		'rel' -> 'noopener'.
-		'CoViD-19 Charts'}
-!
-
-softwareVersionInfo
-	^{	Silk SPAN: {'class' -> 'VersionLabel'. 'Browser app:'}.
-		Silk SPAN: {'class' -> 'VersionName'. self softwareNameAnchor}.
-		Silk SPAN: {'class' -> 'VersionDate'. self model programModificationDate asLocaleString}}
-!
-
-updateFooter
-	| element |
-	element := '#ServerVersion' asSilk.
-	element resetContents.
-	element << self serverVersionInfo
+territoryInfoPopulation: aNumber
+	"<Silk>"
+	
+	| cssClass |
+	cssClass := 'TerritoryInfo'.
+	aNumber isZero ifTrue: [
+		cssClass := cssClass, ' empty'].
+	^Silk DIV: {
+		'class' -> cssClass.
+		Silk SPAN: 'Population: '. 
+		Silk SPAN: aNumber separatedThousandsString}
 ! !
 
-!CoViD19 methodsFor: 'initialize / release'!
+!Graphics methodsFor: 'presenting'!
 
-resetContents
-	| contents |
-	contents := '#Contents' asSilk.
-	contents resetContents.
-	contents << self pageContent.
-	self showCountries
+asSilk
+	self territory ifNil: [
+		^#()].
+	^{	self header refresh frame.
+	 	Silk DIV: {
+			'class' -> 'Charts'.
+			self casesChart refresh frame.
+			self changesChart refresh frame}.
+		Silk DIV: 'id' -> 'Tooltip'}
+!
+
+datasetInfoOf: aDataset
+	| datasource cssClass |
+	datasource := CoViD19Application current sources at: aDataset source.
+	cssClass := 'DatasetInfo'.
+	self dataset = aDataset ifTrue: [
+		cssClass := cssClass, ' selected'].
+	^{	(Silk LI: {'class' -> cssClass.
+			Silk SPAN: {'class' -> 'DatasetLabel'. datasource dataLabel}.
+			Silk A: {datasource provider.
+				'href' -> (datasource about at: #ProviderUrl).
+				'target' -> '_blank'.
+				'rel' -> 'noopener'}.
+			Silk SPAN: {'class' -> 'DatasetDate'. aDataset dataDateString}}) on: #click bind: [self datasetId: aDataset source]
+	}
+!
+
+datasets
+	"<Array of: Silk>"
+	
+	^self territory datasets collect: [:aDataset |
+		self datasetInfoOf: aDataset]
 ! !
 
-CoViD19 class slots: {#current}!
+Component subclass: #Tree
+	slots: {#root. #selection}
+	package: 'Covid19view'!
 
-!CoViD19 class methodsFor: 'starting'!
+!Tree methodsFor: 'accessing'!
 
-start
-	  self new augmentPage
+root
+	"<TreeItem>"
+	
+	^root ifNil: [
+		| component |
+		component := TreeItem on: self model in: (Silk LI: 'tabindex' -> 0) parent: self.
+		component expanded: true.
+		component frame on: #keydown bind: [:event | self keyPressed: event].
+		root := component]
+!
+
+selection
+	"<TreeItem | nil>"
+	
+	^selection
+!
+
+tree
+	^self
 ! !
+
+!Tree methodsFor: 'actions'!
+
+scrollBy: aNumber
+	| treeDiv |
+	treeDiv := self frame asDomNode.
+	treeDiv scrollTop: (treeDiv scrollTop + aNumber max: 0)
+!
+
+scrollToShow: aTreeItem
+	| margin treeBounds itemBounds topSpace bottomSpace |
+	margin := 12.
+	treeBounds := self frame asDomNode getBoundingClientRect.
+	itemBounds := (aTreeItem frame at: 'div') asDomNode getBoundingClientRect.
+	topSpace := itemBounds top - treeBounds top - margin.
+	topSpace negative ifTrue: [
+		self scrollBy: topSpace.
+		^self].
+	bottomSpace := itemBounds bottom - treeBounds bottom + margin.
+	bottomSpace > 0 ifTrue: [
+		self scrollBy: bottomSpace]
+!
+
+select: aTreeItem
+	| old |
+	old := self selection.
+	selection := aTreeItem.
+	old ifNotNil: [old refresh].
+	self selection ifNotNil: [
+		self selection refresh].
+	self scrollToShow: self selection.
+	self root frame asDomNode focus.
+	self announcer announce: TerritorySelected new
+!
+
+selectAfter: aChildTreeItem
+!
+
+selectBefore: aChildTreeItem
+! !
+
+!Tree methodsFor: 'events'!
+
+arrowDown
+	self hasSelection ifFalse: [
+		^self].
+	self selection selectNext
+!
+
+arrowLeft
+	self hasSelection ifFalse: [
+		^self].
+	self selection collapseOrSelectParent
+!
+
+arrowRight
+	self hasSelection ifFalse: [
+		^self].
+	self selection expand
+!
+
+arrowUp
+	self hasSelection ifFalse: [
+		^self].
+	self selection selectPrevious
+!
+
+keyPressed: aKeyboardEvent
+	aKeyboardEvent key = 'ArrowDown' ifTrue: [
+		aKeyboardEvent preventDefault.
+		^self arrowDown].
+	aKeyboardEvent key = 'ArrowUp' ifTrue: [
+		aKeyboardEvent preventDefault.
+		^self arrowUp].
+	aKeyboardEvent key = 'ArrowLeft' ifTrue: [
+		^self arrowLeft].
+	aKeyboardEvent key = 'ArrowRight' ifTrue: [
+		^self arrowRight].
+! !
+
+!Tree methodsFor: 'presenting'!
+
+asSilk
+	self root refresh.
+	^self frame UL: self root frame
+! !
+
+!Tree methodsFor: 'testing'!
+
+hasSelection	
+	^self selection notNil
+! !
+
+Component subclass: #TreeItem
+	slots: {#parent. #parts. #expanded}
+	package: 'Covid19view'!
+
+!TreeItem methodsFor: 'accessing'!
+
+expanded: aBoolean
+	expanded := aBoolean
+!
+
+parent
+	"<TreeItem | Tree>"
+	
+	^parent
+!
+
+parts
+	"<Array of: TreeItem>"
+	
+	^parts ifNil: [
+		parts := self model parts collect: [:part | 
+			self class on: part in: Silk LI parent: self]]
+!
+
+tree
+	"<Tree>"
+	
+	^self parent tree
+! !
+
+!TreeItem methodsFor: 'actions'!
+
+collapse
+	self isPartSelected ifTrue: [self select].
+	expanded := false.
+	self frame asDomNode removeAttribute: 'class'.
+	self refresh
+!
+
+collapseOrSelectParent
+	self isRoot ifTrue: [
+		^self].
+	self isExpanded ifTrue: [
+		^self collapse].
+	self parent select
+!
+
+expand
+	self hasParts ifFalse: [
+		^self].
+	expanded := true.
+	self frame << ('class' -> 'open').
+	self refresh
+!
+
+select
+	self tree select: self
+!
+
+selectAfter: aChildTreeItem
+	| rst |
+	rst := self parts readStream.
+	[rst atEnd] whileFalse: [
+		rst next = aChildTreeItem ifTrue: [
+			rst atEnd ifTrue: [
+				^self parent selectAfter: self].
+			^rst next select]].
+	self halt
+!
+
+selectBefore: aChildTreeItem
+	| rst |
+	rst := self parts reversed readStream.
+	[rst atEnd] whileFalse: [
+		rst next = aChildTreeItem ifTrue: [
+			rst atEnd ifTrue: [
+				^self select].
+			^rst next selectLast]].
+	self halt
+!
+
+selectLast
+	self isExpanded ifTrue: [
+		^self parts last selectLast].
+	self select
+!
+
+selectNext
+	self isExpanded ifTrue: [
+		^self parts first select].
+	self parent selectAfter: self
+!
+
+selectPrevious
+	self parent selectBefore: self
+! !
+
+!TreeItem methodsFor: 'events'!
+
+structureChanged
+	self resetParts.
+	self refresh.
+	self tree hasSelection ifFalse: [
+		self select].
+	self tree announcer announce: DataReceived new
+! !
+
+!TreeItem methodsFor: 'initialization'!
+
+initializeFrame: aSilk model: aModel parent: aTreeItemOrTree
+	parent := aTreeItemOrTree.
+	self initializeFrame: aSilk model: aModel.
+	self model announcer on: StructureChanged send: #structureChanged to: self
+!
+
+resetParts
+	parts := nil
+! !
+
+!TreeItem methodsFor: 'presenting'!
+
+asSilk
+	"<Array of: Silk> to be added to a <li> silk"
+	
+	| elements |
+	elements := OrderedCollection with: (Silk DIV: {
+		'class' -> 'Treeline'.
+		self lineHead. 
+		self itemSilk}).
+	(self hasParts and: [
+	self isExpanded]) ifTrue: [
+		elements add: (self frame UL: (self parts collect: [:part | 
+			part refresh. 
+			part frame]))].
+	^elements
+!
+
+itemSilk
+	| css silk |
+	css := 'Treeitem'.
+	self isSelected ifTrue: [
+		css := css, ' selected'].
+	silk := Silk SPAN: {
+		'class' -> css. 
+		Silk SPAN: {
+			'class' -> 'TerritoryName'. 
+			self model name}.
+		Silk SPAN: {
+			'class' -> 'TerritoryValue'.
+			self model lastConfirmed separatedThousandsString}}.
+	silk on: #click bind: [self select].
+	^silk
+!
+
+lineHead
+	| cssClass |
+	cssClass := 'opener'.
+	self isLoading ifTrue: [
+		^Silk DIV: 'class' -> 'loader'].
+	(self hasParts not or: [
+	self model name = 'World']) ifTrue: [
+		^Silk BUTTON: {'class' -> (cssClass, ' noButton')}]. 
+	self isExpanded ifFalse: [
+		^(Silk BUTTON: {'class' -> cssClass}) on: #click bind: [self expand]].
+	^(Silk BUTTON: {'class' -> (cssClass, ' open')}) on: #click bind: [self collapse]
+! !
+
+!TreeItem methodsFor: 'testing'!
+
+hasParts
+	"<Boolean>"
+	
+	^self model hasParts
+!
+
+isExpanded
+	^expanded ifNil: [false]
+!
+
+isLoading
+	^self model isLoading
+!
+
+isPartSelected
+	self isExpanded ifFalse: [
+		^self isSelected].
+	^self parts anySatisfy: [:part |
+		part isPartSelected]
+!
+
+isRoot
+	^self parent class ~= self class
+!
+
+isSelected
+	^self tree selection = self
+! !
+
+!TreeItem class methodsFor: 'instance creation'!
+
+frame: aSilk model: aModel parent: aTreeItemOrTree
+	| inst |
+	inst := self new.
+	inst initializeFrame: aSilk model: aModel parent: aTreeItemOrTree.
+	^inst
+!
+
+on: aModel in: aSilk parent: aTreeItemOrTree
+	^self frame: aSilk model: aModel parent: aTreeItemOrTree
+! !
+
+SystemAnnouncement subclass: #InteractionAnnouncement
+	slots: {}
+	package: 'Covid19view'!
+
+InteractionAnnouncement subclass: #DataReceived
+	slots: {}
+	package: 'Covid19view'!
+
+InteractionAnnouncement subclass: #TerritorySelected
+	slots: {}
+	package: 'Covid19view'!
 
 Silk subclass: #SVG
 	slots: {}
@@ -732,6 +1355,12 @@ Silk subclass: #SVG
 
 namespace
 	^'http://www.w3.org/2000/svg'
+! !
+
+!SVG class methodsFor: 'instance creation'!
+
+newElementNamed: aString
+	^self newElement: aString xmlns: self namespace
 ! !
 
 Object subclass: #Scale
@@ -770,16 +1399,9 @@ to
 
 !Scale methodsFor: 'initialization'!
 
-goodTopFor: aMaxValue
-	"<Number>
-	a good top value for the chart is the next tick above the maximal value"
-	
-	^aMaxValue
-!
-
 initializeFrom: aStart to: anEnd
 	from := aStart.
-	to := self goodTopFor: anEnd
+	to := anEnd
 ! !
 
 !Scale class methodsFor: 'instance creation'!
@@ -804,7 +1426,7 @@ days
 ! !
 
 Scale subclass: #Valuescale
-	slots: {#logarithmic}
+	slots: {}
 	package: 'Covid19view'!
 
 !Valuescale methodsFor: 'accessing'!
@@ -816,61 +1438,95 @@ ticks
 	^self subclassResponsibility
 ! !
 
+!Valuescale methodsFor: 'testing'!
+
+isLogarithmic
+	"<Boolean>"
+	
+	^self subclassResponsibility
+! !
+
 Valuescale subclass: #LinearValuescale
-	slots: {}
+	slots: {#ticks}
 	package: 'Covid19view'!
 
 !LinearValuescale methodsFor: 'accessing'!
 
-goodTopFor: aMaxValue
-	| f normed |
-	f := 10 raisedTo: aMaxValue exponent.
-	normed := aMaxValue / f.
-	normed >= 3 ifTrue: [
-		^normed ceiling * f].
-	normed >= 2 ifTrue: [
-		^(normed * 2) ceiling * 0.5 * f].
-	normed >= 1 ifTrue: [
-		^(normed * 5) ceiling * 0.2 * f].
-	self halt
+ticks
+	^ticks
+! !
+
+!LinearValuescale methodsFor: 'initialization'!
+
+initializeFrom: aStart to: anEnd
+	| f |
+	f := 10 raisedTo: (aStart abs max: anEnd abs) exponent.
+	(self ticksForNormedLow: aStart / f andHigh: anEnd / f) allIn: [:major :minor |
+		ticks := {major collect: [:n | n * f]. minor collect: [:n | n * f]}.
+		from := ((major first min: minor first) min: 0) * f.
+		to := ((major last max: minor last) max: 0) * f]
 !
 
-normTicks
+ticksForNormedLow: aLowNumber andHigh: aHighNumber
 	"<Array[2] of: (Array of: Number)>"
 	
-	| dict normed |
-	dict := Dictionary new
-		at: 10 put: [#(#(2 4 6 8 10) #(1 3 5 7 9))];
-		at: 9 put: [#(#(2 4 6 8) #(1 3 5 7 9))];
-		at: 8 put: [#(#(2 4 6 8) #(1 3 5 7))];
-		at: 7 put: [#(#(2 4 6) #(1 3 5 7))];
-		at: 6 put: [#(#(2 4 6) #(1 3 5))];
-		at: 5 put: [#(#(2 4) #(1 3 5))];
-		at: 4 put: [:n | {{1. 2. 3. 4}. 0 to: n by: 0.5}];
-		at: 3 put: [:n | {{1. 2. 3}. 0 to: n by: 0.5}];
-		at: 2 put: [:n | {{1. 2}. 0 to: n by: 0.2}];
-		at: 1 put: [:n | {{1}. 0 to: n by: 0.2}];
-		yourself.
-	normed := self to / self tickFactor.
-	^(dict at: normed ceiling) cull: normed
-!
+	| normedHigh positiveTicks normedLow |
+	normedHigh := aLowNumber abs max: aHighNumber abs.
+	positiveTicks := (self class tickBlocksAtValue at: normedHigh ceiling) cull: normedHigh.
+	(aHighNumber abs >= aLowNumber abs and: [
+	aLowNumber positive]) ifTrue: [
+		^positiveTicks].
+	aHighNumber abs < aLowNumber abs ifTrue: [
+		^(self ticksForNormedLow: aHighNumber negated andHigh: aLowNumber negated) allIn: [:major :minor |
+			{major reversed collect: #negated.
+			minor reversed collect: #negated}]].
+	normedLow := aLowNumber negated.
+	^positiveTicks allIn: [:major :minor |
+		| majorStream minorStream majorTicks minorTicks done |
+		majorStream := major readStream.
+		minorStream := minor readStream.
+		majorTicks := OrderedCollection new.
+		minorTicks := OrderedCollection new.
+		done := false.
+		[done] whileFalse: [
+			| tick |
+			(majorStream peek ifNil: [100]) < (minorStream peek ifNil: [100])
+				ifTrue: [
+					tick := majorStream next.
+					majorTicks add: tick]
+				ifFalse: [
+					tick := minorStream next.
+					minorTicks add: tick].
+			(tick >= normedLow or: [
+			(majorStream atEnd and: [
+			minorStream atEnd])]) ifTrue: [
+				done := true]].
+		{(majorTicks reversed collect: #negated), {0}, major.
+		(minorTicks reversed collect: #negated), minor}]
+! !
 
-tickFactor
-	"<Number>
-	decimal factor to divide the max value so that the result is below 10.
-	Examples: 
-		47 tickFactor => 10
-		3577 tickFactor => 1000
-		5 tickFactor => 1 "
-	
-	^10 raisedTo: self to exponent
-!
+!LinearValuescale methodsFor: 'testing'!
 
-ticks
-	| f |
-	f := self tickFactor.
-	^self normTicks collect: [:ticks |
-		ticks collect: [:n | n * f]]
+isLogarithmic
+	^false
+! !
+
+!LinearValuescale class methodsFor: 'accessing'!
+
+tickBlocksAtValue
+	| dict |
+	dict := Dictionary new.
+	dict at: 10 put: [		#(	#(2 4 6 8 10) 	  #(1 3 5 7 9)	)].
+	dict at: 9 put: [		#(	#(2 4 6 8) 		  	#(1 3 5 7 9)	)].
+	dict at: 8 put: [		#(	#(2 4 6 8) 			#(1 3 5 7)		)].
+	dict at: 7 put: [		#(	#(2 4 6) 			#(1 3 5 7)		)].
+	dict at: 6 put: [		#(	#(2 4 6) 			#(1 3 5)		)].
+	dict at: 5 put: [		#(	#(2 4) 				#(1 3 5)		)].
+	dict at: 4 put: [:n | 	{	1 to: n + 0.5. 		0 to: (n + 0.5) by: 0.5		}].
+	dict at: 3 put: [:n |	{	1 to: n + 0.5. 			0 to: (n + 0.5) by: 0.5		}].
+	dict at: 2 put: [:n |	{	1 to: n + 0.2. 			0 to: (n + 0.2) by: 0.2		}].
+	dict at: 1 put: [:n |	{	{1}. 				0 to: (n + 0.2) by: 0.2		}].
+	^dict
 ! !
 
 Valuescale subclass: #LogarithmicValuescale
@@ -883,14 +1539,14 @@ at: aDomainValue
 	^(aDomainValue ln max: 0) / self range ln
 !
 
-goodTopFor: aMaxValue
-	^10 raisedTo: aMaxValue exponent + 1
+range
+	^self to
 !
 
 ticks
 	| exponent majors minors topFactor |
 	exponent := self to exponent.
-	majors := (0 to: exponent + 1) collect: [:exp | 10 raisedTo: exp].
+	majors := (0 to: exponent) collect: [:exp | 10 raisedTo: exp].
 	minors := OrderedCollection new.
 	topFactor := (self to / (10 raisedTo: exponent)) floor.
 	minors addAll: ((3 to: topFactor by: 2) collect: [:i | (10 raisedTo: exponent) * i]).
@@ -899,288 +1555,20 @@ ticks
 	^{majors. minors}
 ! !
 
-Object subclass: #Series
-	slots: {#series}
-	package: 'Covid19view'!
+!LogarithmicValuescale methodsFor: 'initialization'!
 
-!Series methodsFor: 'accessing'!
-
-lastConfirmed
-	"<Integer>"
-	
-	^self series lastConfirmed
-!
-
-lastDeaths
-	"<Integer>"
-	
-	^self series lastDeaths
-!
-
-lastRecovered
-	"<Integer>"
-	
-	^self series lastRecovered
-!
-
-series
-	"<Dataseries>"
-	
-	^series
+initializeFrom: aStart to: anEnd
+	from := 1.
+	(10 raisedTo: anEnd exponent) = anEnd ifTrue: [
+		to := 10 raisedTo: anEnd exponent.
+		^self].
+	to := 10 raisedTo: anEnd exponent + 1
 ! !
 
-!Series methodsFor: 'comparing'!
+!LogarithmicValuescale methodsFor: 'testing'!
 
-< aSeries
-	^self lastConfirmed < aSeries lastConfirmed
-!
-
-<= aSeries
-	^self lastConfirmed <= aSeries lastConfirmed
-!
-
-> aSeries
-	^self lastConfirmed > aSeries lastConfirmed
-!
-
->= aSeries
-	^self lastConfirmed >= aSeries lastConfirmed
-! !
-
-!Series methodsFor: 'initialization'!
-
-initializeSeries: aDataseries
-	series := aDataseries
-! !
-
-!Series methodsFor: 'printing'!
-
-printOn: stream
-	stream
-		nextPutAll: self class name asString;
-		nextPut: $(;
-		nextPutAll: self lastConfirmed printString;
-		nextPut: $)
-! !
-
-!Series class methodsFor: 'instance creation'!
-
-fromJson: aJson
-	^self subclassResponibility
-!
-
-series: aDataseries
-	| inst |
-	inst := self new.
-	inst initializeSeries: aDataseries.
-	^inst
-! !
-
-Series subclass: #JHUSeries
-	slots: {#country. #state}
-	package: 'Covid19view'!
-
-!JHUSeries methodsFor: 'accessing'!
-
-country
-	"<String>"
-	
-	^country
-!
-
-state
-	"<String>"
-	
-	^state
-! !
-
-!JHUSeries methodsFor: 'initialization'!
-
-initializeCountry: aCountryString state: aStateString series: aDataseries
-	self initializeSeries: aDataseries.
-	country := aCountryString.
-	state := aStateString
-! !
-
-!JHUSeries methodsFor: 'printing'!
-
-printOn: stream
-	stream
-		nextPutAll: self country;
-		nextPut: $ ;
-		nextPutAll: self state;
-		nextPut: $(;
-		nextPutAll: self lastConfirmed printString;
-		nextPut: $)
-! !
-
-!JHUSeries class methodsFor: 'instance creation'!
-
-country: aCountryString state: aStateString series: aDataseries
-	| inst |
-	inst := self new.
-	inst 
-		initializeCountry: aCountryString 
-		state: aStateString 
-		series: aDataseries.
-	^inst
-!
-
-fromJson: aJson
-	^self 
-		country: aJson country 
-		state: aJson state 
-		series: (Dataseries series: (aJson series collect: [:json | JHUDatapoint fromJson: json]))
-! !
-
-Series subclass: #JHUUSSeries
-	slots: {#uid. #state. #county. #population}
-	package: 'Covid19view'!
-
-!JHUUSSeries methodsFor: 'accessing'!
-
-county
-	"<String>"
-	
-	^county
-!
-
-population
-	"<Integer>"
-	
-	^population
-!
-
-state
-	"<String>"
-	
-	^state
-!
-
-uid
-	"<String>"
-	
-	^uid
-! !
-
-!JHUUSSeries methodsFor: 'initialization'!
-
-initializeUid: aUidString state: aStateString county: aCountyString population: aPopulationInteger series: aDataseries
-	self initializeSeries: aDataseries.
-	uid := aUidString.
-	state := aStateString.
-	county := aCountyString.
-	population := aPopulationInteger
-! !
-
-!JHUUSSeries methodsFor: 'printing'!
-
-printOn: stream
-	stream
-		nextPutAll: self state;
-		nextPut: $ ;
-		nextPutAll: self county;
-		nextPut: $(;
-		nextPutAll: self lastConfirmed printString;
-		nextPut: $)
-! !
-
-!JHUUSSeries class methodsFor: 'instance creation'!
-
-fromJson: aJson
-	^self 
-		uid: aJson uid
-		state: aJson state 
-		county: aJson county 
-		population: aJson population
-		series: (Dataseries series: (aJson series collect: [:json | ConfirmedAndDeathsDatapoint fromJson: json]))
-!
-
-uid: aUidString state: aStateString county: aCountyString population: aPopulationInteger series: aDataseries
-	| inst |
-	inst := self new.
-	inst 
-		initializeUid: aUidString 
-		state: aStateString 
-		county: aCountyString 
-		population: aPopulationInteger 
-		series: aDataseries.
-	^inst
-! !
-
-Series subclass: #RKISeries
-	slots: {#idBundesland. #bundesland. #idLandkreis. #landkreis}
-	package: 'Covid19view'!
-
-!RKISeries methodsFor: 'accessing'!
-
-bundesland
-	"<String>"
-	
-	^bundesland
-!
-
-idBundesland
-	"<Integer>"
-	
-	^idBundesland
-!
-
-idLandkreis
-	"<String>"
-	
-	^idLandkreis
-!
-
-landkreis
-	"<String>"
-	
-	^landkreis
-! !
-
-!RKISeries methodsFor: 'initialization'!
-
-initializeIdBundesland: anIdBundeslandInteger bundesland: aBundeslandString idLandkreis: anIdLandkreisString landkreis: aLandkreisString series: aDataseries
-	self initializeSeries: aDataseries.
-	idBundesland := anIdBundeslandInteger.
-	bundesland := aBundeslandString.
-	idLandkreis := anIdLandkreisString.
-	landkreis := aLandkreisString
-! !
-
-!RKISeries methodsFor: 'printing'!
-
-printOn: stream
-	stream
-		nextPutAll: self bundesland;
-		nextPut: $ ;
-		nextPutAll: self landkreis;
-		nextPut: $(;
-		nextPutAll: self lastConfirmed printString;
-		nextPut: $)
-! !
-
-!RKISeries class methodsFor: 'instance creation'!
-
-fromJson: aJson
-	^self 
-		idBundesland: aJson idBundesland
-		bundesland: aJson bundesland
-		idLandkreis: aJson idLandkreis
-		landkreis: aJson landkreis
-		series: (Dataseries series: (aJson series collect: [:json | RKIDatapoint fromJson: json]))
-!
-
-idBundesland: anIdBundeslandInteger bundesland: aBundeslandString idLandkreis: anIdLandkreisString landkreis: aLandkreisString series: aDataseries
-	| inst |
-	inst := self new.
-	inst 
-		initializeIdBundesland: anIdBundeslandInteger 
-		bundesland: aBundeslandString 
-		idLandkreis: anIdLandkreisString 
-		landkreis: aLandkreisString 
-		series: aDataseries.
-	^inst
+isLogarithmic
+	^true
 ! !
 
 !Array methodsFor: '*Covid19view'!
@@ -1253,14 +1641,15 @@ exp
 
 exponent
 	"<Integer>
-	the power of 10 below the receiver"
+	the power of 10 below the receiver.
+	Wrong for 1.000 and 1.000.000"
 	
-	^self log floor
+	^(self log + 0.00000001) floor
 !
 
 separatedThousandsString
 	"<String>
-	String with thousands separator every third insertin point"
+	localized String with thousands separator"
 	
 	<inlineJS: 'return self.toLocaleString()'>
 ! !

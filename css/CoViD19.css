@@ -345,34 +345,43 @@ svg > rect {
 	fill: green;
 }
 
+.active {
+	fill: #33ccff;
+}
+
 .ButtonText {
 	font-family: sans-serif;
 	font-size: 6px;
 	fill: black;
 }
 
-#Casechart .ChartHeader {
+.AspectButton {
+	width: max-content;
+	margin-right: 0.5em;
+}
+
+.AspectButton.selected {
+	border-style: solid;
+	border-color: blue;
+}
+
+.ChartHeader {
 	display: grid;
 	grid-template-columns: auto auto; 
 }
 
-#Changechart .ChartHeader {
-	display: grid;
-	grid-template-columns: auto auto; 
-}
-
-.ChartButtons {
+.ChartLegend {
 	justify-self: start;
 }
 
 .LegendButton {
 	width: max-content;
 	margin-right: 0.5em;
+	opacity: 0.3;
 }
 
 .LegendButton.selected {
-	border-style: solid;
-	border-color: blue;
+	opacity: 1;
 }
 
 .LegendBar {

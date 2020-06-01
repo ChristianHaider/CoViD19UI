@@ -1,14 +1,14 @@
 define(["amber/boot", "require", "amber/core/Kernel-Announcements", "amber/core/Kernel-Collections", "amber/core/Kernel-Methods", "amber/core/Kernel-Objects", "silk/Silk"], function($boot,requirejs){"use strict";
 var $core=$boot.api,nil=$boot.nilAsValue,$nil=$boot.nilAsReceiver,$recv=$boot.asReceiver,$globals=$boot.globals;
 var $pkg = $core.addPackage("Covid19view");
-$pkg.innerEval = function (expr) { return eval(expr); };
 $pkg.imports = ["./Covid19Model", "mini-mvp/MiniMVP", "silk/Silk"];
 //>>excludeStart("imports", pragmas.excludeImports);
 $pkg.isReady = new Promise(function (resolve, reject) { requirejs(["./Covid19Model", "mini-mvp/MiniMVP", "silk/Silk"], function () {resolve();}, reject); });
 //>>excludeEnd("imports");
 $pkg.transport = {"type":"amd","amdNamespace":"amber-covid19view"};
 
-$core.addClass("CoViD19", $globals.Object, ["model", "tree", "graphics", "version"], "Covid19view");
+$core.addClass("CoViD19", $globals.Object, "Covid19view");
+$core.setSlots($globals.CoViD19, ["model", "tree", "graphics", "version"]);
 //>>excludeStart("ide", pragmas.excludeIdeData);
 $globals.CoViD19.comment="The one page web application fro browsing CoViD-19 data";
 //>>excludeEnd("ide");
@@ -466,7 +466,8 @@ return self;
 $globals.CoViD19.a$cls);
 
 
-$core.addClass("Component", $globals.Object, ["frame", "model", "announcer"], "Covid19view");
+$core.addClass("Component", $globals.Object, "Covid19view");
+$core.setSlots($globals.Component, ["frame", "model", "announcer"]);
 //>>excludeStart("ide", pragmas.excludeIdeData);
 $globals.Component.comment="UI element presenting a model as Silk object\x0a\x0aThe `model` is a domain object with an announcer. A component subscribes to changes of the domain object. \x0a\x0aTwo kind of changes are implemented by default: `#structureChanged` and `#appearanceChanged`.\x0a\x0aA component has `parts` in which child components are held.\x0a\x0aA component has a `frame` holding the Silk into which it is inserted with `#asSilk`. This allows for `#refresh`.";
 //>>excludeEnd("ide");
@@ -625,6 +626,108 @@ $globals.Component);
 
 $core.addMethod(
 $core.method({
+selector: "keyFor:",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspect"],
+source: "keyFor: anAspect\x0a\x09\x22<String>\x0a\x09String for a setting in the web storage\x22\x0a\x09\x0a\x09^self class name asString, '.Aspect.', anAspect asString",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: [",", "asString", "name", "class"]
+}, function ($methodClass){ return function (anAspect){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return [$recv($recv([$recv($recv($self._class())._name())._asString()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["asString"]=1
+//>>excludeEnd("ctx");
+][0]).__comma(".Aspect.")).__comma($recv(anAspect)._asString())
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx[","]=1
+//>>excludeEnd("ctx");
+][0];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"keyFor:",{anAspect:anAspect})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Component);
+
+$core.addMethod(
+$core.method({
+selector: "localAt:",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspect"],
+source: "localAt: anAspect\x0a\x09\x22<Object | nil>\x0a\x09Global setting in the web local storage\x22\x0a\x09\x0a\x09^(self keyFor: anAspect) settingValue",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["settingValue", "keyFor:"]
+}, function ($methodClass){ return function (anAspect){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._keyFor_(anAspect))._settingValue();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"localAt:",{anAspect:anAspect})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Component);
+
+$core.addMethod(
+$core.method({
+selector: "localAt:ifAbsent:",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspect", "anAbsentBlock"],
+source: "localAt: anAspect ifAbsent: anAbsentBlock\x0a\x09\x22<Object>\x0a\x09Global setting in the web local storage\x22\x0a\x09\x0a\x09^(self keyFor: anAspect) settingValue ifNil: anAbsentBlock",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifNil:", "settingValue", "keyFor:"]
+}, function ($methodClass){ return function (anAspect,anAbsentBlock){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1;
+$1=$recv($self._keyFor_(anAspect))._settingValue();
+return $recv($1)._ifNil_(anAbsentBlock);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"localAt:ifAbsent:",{anAspect:anAspect,anAbsentBlock:anAbsentBlock})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Component);
+
+$core.addMethod(
+$core.method({
+selector: "localAt:put:",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspect", "anObject"],
+source: "localAt: anAspect put: anObject\x0a\x09^(self keyFor: anAspect) settingValue: anObject",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["settingValue:", "keyFor:"]
+}, function ($methodClass){ return function (anAspect,anObject){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._keyFor_(anAspect))._settingValue_(anObject);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"localAt:put:",{anAspect:anAspect,anObject:anObject})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Component);
+
+$core.addMethod(
+$core.method({
 selector: "model",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -675,6 +778,109 @@ $recv($self._frame()).__lt_lt($self._asSilk());
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"refresh",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Component);
+
+$core.addMethod(
+$core.method({
+selector: "sessionAt:",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aKey"],
+source: "sessionAt: aKey\x0a\x09\x22<String | nil>\x0a\x09the value at aKey in the web session storage\x22\x0a\x09\x0a\x09^sessionStorage getItem: aKey",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["getItem:"]
+}, function ($methodClass){ return function (aKey){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv(sessionStorage)._getItem_(aKey);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"sessionAt:",{aKey:aKey})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Component);
+
+$core.addMethod(
+$core.method({
+selector: "sessionAt:ifAbsent:",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aKey", "anAbsentBlock"],
+source: "sessionAt: aKey ifAbsent: anAbsentBlock\x0a\x09\x22<String>\x0a\x09the value at aKey in the web session storage\x22\x0a\x09\x0a\x09^(self sessionAt: aKey) ifNil: anAbsentBlock",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifNil:", "sessionAt:"]
+}, function ($methodClass){ return function (aKey,anAbsentBlock){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1;
+$1=$self._sessionAt_(aKey);
+return $recv($1)._ifNil_(anAbsentBlock);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"sessionAt:ifAbsent:",{aKey:aKey,anAbsentBlock:anAbsentBlock})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Component);
+
+$core.addMethod(
+$core.method({
+selector: "sessionAt:put:",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aKey", "aString"],
+source: "sessionAt: aKey put: aString\x0a\x09sessionStorage setItem: aKey to: aString",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["setItem:to:"]
+}, function ($methodClass){ return function (aKey,aString){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv(sessionStorage)._setItem_to_(aKey,aString);
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"sessionAt:put:",{aKey:aKey,aString:aString})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Component);
+
+$core.addMethod(
+$core.method({
+selector: "sessionKeys",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "sessionKeys\x0a\x09\x22<Array of: Symbol>\x22\x0a\x09\x0a\x09^(0 to: sessionStorage length - 1) collect: [:index | sessionStorage key: index]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["collect:", "to:", "-", "length", "key:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv((0)._to_($recv($recv(sessionStorage)._length()).__minus((1))))._collect_((function(index){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv(sessionStorage)._key_(index);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({index:index},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"sessionKeys",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Component);
@@ -754,33 +960,67 @@ return $self._frame_model_(aSilk,aModel);
 $globals.Component.a$cls);
 
 
-$core.addClass("Barchart", $globals.Component, ["aspects", "valuescale", "datescale"], "Covid19view");
+$core.addClass("Barchart", $globals.Component, "Covid19view");
+$core.setSlots($globals.Barchart, ["valuescale", "datescale"]);
 //>>excludeStart("ide", pragmas.excludeIdeData);
 $globals.Barchart.comment="A bar chart with decent date and value scale.\x0aDatapoints are shown as bars with a tooltip showing details\x0a\x0aThe model of the chart component is a Graphics object holding all parameters used";
 //>>excludeEnd("ide");
+$core.addMethod(
+$core.method({
+selector: "asSilk",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "asSilk\x0a\x09^{\x09Silk DIV: {\x0a\x09\x09\x09'class' -> 'ChartHeader'.\x0a\x09\x09\x09Silk SPAN: {\x0a\x09\x09\x09\x09'class' -> 'ChartLegend'.\x0a\x09\x09\x09\x09self legendFor: #confirmed.\x0a\x09\x09\x09\x09self legendFor: #recovered.\x0a\x09\x09\x09\x09self legendFor: #deaths.\x0a\x09\x09\x09\x09self legendFor: #active}}.\x0a\x09\x09self svg}",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["DIV:", "->", "SPAN:", "legendFor:", "svg"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return [$recv($globals.Silk)._DIV_([["class".__minus_gt("ChartHeader")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=1
+//>>excludeEnd("ctx");
+][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("ChartLegend"),[$self._legendFor_("confirmed")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["legendFor:"]=1
+//>>excludeEnd("ctx");
+][0],[$self._legendFor_("recovered")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["legendFor:"]=2
+//>>excludeEnd("ctx");
+][0],[$self._legendFor_("deaths")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["legendFor:"]=3
+//>>excludeEnd("ctx");
+][0],$self._legendFor_("active")])]),$self._svg()];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"asSilk",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Barchart);
+
 $core.addMethod(
 $core.method({
 selector: "aspects",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "aspects\x0a\x09\x22<Array of: Symbol>\x0a\x09selectors of datapoint instances in the series.\x0a\x09When the list is empty, all aspects are shown\x22\x0a\x09\x0a\x09^aspects ifNil: [#()]",
+source: "aspects\x0a\x09\x22<Array of: Symbol>\x0a\x09selectors of datapoint instances in the series.\x0a\x09When the list is empty, all aspects are shown\x22\x0a\x09\x0a\x09^self model aspects",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifNil:"]
+messageSends: ["aspects", "model"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1;
-$1=$self.aspects;
-if($1 == null || $1.a$nil){
-return [];
-} else {
-return $1;
-}
+return $recv($self._model())._aspects();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"aspects",{})});
 //>>excludeEnd("ctx");
@@ -846,7 +1086,7 @@ selector: "barForDatapoint:at:width:",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aDatapoint", "aBarLeft", "aWidth"],
-source: "barForDatapoint: aDatapoint at: aBarLeft width: aWidth\x0a\x09\x22<g>\x22\x0a\x09\x0a\x09| zero bars g |\x0a\x09zero := self yAt: 0.\x0a\x09bars :=OrderedCollection new.\x0a\x09(self aspects isEmpty or: [\x0a\x09self aspects includes: #confirmed]) ifTrue: [\x0a\x09\x09bars add: (self bar: #confirmed forDatapoint: aDatapoint at: aBarLeft width: aWidth)].\x0a\x09self aspects isEmpty ifTrue: [\x0a\x09\x09bars add: (self bar: #decided forDatapoint: aDatapoint at: aBarLeft width: aWidth)].\x0a\x09(self aspects includes: #recovered) ifTrue: [\x0a\x09\x09bars add: (self bar: #recovered forDatapoint: aDatapoint at: aBarLeft width: aWidth)].\x0a\x09(self aspects isEmpty or: [\x0a\x09self aspects includes: #deaths]) ifTrue: [\x0a\x09\x09bars add: (self bar: #deaths forDatapoint: aDatapoint at: aBarLeft width: aWidth)].\x0a\x09g := SVG G: {\x0a\x09\x09'class' -> 'Bar'.\x0a\x09\x09bars}.\x0a\x09g on: #mouseover bind: [:event | self mouseover: event datapoint: aDatapoint].\x0a\x09g on: #mouseout bind: [:event | self mouseout: event datapoint: aDatapoint].\x0a\x09^g",
+source: "barForDatapoint: aDatapoint at: aBarLeft width: aWidth\x0a\x09\x22<g>\x22\x0a\x09\x0a\x09| zero bars g |\x0a\x09zero := self yAt: 0.\x0a\x09bars :=OrderedCollection new.\x0a\x09(self aspects isEmpty or: [\x0a\x09self aspects includes: #confirmed]) ifTrue: [\x0a\x09\x09bars add: (self bar: #confirmed forDatapoint: aDatapoint at: aBarLeft width: aWidth)].\x0a\x09self aspects isEmpty ifTrue: [\x0a\x09\x09bars add: (self bar: #decided forDatapoint: aDatapoint at: aBarLeft width: aWidth)].\x0a\x09(self aspects includes: #recovered) ifTrue: [\x0a\x09\x09bars add: (self bar: #recovered forDatapoint: aDatapoint at: aBarLeft width: aWidth)].\x0a\x09(self aspects includes: #active) ifTrue: [\x0a\x09\x09bars add: (self bar: #active forDatapoint: aDatapoint at: aBarLeft width: aWidth)].\x0a\x09(self aspects isEmpty or: [\x0a\x09self aspects includes: #deaths]) ifTrue: [\x0a\x09\x09bars add: (self bar: #deaths forDatapoint: aDatapoint at: aBarLeft width: aWidth)].\x0a\x09g := SVG G: {\x0a\x09\x09'class' -> 'Bar'.\x0a\x09\x09bars}.\x0a\x09g on: #mouseover bind: [:event | self mouseover: event datapoint: aDatapoint].\x0a\x09g on: #mouseout bind: [:event | self mouseout: event datapoint: aDatapoint].\x0a\x09^g",
 referencedClasses: ["OrderedCollection", "SVG"],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -930,9 +1170,28 @@ if($core.assert([$recv([$self._aspects()
 //>>excludeEnd("ctx");
 ][0];
 }
-if($core.assert($recv([$self._aspects()
+if($core.assert([$recv([$self._aspects()
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["aspects"]=5
+//>>excludeEnd("ctx");
+][0])._includes_("active")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["includes:"]=3
+//>>excludeEnd("ctx");
+][0])){
+[$recv(bars)._add_([$self._bar_forDatapoint_at_width_("active",aDatapoint,aBarLeft,aWidth)
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["bar:forDatapoint:at:width:"]=4
+//>>excludeEnd("ctx");
+][0])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["add:"]=4
+//>>excludeEnd("ctx");
+][0];
+}
+if($core.assert($recv([$self._aspects()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["aspects"]=6
 //>>excludeEnd("ctx");
 ][0])._isEmpty())){
 $2=true;
@@ -949,7 +1208,7 @@ return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
 return $self._mouseover_datapoint_(event,aDatapoint);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({event:event},$ctx1,7)});
+}, function($ctx2) {$ctx2.fillBlock({event:event},$ctx1,8)});
 //>>excludeEnd("ctx");
 }))
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -962,7 +1221,7 @@ return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
 return $self._mouseout_datapoint_(event,aDatapoint);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({event:event},$ctx1,8)});
+}, function($ctx2) {$ctx2.fillBlock({event:event},$ctx1,9)});
 //>>excludeEnd("ctx");
 }));
 return g;
@@ -1428,7 +1687,7 @@ $globals.Barchart);
 $core.addMethod(
 $core.method({
 selector: "datescale",
-protocol: "accessing",
+protocol: "accessing datescale",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
 source: "datescale\x0a\x09\x22<Datescale>\x22\x0a\x09\x0a\x09^datescale ifNil: [\x0a\x09\x09datescale := Datescale from: self firstDate to: self model lastDate]",
@@ -1481,7 +1740,7 @@ $globals.Barchart);
 $core.addMethod(
 $core.method({
 selector: "days",
-protocol: "accessing",
+protocol: "accessing datescale",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
 source: "days\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09^self datescale days",
@@ -1504,7 +1763,7 @@ $globals.Barchart);
 $core.addMethod(
 $core.method({
 selector: "firstDate",
-protocol: "accessing",
+protocol: "accessing datescale",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
 source: "firstDate\x0a\x09\x22<Date>\x22\x0a\x09\x0a\x09^Date fromMilliseconds: self dataset firstDate asMilliseconds - (24 * 60 * 60 * 1000)",
@@ -1534,39 +1793,23 @@ $globals.Barchart);
 
 $core.addMethod(
 $core.method({
-selector: "fullBoxClassed:",
-protocol: "presenting",
+selector: "infoValueString:",
+protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aClassString"],
-source: "fullBoxClassed: aClassString\x0a\x09^SVG RECT: {\x0a\x09\x09'class' -> aClassString.\x0a\x09\x09'x' -> 0. 'y' -> 0. \x0a\x09\x09'width' -> '100%'. 'height' -> '100%'}",
-referencedClasses: ["SVG"],
+args: ["aNumber"],
+source: "infoValueString: aNumber\x0a\x09\x22<String>\x0a\x09the number on a button\x22\x0a\x09\x0a\x09^aNumber separatedThousandsString",
+referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["RECT:", "->"]
-}, function ($methodClass){ return function (aClassString){
+messageSends: ["separatedThousandsString"]
+}, function ($methodClass){ return function (aNumber){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($globals.SVG)._RECT_([["class".__minus_gt(aClassString)
+return $recv(aNumber)._separatedThousandsString();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["->"]=1
-//>>excludeEnd("ctx");
-][0],["x".__minus_gt((0))
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["->"]=2
-//>>excludeEnd("ctx");
-][0],["y".__minus_gt((0))
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["->"]=3
-//>>excludeEnd("ctx");
-][0],["width".__minus_gt("100%")
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["->"]=4
-//>>excludeEnd("ctx");
-][0],"height".__minus_gt("100%")]);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"fullBoxClassed:",{aClassString:aClassString})});
+}, function($ctx1) {$ctx1.fill(self,"infoValueString:",{aNumber:aNumber})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Barchart);
@@ -1597,7 +1840,7 @@ $globals.Barchart);
 $core.addMethod(
 $core.method({
 selector: "lastDate",
-protocol: "accessing",
+protocol: "accessing datescale",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
 source: "lastDate\x0a\x09\x22<Date>\x22\x0a\x09\x0a\x09^self datescale to",
@@ -1619,16 +1862,46 @@ $globals.Barchart);
 
 $core.addMethod(
 $core.method({
-selector: "legendClass:label:value:",
+selector: "legendFor:",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aClassString", "aString", "aNumber"],
-source: "legendClass: aClassString label: aString value: aNumber\x0a\x09^{\x0a\x09\x09Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: aClassString}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'. aNumber separatedThousandsString}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. aString}}",
+args: ["anAspectSymbol"],
+source: "legendFor: anAspectSymbol\x0a\x09(self model hasAspect: anAspectSymbol) ifFalse: [\x0a\x09\x09^Silk SPAN].\x0a\x09^Silk SPAN: {\x0a\x09\x09'class' -> ('LegendButton', (self model selectionClassFor: anAspectSymbol)).\x0a\x09\x09self legendFor: anAspectSymbol value: (self dataset lastValueOf: anAspectSymbol)}",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifFalse:", "hasAspect:", "model", "SPAN", "SPAN:", "->", ",", "selectionClassFor:", "legendFor:value:", "lastValueOf:", "dataset"]
+}, function ($methodClass){ return function (anAspectSymbol){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+if(!$core.assert($recv([$self._model()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["model"]=1
+//>>excludeEnd("ctx");
+][0])._hasAspect_(anAspectSymbol))){
+return $recv($globals.Silk)._SPAN();
+}
+return $recv($globals.Silk)._SPAN_(["class".__minus_gt("LegendButton".__comma($recv($self._model())._selectionClassFor_(anAspectSymbol))),$self._legendFor_value_(anAspectSymbol,$recv($self._dataset())._lastValueOf_(anAspectSymbol))]);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"legendFor:",{anAspectSymbol:anAspectSymbol})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Barchart);
+
+$core.addMethod(
+$core.method({
+selector: "legendFor:value:",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aString", "aNumber"],
+source: "legendFor: aString value: aNumber\x0a\x09^{\x0a\x09\x09Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self model fullBoxClassed: aString}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'. self infoValueString: aNumber}}",
 referencedClasses: ["Silk", "SVG"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["SPAN:", "->", "SVG:", "fullBoxClassed:", "separatedThousandsString"]
-}, function ($methodClass){ return function (aClassString,aString,aNumber){
+messageSends: ["SPAN:", "->", "SVG:", "fullBoxClassed:", "model", "infoValueString:"]
+}, function ($methodClass){ return function (aString,aNumber){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
@@ -1641,21 +1914,13 @@ return [[$recv($globals.Silk)._SPAN_([["class".__minus_gt("LegendBar")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["->"]=2
 //>>excludeEnd("ctx");
-][0],$self._fullBoxClassed_(aClassString)])])
+][0],$recv($self._model())._fullBoxClassed_(aString)])])
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["SPAN:"]=1
 //>>excludeEnd("ctx");
-][0],[$recv($globals.Silk)._SPAN_([["class".__minus_gt("LegendValue")
+][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("LegendValue"),$self._infoValueString_(aNumber)])];
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["->"]=3
-//>>excludeEnd("ctx");
-][0],$recv(aNumber)._separatedThousandsString()])
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["SPAN:"]=2
-//>>excludeEnd("ctx");
-][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("LegendLabel"),aString])];
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"legendClass:label:value:",{aClassString:aClassString,aString:aString,aNumber:aNumber})});
+}, function($ctx1) {$ctx1.fill(self,"legendFor:value:",{aString:aString,aNumber:aNumber})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Barchart);
@@ -1663,22 +1928,39 @@ $globals.Barchart);
 $core.addMethod(
 $core.method({
 selector: "linearValuescale",
-protocol: "accessing",
+protocol: "accessing valuescale",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "linearValuescale\x0a\x09\x22<LinearValuescale>\x22\x0a\x09\x0a\x09^LinearValuescale from: self minValue to: self maxValue",
+source: "linearValuescale\x0a\x09\x22<LinearValuescale>\x22\x0a\x09\x0a\x09| min max |\x0a\x09min := self minValue.\x0a\x09max := self maxValue.\x0a\x09(min isZero and: [\x0a\x09max isZero]) ifTrue: [\x0a\x09\x09max := 10].\x0a\x09^LinearValuescale from: min to: max",
 referencedClasses: ["LinearValuescale"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["from:to:", "minValue", "maxValue"]
+messageSends: ["minValue", "maxValue", "ifTrue:", "and:", "isZero", "from:to:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
+var min,max;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($globals.LinearValuescale)._from_to_($self._minValue(),$self._maxValue());
+var $1;
+min=$self._minValue();
+max=$self._maxValue();
+if($core.assert([$recv(min)._isZero()
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"linearValuescale",{})});
+,$ctx1.sendIdx["isZero"]=1
+//>>excludeEnd("ctx");
+][0])){
+$1=$recv(max)._isZero();
+} else {
+$1=false;
+}
+if($core.assert($1)){
+max=(10);
+max;
+}
+return $recv($globals.LinearValuescale)._from_to_(min,max);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"linearValuescale",{min:min,max:max})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Barchart);
@@ -1686,19 +1968,26 @@ $globals.Barchart);
 $core.addMethod(
 $core.method({
 selector: "logarithmicValuescale",
-protocol: "accessing",
+protocol: "accessing valuescale",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "logarithmicValuescale\x0a\x09\x22<LogarithmicValuescale>\x22\x0a\x09\x0a\x09^LogarithmicValuescale from: 1 to: self maxValue",
+source: "logarithmicValuescale\x0a\x09\x22<LogarithmicValuescale>\x22\x0a\x09\x0a\x09self maxValue <= 1 ifTrue: [\x0a\x09\x09^self linearValuescale].\x0a\x09^LogarithmicValuescale from: 1 to: self maxValue",
 referencedClasses: ["LogarithmicValuescale"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["from:to:", "maxValue"]
+messageSends: ["ifTrue:", "<=", "maxValue", "linearValuescale", "from:to:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
+if($core.assert($recv([$self._maxValue()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["maxValue"]=1
+//>>excludeEnd("ctx");
+][0]).__lt_eq((1)))){
+return $self._linearValuescale();
+}
 return $recv($globals.LogarithmicValuescale)._from_to_((1),$self._maxValue());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"logarithmicValuescale",{})});
@@ -1709,20 +1998,30 @@ $globals.Barchart);
 $core.addMethod(
 $core.method({
 selector: "maxValue",
-protocol: "accessing",
+protocol: "accessing valuescale",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "maxValue\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09^self datapoints inject: 0 into: [:max :datapoint | \x0a\x09\x09max max: (datapoint maxValueForAspects: self aspects)]",
+source: "maxValue\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09| datapoints |\x0a\x09datapoints := self datapoints.\x0a\x09^datapoints allButFirst inject: (datapoints first maxValueForAspects: self aspects) into: [:max :datapoint | \x0a\x09\x09max max: (datapoint maxValueForAspects: self aspects)]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["inject:into:", "datapoints", "max:", "maxValueForAspects:", "aspects"]
+messageSends: ["datapoints", "inject:into:", "allButFirst", "maxValueForAspects:", "first", "aspects", "max:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
+var datapoints;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($self._datapoints())._inject_into_((0),(function(max,datapoint){
+datapoints=$self._datapoints();
+return $recv($recv(datapoints)._allButFirst())._inject_into_([$recv($recv(datapoints)._first())._maxValueForAspects_([$self._aspects()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["aspects"]=1
+//>>excludeEnd("ctx");
+][0])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["maxValueForAspects:"]=1
+//>>excludeEnd("ctx");
+][0],(function(max,datapoint){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
@@ -1732,7 +2031,7 @@ return $recv(max)._max_($recv(datapoint)._maxValueForAspects_($self._aspects()))
 //>>excludeEnd("ctx");
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"maxValue",{})});
+}, function($ctx1) {$ctx1.fill(self,"maxValue",{datapoints:datapoints})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Barchart);
@@ -1740,7 +2039,7 @@ $globals.Barchart);
 $core.addMethod(
 $core.method({
 selector: "minValue",
-protocol: "accessing",
+protocol: "accessing valuescale",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
 source: "minValue\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09| datapoints |\x0a\x09datapoints := self datapoints.\x0a\x09^datapoints allButFirst inject: (datapoints first minValueForAspects: self aspects) into: [:min :datapoint | \x0a\x09\x09min min: (datapoint minValueForAspects: self aspects)]",
@@ -1781,7 +2080,7 @@ $globals.Barchart);
 $core.addMethod(
 $core.method({
 selector: "monthnameAt:",
-protocol: "accessing",
+protocol: "accessing datescale",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["anInteger"],
 source: "monthnameAt: anInteger\x0a\x09\x22<String>\x22\x0a\x09\x0a\x09| index |\x0a\x09index := anInteger.\x0a\x09index > 12 ifTrue: [\x0a\x09\x09index := 1].\x0a\x09^#('January' 'February' 'March' 'April' 'May' 'June' 'July' 'August' 'September' 'October' 'November' 'December') at: index",
@@ -1837,11 +2136,11 @@ selector: "mouseover:datapoint:",
 protocol: "events",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["anEvent", "aDatapoint"],
-source: "mouseover: anEvent datapoint: aDatapoint\x0a\x09| tooltip |\x0a\x09tooltip := '#Tooltip' asSilk.\x0a\x09tooltip resetContents.\x0a\x09tooltip << {\x0a\x09\x09'style' -> (\x0a\x09\x09\x09'right: ', (window innerWidth - anEvent x) printString, 'px; ',\x0a\x09\x09\x09'top: ', anEvent y printString, 'px; ',\x0a\x09\x09\x09'visibility: visible;').\x0a\x09\x09Silk SPAN: {'class' -> 'LegendBar'}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. aDatapoint date asLocaleDateString}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'}.\x0a\x09\x09self tooltipClass: 'confirmed' label: 'confirmed' value: aDatapoint confirmed.\x0a\x09\x09self tooltipClass: 'recovered' label: 'recovered' value: aDatapoint recovered.\x0a\x09\x09self tooltipClass: 'deaths' label: 'deaths' value: aDatapoint deaths}",
+source: "mouseover: anEvent datapoint: aDatapoint\x0a\x09| tooltip |\x0a\x09tooltip := '#Tooltip' asSilk.\x0a\x09tooltip resetContents.\x0a\x09tooltip << {\x0a\x09\x09'style' -> (\x0a\x09\x09\x09'right: ', (window innerWidth - anEvent x) printString, 'px; ',\x0a\x09\x09\x09'top: ', anEvent y printString, 'px; ',\x0a\x09\x09\x09'visibility: visible;').\x0a\x09\x09Silk SPAN: {'class' -> 'LegendBar'}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. aDatapoint date asLocaleDateString}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'}.\x0a\x09\x09self tooltipClass: 'confirmed' label: 'confirmed' value: aDatapoint confirmed.\x0a\x09\x09self tooltipClass: 'recovered' label: 'recovered' value: aDatapoint recovered.\x0a\x09\x09self tooltipClass: 'deaths' label: 'deaths' value: aDatapoint deaths.\x0a\x09\x09self tooltipClass: 'active' label: 'active' value: aDatapoint active}",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["asSilk", "resetContents", "<<", "->", ",", "printString", "-", "innerWidth", "x", "y", "SPAN:", "asLocaleDateString", "date", "tooltipClass:label:value:", "confirmed", "recovered", "deaths"]
+messageSends: ["asSilk", "resetContents", "<<", "->", ",", "printString", "-", "innerWidth", "x", "y", "SPAN:", "asLocaleDateString", "date", "tooltipClass:label:value:", "confirmed", "recovered", "deaths", "active"]
 }, function ($methodClass){ return function (anEvent,aDatapoint){
 var self=this,$self=this;
 var tooltip;
@@ -1902,7 +2201,11 @@ $recv(tooltip).__lt_lt([["style".__minus_gt([$recv([$recv([$recv([$recv([$recv("
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["tooltipClass:label:value:"]=2
 //>>excludeEnd("ctx");
-][0],$self._tooltipClass_label_value_("deaths","deaths",$recv(aDatapoint)._deaths())]);
+][0],[$self._tooltipClass_label_value_("deaths","deaths",$recv(aDatapoint)._deaths())
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["tooltipClass:label:value:"]=3
+//>>excludeEnd("ctx");
+][0],$self._tooltipClass_label_value_("active","active",$recv(aDatapoint)._active())]);
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"mouseover:datapoint:",{anEvent:anEvent,aDatapoint:aDatapoint,tooltip:tooltip})});
@@ -1913,7 +2216,7 @@ $globals.Barchart);
 $core.addMethod(
 $core.method({
 selector: "newValuescale",
-protocol: "accessing",
+protocol: "accessing valuescale",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
 source: "newValuescale\x0a\x09\x22<Valuescale>\x22\x0a\x09\x0a\x09self isLogarithmic ifTrue: [\x0a\x09\x09^self logarithmicValuescale].\x0a\x09^self linearValuescale",
@@ -1939,7 +2242,7 @@ $globals.Barchart);
 $core.addMethod(
 $core.method({
 selector: "nextMonthnameAt:",
-protocol: "accessing",
+protocol: "accessing datescale",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aDate"],
 source: "nextMonthnameAt: aDate\x0a\x09\x22<String>\x22\x0a\x09\x0a\x09^self monthnameAt: aDate month + 1",
@@ -2079,7 +2382,7 @@ $globals.Barchart);
 $core.addMethod(
 $core.method({
 selector: "stringLogarithmic:",
-protocol: "accessing",
+protocol: "accessing valuescale",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aBoolean"],
 source: "stringLogarithmic: aBoolean\x0a\x09\x22<String>\x22\x0a\x09\x0a\x09^aBoolean\x0a\x09\x09ifTrue: ['lin']\x0a\x09\x09ifFalse: ['log']",
@@ -2205,11 +2508,11 @@ selector: "tooltipClass:label:value:",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aClassString", "aString", "aNumber"],
-source: "tooltipClass: aClassString label: aString value: aNumber\x0a\x09^{\x0a\x09\x09Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 5'. self fullBoxClassed: aClassString}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. aString}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'. aNumber separatedThousandsString}}",
+source: "tooltipClass: aClassString label: aString value: aNumber\x0a\x09^{\x0a\x09\x09Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 5'. self model fullBoxClassed: aClassString}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. aString}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'. (self infoValueString: aNumber)}}",
 referencedClasses: ["Silk", "SVG"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["SPAN:", "->", "SVG:", "fullBoxClassed:", "separatedThousandsString"]
+messageSends: ["SPAN:", "->", "SVG:", "fullBoxClassed:", "model", "infoValueString:"]
 }, function ($methodClass){ return function (aClassString,aString,aNumber){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -2223,7 +2526,7 @@ return [[$recv($globals.Silk)._SPAN_([["class".__minus_gt("LegendBar")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["->"]=2
 //>>excludeEnd("ctx");
-][0],$self._fullBoxClassed_(aClassString)])])
+][0],$recv($self._model())._fullBoxClassed_(aClassString)])])
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["SPAN:"]=1
 //>>excludeEnd("ctx");
@@ -2235,7 +2538,7 @@ return [[$recv($globals.Silk)._SPAN_([["class".__minus_gt("LegendBar")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["SPAN:"]=2
 //>>excludeEnd("ctx");
-][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("LegendValue"),$recv(aNumber)._separatedThousandsString()])];
+][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("LegendValue"),$self._infoValueString_(aNumber)])];
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"tooltipClass:label:value:",{aClassString:aClassString,aString:aString,aNumber:aNumber})});
 //>>excludeEnd("ctx");
@@ -2447,7 +2750,7 @@ $globals.Barchart);
 $core.addMethod(
 $core.method({
 selector: "valuescale",
-protocol: "accessing",
+protocol: "accessing valuescale",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
 source: "valuescale\x0a\x09\x22<Valuescale>\x22\x0a\x09\x0a\x09^valuescale ifNil: [valuescale := self newValuescale]",
@@ -2647,24 +2950,6 @@ $globals.Barchart);
 
 $core.addMethod(
 $core.method({
-selector: "currentAspects",
-protocol: "instance creation",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "currentAspects\x0a\x09\x22<Array of: Symbol>\x0a\x09selectors of Datapoints to be shown\x22\x0a\x09\x0a\x09^#()",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: []
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-return [];
-
-}; }),
-$globals.Barchart.a$cls);
-
-$core.addMethod(
-$core.method({
 selector: "logarithmic",
 protocol: "settings",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -2727,37 +3012,10 @@ return self;
 $globals.Barchart.a$cls);
 
 
-$core.addClass("Casechart", $globals.Barchart, [], "Covid19view");
+$core.addClass("Casechart", $globals.Barchart, "Covid19view");
 //>>excludeStart("ide", pragmas.excludeIdeData);
 $globals.Casechart.comment="A chart for case data\x0a\x0aCase data only grow, therefore, a logarithmic scale is most appropriate";
 //>>excludeEnd("ide");
-$core.addMethod(
-$core.method({
-selector: "asSilk",
-protocol: "presenting",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "asSilk\x0a\x09^{\x09Silk DIV: {\x0a\x09\x09\x09'class' -> 'ChartHeader'.\x0a\x09\x09\x09Silk SPAN: {\x0a\x09\x09\x09\x09'class' -> 'ChartButtons'.\x0a\x09\x09\x09\x09self legendButtonConfirmed.\x0a\x09\x09\x09\x09self legendButtonRecovered.\x0a\x09\x09\x09\x09self legendButtonDeaths}}.\x0a\x09\x09self svg}",
-referencedClasses: ["Silk"],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["DIV:", "->", "SPAN:", "legendButtonConfirmed", "legendButtonRecovered", "legendButtonDeaths", "svg"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return [$recv($globals.Silk)._DIV_([["class".__minus_gt("ChartHeader")
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["->"]=1
-//>>excludeEnd("ctx");
-][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("ChartButtons"),$self._legendButtonConfirmed(),$self._legendButtonRecovered(),$self._legendButtonDeaths()])]),$self._svg()];
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"asSilk",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Casechart);
-
 $core.addMethod(
 $core.method({
 selector: "dataset",
@@ -2781,264 +3039,6 @@ return $recv($self._model())._dataset();
 }; }),
 $globals.Casechart);
 
-$core.addMethod(
-$core.method({
-selector: "legendButtonConfirmed",
-protocol: "presenting",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "legendButtonConfirmed\x0a\x09\x22<Silk BUTTON>\x22\x0a\x09\x0a\x09| selectedString button |\x0a\x09selectedString := ''.\x0a\x09(self aspects includes: #confirmed) ifTrue: [selectedString := ' selected'].\x0a\x09button := Silk BUTTON: {\x0a\x09\x09'class' -> ('LegendButton', selectedString).\x0a\x09\x09'type' -> 'button'. \x0a\x09\x09self legendClass: 'confirmed' label: 'confirmed' value: self dataset lastConfirmed}.\x0a\x09button on: #click bind: [self toggleConfirmed].\x0a\x09^button",
-referencedClasses: ["Silk"],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["ifTrue:", "includes:", "aspects", "BUTTON:", "->", ",", "legendClass:label:value:", "lastConfirmed", "dataset", "on:bind:", "toggleConfirmed"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-var selectedString,button;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-selectedString="";
-if($core.assert($recv($self._aspects())._includes_("confirmed"))){
-selectedString=" selected";
-selectedString;
-}
-button=$recv($globals.Silk)._BUTTON_([["class".__minus_gt("LegendButton".__comma(selectedString))
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["->"]=1
-//>>excludeEnd("ctx");
-][0],"type".__minus_gt("button"),$self._legendClass_label_value_("confirmed","confirmed",$recv($self._dataset())._lastConfirmed())]);
-$recv(button)._on_bind_("click",(function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $self._toggleConfirmed();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,2)});
-//>>excludeEnd("ctx");
-}));
-return button;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"legendButtonConfirmed",{selectedString:selectedString,button:button})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Casechart);
-
-$core.addMethod(
-$core.method({
-selector: "legendButtonDeaths",
-protocol: "presenting",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "legendButtonDeaths\x0a\x09\x22<Silk BUTTON>\x22\x0a\x09\x0a\x09| selectedString button |\x0a\x09selectedString := ''.\x0a\x09(self aspects includes: #deaths) ifTrue: [selectedString := ' selected'].\x0a\x09button := Silk BUTTON: {\x0a\x09\x09'class' -> ('LegendButton', selectedString).\x0a\x09\x09'type' -> 'button'. \x0a\x09\x09self legendClass: 'deaths' label: 'deaths' value: self dataset lastDeaths}.\x0a\x09button on: #click bind: [self toggleDeaths].\x0a\x09^button",
-referencedClasses: ["Silk"],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["ifTrue:", "includes:", "aspects", "BUTTON:", "->", ",", "legendClass:label:value:", "lastDeaths", "dataset", "on:bind:", "toggleDeaths"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-var selectedString,button;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-selectedString="";
-if($core.assert($recv($self._aspects())._includes_("deaths"))){
-selectedString=" selected";
-selectedString;
-}
-button=$recv($globals.Silk)._BUTTON_([["class".__minus_gt("LegendButton".__comma(selectedString))
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["->"]=1
-//>>excludeEnd("ctx");
-][0],"type".__minus_gt("button"),$self._legendClass_label_value_("deaths","deaths",$recv($self._dataset())._lastDeaths())]);
-$recv(button)._on_bind_("click",(function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $self._toggleDeaths();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,2)});
-//>>excludeEnd("ctx");
-}));
-return button;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"legendButtonDeaths",{selectedString:selectedString,button:button})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Casechart);
-
-$core.addMethod(
-$core.method({
-selector: "legendButtonRecovered",
-protocol: "presenting",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "legendButtonRecovered\x0a\x09\x22<Silk BUTTON>\x22\x0a\x09\x0a\x09| selectedString button |\x0a\x09selectedString := ''.\x0a\x09(self aspects includes: #recovered) ifTrue: [selectedString := ' selected'].\x0a\x09button := Silk BUTTON: {\x0a\x09\x09'class' -> ('LegendButton', selectedString).\x0a\x09\x09'type' -> 'button'. \x0a\x09\x09self legendClass: 'recovered' label: 'recovered' value: self dataset lastRecovered}.\x0a\x09button on: #click bind: [self toggleRecovered].\x0a\x09^button",
-referencedClasses: ["Silk"],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["ifTrue:", "includes:", "aspects", "BUTTON:", "->", ",", "legendClass:label:value:", "lastRecovered", "dataset", "on:bind:", "toggleRecovered"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-var selectedString,button;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-selectedString="";
-if($core.assert($recv($self._aspects())._includes_("recovered"))){
-selectedString=" selected";
-selectedString;
-}
-button=$recv($globals.Silk)._BUTTON_([["class".__minus_gt("LegendButton".__comma(selectedString))
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["->"]=1
-//>>excludeEnd("ctx");
-][0],"type".__minus_gt("button"),$self._legendClass_label_value_("recovered","recovered",$recv($self._dataset())._lastRecovered())]);
-$recv(button)._on_bind_("click",(function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $self._toggleRecovered();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,2)});
-//>>excludeEnd("ctx");
-}));
-return button;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"legendButtonRecovered",{selectedString:selectedString,button:button})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Casechart);
-
-$core.addMethod(
-$core.method({
-selector: "toggleConfirmed",
-protocol: "actions",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "toggleConfirmed\x0a\x09self class showConfirmed: self class showConfirmed not.\x0a\x09self model refresh",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["showConfirmed:", "class", "not", "showConfirmed", "refresh", "model"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-$recv([$self._class()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["class"]=1
-//>>excludeEnd("ctx");
-][0])._showConfirmed_($recv($recv($self._class())._showConfirmed())._not());
-$recv($self._model())._refresh();
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"toggleConfirmed",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Casechart);
-
-$core.addMethod(
-$core.method({
-selector: "toggleDeaths",
-protocol: "actions",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "toggleDeaths\x0a\x09self class showDeaths: self class showDeaths not.\x0a\x09self model refresh",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["showDeaths:", "class", "not", "showDeaths", "refresh", "model"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-$recv([$self._class()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["class"]=1
-//>>excludeEnd("ctx");
-][0])._showDeaths_($recv($recv($self._class())._showDeaths())._not());
-$recv($self._model())._refresh();
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"toggleDeaths",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Casechart);
-
-$core.addMethod(
-$core.method({
-selector: "toggleRecovered",
-protocol: "actions",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "toggleRecovered\x0a\x09self class showRecovered: self class showRecovered not.\x0a\x09self model refresh",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["showRecovered:", "class", "not", "showRecovered", "refresh", "model"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-$recv([$self._class()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["class"]=1
-//>>excludeEnd("ctx");
-][0])._showRecovered_($recv($recv($self._class())._showRecovered())._not());
-$recv($self._model())._refresh();
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"toggleRecovered",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Casechart);
-
-
-$core.addMethod(
-$core.method({
-selector: "currentAspects",
-protocol: "accessing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "currentAspects\x0a\x09| aspects |\x0a\x09aspects := OrderedCollection new.\x0a\x09self showConfirmed ifTrue: [aspects add: #confirmed].\x0a\x09self showRecovered ifTrue: [aspects add: #recovered].\x0a\x09self showDeaths ifTrue: [aspects add: #deaths].\x0a\x09^aspects",
-referencedClasses: ["OrderedCollection"],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["new", "ifTrue:", "showConfirmed", "add:", "showRecovered", "showDeaths"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-var aspects;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-aspects=$recv($globals.OrderedCollection)._new();
-if($core.assert($self._showConfirmed())){
-[$recv(aspects)._add_("confirmed")
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["add:"]=1
-//>>excludeEnd("ctx");
-][0];
-}
-if($core.assert($self._showRecovered())){
-[$recv(aspects)._add_("recovered")
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["add:"]=2
-//>>excludeEnd("ctx");
-][0];
-}
-if($core.assert($self._showDeaths())){
-$recv(aspects)._add_("deaths");
-}
-return aspects;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"currentAspects",{aspects:aspects})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Casechart.a$cls);
 
 $core.addMethod(
 $core.method({
@@ -3230,33 +3230,11 @@ return self;
 $globals.Casechart.a$cls);
 
 
-$core.addClass("Changechart", $globals.Barchart, ["dataArePositive"], "Covid19view");
+$core.addClass("Changechart", $globals.Barchart, "Covid19view");
+$core.setSlots($globals.Changechart, ["dataArePositive"]);
 //>>excludeStart("ide", pragmas.excludeIdeData);
 $globals.Changechart.comment="A chart for changes\x0a\x0achanges go up and down and should, therefore, be shown with a linear scale";
 //>>excludeEnd("ide");
-$core.addMethod(
-$core.method({
-selector: "asSilk",
-protocol: "presenting",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "asSilk\x0a\x09^{\x09Silk DIV: {\x0a\x09\x09\x09'class' -> 'ChartHeader'.\x0a\x09\x09\x09'Change'.\x0a\x09\x09\x09\x22self legendButtonRelative\x22}.\x0a\x09\x09self svg}",
-referencedClasses: ["Silk"],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["DIV:", "->", "svg"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return [$recv($globals.Silk)._DIV_(["class".__minus_gt("ChartHeader"),"Change"]),$self._svg()];
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"asSilk",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Changechart);
-
 $core.addMethod(
 $core.method({
 selector: "dataArePositive",
@@ -3320,38 +3298,48 @@ $globals.Changechart);
 
 $core.addMethod(
 $core.method({
-selector: "legendButtonRelative",
-protocol: "presenting",
+selector: "infoValueString:",
+protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "legendButtonRelative\x0a\x09\x22<Silk BUTTON>\x22\x0a\x09\x0a\x09| button |\x0a\x09button := Silk BUTTON: {\x0a\x09\x09'class' -> 'LegendButton'.\x0a\x09\x09'type' -> 'button'. \x0a\x09\x09'Relative'}.\x0a\x09button on: #click bind: [self toggleRelative].\x0a\x09^button",
-referencedClasses: ["Silk"],
+args: ["aNumber"],
+source: "infoValueString: aNumber\x0a\x09| prefix |\x0a\x09aNumber isZero ifTrue: [\x0a\x09\x09^super infoValueString: aNumber].\x0a\x09prefix := ''.\x0a\x09aNumber negative ifFalse: [\x0a\x09\x09prefix := '+'].\x0a\x09^prefix, (super infoValueString: aNumber)",
+referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["BUTTON:", "->", "on:bind:", "toggleRelative"]
-}, function ($methodClass){ return function (){
+messageSends: ["ifTrue:", "isZero", "infoValueString:", "ifFalse:", "negative", ","]
+}, function ($methodClass){ return function (aNumber){
 var self=this,$self=this;
-var button;
+var prefix;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-button=$recv($globals.Silk)._BUTTON_([["class".__minus_gt("LegendButton")
+if($core.assert($recv(aNumber)._isZero())){
+return [(
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["->"]=1
+$ctx1.supercall = true,
 //>>excludeEnd("ctx");
-][0],"type".__minus_gt("button"),"Relative"]);
-$recv(button)._on_bind_("click",(function(){
+($methodClass.superclass||$boot.nilAsClass).fn.prototype._infoValueString_.call($self,aNumber))
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
+,$ctx1.sendIdx["infoValueString:"]=1,$ctx1.supercall = false
 //>>excludeEnd("ctx");
-return $self._toggleRelative();
+][0];
+}
+prefix="";
+if(!$core.assert($recv(aNumber)._negative())){
+prefix="+";
+prefix;
+}
+return $recv(prefix).__comma([(
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
+$ctx1.supercall = true,
 //>>excludeEnd("ctx");
-}));
-return button;
+($methodClass.superclass||$boot.nilAsClass).fn.prototype._infoValueString_.call($self,aNumber))
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"legendButtonRelative",{button:button})});
+,$ctx1.supercall = false
+//>>excludeEnd("ctx");
+][0]);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"infoValueString:",{aNumber:aNumber,prefix:prefix})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Changechart);
@@ -3389,59 +3377,6 @@ return self;
 }; }),
 $globals.Changechart);
 
-$core.addMethod(
-$core.method({
-selector: "toggleRelative",
-protocol: "actions",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "toggleRelative\x0a\x09| chart |\x0a\x09self class showRelative: self class showRelative not.\x0a\x09self model refresh",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["showRelative:", "class", "not", "showRelative", "refresh", "model"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-var chart;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-$recv([$self._class()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["class"]=1
-//>>excludeEnd("ctx");
-][0])._showRelative_($recv($recv($self._class())._showRelative())._not());
-$recv($self._model())._refresh();
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"toggleRelative",{chart:chart})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Changechart);
-
-
-$core.addMethod(
-$core.method({
-selector: "currentAspects",
-protocol: "settings",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "currentAspects\x0a\x09^Casechart currentAspects",
-referencedClasses: ["Casechart"],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["currentAspects"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return $recv($globals.Casechart)._currentAspects();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"currentAspects",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Changechart.a$cls);
 
 $core.addMethod(
 $core.method({
@@ -3507,10 +3442,34 @@ return self;
 $globals.Changechart.a$cls);
 
 
-$core.addClass("Graphics", $globals.Component, ["header", "dataset", "datasetId", "casesChart", "changesChart"], "Covid19view");
+$core.addClass("Graphics", $globals.Component, "Covid19view");
+$core.setSlots($globals.Graphics, ["datasetId", "aspects", "dataset", "header", "casesChart", "changesChart"]);
 //>>excludeStart("ide", pragmas.excludeIdeData);
 $globals.Graphics.comment="The details for the selected territory\x0a\x0aThe component has the tree as model and uses it's selection as model";
 //>>excludeEnd("ide");
+$core.addMethod(
+$core.method({
+selector: "allAspects",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "allAspects\x0a\x09\x22<Array of: Symbol>\x0a\x09selectors of datapoint instances in the series which can be shown\x22\x0a\x09\x0a\x09^self dataset aspects",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["aspects", "dataset"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._dataset())._aspects();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"allAspects",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Graphics);
+
 $core.addMethod(
 $core.method({
 selector: "asSilk",
@@ -3561,6 +3520,105 @@ return [[$recv([$recv($self._header())._refresh()
 ][0],$recv($globals.Silk)._DIV_("id".__minus_gt("Tooltip"))];
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"asSilk",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Graphics);
+
+$core.addMethod(
+$core.method({
+selector: "aspectButtons",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "aspectButtons\x0a\x09\x22<Silk | (Array of: Silk)>\x22\x0a\x09\x0a\x09^self allAspects collect: [:aspect | self buttonFor: aspect]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["collect:", "allAspects", "buttonFor:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._allAspects())._collect_((function(aspect){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._buttonFor_(aspect);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({aspect:aspect},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"aspectButtons",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Graphics);
+
+$core.addMethod(
+$core.method({
+selector: "aspects",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "aspects\x0a\x09\x22<Array of: Symbol>\x0a\x09selectors of datapoint instances in the series to be shown.\x0a\x09When the list is empty, all aspects are shown\x22\x0a\x09\x0a\x09^aspects ifNil: [aspects := self readAspects]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifNil:", "readAspects"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1;
+$1=$self.aspects;
+if($1 == null || $1.a$nil){
+$self.aspects=$self._readAspects();
+return $self.aspects;
+} else {
+return $1;
+}
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"aspects",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Graphics);
+
+$core.addMethod(
+$core.method({
+selector: "buttonFor:",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspect"],
+source: "buttonFor: anAspect\x0a\x09\x22<Silk BUTTON>\x22\x0a\x09\x0a\x09| button |\x0a\x09button := Silk BUTTON: {\x0a\x09\x09'class' -> ('AspectButton', (self selectionClassFor: anAspect)).\x0a\x09\x09'type' -> 'button'. \x0a\x09\x09self legendFor: anAspect}.\x0a\x09button on: #click bind: [self toggleAspect: anAspect].\x0a\x09^button",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["BUTTON:", "->", ",", "selectionClassFor:", "legendFor:", "on:bind:", "toggleAspect:"]
+}, function ($methodClass){ return function (anAspect){
+var self=this,$self=this;
+var button;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+button=$recv($globals.Silk)._BUTTON_([["class".__minus_gt("AspectButton".__comma($self._selectionClassFor_(anAspect)))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=1
+//>>excludeEnd("ctx");
+][0],"type".__minus_gt("button"),$self._legendFor_(anAspect)]);
+$recv(button)._on_bind_("click",(function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._toggleAspect_(anAspect);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+return button;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"buttonFor:",{anAspect:anAspect,button:button})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Graphics);
@@ -3654,21 +3712,21 @@ selector: "dataset",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "dataset\x0a\x09\x22<Dataset>\x22\x0a\x09\x0a\x09^(self territory datasetAt: self datasetId) ifNil: [\x0a\x09\x09datasetId := nil.\x0a\x09\x09self dataset]",
+source: "dataset\x0a\x09\x22<Dataset>\x0a\x09Dataset to be shown.\x0a\x09Derrived from the model dataset\x22\x0a\x09\x0a\x09^dataset ifNil: [dataset := self modelDataset extendedTo: self lastDate]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifNil:", "datasetAt:", "territory", "datasetId", "dataset"]
+messageSends: ["ifNil:", "extendedTo:", "modelDataset", "lastDate"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 var $1;
-$1=$recv($self._territory())._datasetAt_($self._datasetId());
+$1=$self.dataset;
 if($1 == null || $1.a$nil){
-$self.datasetId=nil;
-return $self._dataset();
+$self.dataset=$recv($self._modelDataset())._extendedTo_($self._lastDate());
+return $self.dataset;
 } else {
 return $1;
 }
@@ -3684,7 +3742,7 @@ selector: "datasetId",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "datasetId\x0a\x09\x22<String>\x0a\x09the id of the datasource\x22\x0a\x09\x0a\x09^datasetId ifNil: [datasetId := self territory datasets first source]",
+source: "datasetId\x0a\x09\x22<String>\x0a\x09the id of the selected datasource\x22\x0a\x09\x0a\x09^datasetId ifNil: [datasetId := self territory datasets first source]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -3714,7 +3772,7 @@ selector: "datasetId:",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aString"],
-source: "datasetId: aString\x0a\x09datasetId := aString.\x0a\x09self refresh",
+source: "datasetId: aString\x0a\x09datasetId := aString.\x0a\x09dataset := nil.\x0a\x09self refresh",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -3725,6 +3783,7 @@ var self=this,$self=this;
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 $self.datasetId=aString;
+$self.dataset=nil;
 $self._refresh();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -3836,15 +3895,77 @@ $globals.Graphics);
 
 $core.addMethod(
 $core.method({
+selector: "fullBoxClassed:",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aClassString"],
+source: "fullBoxClassed: aClassString\x0a\x09^SVG RECT: {\x0a\x09\x09'class' -> aClassString.\x0a\x09\x09'x' -> 0. 'y' -> 0. \x0a\x09\x09'width' -> '100%'. 'height' -> '100%'}",
+referencedClasses: ["SVG"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["RECT:", "->"]
+}, function ($methodClass){ return function (aClassString){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($globals.SVG)._RECT_([["class".__minus_gt(aClassString)
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=1
+//>>excludeEnd("ctx");
+][0],["x".__minus_gt((0))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=2
+//>>excludeEnd("ctx");
+][0],["y".__minus_gt((0))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=3
+//>>excludeEnd("ctx");
+][0],["width".__minus_gt("100%")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=4
+//>>excludeEnd("ctx");
+][0],"height".__minus_gt("100%")]);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"fullBoxClassed:",{aClassString:aClassString})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Graphics);
+
+$core.addMethod(
+$core.method({
+selector: "hasAspect:",
+protocol: "testing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspectSymbol"],
+source: "hasAspect: anAspectSymbol\x0a\x09\x22true, if the aspect is supported by the dataset\x22\x0a\x09\x0a\x09^self allAspects includes: anAspectSymbol",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["includes:", "allAspects"]
+}, function ($methodClass){ return function (anAspectSymbol){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._allAspects())._includes_(anAspectSymbol);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"hasAspect:",{anAspectSymbol:anAspectSymbol})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Graphics);
+
+$core.addMethod(
+$core.method({
 selector: "header",
-protocol: "accessing",
+protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "header\x0a\x09\x22<Presenter>\x22\x0a\x09\x0a\x09^header ifNil: [\x0a\x09\x09header := SilkLeafPresenter shows: [self territory] in: Silk DIV do: [:aTerritory |\x0a\x09\x09\x09{'class' -> 'GraphicsHeader'.\x0a\x09\x09\x09\x09Silk H2: {\x0a\x09\x09\x09\x09\x09aTerritory name.\x0a\x09\x09\x09\x09\x09self territoryInfoPopulation: aTerritory population}.\x0a\x09\x09\x09\x09Silk UL: {'class' -> 'Datasets'. self datasets}}]]",
+source: "header\x0a\x09\x22<Presenter>\x22\x0a\x09\x0a\x09^header ifNil: [\x0a\x09\x09header := SilkLeafPresenter shows: [self territory] in: Silk DIV do: [:aTerritory |\x0a\x09\x09\x09{'class' -> 'GraphicsHeader'.\x0a\x09\x09\x09\x09Silk H2: {\x0a\x09\x09\x09\x09\x09aTerritory name.\x0a\x09\x09\x09\x09\x09self territoryInfoPopulation: aTerritory population}.\x0a\x09\x09\x09\x09Silk UL: {'class' -> 'Datasets'. self datasets}.\x0a\x09\x09\x09\x09Silk DIV: {'class' -> 'AspectButtons'. self aspectButtons}}]]",
 referencedClasses: ["SilkLeafPresenter", "Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifNil:", "shows:in:do:", "territory", "DIV", "->", "H2:", "name", "territoryInfoPopulation:", "population", "UL:", "datasets"]
+messageSends: ["ifNil:", "shows:in:do:", "territory", "DIV", "->", "H2:", "name", "territoryInfoPopulation:", "population", "UL:", "datasets", "DIV:", "aspectButtons"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -3869,7 +3990,11 @@ return [["class".__minus_gt("GraphicsHeader")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx2.sendIdx["->"]=1
 //>>excludeEnd("ctx");
-][0],$recv($globals.Silk)._H2_([$recv(aTerritory)._name(),$self._territoryInfoPopulation_($recv(aTerritory)._population())]),$recv($globals.Silk)._UL_(["class".__minus_gt("Datasets"),$self._datasets()])];
+][0],$recv($globals.Silk)._H2_([$recv(aTerritory)._name(),$self._territoryInfoPopulation_($recv(aTerritory)._population())]),$recv($globals.Silk)._UL_([["class".__minus_gt("Datasets")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx2.sendIdx["->"]=2
+//>>excludeEnd("ctx");
+][0],$self._datasets()]),$recv($globals.Silk)._DIV_(["class".__minus_gt("AspectButtons"),$self._aspectButtons()])];
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx2) {$ctx2.fillBlock({aTerritory:aTerritory},$ctx1,3)});
 //>>excludeEnd("ctx");
@@ -3880,6 +4005,29 @@ return $1;
 }
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"header",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Graphics);
+
+$core.addMethod(
+$core.method({
+selector: "isAspectSelected:",
+protocol: "testing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspectSymbol"],
+source: "isAspectSelected: anAspectSymbol\x0a\x09^self aspects includes: anAspectSymbol",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["includes:", "aspects"]
+}, function ($methodClass){ return function (anAspectSymbol){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._aspects())._includes_(anAspectSymbol);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"isAspectSelected:",{anAspectSymbol:anAspectSymbol})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Graphics);
@@ -3903,6 +4051,180 @@ return $core.withContext(function($ctx1) {
 return $recv($recv($globals.CoViD19Application)._current())._lastDate();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"lastDate",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Graphics);
+
+$core.addMethod(
+$core.method({
+selector: "legendFor:",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aString"],
+source: "legendFor: aString\x0a\x09^{\x0a\x09\x09Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: aString}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. aString}}",
+referencedClasses: ["Silk", "SVG"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["SPAN:", "->", "SVG:", "fullBoxClassed:"]
+}, function ($methodClass){ return function (aString){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return [[$recv($globals.Silk)._SPAN_([["class".__minus_gt("LegendBar")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=1
+//>>excludeEnd("ctx");
+][0],$recv($globals.SVG)._SVG_([["viewBox".__minus_gt("0 0 10 6")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=2
+//>>excludeEnd("ctx");
+][0],$self._fullBoxClassed_(aString)])])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["SPAN:"]=1
+//>>excludeEnd("ctx");
+][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("LegendLabel"),aString])];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"legendFor:",{aString:aString})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Graphics);
+
+$core.addMethod(
+$core.method({
+selector: "modelDataset",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "modelDataset\x0a\x09\x22<Dataset>\x0a\x09Dataset from the model with domain datapoints\x22\x0a\x09\x0a\x09^(self territory datasetAt: self datasetId) ifNil: [\x0a\x09\x09datasetId := nil.\x0a\x09\x09self modelDataset]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifNil:", "datasetAt:", "territory", "datasetId", "modelDataset"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1;
+$1=$recv($self._territory())._datasetAt_($self._datasetId());
+if($1 == null || $1.a$nil){
+$self.datasetId=nil;
+return $self._modelDataset();
+} else {
+return $1;
+}
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"modelDataset",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Graphics);
+
+$core.addMethod(
+$core.method({
+selector: "readAspects",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "readAspects\x0a\x09\x22<Array of: Symbol>\x22\x0a\x09\x0a\x09^self sessionKeys select: [:key | (self sessionAt: key) = 'true']",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["select:", "sessionKeys", "=", "sessionAt:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._sessionKeys())._select_((function(key){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv($self._sessionAt_(key)).__eq("true");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({key:key},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"readAspects",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Graphics);
+
+$core.addMethod(
+$core.method({
+selector: "refresh",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "refresh\x0a\x09dataset := nil.\x0a\x09super refresh",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["refresh"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$self.dataset=nil;
+[(
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.supercall = true,
+//>>excludeEnd("ctx");
+($methodClass.superclass||$boot.nilAsClass).fn.prototype._refresh.call($self))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.supercall = false
+//>>excludeEnd("ctx");
+][0];
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"refresh",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Graphics);
+
+$core.addMethod(
+$core.method({
+selector: "resetAspects",
+protocol: "initialization",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "resetAspects\x0a\x09aspects := nil",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+$self.aspects=nil;
+return self;
+
+}; }),
+$globals.Graphics);
+
+$core.addMethod(
+$core.method({
+selector: "selectionClassFor:",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspect"],
+source: "selectionClassFor: anAspect\x0a\x09\x22<String>\x22\x0a\x09\x0a\x09(self isAspectSelected: anAspect) ifTrue: [\x0a\x09\x09^' selected'].\x0a\x09^''",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifTrue:", "isAspectSelected:"]
+}, function ($methodClass){ return function (anAspect){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+if($core.assert($self._isAspectSelected_(anAspect))){
+return " selected";
+}
+return "";
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"selectionClassFor:",{anAspect:anAspect})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Graphics);
@@ -3944,7 +4266,7 @@ $globals.Graphics);
 $core.addMethod(
 $core.method({
 selector: "territoryInfoPopulation:",
-protocol: "accessing",
+protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aNumber"],
 source: "territoryInfoPopulation: aNumber\x0a\x09\x22<Silk>\x22\x0a\x09\x0a\x09| cssClass |\x0a\x09cssClass := 'TerritoryInfo'.\x0a\x09aNumber isZero ifTrue: [\x0a\x09\x09cssClass := cssClass, ' empty'].\x0a\x09^Silk DIV: {\x0a\x09\x09'class' -> cssClass.\x0a\x09\x09Silk SPAN: 'Population: '. \x0a\x09\x09Silk SPAN: aNumber separatedThousandsString}",
@@ -3974,9 +4296,41 @@ return $recv($globals.Silk)._DIV_(["class".__minus_gt(cssClass),[$recv($globals.
 }; }),
 $globals.Graphics);
 
+$core.addMethod(
+$core.method({
+selector: "toggleAspect:",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspect"],
+source: "toggleAspect: anAspect\x0a\x09| setting |\x0a\x09setting := (self sessionAt: anAspect ifAbsent: [false]) = 'true'.\x0a\x09self sessionAt: anAspect put: setting not.\x0a\x09self resetAspects.\x0a\x09self refresh",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["=", "sessionAt:ifAbsent:", "sessionAt:put:", "not", "resetAspects", "refresh"]
+}, function ($methodClass){ return function (anAspect){
+var self=this,$self=this;
+var setting;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+setting=$recv($self._sessionAt_ifAbsent_(anAspect,(function(){
+return false;
+
+}))).__eq("true");
+$self._sessionAt_put_(anAspect,$recv(setting)._not());
+$self._resetAspects();
+$self._refresh();
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"toggleAspect:",{anAspect:anAspect,setting:setting})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Graphics);
 
 
-$core.addClass("Tree", $globals.Component, ["root", "selection"], "Covid19view");
+
+$core.addClass("Tree", $globals.Component, "Covid19view");
+$core.setSlots($globals.Tree, ["root", "selection"]);
 $core.addMethod(
 $core.method({
 selector: "arrowDown",
@@ -4473,7 +4827,8 @@ $globals.Tree);
 
 
 
-$core.addClass("TreeItem", $globals.Component, ["parent", "parts", "expanded"], "Covid19view");
+$core.addClass("TreeItem", $globals.Component, "Covid19view");
+$core.setSlots($globals.TreeItem, ["parent", "parts", "expanded"]);
 $core.addMethod(
 $core.method({
 selector: "asSilk",
@@ -5362,16 +5717,16 @@ return $self._frame_model_parent_(aSilk,aModel,aTreeItemOrTree);
 $globals.TreeItem.a$cls);
 
 
-$core.addClass("InteractionAnnouncement", $globals.SystemAnnouncement, [], "Covid19view");
+$core.addClass("InteractionAnnouncement", $globals.SystemAnnouncement, "Covid19view");
 
 
-$core.addClass("DataReceived", $globals.InteractionAnnouncement, [], "Covid19view");
+$core.addClass("DataReceived", $globals.InteractionAnnouncement, "Covid19view");
 
 
-$core.addClass("TerritorySelected", $globals.InteractionAnnouncement, [], "Covid19view");
+$core.addClass("TerritorySelected", $globals.InteractionAnnouncement, "Covid19view");
 
 
-$core.addClass("SVG", $globals.Silk, [], "Covid19view");
+$core.addClass("SVG", $globals.Silk, "Covid19view");
 
 $core.addMethod(
 $core.method({
@@ -5415,7 +5770,8 @@ return $self._newElement_xmlns_(aString,$self._namespace());
 $globals.SVG.a$cls);
 
 
-$core.addClass("Scale", $globals.Object, ["from", "to"], "Covid19view");
+$core.addClass("Scale", $globals.Object, "Covid19view");
+$core.setSlots($globals.Scale, ["from", "to"]);
 $core.addMethod(
 $core.method({
 selector: "at:",
@@ -5546,7 +5902,7 @@ return inst;
 $globals.Scale.a$cls);
 
 
-$core.addClass("Datescale", $globals.Scale, [], "Covid19view");
+$core.addClass("Datescale", $globals.Scale, "Covid19view");
 $core.addMethod(
 $core.method({
 selector: "days",
@@ -5572,7 +5928,7 @@ $globals.Datescale);
 
 
 
-$core.addClass("Valuescale", $globals.Scale, [], "Covid19view");
+$core.addClass("Valuescale", $globals.Scale, "Covid19view");
 $core.addMethod(
 $core.method({
 selector: "isLogarithmic",
@@ -5621,7 +5977,8 @@ $globals.Valuescale);
 
 
 
-$core.addClass("LinearValuescale", $globals.Valuescale, ["ticks"], "Covid19view");
+$core.addClass("LinearValuescale", $globals.Valuescale, "Covid19view");
+$core.setSlots($globals.LinearValuescale, ["ticks"]);
 $core.addMethod(
 $core.method({
 selector: "initializeFrom:to:",
@@ -6123,7 +6480,7 @@ return dict;
 $globals.LinearValuescale.a$cls);
 
 
-$core.addClass("LogarithmicValuescale", $globals.Valuescale, [], "Covid19view");
+$core.addClass("LogarithmicValuescale", $globals.Valuescale, "Covid19view");
 $core.addMethod(
 $core.method({
 selector: "at:",
@@ -6597,6 +6954,52 @@ return $core.withContext(function($ctx1) {
 return $recv($self._class())._fromMilliseconds_($recv($self._asMilliseconds()).__plus($self._millisecondsInDay()));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"nextDay",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Date);
+
+$core.addMethod(
+$core.method({
+selector: "to:",
+protocol: "*Covid19view",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aDate"],
+source: "to: aDate\x0a\x09\x22<Array of: Date>\x0a\x09list of all dates between the receiver (including) and aDate (including).\x0a\x09((Date d: 1 m: 1 y: 2020) to: (Date d: 1 m: 2 y: 2020)) size\x0a\x09(Date d: 1 m: 1 y: 2020) to: (Date d: 1 m: 1 y: 2020)\x0a\x09\x22\x0a\x09\x0a\x09| list |\x0a\x09list := OrderedCollection with: self.\x0a\x09[list last < aDate] whileTrue: [\x0a\x09\x09list add: list last nextDay].\x0a\x09^list",
+referencedClasses: ["OrderedCollection"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["with:", "whileTrue:", "<", "last", "add:", "nextDay"]
+}, function ($methodClass){ return function (aDate){
+var self=this,$self=this;
+var list;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+list=$recv($globals.OrderedCollection)._with_(self);
+$recv((function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv([$recv(list)._last()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx2.sendIdx["last"]=1
+//>>excludeEnd("ctx");
+][0]).__lt(aDate);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
+//>>excludeEnd("ctx");
+}))._whileTrue_((function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv(list)._add_($recv($recv(list)._last())._nextDay());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,2)});
+//>>excludeEnd("ctx");
+}));
+return list;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"to:",{aDate:aDate,list:list})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Date);

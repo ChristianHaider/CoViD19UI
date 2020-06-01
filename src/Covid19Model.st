@@ -189,6 +189,12 @@ Object subclass: #Datapoint
 
 !Datapoint methodsFor: 'accessing'!
 
+active
+	"<Integer>"
+
+	^self confirmed - self deaths
+!
+
 aspects
 	"<Array of: Symbol>"
 	
@@ -222,7 +228,8 @@ decided
 maxValue
 	"<Integer>"
 	
-	^self aspects inject: 0 into: [:max :aspect | max max: (self perform:  aspect)]
+	^self aspects allButFirst inject: (self perform: self aspects first) into: [:max :aspect | 
+		max max: (self perform:  aspect)]
 !
 
 maxValueForAspects: someAspects
@@ -230,13 +237,14 @@ maxValueForAspects: someAspects
 	
 	someAspects isEmpty ifTrue: [
 		^self maxValue].
-	^someAspects inject: 0 into: [:max :aspect | max max: (self perform:  aspect)]
+	^someAspects allButFirst inject: (self perform: someAspects first) into: [:max :aspect | max max: (self perform:  aspect)]
 !
 
 minValue
 	"<Integer>"
 	
-	^self aspects allButFirst inject: (self perform: self aspects first) into: [:min :aspect | min min: (self perform:  aspect)]
+	^self aspects allButFirst inject: (self perform: self aspects first) into: [:min :aspect | 
+		min min: (self perform:  aspect)]
 !
 
 minValueForAspects: someAspects
@@ -441,8 +449,12 @@ Datapoint subclass: #JHUDatapoint
 
 !JHUDatapoint methodsFor: 'accessing'!
 
+active
+	^self confirmed - self recovered - self deaths
+!
+
 aspects
-	^super aspects, #(#recovered)
+	^#(#confirmed #recovered #deaths #active)
 !
 
 recovered
@@ -624,8 +636,12 @@ A dictionary `byAge` holds the cases by age group in another dictionary keyed by
 
 !RKIDatapoint methodsFor: 'accessing'!
 
+active
+	^self confirmed - self recovered - self deaths
+!
+
 aspects
-	^super aspects, #(#recovered)
+	^#(#confirmed #recovered #deaths #active)
 !
 
 byAge
@@ -788,6 +804,13 @@ about
 	^about ifNil: [Dictionary new]
 !
 
+aspects
+	"<Array of: Symbol>
+	selectors of datapoint instances in the series which may be shown"
+	
+	^self last aspects
+!
+
 changeDataset
 	"<Dataset>"
 	
@@ -811,6 +834,16 @@ dataDateString
 		ifNil: [self lastDate asLocaleDateString]
 !
 
+extendedTo: aDate
+	"<Dataset>"
+	
+	| extension last |
+	last := self last.
+	extension := (self lastDate nextDay to: aDate) collect: [:date |
+		last copyWithDate: date].
+	^self class source: self source about: self about series: self series, extension
+!
+
 firstDate
 	"<Date>"
 	
@@ -823,18 +856,10 @@ last
 	^self series last
 !
 
-lastConfirmed
-	"<Integer>"
-	
-	self isEmpty ifTrue: [
-		^0].
-	^self series last confirmed
-!
-
 lastDate
 	"<Date>"
 	
-	^self series last date
+	^self last date
 !
 
 lastDateOfMonths
@@ -856,20 +881,12 @@ lastDateOfWeeks
 	^(self series collect: #date) select: [:date | date dayOfWeek = 7]
 !
 
-lastDeaths
+lastValueOf: anAspect
 	"<Integer>"
 	
 	self isEmpty ifTrue: [
 		^0].
-	^self series last deaths
-!
-
-lastRecovered
-	"<Integer>"
-	
-	self isEmpty ifTrue: [
-		^0].
-	^self series last recovered
+	^[self last perform: anAspect] on: MessageNotUnderstood do: [:ex | ex return: 0]
 !
 
 series
@@ -1226,7 +1243,7 @@ lastConfirmed
 	
 	self datasets isEmpty ifTrue: [
 		^0].
-	^self datasets first lastConfirmed
+	^self datasets first lastValueOf: #confirmed
 !
 
 lastDate

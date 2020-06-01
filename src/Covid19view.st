@@ -147,11 +147,60 @@ frame: aSilk
 	frame := aSilk
 !
 
+keyFor: anAspect
+	"<String>
+	String for a setting in the web storage"
+	
+	^self class name asString, '.Aspect.', anAspect asString
+!
+
+localAt: anAspect
+	"<Object | nil>
+	Global setting in the web local storage"
+	
+	^(self keyFor: anAspect) settingValue
+!
+
+localAt: anAspect ifAbsent: anAbsentBlock
+	"<Object>
+	Global setting in the web local storage"
+	
+	^(self keyFor: anAspect) settingValue ifNil: anAbsentBlock
+!
+
+localAt: anAspect put: anObject
+	^(self keyFor: anAspect) settingValue: anObject
+!
+
 model
 	"<Object>
 	Object responding to #announcer"
 	
 	^model
+!
+
+sessionAt: aKey
+	"<String | nil>
+	the value at aKey in the web session storage"
+	
+	^sessionStorage getItem: aKey
+!
+
+sessionAt: aKey ifAbsent: anAbsentBlock
+	"<String>
+	the value at aKey in the web session storage"
+	
+	^(self sessionAt: aKey) ifNil: anAbsentBlock
+!
+
+sessionAt: aKey put: aString
+	sessionStorage setItem: aKey to: aString
+!
+
+sessionKeys
+	"<Array of: Symbol>"
+	
+	^(0 to: sessionStorage length - 1) collect: [:index | sessionStorage key: index]
 ! !
 
 !Component methodsFor: 'actions'!
@@ -207,7 +256,7 @@ on: aModel in: aSilk
 ! !
 
 Component subclass: #Barchart
-	slots: {#aspects. #valuescale. #datescale}
+	slots: {#valuescale. #datescale}
 	package: 'Covid19view'!
 !Barchart commentStamp!
 A bar chart with decent date and value scale.
@@ -222,7 +271,7 @@ aspects
 	selectors of datapoint instances in the series.
 	When the list is empty, all aspects are shown"
 	
-	^aspects ifNil: [#()]
+	^self model aspects
 !
 
 datapoints
@@ -236,6 +285,15 @@ dataset
 	
 	^self subclassResponsibility
 !
+
+infoValueString: aNumber
+	"<String>
+	the number on a button"
+	
+	^aNumber separatedThousandsString
+! !
+
+!Barchart methodsFor: 'accessing datescale'!
 
 datescale
 	"<Datescale>"
@@ -262,22 +320,50 @@ lastDate
 	^self datescale to
 !
 
+monthnameAt: anInteger
+	"<String>"
+	
+	| index |
+	index := anInteger.
+	index > 12 ifTrue: [
+		index := 1].
+	^#('January' 'February' 'March' 'April' 'May' 'June' 'July' 'August' 'September' 'October' 'November' 'December') at: index
+!
+
+nextMonthnameAt: aDate
+	"<String>"
+	
+	^self monthnameAt: aDate month + 1
+! !
+
+!Barchart methodsFor: 'accessing valuescale'!
+
 linearValuescale
 	"<LinearValuescale>"
 	
-	^LinearValuescale from: self minValue to: self maxValue
+	| min max |
+	min := self minValue.
+	max := self maxValue.
+	(min isZero and: [
+	max isZero]) ifTrue: [
+		max := 10].
+	^LinearValuescale from: min to: max
 !
 
 logarithmicValuescale
 	"<LogarithmicValuescale>"
 	
+	self maxValue <= 1 ifTrue: [
+		^self linearValuescale].
 	^LogarithmicValuescale from: 1 to: self maxValue
 !
 
 maxValue
 	"<Integer>"
 	
-	^self datapoints inject: 0 into: [:max :datapoint | 
+	| datapoints |
+	datapoints := self datapoints.
+	^datapoints allButFirst inject: (datapoints first maxValueForAspects: self aspects) into: [:max :datapoint | 
 		max max: (datapoint maxValueForAspects: self aspects)]
 !
 
@@ -290,28 +376,12 @@ minValue
 		min min: (datapoint minValueForAspects: self aspects)]
 !
 
-monthnameAt: anInteger
-	"<String>"
-	
-	| index |
-	index := anInteger.
-	index > 12 ifTrue: [
-		index := 1].
-	^#('January' 'February' 'March' 'April' 'May' 'June' 'July' 'August' 'September' 'October' 'November' 'December') at: index
-!
-
 newValuescale
 	"<Valuescale>"
 	
 	self isLogarithmic ifTrue: [
 		^self logarithmicValuescale].
 	^self linearValuescale
-!
-
-nextMonthnameAt: aDate
-	"<String>"
-	
-	^self monthnameAt: aDate month + 1
 !
 
 stringLogarithmic: aBoolean
@@ -361,7 +431,8 @@ mouseover: anEvent datapoint: aDatapoint
 		Silk SPAN: {'class' -> 'LegendValue'}.
 		self tooltipClass: 'confirmed' label: 'confirmed' value: aDatapoint confirmed.
 		self tooltipClass: 'recovered' label: 'recovered' value: aDatapoint recovered.
-		self tooltipClass: 'deaths' label: 'deaths' value: aDatapoint deaths}
+		self tooltipClass: 'deaths' label: 'deaths' value: aDatapoint deaths.
+		self tooltipClass: 'active' label: 'active' value: aDatapoint active}
 ! !
 
 !Barchart methodsFor: 'geometry'!
@@ -456,6 +527,18 @@ yAt: aDomainValue
 
 !Barchart methodsFor: 'presenting'!
 
+asSilk
+	^{	Silk DIV: {
+			'class' -> 'ChartHeader'.
+			Silk SPAN: {
+				'class' -> 'ChartLegend'.
+				self legendFor: #confirmed.
+				self legendFor: #recovered.
+				self legendFor: #deaths.
+				self legendFor: #active}}.
+		self svg}
+!
+
 bar: anAspectSymbol forDatapoint: aDatapoint at: aBarLeft width: aWidth
 	"<g>"
 	
@@ -486,6 +569,8 @@ barForDatapoint: aDatapoint at: aBarLeft width: aWidth
 		bars add: (self bar: #decided forDatapoint: aDatapoint at: aBarLeft width: aWidth)].
 	(self aspects includes: #recovered) ifTrue: [
 		bars add: (self bar: #recovered forDatapoint: aDatapoint at: aBarLeft width: aWidth)].
+	(self aspects includes: #active) ifTrue: [
+		bars add: (self bar: #active forDatapoint: aDatapoint at: aBarLeft width: aWidth)].
 	(self aspects isEmpty or: [
 	self aspects includes: #deaths]) ifTrue: [
 		bars add: (self bar: #deaths forDatapoint: aDatapoint at: aBarLeft width: aWidth)].
@@ -555,18 +640,18 @@ dateAxis
 	^dateAxis
 !
 
-fullBoxClassed: aClassString
-	^SVG RECT: {
-		'class' -> aClassString.
-		'x' -> 0. 'y' -> 0. 
-		'width' -> '100%'. 'height' -> '100%'}
+legendFor: anAspectSymbol
+	(self model hasAspect: anAspectSymbol) ifFalse: [
+		^Silk SPAN].
+	^Silk SPAN: {
+		'class' -> ('LegendButton', (self model selectionClassFor: anAspectSymbol)).
+		self legendFor: anAspectSymbol value: (self dataset lastValueOf: anAspectSymbol)}
 !
 
-legendClass: aClassString label: aString value: aNumber
+legendFor: aString value: aNumber
 	^{
-		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: aClassString}}.
-		Silk SPAN: {'class' -> 'LegendValue'. aNumber separatedThousandsString}.
-		Silk SPAN: {'class' -> 'LegendLabel'. aString}}
+		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self model fullBoxClassed: aString}}.
+		Silk SPAN: {'class' -> 'LegendValue'. self infoValueString: aNumber}}
 !
 
 scalingButton
@@ -602,9 +687,9 @@ svg
 
 tooltipClass: aClassString label: aString value: aNumber
 	^{
-		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 5'. self fullBoxClassed: aClassString}}.
+		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 5'. self model fullBoxClassed: aClassString}}.
 		Silk SPAN: {'class' -> 'LegendLabel'. aString}.
-		Silk SPAN: {'class' -> 'LegendValue'. aNumber separatedThousandsString}}
+		Silk SPAN: {'class' -> 'LegendValue'. (self infoValueString: aNumber)}}
 !
 
 valueAxis
@@ -657,15 +742,6 @@ isLogarithmic
 	^self class logarithmic
 ! !
 
-!Barchart class methodsFor: 'instance creation'!
-
-currentAspects
-	"<Array of: Symbol>
-	selectors of Datapoints to be shown"
-	
-	^#()
-! !
-
 !Barchart class methodsFor: 'settings'!
 
 logarithmic
@@ -692,89 +768,6 @@ Case data only grow, therefore, a logarithmic scale is most appropriate!
 
 dataset
 	^self model dataset
-! !
-
-!Casechart methodsFor: 'actions'!
-
-toggleConfirmed
-	self class showConfirmed: self class showConfirmed not.
-	self model refresh
-!
-
-toggleDeaths
-	self class showDeaths: self class showDeaths not.
-	self model refresh
-!
-
-toggleRecovered
-	self class showRecovered: self class showRecovered not.
-	self model refresh
-! !
-
-!Casechart methodsFor: 'presenting'!
-
-asSilk
-	^{	Silk DIV: {
-			'class' -> 'ChartHeader'.
-			Silk SPAN: {
-				'class' -> 'ChartButtons'.
-				self legendButtonConfirmed.
-				self legendButtonRecovered.
-				self legendButtonDeaths}}.
-		self svg}
-!
-
-legendButtonConfirmed
-	"<Silk BUTTON>"
-	
-	| selectedString button |
-	selectedString := ''.
-	(self aspects includes: #confirmed) ifTrue: [selectedString := ' selected'].
-	button := Silk BUTTON: {
-		'class' -> ('LegendButton', selectedString).
-		'type' -> 'button'. 
-		self legendClass: 'confirmed' label: 'confirmed' value: self dataset lastConfirmed}.
-	button on: #click bind: [self toggleConfirmed].
-	^button
-!
-
-legendButtonDeaths
-	"<Silk BUTTON>"
-	
-	| selectedString button |
-	selectedString := ''.
-	(self aspects includes: #deaths) ifTrue: [selectedString := ' selected'].
-	button := Silk BUTTON: {
-		'class' -> ('LegendButton', selectedString).
-		'type' -> 'button'. 
-		self legendClass: 'deaths' label: 'deaths' value: self dataset lastDeaths}.
-	button on: #click bind: [self toggleDeaths].
-	^button
-!
-
-legendButtonRecovered
-	"<Silk BUTTON>"
-	
-	| selectedString button |
-	selectedString := ''.
-	(self aspects includes: #recovered) ifTrue: [selectedString := ' selected'].
-	button := Silk BUTTON: {
-		'class' -> ('LegendButton', selectedString).
-		'type' -> 'button'. 
-		self legendClass: 'recovered' label: 'recovered' value: self dataset lastRecovered}.
-	button on: #click bind: [self toggleRecovered].
-	^button
-! !
-
-!Casechart class methodsFor: 'accessing'!
-
-currentAspects
-	| aspects |
-	aspects := OrderedCollection new.
-	self showConfirmed ifTrue: [aspects add: #confirmed].
-	self showRecovered ifTrue: [aspects add: #recovered].
-	self showDeaths ifTrue: [aspects add: #deaths].
-	^aspects
 ! !
 
 !Casechart class methodsFor: 'settings'!
@@ -827,6 +820,16 @@ dataArePositive
 
 dataset
 	^self model changeDataset
+!
+
+infoValueString: aNumber
+	| prefix |
+	aNumber isZero ifTrue: [
+		^super infoValueString: aNumber].
+	prefix := ''.
+	aNumber negative ifFalse: [
+		prefix := '+'].
+	^prefix, (super infoValueString: aNumber)
 ! !
 
 !Changechart methodsFor: 'actions'!
@@ -834,41 +837,9 @@ dataset
 refresh
 	dataArePositive := nil.
 	super refresh
-!
-
-toggleRelative
-	| chart |
-	self class showRelative: self class showRelative not.
-	self model refresh
-! !
-
-!Changechart methodsFor: 'presenting'!
-
-asSilk
-	^{	Silk DIV: {
-			'class' -> 'ChartHeader'.
-			'Change'.
-			"self legendButtonRelative"}.
-		self svg}
-!
-
-legendButtonRelative
-	"<Silk BUTTON>"
-	
-	| button |
-	button := Silk BUTTON: {
-		'class' -> 'LegendButton'.
-		'type' -> 'button'. 
-		'Relative'}.
-	button on: #click bind: [self toggleRelative].
-	^button
 ! !
 
 !Changechart class methodsFor: 'settings'!
-
-currentAspects
-	^Casechart currentAspects
-!
 
 showRelative
 	"<Boolean>"
@@ -881,7 +852,7 @@ showRelative: aBoolean
 ! !
 
 Component subclass: #Graphics
-	slots: {#header. #dataset. #datasetId. #casesChart. #changesChart}
+	slots: {#datasetId. #aspects. #dataset. #header. #casesChart. #changesChart}
 	package: 'Covid19view'!
 !Graphics commentStamp!
 The details for the selected territory
@@ -889,6 +860,21 @@ The details for the selected territory
 The component has the tree as model and uses it's selection as model!
 
 !Graphics methodsFor: 'accessing'!
+
+allAspects
+	"<Array of: Symbol>
+	selectors of datapoint instances in the series which can be shown"
+	
+	^self dataset aspects
+!
+
+aspects
+	"<Array of: Symbol>
+	selectors of datapoint instances in the series to be shown.
+	When the list is empty, all aspects are shown"
+	
+	^aspects ifNil: [aspects := self readAspects]
+!
 
 casesChart
 	"<Component>"
@@ -911,35 +897,24 @@ changesChart
 !
 
 dataset
-	"<Dataset>"
+	"<Dataset>
+	Dataset to be shown.
+	Derrived from the model dataset"
 	
-	^(self territory datasetAt: self datasetId) ifNil: [
-		datasetId := nil.
-		self dataset]
+	^dataset ifNil: [dataset := self modelDataset extendedTo: self lastDate]
 !
 
 datasetId
 	"<String>
-	the id of the datasource"
+	the id of the selected datasource"
 	
 	^datasetId ifNil: [datasetId := self territory datasets first source]
 !
 
 datasetId: aString
 	datasetId := aString.
+	dataset := nil.
 	self refresh
-!
-
-header
-	"<Presenter>"
-	
-	^header ifNil: [
-		header := SilkLeafPresenter shows: [self territory] in: Silk DIV do: [:aTerritory |
-			{'class' -> 'GraphicsHeader'.
-				Silk H2: {
-					aTerritory name.
-					self territoryInfoPopulation: aTerritory population}.
-				Silk UL: {'class' -> 'Datasets'. self datasets}}]]
 !
 
 lastDate
@@ -948,25 +923,48 @@ lastDate
 	^CoViD19Application current lastDate
 !
 
+modelDataset
+	"<Dataset>
+	Dataset from the model with domain datapoints"
+	
+	^(self territory datasetAt: self datasetId) ifNil: [
+		datasetId := nil.
+		self modelDataset]
+!
+
+readAspects
+	"<Array of: Symbol>"
+	
+	^self sessionKeys select: [:key | (self sessionAt: key) = 'true']
+!
+
 territory
 	"<Territory | nil>"
 	
 	self model hasSelection ifFalse: [
 		^nil].
 	^self model selection model
+! !
+
+!Graphics methodsFor: 'actions'!
+
+refresh
+	dataset := nil.
+	super refresh
 !
 
-territoryInfoPopulation: aNumber
-	"<Silk>"
-	
-	| cssClass |
-	cssClass := 'TerritoryInfo'.
-	aNumber isZero ifTrue: [
-		cssClass := cssClass, ' empty'].
-	^Silk DIV: {
-		'class' -> cssClass.
-		Silk SPAN: 'Population: '. 
-		Silk SPAN: aNumber separatedThousandsString}
+toggleAspect: anAspect
+	| setting |
+	setting := (self sessionAt: anAspect ifAbsent: [false]) = 'true'.
+	self sessionAt: anAspect put: setting not.
+	self resetAspects.
+	self refresh
+! !
+
+!Graphics methodsFor: 'initialization'!
+
+resetAspects
+	aspects := nil
 ! !
 
 !Graphics methodsFor: 'presenting'!
@@ -980,6 +978,24 @@ asSilk
 			self casesChart refresh frame.
 			self changesChart refresh frame}.
 		Silk DIV: 'id' -> 'Tooltip'}
+!
+
+aspectButtons
+	"<Silk | (Array of: Silk)>"
+	
+	^self allAspects collect: [:aspect | self buttonFor: aspect]
+!
+
+buttonFor: anAspect
+	"<Silk BUTTON>"
+	
+	| button |
+	button := Silk BUTTON: {
+		'class' -> ('AspectButton', (self selectionClassFor: anAspect)).
+		'type' -> 'button'. 
+		self legendFor: anAspect}.
+	button on: #click bind: [self toggleAspect: anAspect].
+	^button
 !
 
 datasetInfoOf: aDataset
@@ -1003,6 +1019,65 @@ datasets
 	
 	^self territory datasets collect: [:aDataset |
 		self datasetInfoOf: aDataset]
+!
+
+fullBoxClassed: aClassString
+	^SVG RECT: {
+		'class' -> aClassString.
+		'x' -> 0. 'y' -> 0. 
+		'width' -> '100%'. 'height' -> '100%'}
+!
+
+header
+	"<Presenter>"
+	
+	^header ifNil: [
+		header := SilkLeafPresenter shows: [self territory] in: Silk DIV do: [:aTerritory |
+			{'class' -> 'GraphicsHeader'.
+				Silk H2: {
+					aTerritory name.
+					self territoryInfoPopulation: aTerritory population}.
+				Silk UL: {'class' -> 'Datasets'. self datasets}.
+				Silk DIV: {'class' -> 'AspectButtons'. self aspectButtons}}]]
+!
+
+legendFor: aString
+	^{
+		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: aString}}.
+		Silk SPAN: {'class' -> 'LegendLabel'. aString}}
+!
+
+selectionClassFor: anAspect
+	"<String>"
+	
+	(self isAspectSelected: anAspect) ifTrue: [
+		^' selected'].
+	^''
+!
+
+territoryInfoPopulation: aNumber
+	"<Silk>"
+	
+	| cssClass |
+	cssClass := 'TerritoryInfo'.
+	aNumber isZero ifTrue: [
+		cssClass := cssClass, ' empty'].
+	^Silk DIV: {
+		'class' -> cssClass.
+		Silk SPAN: 'Population: '. 
+		Silk SPAN: aNumber separatedThousandsString}
+! !
+
+!Graphics methodsFor: 'testing'!
+
+hasAspect: anAspectSymbol
+	"true, if the aspect is supported by the dataset"
+	
+	^self allAspects includes: anAspectSymbol
+!
+
+isAspectSelected: anAspectSymbol
+	^self aspects includes: anAspectSymbol
 ! !
 
 Component subclass: #Tree
@@ -1621,6 +1696,20 @@ millisecondsInDay
 
 nextDay
 	^self class fromMilliseconds: self asMilliseconds + self millisecondsInDay
+!
+
+to: aDate
+	"<Array of: Date>
+	list of all dates between the receiver (including) and aDate (including).
+	((Date d: 1 m: 1 y: 2020) to: (Date d: 1 m: 2 y: 2020)) size
+	(Date d: 1 m: 1 y: 2020) to: (Date d: 1 m: 1 y: 2020)
+	"
+	
+	| list |
+	list := OrderedCollection with: self.
+	[list last < aDate] whileTrue: [
+		list add: list last nextDay].
+	^list
 ! !
 
 !Date class methodsFor: '*Covid19view'!

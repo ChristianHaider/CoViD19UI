@@ -265,6 +265,18 @@ recovered
 	"<Integer>"
 	
 	^0
+!
+
+secondaryAspects
+	"<Array of: Symbol>"
+	
+	^#()
+!
+
+tertiaryAspects
+	"<Array of: Symbol>"
+	
+	^#()
 ! !
 
 !Datapoint methodsFor: 'arithmetic'!
@@ -669,6 +681,15 @@ deaths
 
 recovered
 	^self caseCount recovered
+!
+
+secondaryAspects
+	^self byAge keys sorted
+!
+
+tertiaryAspects
+	^(self byAge values inject: Set new into: [:set :ageDict |
+		set addAll: ageDict keys]) asArray sorted
 ! !
 
 !RKIDatapoint methodsFor: 'arithmetic'!
@@ -804,6 +825,13 @@ about
 	^about ifNil: [Dictionary new]
 !
 
+allAspects
+	"<Array of: Symbol>
+	selectors of datapoint instances in the series which may be shown"
+	
+	^self aspects, self secondaryAspects, self tertiaryAspects
+!
+
 aspects
 	"<Array of: Symbol>
 	selectors of datapoint instances in the series which may be shown"
@@ -889,6 +917,13 @@ lastValueOf: anAspect
 	^[self last perform: anAspect] on: MessageNotUnderstood do: [:ex | ex return: 0]
 !
 
+secondaryAspects
+	"<Array of: Symbol>
+	selectors of datapoint instances in the series which may be shown"
+	
+	^self last secondaryAspects
+!
+
 series
 	"<Array of: Datapoint>
 	datapoints for one territory from one provider"
@@ -901,6 +936,13 @@ source
 	the id of the datasource from where I come"
 	
 	^source
+!
+
+tertiaryAspects
+	"<Array of: Symbol>
+	selectors of datapoint instances in the series which may be shown"
+	
+	^self last tertiaryAspects
 ! !
 
 !Dataset methodsFor: 'arithmetic'!
@@ -914,7 +956,13 @@ source
 	aDataset isEmpty ifTrue: [
 		^self].
 	newAbout := self about copy.
-	newAbout at: #updated put: ((newAbout at: #updated) max: (aDataset about at: #updated)).
+	newAbout at: #updated
+		ifPresent: [:updateTimestamp |
+			aDataset about at: #updated ifPresent: [:newUpdateTimestamp |
+				newAbout at: #updated put: (updateTimestamp max: newUpdateTimestamp)]]
+		ifAbsent: [
+			aDataset about at: #updated ifPresent: [:newUpdateTimestamp |
+				newAbout at: #updated put: newUpdateTimestamp]].
 	^self class source: self source about: newAbout series: (self plusSeries: aDataset)
 !
 
@@ -992,6 +1040,12 @@ printOn: aStream
 ! !
 
 !Dataset methodsFor: 'testing'!
+
+hasAspect: anAspectSymbol
+	"true, if the aspect is supported by the dataset"
+	
+	^self allAspects includes: anAspectSymbol
+!
 
 isEmpty
 	^self series isEmpty

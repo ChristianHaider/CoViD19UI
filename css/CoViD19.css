@@ -374,13 +374,13 @@ svg > rect {
 	justify-self: start;
 }
 
-.LegendButton {
+.Legend {
 	width: max-content;
 	margin-right: 0.5em;
 	opacity: 0.3;
 }
 
-.LegendButton.selected {
+.Legend.selected {
 	opacity: 1;
 }
 

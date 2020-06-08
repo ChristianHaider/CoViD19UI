@@ -1,30 +1,107 @@
 define(["amber/boot", "require", "amber/core/SUnit"], function($boot,requirejs){"use strict";
 var $core=$boot.api,nil=$boot.nilAsValue,$nil=$boot.nilAsReceiver,$recv=$boot.asReceiver,$globals=$boot.globals;
 var $pkg = $core.addPackage("Covid19view-Tests");
-$pkg.innerEval = function (expr) { return eval(expr); };
 $pkg.transport = {"type":"amd","amdNamespace":"amber-covid19view"};
 
-$core.addClass("Covid19viewTest", $globals.TestCase, [], "Covid19view-Tests");
+$core.addClass("Covid19viewTest", $globals.TestCase, "Covid19view-Tests");
 $core.addMethod(
 $core.method({
 selector: "testDatasetAddition",
 protocol: "tests",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "testDatasetAddition\x0a\x09self assert: (Dataset example + Dataset examplePlus5Days) printString = 'Dataset[14]'",
+source: "testDatasetAddition\x0a\x09self assert: (Dataset example + Dataset examplePlus5Days) printString equals: 'Dataset[JHU, 14]'",
 referencedClasses: ["Dataset"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["assert:", "=", "printString", "+", "example", "examplePlus5Days"]
+messageSends: ["assert:equals:", "printString", "+", "example", "examplePlus5Days"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-$self._assert_($recv($recv($recv($recv($globals.Dataset)._example()).__plus($recv($globals.Dataset)._examplePlus5Days()))._printString()).__eq("Dataset[14]"));
+$self._assert_equals_($recv($recv($recv($globals.Dataset)._example()).__plus($recv($globals.Dataset)._examplePlus5Days()))._printString(),"Dataset[JHU, 14]");
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"testDatasetAddition",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Covid19viewTest);
+
+$core.addMethod(
+$core.method({
+selector: "testDateIntervals",
+protocol: "tests",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "testDateIntervals\x0a\x09self assert: ((Date d: 8 m: 6 y: 2020) to: (Date d: 8 m: 6 y: 2020)) equals: {(Date d: 8 m: 6 y: 2020)}.\x0a\x09self assert: ((Date d: 6 m: 6 y: 2020) to: (Date d: 8 m: 6 y: 2020)) equals: {(Date d: 6 m: 6 y: 2020). (Date d: 7 m: 6 y: 2020). (Date d: 8 m: 6 y: 2020)}.\x0a\x09self assert: ((Date d: 8 m: 6 y: 2020) nextDay to: (Date d: 8 m: 6 y: 2020)) equals: #().",
+referencedClasses: ["Date"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["assert:equals:", "to:", "d:m:y:", "nextDay"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+[$self._assert_equals_([$recv([$recv($globals.Date)._d_m_y_((8),(6),(2020))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["d:m:y:"]=1
+//>>excludeEnd("ctx");
+][0])._to_([$recv($globals.Date)._d_m_y_((8),(6),(2020))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["d:m:y:"]=2
+//>>excludeEnd("ctx");
+][0])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["to:"]=1
+//>>excludeEnd("ctx");
+][0],[[$recv($globals.Date)._d_m_y_((8),(6),(2020))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["d:m:y:"]=3
+//>>excludeEnd("ctx");
+][0]])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["assert:equals:"]=1
+//>>excludeEnd("ctx");
+][0];
+[$self._assert_equals_([$recv([$recv($globals.Date)._d_m_y_((6),(6),(2020))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["d:m:y:"]=4
+//>>excludeEnd("ctx");
+][0])._to_([$recv($globals.Date)._d_m_y_((8),(6),(2020))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["d:m:y:"]=5
+//>>excludeEnd("ctx");
+][0])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["to:"]=2
+//>>excludeEnd("ctx");
+][0],[[$recv($globals.Date)._d_m_y_((6),(6),(2020))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["d:m:y:"]=6
+//>>excludeEnd("ctx");
+][0],[$recv($globals.Date)._d_m_y_((7),(6),(2020))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["d:m:y:"]=7
+//>>excludeEnd("ctx");
+][0],[$recv($globals.Date)._d_m_y_((8),(6),(2020))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["d:m:y:"]=8
+//>>excludeEnd("ctx");
+][0]])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["assert:equals:"]=2
+//>>excludeEnd("ctx");
+][0];
+$self._assert_equals_($recv($recv([$recv($globals.Date)._d_m_y_((8),(6),(2020))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["d:m:y:"]=9
+//>>excludeEnd("ctx");
+][0])._nextDay())._to_($recv($globals.Date)._d_m_y_((8),(6),(2020))),[]);
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"testDateIntervals",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Covid19viewTest);
@@ -35,7 +112,7 @@ selector: "testJHUDatapoint",
 protocol: "tests",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "testJHUDatapoint\x0a\x09\x22does not work: how can I create a JSON for tests?\x22\x0a\x09\x0a\x09((Promise value: [:model | model value: '{\x22date\x22: {\x22d\x22: 27, \x22m\x22: 1, \x22y\x22: 2020}, \x22c\x22: 1}']) then: #json) then: [:json |\x0a\x09\x09console log: json.\x0a\x09\x09self assert: (JHUDatapoint fromJson: json) printString = '']",
+source: "testJHUDatapoint\x0a\x09\x22does not work: how can I create a JSON for tests?\x22\x0a\x09\x0a\x09[((Promise value: [:model | model value: '{\x22date\x22: {\x22d\x22: 27, \x22m\x22: 1, \x22y\x22: 2020}, \x22c\x22: 1}']) then: #json) then: [:json |\x0a\x09\x09console log: json.\x0a\x09\x09self assert: (JHUDatapoint fromJson: json) printString = '']].\x0a\x09self assert: true",
 referencedClasses: ["Promise", "JHUDatapoint"],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -45,32 +122,45 @@ var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-[$recv($recv([$recv($globals.Promise)._value_((function(model){
+(function(){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return [$recv($recv([$recv($globals.Promise)._value_((function(model){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx3) {
 //>>excludeEnd("ctx");
 return $recv(model)._value_("{\x22date\x22: {\x22d\x22: 27, \x22m\x22: 1, \x22y\x22: 2020}, \x22c\x22: 1}");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({model:model},$ctx1,1)});
+}, function($ctx3) {$ctx3.fillBlock({model:model},$ctx2,2)});
 //>>excludeEnd("ctx");
 }))
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["value:"]=1
+,$ctx2.sendIdx["value:"]=1
 //>>excludeEnd("ctx");
 ][0])._then_("json"))._then_((function(json){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
+return $core.withContext(function($ctx3) {
 //>>excludeEnd("ctx");
 $recv(console)._log_(json);
-return $self._assert_($recv($recv($recv($globals.JHUDatapoint)._fromJson_(json))._printString()).__eq(""));
+return [$self._assert_($recv($recv($recv($globals.JHUDatapoint)._fromJson_(json))._printString()).__eq(""))
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({json:json},$ctx1,2)});
+,$ctx3.sendIdx["assert:"]=1
+//>>excludeEnd("ctx");
+][0];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({json:json},$ctx2,3)});
 //>>excludeEnd("ctx");
 }))
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["then:"]=1
+,$ctx2.sendIdx["then:"]=1
 //>>excludeEnd("ctx");
 ][0];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
+//>>excludeEnd("ctx");
+});
+$self._assert_(true);
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"testJHUDatapoint",{})});
@@ -80,7 +170,7 @@ $globals.Covid19viewTest);
 
 
 
-$core.addClass("ScaleTest", $globals.TestCase, [], "Covid19view-Tests");
+$core.addClass("ScaleTest", $globals.TestCase, "Covid19view-Tests");
 $core.addMethod(
 $core.method({
 selector: "testExponent",

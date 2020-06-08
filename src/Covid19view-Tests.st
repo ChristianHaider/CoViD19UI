@@ -6,15 +6,22 @@ TestCase subclass: #Covid19viewTest
 !Covid19viewTest methodsFor: 'tests'!
 
 testDatasetAddition
-	self assert: (Dataset example + Dataset examplePlus5Days) printString = 'Dataset[14]'
+	self assert: (Dataset example + Dataset examplePlus5Days) printString equals: 'Dataset[JHU, 14]'
+!
+
+testDateIntervals
+	self assert: ((Date d: 8 m: 6 y: 2020) to: (Date d: 8 m: 6 y: 2020)) equals: {(Date d: 8 m: 6 y: 2020)}.
+	self assert: ((Date d: 6 m: 6 y: 2020) to: (Date d: 8 m: 6 y: 2020)) equals: {(Date d: 6 m: 6 y: 2020). (Date d: 7 m: 6 y: 2020). (Date d: 8 m: 6 y: 2020)}.
+	self assert: ((Date d: 8 m: 6 y: 2020) nextDay to: (Date d: 8 m: 6 y: 2020)) equals: #().
 !
 
 testJHUDatapoint
 	"does not work: how can I create a JSON for tests?"
 	
-	((Promise value: [:model | model value: '{"date": {"d": 27, "m": 1, "y": 2020}, "c": 1}']) then: #json) then: [:json |
+	[((Promise value: [:model | model value: '{"date": {"d": 27, "m": 1, "y": 2020}, "c": 1}']) then: #json) then: [:json |
 		console log: json.
-		self assert: (JHUDatapoint fromJson: json) printString = '']
+		self assert: (JHUDatapoint fromJson: json) printString = '']].
+	self assert: true
 ! !
 
 TestCase subclass: #ScaleTest

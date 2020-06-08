@@ -256,7 +256,7 @@ on: aModel in: aSilk
 ! !
 
 Component subclass: #Barchart
-	slots: {#valuescale. #datescale}
+	slots: {#dataset. #valuescale. #datescale}
 	package: 'Covid19view'!
 !Barchart commentStamp!
 A bar chart with decent date and value scale.
@@ -283,7 +283,7 @@ datapoints
 dataset
 	"<Dataset>"
 	
-	^self subclassResponsibility
+	^dataset ifNil: [dataset := self newDataset]
 !
 
 infoValueString: aNumber
@@ -291,6 +291,12 @@ infoValueString: aNumber
 	the number on a button"
 	
 	^aNumber separatedThousandsString
+!
+
+newDataset
+	"<Dataset>"
+	
+	^self subclassResponsibility
 ! !
 
 !Barchart methodsFor: 'accessing datescale'!
@@ -401,6 +407,7 @@ valuescale
 !Barchart methodsFor: 'actions'!
 
 refresh
+	dataset := nil.
 	valuescale := nil.
 	datescale := nil.
 	super refresh
@@ -644,7 +651,7 @@ legendFor: anAspectSymbol
 	(self model hasAspect: anAspectSymbol) ifFalse: [
 		^Silk SPAN].
 	^Silk SPAN: {
-		'class' -> ('LegendButton', (self model selectionClassFor: anAspectSymbol)).
+		'class' -> ('Legend', (self model legendSelectionClassFor: anAspectSymbol)).
 		self legendFor: anAspectSymbol value: (self dataset lastValueOf: anAspectSymbol)}
 !
 
@@ -766,7 +773,7 @@ Case data only grow, therefore, a logarithmic scale is most appropriate!
 
 !Casechart methodsFor: 'accessing'!
 
-dataset
+newDataset
 	^self model dataset
 ! !
 
@@ -818,10 +825,6 @@ dataArePositive
 	^dataArePositive ifNil: [dataArePositive := super dataArePositive]
 !
 
-dataset
-	^self model changeDataset
-!
-
 infoValueString: aNumber
 	| prefix |
 	aNumber isZero ifTrue: [
@@ -830,6 +833,10 @@ infoValueString: aNumber
 	aNumber negative ifFalse: [
 		prefix := '+'].
 	^prefix, (super infoValueString: aNumber)
+!
+
+newDataset
+	^self model changeDataset
 ! !
 
 !Changechart methodsFor: 'actions'!
@@ -865,7 +872,7 @@ allAspects
 	"<Array of: Symbol>
 	selectors of datapoint instances in the series which can be shown"
 	
-	^self dataset aspects
+	^self dataset allAspects
 !
 
 aspects
@@ -917,6 +924,13 @@ datasetId: aString
 	self refresh
 !
 
+datasets
+	"<Array of: Silk>"
+	
+	^self territory datasets collect: [:aDataset |
+		self datasetInfoOf: aDataset]
+!
+
 lastDate
 	"<Date>"
 	
@@ -938,12 +952,28 @@ readAspects
 	^self sessionKeys select: [:key | (self sessionAt: key) = 'true']
 !
 
+secondaryAspects
+	"<Array of: Symbol>
+	selectors of datapoint instances in the series which can be shown"
+	
+	console log: '2nd ', self dataset secondaryAspects printString.
+	^self dataset secondaryAspects
+!
+
 territory
 	"<Territory | nil>"
 	
 	self model hasSelection ifFalse: [
 		^nil].
 	^self model selection model
+!
+
+tertiaryAspects
+	"<Array of: Symbol>
+	selectors of datapoint instances in the series which can be shown"
+	
+	console log: '3rd ', self dataset tertiaryAspects printString.
+	^self dataset tertiaryAspects
 ! !
 
 !Graphics methodsFor: 'actions'!
@@ -983,7 +1013,7 @@ asSilk
 aspectButtons
 	"<Silk | (Array of: Silk)>"
 	
-	^self allAspects collect: [:aspect | self buttonFor: aspect]
+	^self dataset aspects collect: [:aspect | self buttonFor: aspect]
 !
 
 buttonFor: anAspect
@@ -1014,13 +1044,6 @@ datasetInfoOf: aDataset
 	}
 !
 
-datasets
-	"<Array of: Silk>"
-	
-	^self territory datasets collect: [:aDataset |
-		self datasetInfoOf: aDataset]
-!
-
 fullBoxClassed: aClassString
 	^SVG RECT: {
 		'class' -> aClassString.
@@ -1038,13 +1061,30 @@ header
 					aTerritory name.
 					self territoryInfoPopulation: aTerritory population}.
 				Silk UL: {'class' -> 'Datasets'. self datasets}.
-				Silk DIV: {'class' -> 'AspectButtons'. self aspectButtons}}]]
+				Silk DIV: {'class' -> 'AspectButtons'. self aspectButtons}.
+				Silk DIV: {'class' -> 'SecondaryAspectButtons'. self secondaryAspectButtons}.
+				Silk DIV: {'class' -> 'TertiaryAspectButtons'. self tertiaryAspectButtons}}]]
 !
 
 legendFor: aString
 	^{
 		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: aString}}.
 		Silk SPAN: {'class' -> 'LegendLabel'. aString}}
+!
+
+legendSelectionClassFor: anAspect
+	"<String>"
+	
+	((self isAspectSelected: anAspect) or: [
+	self aspects isEmpty]) ifTrue: [
+		^' selected'].
+	^''
+!
+
+secondaryAspectButtons
+	"<Silk | (Array of: Silk)>"
+	
+	^self secondaryAspects collect: [:aspect | self buttonFor: aspect]
 !
 
 selectionClassFor: anAspect
@@ -1066,6 +1106,12 @@ territoryInfoPopulation: aNumber
 		'class' -> cssClass.
 		Silk SPAN: 'Population: '. 
 		Silk SPAN: aNumber separatedThousandsString}
+!
+
+tertiaryAspectButtons
+	"<Silk | (Array of: Silk)>"
+	
+	^self tertiaryAspects collect: [:aspect | self buttonFor: aspect]
 ! !
 
 !Graphics methodsFor: 'testing'!
@@ -1073,7 +1119,7 @@ territoryInfoPopulation: aNumber
 hasAspect: anAspectSymbol
 	"true, if the aspect is supported by the dataset"
 	
-	^self allAspects includes: anAspectSymbol
+	^self dataset hasAspect: anAspectSymbol
 !
 
 isAspectSelected: anAspectSymbol
@@ -1703,9 +1749,12 @@ to: aDate
 	list of all dates between the receiver (including) and aDate (including).
 	((Date d: 1 m: 1 y: 2020) to: (Date d: 1 m: 2 y: 2020)) size
 	(Date d: 1 m: 1 y: 2020) to: (Date d: 1 m: 1 y: 2020)
+	(Date d: 1 m: 1 y: 2020) nextDay to: (Date d: 1 m: 1 y: 2020)
 	"
 	
 	| list |
+	self > aDate ifTrue: [
+		^#()].
 	list := OrderedCollection with: self.
 	[list last < aDate] whileTrue: [
 		list add: list last nextDay].

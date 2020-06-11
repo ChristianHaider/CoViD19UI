@@ -99,24 +99,6 @@ $globals.CaseCount);
 
 $core.addMethod(
 $core.method({
-selector: "aspects",
-protocol: "accessing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "aspects\x0a\x09\x22<Array of: Symbol>\x22\x0a\x09\x0a\x09^#(#confirmed #deaths #recovered)",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: []
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-return ["confirmed", "deaths", "recovered"];
-
-}; }),
-$globals.CaseCount);
-
-$core.addMethod(
-$core.method({
 selector: "confirmed",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -818,24 +800,6 @@ $globals.Datapoint);
 
 $core.addMethod(
 $core.method({
-selector: "aspects",
-protocol: "accessing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "aspects\x0a\x09\x22<Array of: Symbol>\x22\x0a\x09\x0a\x09^#(#confirmed #deaths)",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: []
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-return ["confirmed", "deaths"];
-
-}; }),
-$globals.Datapoint);
-
-$core.addMethod(
-$core.method({
 selector: "changeFrom:",
 protocol: "arithmetic",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -959,6 +923,42 @@ $globals.Datapoint);
 
 $core.addMethod(
 $core.method({
+selector: "filteredBySecondaryAspects:",
+protocol: "copying",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspectGroup"],
+source: "filteredBySecondaryAspects: anAspectGroup\x0a\x09\x22<Datapoint>\x22\x0a\x09\x0a\x09^self",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (anAspectGroup){
+var self=this,$self=this;
+return self;
+
+}; }),
+$globals.Datapoint);
+
+$core.addMethod(
+$core.method({
+selector: "filteredByTerniaryAspects:",
+protocol: "copying",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspectGroup"],
+source: "filteredByTerniaryAspects: anAspectGroup\x0a\x09\x22<Datapoint>\x22\x0a\x09\x0a\x09^self",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (anAspectGroup){
+var self=this,$self=this;
+return self;
+
+}; }),
+$globals.Datapoint);
+
+$core.addMethod(
+$core.method({
 selector: "initializeDate:confirmed:deaths:",
 protocol: "initialization",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -984,21 +984,21 @@ selector: "maxValue",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "maxValue\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09^self aspects allButFirst inject: (self perform: self aspects first) into: [:max :aspect | \x0a\x09\x09max max: (self perform:  aspect)]",
+source: "maxValue\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09^self primaryAspects allButFirst inject: (self perform: self primaryAspects first) into: [:max :aspect | \x0a\x09\x09max max: (self perform:  aspect)]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["inject:into:", "allButFirst", "aspects", "perform:", "first", "max:"]
+messageSends: ["inject:into:", "allButFirst", "primaryAspects", "perform:", "first", "max:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($recv([$self._aspects()
+return $recv($recv([$self._primaryAspects()
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["aspects"]=1
+,$ctx1.sendIdx["primaryAspects"]=1
 //>>excludeEnd("ctx");
-][0])._allButFirst())._inject_into_([$self._perform_($recv($self._aspects())._first())
+][0])._allButFirst())._inject_into_([$self._perform_($recv($self._primaryAspects())._first())
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["perform:"]=1
 //>>excludeEnd("ctx");
@@ -1061,21 +1061,21 @@ selector: "minValue",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "minValue\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09^self aspects allButFirst inject: (self perform: self aspects first) into: [:min :aspect | \x0a\x09\x09min min: (self perform:  aspect)]",
+source: "minValue\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09^self primaryAspects allButFirst inject: (self perform: self primaryAspects first) into: [:min :aspect | \x0a\x09\x09min min: (self perform: aspect)]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["inject:into:", "allButFirst", "aspects", "perform:", "first", "min:"]
+messageSends: ["inject:into:", "allButFirst", "primaryAspects", "perform:", "first", "min:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($recv([$self._aspects()
+return $recv($recv([$self._primaryAspects()
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["aspects"]=1
+,$ctx1.sendIdx["primaryAspects"]=1
 //>>excludeEnd("ctx");
-][0])._allButFirst())._inject_into_([$self._perform_($recv($self._aspects())._first())
+][0])._allButFirst())._inject_into_([$self._perform_($recv($self._primaryAspects())._first())
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["perform:"]=1
 //>>excludeEnd("ctx");
@@ -1138,17 +1138,17 @@ selector: "numbers",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "numbers\x0a\x09\x22<Array of: Number>\x22\x0a\x09\x0a\x09^self aspects collect: [:selector | self perform: selector]",
+source: "numbers\x0a\x09\x22<Array of: Number>\x22\x0a\x09\x0a\x09^self primaryAspects collect: [:selector | self perform: selector]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["collect:", "aspects", "perform:"]
+messageSends: ["collect:", "primaryAspects", "perform:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($self._aspects())._collect_((function(selector){
+return $recv($self._primaryAspects())._collect_((function(selector){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
@@ -1182,6 +1182,29 @@ return $core.withContext(function($ctx1) {
 return $recv($self._numbers())._allSatisfy_("positive");
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"positive",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Datapoint);
+
+$core.addMethod(
+$core.method({
+selector: "primaryAspects",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "primaryAspects\x0a\x09\x22<Array of: Symbol>\x22\x0a\x09\x0a\x09^self subclassResponsibility",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["subclassResponsibility"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $self._subclassResponsibility();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"primaryAspects",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Datapoint);
@@ -1800,24 +1823,6 @@ $globals.JHUDatapoint);
 
 $core.addMethod(
 $core.method({
-selector: "aspects",
-protocol: "accessing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "aspects\x0a\x09^#(#confirmed #recovered #deaths #active)",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: []
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-return ["confirmed", "recovered", "deaths", "active"];
-
-}; }),
-$globals.JHUDatapoint);
-
-$core.addMethod(
-$core.method({
 selector: "changeFrom:",
 protocol: "arithmetic",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -1904,6 +1909,24 @@ return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"initializeDate:confirmed:deaths:recovered:",{aDate:aDate,aConfirmedInteger:aConfirmedInteger,aDeathsInteger:aDeathsInteger,aRecoveredInteger:aRecoveredInteger})});
 //>>excludeEnd("ctx");
+}; }),
+$globals.JHUDatapoint);
+
+$core.addMethod(
+$core.method({
+selector: "primaryAspects",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "primaryAspects\x0a\x09^#(#confirmed #recovered #deaths #active)",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return ["confirmed", "recovered", "deaths", "active"];
+
 }; }),
 $globals.JHUDatapoint);
 
@@ -2183,6 +2206,24 @@ return $recv($self._class())._date_confirmed_deaths_($self._date(),[$recv([$self
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"changeFrom:",{aDatapoint:aDatapoint})});
 //>>excludeEnd("ctx");
+}; }),
+$globals.JHUUSDatapoint);
+
+$core.addMethod(
+$core.method({
+selector: "primaryAspects",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "primaryAspects\x0a\x09^#(#confirmed #deaths)",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return ["confirmed", "deaths"];
+
 }; }),
 $globals.JHUUSDatapoint);
 
@@ -2470,24 +2511,6 @@ $globals.RKIDatapoint);
 
 $core.addMethod(
 $core.method({
-selector: "aspects",
-protocol: "accessing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "aspects\x0a\x09^#(#confirmed #recovered #deaths #active)",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: []
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-return ["confirmed", "recovered", "deaths", "active"];
-
-}; }),
-$globals.RKIDatapoint);
-
-$core.addMethod(
-$core.method({
 selector: "byAge",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -2710,6 +2733,122 @@ $globals.RKIDatapoint);
 
 $core.addMethod(
 $core.method({
+selector: "filteredBySecondaryAspects:",
+protocol: "copying",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspectGroup"],
+source: "filteredBySecondaryAspects: anAspectGroup\x0a\x09| dict |\x0a\x09dict := Dictionary new.\x0a\x09anAspectGroup selectedAspects do: [:aspect |\x0a\x09\x09(self byAge includesKey: aspect) ifTrue: [\x0a\x09\x09\x09dict at: aspect put: (self byAge at: aspect)]].\x0a\x09^self class date: self date byAge: dict",
+referencedClasses: ["Dictionary"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["new", "do:", "selectedAspects", "ifTrue:", "includesKey:", "byAge", "at:put:", "at:", "date:byAge:", "class", "date"]
+}, function ($methodClass){ return function (anAspectGroup){
+var self=this,$self=this;
+var dict;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+dict=$recv($globals.Dictionary)._new();
+$recv($recv(anAspectGroup)._selectedAspects())._do_((function(aspect){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+if($core.assert($recv([$self._byAge()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx2.sendIdx["byAge"]=1
+//>>excludeEnd("ctx");
+][0])._includesKey_(aspect))){
+return $recv(dict)._at_put_(aspect,$recv($self._byAge())._at_(aspect));
+}
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({aspect:aspect},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+return $recv($self._class())._date_byAge_($self._date(),dict);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"filteredBySecondaryAspects:",{anAspectGroup:anAspectGroup,dict:dict})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.RKIDatapoint);
+
+$core.addMethod(
+$core.method({
+selector: "filteredByTerniaryAspects:",
+protocol: "copying",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspectGroup"],
+source: "filteredByTerniaryAspects: anAspectGroup\x0a\x09| newAgeDict |\x0a\x09newAgeDict := Dictionary new.\x0a\x09self byAge keys do: [:age |\x0a\x09\x09| sexDict newSexDict |\x0a\x09\x09sexDict := self byAge at: age.\x0a\x09\x09newSexDict := Dictionary new.\x0a\x09\x09anAspectGroup selectedAspects do: [:aspect |\x0a\x09\x09\x09(sexDict includesKey: aspect) ifTrue: [\x0a\x09\x09\x09\x09newSexDict at: aspect put: (sexDict at: aspect)]].\x0a\x09\x09newSexDict ifNotEmpty: [\x0a\x09\x09\x09newAgeDict at: age put: newSexDict]].\x0a\x09^self class date: self date byAge: newAgeDict",
+referencedClasses: ["Dictionary"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["new", "do:", "keys", "byAge", "at:", "selectedAspects", "ifTrue:", "includesKey:", "at:put:", "ifNotEmpty:", "date:byAge:", "class", "date"]
+}, function ($methodClass){ return function (anAspectGroup){
+var self=this,$self=this;
+var newAgeDict;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+newAgeDict=[$recv($globals.Dictionary)._new()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["new"]=1
+//>>excludeEnd("ctx");
+][0];
+[$recv($recv([$self._byAge()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["byAge"]=1
+//>>excludeEnd("ctx");
+][0])._keys())._do_((function(age){
+var sexDict,newSexDict;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+sexDict=[$recv($self._byAge())._at_(age)
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx2.sendIdx["at:"]=1
+//>>excludeEnd("ctx");
+][0];
+newSexDict=$recv($globals.Dictionary)._new();
+$recv($recv(anAspectGroup)._selectedAspects())._do_((function(aspect){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
+if($core.assert($recv(sexDict)._includesKey_(aspect))){
+return [$recv(newSexDict)._at_put_(aspect,$recv(sexDict)._at_(aspect))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx3.sendIdx["at:put:"]=1
+//>>excludeEnd("ctx");
+][0];
+}
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({aspect:aspect},$ctx2,2)});
+//>>excludeEnd("ctx");
+}));
+return $recv(newSexDict)._ifNotEmpty_((function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
+return $recv(newAgeDict)._at_put_(age,newSexDict);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({},$ctx2,4)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({age:age,sexDict:sexDict,newSexDict:newSexDict},$ctx1,1)});
+//>>excludeEnd("ctx");
+}))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["do:"]=1
+//>>excludeEnd("ctx");
+][0];
+return $recv($self._class())._date_byAge_($self._date(),newAgeDict);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"filteredByTerniaryAspects:",{anAspectGroup:anAspectGroup,newAgeDict:newAgeDict})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.RKIDatapoint);
+
+$core.addMethod(
+$core.method({
 selector: "initializeDate:byAge:",
 protocol: "initialization",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -2724,6 +2863,24 @@ var self=this,$self=this;
 $self.date=aDate;
 $self.byAge=aByAgeDictionary;
 return self;
+
+}; }),
+$globals.RKIDatapoint);
+
+$core.addMethod(
+$core.method({
+selector: "primaryAspects",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "primaryAspects\x0a\x09^#(#confirmed #recovered #deaths #active)",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return ["confirmed", "recovered", "deaths", "active"];
 
 }; }),
 $globals.RKIDatapoint);
@@ -2757,17 +2914,17 @@ selector: "secondaryAspects",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "secondaryAspects\x0a\x09^self byAge keys sorted",
+source: "secondaryAspects\x0a\x09^self byAge keys",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["sorted", "keys", "byAge"]
+messageSends: ["keys", "byAge"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($recv($self._byAge())._keys())._sorted();
+return $recv($self._byAge())._keys();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"secondaryAspects",{})});
 //>>excludeEnd("ctx");
@@ -2780,25 +2937,26 @@ selector: "tertiaryAspects",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "tertiaryAspects\x0a\x09^(self byAge values inject: Set new into: [:set :ageDict |\x0a\x09\x09set addAll: ageDict keys]) asArray sorted",
+source: "tertiaryAspects\x0a\x09^self byAge values inject: Set new into: [:set :ageDict |\x0a\x09\x09set addAll: ageDict keys.\x0a\x09\x09set]",
 referencedClasses: ["Set"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["sorted", "asArray", "inject:into:", "values", "byAge", "new", "addAll:", "keys"]
+messageSends: ["inject:into:", "values", "byAge", "new", "addAll:", "keys"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($recv($recv($recv($self._byAge())._values())._inject_into_($recv($globals.Set)._new(),(function(set,ageDict){
+return $recv($recv($self._byAge())._values())._inject_into_($recv($globals.Set)._new(),(function(set,ageDict){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-return $recv(set)._addAll_($recv(ageDict)._keys());
+$recv(set)._addAll_($recv(ageDict)._keys());
+return set;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx2) {$ctx2.fillBlock({set:set,ageDict:ageDict},$ctx1,1)});
 //>>excludeEnd("ctx");
-})))._asArray())._sorted();
+}));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"tertiaryAspects",{})});
 //>>excludeEnd("ctx");
@@ -3156,106 +3314,72 @@ $globals.Dataset);
 
 $core.addMethod(
 $core.method({
-selector: "allAspects",
-protocol: "accessing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "allAspects\x0a\x09\x22<Array of: Symbol>\x0a\x09selectors of datapoint instances in the series which may be shown\x22\x0a\x09\x0a\x09^self aspects, self secondaryAspects, self tertiaryAspects",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: [",", "aspects", "secondaryAspects", "tertiaryAspects"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return [$recv($recv($self._aspects()).__comma($self._secondaryAspects())).__comma($self._tertiaryAspects())
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx[","]=1
-//>>excludeEnd("ctx");
-][0];
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"allAspects",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Dataset);
-
-$core.addMethod(
-$core.method({
-selector: "aspects",
-protocol: "accessing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "aspects\x0a\x09\x22<Array of: Symbol>\x0a\x09selectors of datapoint instances in the series which may be shown\x22\x0a\x09\x0a\x09^self last aspects",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["aspects", "last"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return $recv($self._last())._aspects();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"aspects",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Dataset);
-
-$core.addMethod(
-$core.method({
 selector: "changeDataset",
-protocol: "accessing",
+protocol: "copying",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "changeDataset\x0a\x09\x22<Dataset>\x22\x0a\x09\x0a\x09| wst rst last |\x0a\x09wst := OrderedCollection new writeStream.\x0a\x09rst := self series readStream.\x0a\x09last := nil.\x0a\x09[rst atEnd] whileFalse: [\x0a\x09\x09| datapoint | \x0a\x09\x09datapoint := rst next.\x0a\x09\x09wst nextPut: (last \x0a\x09\x09\x09ifNil: [datapoint]\x0a\x09\x09\x09ifNotNil: [datapoint changeFrom: last]).\x0a\x09\x09last := datapoint].\x0a\x09^self class source: self source about: self about series: wst contents",
-referencedClasses: ["OrderedCollection"],
+source: "changeDataset\x0a\x09\x22<Dataset>\x22\x0a\x09\x0a\x09| last |\x0a\x09last := self series first.\x0a\x09^self copyWithSeries: {last}, (self series collect: [:datapoint |\x0a\x09\x09\x09[datapoint changeFrom: last] ensure: [\x0a\x09\x09\x09\x09last := datapoint]])",
+referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["writeStream", "new", "readStream", "series", "whileFalse:", "atEnd", "next", "nextPut:", "ifNil:ifNotNil:", "changeFrom:", "source:about:series:", "class", "source", "about", "contents"]
+messageSends: ["first", "series", "copyWithSeries:", ",", "collect:", "ensure:", "changeFrom:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
-var wst,rst,last;
+var last;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1,$2,$3;
-wst=$recv($recv($globals.OrderedCollection)._new())._writeStream();
-rst=$recv($self._series())._readStream();
-last=nil;
-$recv((function(){
+last=$recv([$self._series()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["series"]=1
+//>>excludeEnd("ctx");
+][0])._first();
+return $self._copyWithSeries_($recv([last]).__comma($recv($self._series())._collect_((function(datapoint){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-return $recv(rst)._atEnd();
+return $recv((function(){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
+return $core.withContext(function($ctx3) {
 //>>excludeEnd("ctx");
-}))._whileFalse_((function(){
-var datapoint;
+return $recv(datapoint)._changeFrom_(last);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
+}, function($ctx3) {$ctx3.fillBlock({},$ctx2,2)});
 //>>excludeEnd("ctx");
-datapoint=$recv(rst)._next();
-$1=wst;
-$2=last;
-if($2 == null || $2.a$nil){
-$3=datapoint;
-} else {
-$3=$recv(datapoint)._changeFrom_(last);
-}
-$recv($1)._nextPut_($3);
+}))._ensure_((function(){
 last=datapoint;
 return last;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({datapoint:datapoint},$ctx1,2)});
-//>>excludeEnd("ctx");
+
 }));
-return $recv($self._class())._source_about_series_($self._source(),$self._about(),$recv(wst)._contents());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"changeDataset",{wst:wst,rst:rst,last:last})});
+}, function($ctx2) {$ctx2.fillBlock({datapoint:datapoint},$ctx1,1)});
+//>>excludeEnd("ctx");
+}))));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"changeDataset",{last:last})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Dataset);
+
+$core.addMethod(
+$core.method({
+selector: "copyWithSeries:",
+protocol: "copying",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["someDatapoints"],
+source: "copyWithSeries: someDatapoints\x0a\x09\x22<Dataset>\x22\x0a\x09\x0a\x09^self class source: self source about: self about series: someDatapoints",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["source:about:series:", "class", "source", "about"]
+}, function ($methodClass){ return function (someDatapoints){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._class())._source_about_series_($self._source(),$self._about(),someDatapoints);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"copyWithSeries:",{someDatapoints:someDatapoints})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Dataset);
@@ -3299,14 +3423,14 @@ $globals.Dataset);
 $core.addMethod(
 $core.method({
 selector: "extendedTo:",
-protocol: "accessing",
+protocol: "copying",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aDate"],
-source: "extendedTo: aDate\x0a\x09\x22<Dataset>\x22\x0a\x09\x0a\x09| extension last |\x0a\x09last := self last.\x0a\x09extension := (self lastDate nextDay to: aDate) collect: [:date |\x0a\x09\x09last copyWithDate: date].\x0a\x09^self class source: self source about: self about series: self series, extension",
+source: "extendedTo: aDate\x0a\x09\x22<Dataset>\x22\x0a\x09\x0a\x09| extension last |\x0a\x09last := self last.\x0a\x09extension := (self lastDate nextDay to: aDate) collect: [:date |\x0a\x09\x09last copyWithDate: date].\x0a\x09^self copyWithSeries: self series, extension",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["last", "collect:", "to:", "nextDay", "lastDate", "copyWithDate:", "source:about:series:", "class", "source", "about", ",", "series"]
+messageSends: ["last", "collect:", "to:", "nextDay", "lastDate", "copyWithDate:", "copyWithSeries:", ",", "series"]
 }, function ($methodClass){ return function (aDate){
 var self=this,$self=this;
 var extension,last;
@@ -3323,9 +3447,77 @@ return $recv(last)._copyWithDate_(date);
 }, function($ctx2) {$ctx2.fillBlock({date:date},$ctx1,1)});
 //>>excludeEnd("ctx");
 }));
-return $recv($self._class())._source_about_series_($self._source(),$self._about(),$recv($self._series()).__comma(extension));
+return $self._copyWithSeries_($recv($self._series()).__comma(extension));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"extendedTo:",{aDate:aDate,extension:extension,last:last})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Dataset);
+
+$core.addMethod(
+$core.method({
+selector: "filteredBySecondaryAspects:",
+protocol: "copying",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspectGroup"],
+source: "filteredBySecondaryAspects: anAspectGroup\x0a\x09\x22<Dataset>\x22\x0a\x09\x0a\x09anAspectGroup nothingSelected ifTrue: [\x0a\x09\x09^self].\x0a\x09^self copyWithSeries: (self series collect: [:datapoint |\x0a\x09\x09datapoint filteredBySecondaryAspects: anAspectGroup])",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifTrue:", "nothingSelected", "copyWithSeries:", "collect:", "series", "filteredBySecondaryAspects:"]
+}, function ($methodClass){ return function (anAspectGroup){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+if($core.assert($recv(anAspectGroup)._nothingSelected())){
+return self;
+}
+return $self._copyWithSeries_($recv($self._series())._collect_((function(datapoint){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv(datapoint)._filteredBySecondaryAspects_(anAspectGroup);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({datapoint:datapoint},$ctx1,2)});
+//>>excludeEnd("ctx");
+})));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"filteredBySecondaryAspects:",{anAspectGroup:anAspectGroup})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Dataset);
+
+$core.addMethod(
+$core.method({
+selector: "filteredByTerniaryAspects:",
+protocol: "copying",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspectGroup"],
+source: "filteredByTerniaryAspects: anAspectGroup\x0a\x09\x22<Dataset>\x22\x0a\x09\x0a\x09anAspectGroup nothingSelected ifTrue: [\x0a\x09\x09^self].\x0a\x09^self copyWithSeries: (self series collect: [:datapoint |\x0a\x09\x09datapoint filteredByTerniaryAspects: anAspectGroup])",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifTrue:", "nothingSelected", "copyWithSeries:", "collect:", "series", "filteredByTerniaryAspects:"]
+}, function ($methodClass){ return function (anAspectGroup){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+if($core.assert($recv(anAspectGroup)._nothingSelected())){
+return self;
+}
+return $self._copyWithSeries_($recv($self._series())._collect_((function(datapoint){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv(datapoint)._filteredByTerniaryAspects_(anAspectGroup);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({datapoint:datapoint},$ctx1,2)});
+//>>excludeEnd("ctx");
+})));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"filteredByTerniaryAspects:",{anAspectGroup:anAspectGroup})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Dataset);
@@ -3349,29 +3541,6 @@ return $core.withContext(function($ctx1) {
 return $recv($recv($self._series())._first())._date();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"firstDate",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Dataset);
-
-$core.addMethod(
-$core.method({
-selector: "hasAspect:",
-protocol: "testing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["anAspectSymbol"],
-source: "hasAspect: anAspectSymbol\x0a\x09\x22true, if the aspect is supported by the dataset\x22\x0a\x09\x0a\x09^self allAspects includes: anAspectSymbol",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["includes:", "allAspects"]
-}, function ($methodClass){ return function (anAspectSymbol){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return $recv($self._allAspects())._includes_(anAspectSymbol);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"hasAspect:",{anAspectSymbol:anAspectSymbol})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Dataset);
@@ -3713,6 +3882,29 @@ $globals.Dataset);
 
 $core.addMethod(
 $core.method({
+selector: "primaryAspects",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "primaryAspects\x0a\x09\x22<Array of: Symbol>\x0a\x09selectors of datapoint instances in the series which may be shown\x22\x0a\x09\x0a\x09^self last primaryAspects",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["primaryAspects", "last"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._last())._primaryAspects();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"primaryAspects",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Dataset);
+
+$core.addMethod(
+$core.method({
 selector: "printOn:",
 protocol: "printing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -3762,17 +3954,26 @@ selector: "secondaryAspects",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "secondaryAspects\x0a\x09\x22<Array of: Symbol>\x0a\x09selectors of datapoint instances in the series which may be shown\x22\x0a\x09\x0a\x09^self last secondaryAspects",
-referencedClasses: [],
+source: "secondaryAspects\x0a\x09\x22<Array of: Symbol>\x0a\x09selectors of datapoint instances in the series which may be shown\x22\x0a\x09\x0a\x09^(self series inject: Set new into: [:set :datapoint | set addAll: datapoint secondaryAspects. set]) asArray sorted",
+referencedClasses: ["Set"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["secondaryAspects", "last"]
+messageSends: ["sorted", "asArray", "inject:into:", "series", "new", "addAll:", "secondaryAspects"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($self._last())._secondaryAspects();
+return $recv($recv($recv($self._series())._inject_into_($recv($globals.Set)._new(),(function(set,datapoint){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+$recv(set)._addAll_($recv(datapoint)._secondaryAspects());
+return set;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({set:set,datapoint:datapoint},$ctx1,1)});
+//>>excludeEnd("ctx");
+})))._asArray())._sorted();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"secondaryAspects",{})});
 //>>excludeEnd("ctx");
@@ -3832,17 +4033,26 @@ selector: "tertiaryAspects",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "tertiaryAspects\x0a\x09\x22<Array of: Symbol>\x0a\x09selectors of datapoint instances in the series which may be shown\x22\x0a\x09\x0a\x09^self last tertiaryAspects",
-referencedClasses: [],
+source: "tertiaryAspects\x0a\x09\x22<Array of: Symbol>\x0a\x09selectors of datapoint instances in the series which may be shown\x22\x0a\x09\x0a\x09^(self series inject: Set new into: [:set :datapoint | set addAll: datapoint tertiaryAspects. set]) asArray sorted",
+referencedClasses: ["Set"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["tertiaryAspects", "last"]
+messageSends: ["sorted", "asArray", "inject:into:", "series", "new", "addAll:", "tertiaryAspects"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($self._last())._tertiaryAspects();
+return $recv($recv($recv($self._series())._inject_into_($recv($globals.Set)._new(),(function(set,datapoint){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+$recv(set)._addAll_($recv(datapoint)._tertiaryAspects());
+return set;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({set:set,datapoint:datapoint},$ctx1,1)});
+//>>excludeEnd("ctx");
+})))._asArray())._sorted();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"tertiaryAspects",{})});
 //>>excludeEnd("ctx");

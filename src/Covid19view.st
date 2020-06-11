@@ -1,5 +1,168 @@
 Smalltalk createPackage: 'Covid19view'!
 (Smalltalk packageAt: 'Covid19view' ifAbsent: [ self error: 'Package not created: Covid19view' ]) imports: {'./Covid19Model'. 'mini-mvp/MiniMVP'. 'silk/Silk'}!
+Object subclass: #AspectGroup
+	slots: {#name. #aspects. #announcer}
+	package: 'Covid19view'!
+!AspectGroup commentStamp!
+Named group of aspects (key and value)
+
+The group persists in the session storage!
+
+!AspectGroup methodsFor: 'accessing'!
+
+announcer
+	"<Announcer>
+	holds all subscriptions to changes of the receiver"
+	
+	^announcer ifNil: [announcer := Announcer new]
+!
+
+aspectAt: aSymbol
+	"<Boolean>"
+	
+	^self aspects at: aSymbol ifAbsent: [false]
+!
+
+aspectAt: aSymbol put: aBoolean
+	self aspects at: aSymbol put: aBoolean.
+	self sessionAt: self name, '.', aSymbol put: aBoolean.
+	self announcer announce: AspectChanged new
+!
+
+aspects
+	"<Dictionary key: Symbol value: Boolean>"
+	
+	^aspects ifNil: [aspects := Dictionary new]
+!
+
+filteredDatapoint: aDatapoint
+	^aDatapoint
+!
+
+filteredDataset: aDataset
+	self nothingSelected ifTrue: [
+		^aDataset].
+	^aDataset copyWithSeries: (aDataset series collect: [:datapoint |
+		self filteredDatapoint: datapoint])
+!
+
+name
+	"<String>"
+	
+	^name
+!
+
+selectedAspects
+	"<Array of: Symbol>"
+	
+	^self aspects keys select: [:key | self aspectAt: key]
+!
+
+sessionAt: aKey
+	"<String | nil>
+	the value at aKey in the web session storage"
+	
+	^sessionStorage getItem: aKey
+!
+
+sessionAt: aKey ifAbsent: anAbsentBlock
+	"<String>
+	the value at aKey in the web session storage"
+	
+	^(self sessionAt: aKey) ifNil: anAbsentBlock
+!
+
+sessionAt: aKey put: aString
+	sessionStorage setItem: aKey to: aString
+!
+
+sessionKeys
+	"<Array of: Symbol>"
+	
+	^(0 to: sessionStorage length - 1) collect: [:index | sessionStorage key: index]
+!
+
+toggleAspect: aSymbol
+	self aspectAt: aSymbol put: (self aspectAt: aSymbol) not
+! !
+
+!AspectGroup methodsFor: 'initialization'!
+
+initializeName: aString aspects: someSymbols
+	name := aString.
+	someSymbols do: [:aspect |
+		self aspects at: aspect put: (self sessionAt: self name, '.', aspect ifAbsent: [false]) = 'true']
+! !
+
+!AspectGroup methodsFor: 'presenting'!
+
+buttonFor: anAspect
+	"<Silk BUTTON>"
+	
+	| button |
+	button := Silk BUTTON: {
+		'class' -> ('AspectButton', (self selectionClassFor: anAspect)).
+		'type' -> 'button'. 
+		self legendFor: anAspect}.
+	button on: #click bind: [self toggleAspect: anAspect].
+	^button
+!
+
+buttons
+	"<Array of: Silk BUTTON>"
+	
+	^self aspects keys collect: [:aspect | self buttonFor: aspect]
+!
+
+fullBoxClassed: aClassString
+	^SVG RECT: {
+		'class' -> aClassString.
+		'x' -> 0. 'y' -> 0. 
+		'width' -> '100%'. 'height' -> '100%'}
+!
+
+legendFor: aString
+	^{
+		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: aString}}.
+		Silk SPAN: {'class' -> 'LegendLabel'. aString}}
+!
+
+legendSelectionClassFor: anAspect
+	"<String>"
+	
+	((self aspectAt: anAspect) or: [
+	self nothingSelected]) ifTrue: [
+		^' selected'].
+	^''
+!
+
+selectionClassFor: anAspect
+	"<String>"
+	
+	(self aspectAt: anAspect) ifTrue: [
+		^' selected'].
+	^''
+! !
+
+!AspectGroup methodsFor: 'testing'!
+
+hasAspect: anAspect
+	^self aspects includesKey: anAspect
+!
+
+nothingSelected
+	^(self aspects values anySatisfy: [:bool | bool]) not
+! !
+
+!AspectGroup class methodsFor: 'initialization'!
+
+name: aString aspects: someSymbols
+	| inst |
+	inst := self new.
+	inst initializeName: aString aspects: someSymbols.
+	^inst
+! !
+
 Object subclass: #CoViD19
 	slots: {#model. #tree. #graphics. #version}
 	package: 'Covid19view'!
@@ -105,6 +268,12 @@ CoViD19 class slots: {#current}!
 
 current
 	  ^current ifNil: [current := self new]
+! !
+
+!CoViD19 class methodsFor: 'documentation'!
+
+heliosToDo
+	  ^#('show references to inst vars')
 ! !
 
 !CoViD19 class methodsFor: 'starting'!
@@ -271,7 +440,7 @@ aspects
 	selectors of datapoint instances in the series.
 	When the list is empty, all aspects are shown"
 	
-	^self model aspects
+	^self model primaryAspectGroup selectedAspects
 !
 
 datapoints
@@ -647,17 +816,24 @@ dateAxis
 	^dateAxis
 !
 
+fullBoxClassed: aClassString
+	^SVG RECT: {
+		'class' -> aClassString.
+		'x' -> 0. 'y' -> 0. 
+		'width' -> '100%'. 'height' -> '100%'}
+!
+
 legendFor: anAspectSymbol
-	(self model hasAspect: anAspectSymbol) ifFalse: [
+	(self model primaryAspectGroup hasAspect: anAspectSymbol) ifFalse: [
 		^Silk SPAN].
 	^Silk SPAN: {
-		'class' -> ('Legend', (self model legendSelectionClassFor: anAspectSymbol)).
+		'class' -> ('Legend', (self model primaryAspectGroup legendSelectionClassFor: anAspectSymbol)).
 		self legendFor: anAspectSymbol value: (self dataset lastValueOf: anAspectSymbol)}
 !
 
 legendFor: aString value: aNumber
 	^{
-		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self model fullBoxClassed: aString}}.
+		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: aString}}.
 		Silk SPAN: {'class' -> 'LegendValue'. self infoValueString: aNumber}}
 !
 
@@ -694,7 +870,7 @@ svg
 
 tooltipClass: aClassString label: aString value: aNumber
 	^{
-		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 5'. self model fullBoxClassed: aClassString}}.
+		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 5'. self fullBoxClassed: aClassString}}.
 		Silk SPAN: {'class' -> 'LegendLabel'. aString}.
 		Silk SPAN: {'class' -> 'LegendValue'. (self infoValueString: aNumber)}}
 !
@@ -859,7 +1035,7 @@ showRelative: aBoolean
 ! !
 
 Component subclass: #Graphics
-	slots: {#datasetId. #aspects. #dataset. #header. #casesChart. #changesChart}
+	slots: {#datasetId. #dataset. #primaryAspectGroup. #secondaryAspectGroup. #tertiaryAspectGroup. #header. #casesChart. #changesChart}
 	package: 'Covid19view'!
 !Graphics commentStamp!
 The details for the selected territory
@@ -867,21 +1043,6 @@ The details for the selected territory
 The component has the tree as model and uses it's selection as model!
 
 !Graphics methodsFor: 'accessing'!
-
-allAspects
-	"<Array of: Symbol>
-	selectors of datapoint instances in the series which can be shown"
-	
-	^self dataset allAspects
-!
-
-aspects
-	"<Array of: Symbol>
-	selectors of datapoint instances in the series to be shown.
-	When the list is empty, all aspects are shown"
-	
-	^aspects ifNil: [aspects := self readAspects]
-!
 
 casesChart
 	"<Component>"
@@ -908,7 +1069,7 @@ dataset
 	Dataset to be shown.
 	Derrived from the model dataset"
 	
-	^dataset ifNil: [dataset := self modelDataset extendedTo: self lastDate]
+	^dataset ifNil: [dataset := self filteredDataset]
 !
 
 datasetId
@@ -931,6 +1092,21 @@ datasets
 		self datasetInfoOf: aDataset]
 !
 
+extendedDataset
+	"<Dataset>
+	Derrived from the model dataset and extended with empty change data to match the global end date.
+	This is usefull when no data is reported for the last days"
+	
+	^self modelDataset extendedTo: self lastDate
+!
+
+filteredDataset
+	"<Dataset>
+	filtered by secondary and terniary aspects"
+	
+	^(self extendedDataset filteredBySecondaryAspects: self secondaryAspectGroup) filteredByTerniaryAspects: self tertiaryAspectGroup
+!
+
 lastDate
 	"<Date>"
 	
@@ -946,18 +1122,24 @@ modelDataset
 		self modelDataset]
 !
 
-readAspects
-	"<Array of: Symbol>"
+primaryAspectGroup
+	"<AspectGroup>"
 	
-	^self sessionKeys select: [:key | (self sessionAt: key) = 'true']
+	^primaryAspectGroup ifNil: [
+		| group |
+		group := AspectGroup name: 'Cases' aspects: self modelDataset primaryAspects.
+		group announcer on: AspectChanged send: #aspectChanged to: self.
+		primaryAspectGroup := group]
 !
 
-secondaryAspects
-	"<Array of: Symbol>
-	selectors of datapoint instances in the series which can be shown"
+secondaryAspectGroup
+	"<AspectGroup>"
 	
-	console log: '2nd ', self dataset secondaryAspects printString.
-	^self dataset secondaryAspects
+	^secondaryAspectGroup ifNil: [
+		| group |
+		group := AspectGroup name: 'Age' aspects: self modelDataset secondaryAspects.
+		group announcer on: AspectChanged send: #ageAspectChanged to: self.
+		secondaryAspectGroup := group]
 !
 
 territory
@@ -968,33 +1150,38 @@ territory
 	^self model selection model
 !
 
-tertiaryAspects
-	"<Array of: Symbol>
-	selectors of datapoint instances in the series which can be shown"
+tertiaryAspectGroup
+	"<AspectGroup>"
 	
-	console log: '3rd ', self dataset tertiaryAspects printString.
-	^self dataset tertiaryAspects
+	^tertiaryAspectGroup ifNil: [
+		| group |
+		group := AspectGroup name: 'Sex' aspects: self modelDataset tertiaryAspects.
+		group announcer on: AspectChanged send: #sexAspectChanged to: self.
+		tertiaryAspectGroup := group]
 ! !
 
 !Graphics methodsFor: 'actions'!
 
 refresh
 	dataset := nil.
+	primaryAspectGroup := nil.
+	secondaryAspectGroup := nil.
+	tertiaryAspectGroup := nil.
 	super refresh
-!
-
-toggleAspect: anAspect
-	| setting |
-	setting := (self sessionAt: anAspect ifAbsent: [false]) = 'true'.
-	self sessionAt: anAspect put: setting not.
-	self resetAspects.
-	self refresh
 ! !
 
-!Graphics methodsFor: 'initialization'!
+!Graphics methodsFor: 'events'!
 
-resetAspects
-	aspects := nil
+ageAspectChanged
+	self refresh
+!
+
+aspectChanged
+	self refresh
+!
+
+sexAspectChanged
+	self refresh
 ! !
 
 !Graphics methodsFor: 'presenting'!
@@ -1008,24 +1195,6 @@ asSilk
 			self casesChart refresh frame.
 			self changesChart refresh frame}.
 		Silk DIV: 'id' -> 'Tooltip'}
-!
-
-aspectButtons
-	"<Silk | (Array of: Silk)>"
-	
-	^self dataset aspects collect: [:aspect | self buttonFor: aspect]
-!
-
-buttonFor: anAspect
-	"<Silk BUTTON>"
-	
-	| button |
-	button := Silk BUTTON: {
-		'class' -> ('AspectButton', (self selectionClassFor: anAspect)).
-		'type' -> 'button'. 
-		self legendFor: anAspect}.
-	button on: #click bind: [self toggleAspect: anAspect].
-	^button
 !
 
 datasetInfoOf: aDataset
@@ -1044,13 +1213,6 @@ datasetInfoOf: aDataset
 	}
 !
 
-fullBoxClassed: aClassString
-	^SVG RECT: {
-		'class' -> aClassString.
-		'x' -> 0. 'y' -> 0. 
-		'width' -> '100%'. 'height' -> '100%'}
-!
-
 header
 	"<Presenter>"
 	
@@ -1061,38 +1223,9 @@ header
 					aTerritory name.
 					self territoryInfoPopulation: aTerritory population}.
 				Silk UL: {'class' -> 'Datasets'. self datasets}.
-				Silk DIV: {'class' -> 'AspectButtons'. self aspectButtons}.
-				Silk DIV: {'class' -> 'SecondaryAspectButtons'. self secondaryAspectButtons}.
-				Silk DIV: {'class' -> 'TertiaryAspectButtons'. self tertiaryAspectButtons}}]]
-!
-
-legendFor: aString
-	^{
-		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: aString}}.
-		Silk SPAN: {'class' -> 'LegendLabel'. aString}}
-!
-
-legendSelectionClassFor: anAspect
-	"<String>"
-	
-	((self isAspectSelected: anAspect) or: [
-	self aspects isEmpty]) ifTrue: [
-		^' selected'].
-	^''
-!
-
-secondaryAspectButtons
-	"<Silk | (Array of: Silk)>"
-	
-	^self secondaryAspects collect: [:aspect | self buttonFor: aspect]
-!
-
-selectionClassFor: anAspect
-	"<String>"
-	
-	(self isAspectSelected: anAspect) ifTrue: [
-		^' selected'].
-	^''
+				Silk DIV: {'class' -> 'AspectButtons'. self primaryAspectGroup buttons}.
+				Silk DIV: {'class' -> 'SecondaryAspectButtons'. self secondaryAspectGroup buttons}.
+				Silk DIV: {'class' -> 'TertiaryAspectButtons'. self tertiaryAspectGroup buttons}}]]
 !
 
 territoryInfoPopulation: aNumber
@@ -1106,24 +1239,6 @@ territoryInfoPopulation: aNumber
 		'class' -> cssClass.
 		Silk SPAN: 'Population: '. 
 		Silk SPAN: aNumber separatedThousandsString}
-!
-
-tertiaryAspectButtons
-	"<Silk | (Array of: Silk)>"
-	
-	^self tertiaryAspects collect: [:aspect | self buttonFor: aspect]
-! !
-
-!Graphics methodsFor: 'testing'!
-
-hasAspect: anAspectSymbol
-	"true, if the aspect is supported by the dataset"
-	
-	^self dataset hasAspect: anAspectSymbol
-!
-
-isAspectSelected: anAspectSymbol
-	^self aspects includes: anAspectSymbol
 ! !
 
 Component subclass: #Tree
@@ -1457,6 +1572,10 @@ on: aModel in: aSilk parent: aTreeItemOrTree
 ! !
 
 SystemAnnouncement subclass: #InteractionAnnouncement
+	slots: {}
+	package: 'Covid19view'!
+
+InteractionAnnouncement subclass: #AspectChanged
 	slots: {}
 	package: 'Covid19view'!
 

@@ -6,12 +6,6 @@ Object subclass: #CaseCount
 
 !CaseCount methodsFor: 'accessing'!
 
-aspects
-	"<Array of: Symbol>"
-	
-	^#(#confirmed #deaths #recovered)
-!
-
 confirmed
 	"<Integer>"
 
@@ -195,12 +189,6 @@ active
 	^self confirmed - self deaths
 !
 
-aspects
-	"<Array of: Symbol>"
-	
-	^#(#confirmed #deaths)
-!
-
 confirmed
 	"<Integer>"
 
@@ -228,7 +216,7 @@ decided
 maxValue
 	"<Integer>"
 	
-	^self aspects allButFirst inject: (self perform: self aspects first) into: [:max :aspect | 
+	^self primaryAspects allButFirst inject: (self perform: self primaryAspects first) into: [:max :aspect | 
 		max max: (self perform:  aspect)]
 !
 
@@ -243,8 +231,8 @@ maxValueForAspects: someAspects
 minValue
 	"<Integer>"
 	
-	^self aspects allButFirst inject: (self perform: self aspects first) into: [:min :aspect | 
-		min min: (self perform:  aspect)]
+	^self primaryAspects allButFirst inject: (self perform: self primaryAspects first) into: [:min :aspect | 
+		min min: (self perform: aspect)]
 !
 
 minValueForAspects: someAspects
@@ -258,7 +246,13 @@ minValueForAspects: someAspects
 numbers
 	"<Array of: Number>"
 	
-	^self aspects collect: [:selector | self perform: selector]
+	^self primaryAspects collect: [:selector | self perform: selector]
+!
+
+primaryAspects
+	"<Array of: Symbol>"
+	
+	^self subclassResponsibility
 !
 
 recovered
@@ -308,6 +302,18 @@ copyWithDate: aDate
 	"<Datapoint>"
 	
 	^self class date: aDate confirmed: self confirmed deaths: self deaths
+!
+
+filteredBySecondaryAspects: anAspectGroup
+	"<Datapoint>"
+	
+	^self
+!
+
+filteredByTerniaryAspects: anAspectGroup
+	"<Datapoint>"
+	
+	^self
 ! !
 
 !Datapoint methodsFor: 'initialization'!
@@ -465,7 +471,7 @@ active
 	^self confirmed - self recovered - self deaths
 !
 
-aspects
+primaryAspects
 	^#(#confirmed #recovered #deaths #active)
 !
 
@@ -575,6 +581,12 @@ Datapoint subclass: #JHUUSDatapoint
 	slots: {}
 	package: 'Covid19Model'!
 
+!JHUUSDatapoint methodsFor: 'accessing'!
+
+primaryAspects
+	^#(#confirmed #deaths)
+! !
+
 !JHUUSDatapoint methodsFor: 'arithmetic'!
 
 + aDatapoint
@@ -652,10 +664,6 @@ active
 	^self confirmed - self recovered - self deaths
 !
 
-aspects
-	^#(#confirmed #recovered #deaths #active)
-!
-
 byAge
 	"<Dictionary key: String value: Integer>"
 	
@@ -679,17 +687,22 @@ deaths
 	^self caseCount deaths
 !
 
+primaryAspects
+	^#(#confirmed #recovered #deaths #active)
+!
+
 recovered
 	^self caseCount recovered
 !
 
 secondaryAspects
-	^self byAge keys sorted
+	^self byAge keys
 !
 
 tertiaryAspects
-	^(self byAge values inject: Set new into: [:set :ageDict |
-		set addAll: ageDict keys]) asArray sorted
+	^self byAge values inject: Set new into: [:set :ageDict |
+		set addAll: ageDict keys.
+		set]
 ! !
 
 !RKIDatapoint methodsFor: 'arithmetic'!
@@ -732,6 +745,30 @@ asZero
 
 copyWithDate: aDate
 	^self class date: aDate byAge: self byAge
+!
+
+filteredBySecondaryAspects: anAspectGroup
+	| dict |
+	dict := Dictionary new.
+	anAspectGroup selectedAspects do: [:aspect |
+		(self byAge includesKey: aspect) ifTrue: [
+			dict at: aspect put: (self byAge at: aspect)]].
+	^self class date: self date byAge: dict
+!
+
+filteredByTerniaryAspects: anAspectGroup
+	| newAgeDict |
+	newAgeDict := Dictionary new.
+	self byAge keys do: [:age |
+		| sexDict newSexDict |
+		sexDict := self byAge at: age.
+		newSexDict := Dictionary new.
+		anAspectGroup selectedAspects do: [:aspect |
+			(sexDict includesKey: aspect) ifTrue: [
+				newSexDict at: aspect put: (sexDict at: aspect)]].
+		newSexDict ifNotEmpty: [
+			newAgeDict at: age put: newSexDict]].
+	^self class date: self date byAge: newAgeDict
 ! !
 
 !RKIDatapoint methodsFor: 'initialization'!
@@ -825,51 +862,10 @@ about
 	^about ifNil: [Dictionary new]
 !
 
-allAspects
-	"<Array of: Symbol>
-	selectors of datapoint instances in the series which may be shown"
-	
-	^self aspects, self secondaryAspects, self tertiaryAspects
-!
-
-aspects
-	"<Array of: Symbol>
-	selectors of datapoint instances in the series which may be shown"
-	
-	^self last aspects
-!
-
-changeDataset
-	"<Dataset>"
-	
-	| wst rst last |
-	wst := OrderedCollection new writeStream.
-	rst := self series readStream.
-	last := nil.
-	[rst atEnd] whileFalse: [
-		| datapoint | 
-		datapoint := rst next.
-		wst nextPut: (last 
-			ifNil: [datapoint]
-			ifNotNil: [datapoint changeFrom: last]).
-		last := datapoint].
-	^self class source: self source about: self about series: wst contents
-!
-
 dataDateString
 	^(self about at: #updated ifAbsent: [nil])
 		ifNotNil: #asLocaleString
 		ifNil: [self lastDate asLocaleDateString]
-!
-
-extendedTo: aDate
-	"<Dataset>"
-	
-	| extension last |
-	last := self last.
-	extension := (self lastDate nextDay to: aDate) collect: [:date |
-		last copyWithDate: date].
-	^self class source: self source about: self about series: self series, extension
 !
 
 firstDate
@@ -917,11 +913,18 @@ lastValueOf: anAspect
 	^[self last perform: anAspect] on: MessageNotUnderstood do: [:ex | ex return: 0]
 !
 
+primaryAspects
+	"<Array of: Symbol>
+	selectors of datapoint instances in the series which may be shown"
+	
+	^self last primaryAspects
+!
+
 secondaryAspects
 	"<Array of: Symbol>
 	selectors of datapoint instances in the series which may be shown"
 	
-	^self last secondaryAspects
+	^(self series inject: Set new into: [:set :datapoint | set addAll: datapoint secondaryAspects. set]) asArray sorted
 !
 
 series
@@ -942,7 +945,7 @@ tertiaryAspects
 	"<Array of: Symbol>
 	selectors of datapoint instances in the series which may be shown"
 	
-	^self last tertiaryAspects
+	^(self series inject: Set new into: [:set :datapoint | set addAll: datapoint tertiaryAspects. set]) asArray sorted
 ! !
 
 !Dataset methodsFor: 'arithmetic'!
@@ -1019,6 +1022,52 @@ with: aDataset onlyInSelf: onlyInSelfBlock onlyInArg: onlyInArgBlock inBoth: inB
 							ifFalse: [onlyInArgBlock value: rstArg next]]]]]
 ! !
 
+!Dataset methodsFor: 'copying'!
+
+changeDataset
+	"<Dataset>"
+	
+	| last |
+	last := self series first.
+	^self copyWithSeries: {last}, (self series collect: [:datapoint |
+			[datapoint changeFrom: last] ensure: [
+				last := datapoint]])
+!
+
+copyWithSeries: someDatapoints
+	"<Dataset>"
+	
+	^self class source: self source about: self about series: someDatapoints
+!
+
+extendedTo: aDate
+	"<Dataset>"
+	
+	| extension last |
+	last := self last.
+	extension := (self lastDate nextDay to: aDate) collect: [:date |
+		last copyWithDate: date].
+	^self copyWithSeries: self series, extension
+!
+
+filteredBySecondaryAspects: anAspectGroup
+	"<Dataset>"
+	
+	anAspectGroup nothingSelected ifTrue: [
+		^self].
+	^self copyWithSeries: (self series collect: [:datapoint |
+		datapoint filteredBySecondaryAspects: anAspectGroup])
+!
+
+filteredByTerniaryAspects: anAspectGroup
+	"<Dataset>"
+	
+	anAspectGroup nothingSelected ifTrue: [
+		^self].
+	^self copyWithSeries: (self series collect: [:datapoint |
+		datapoint filteredByTerniaryAspects: anAspectGroup])
+! !
+
 !Dataset methodsFor: 'initialization'!
 
 initializeSource: aSourceString about: aDictionary series: someDatapoints
@@ -1040,12 +1089,6 @@ printOn: aStream
 ! !
 
 !Dataset methodsFor: 'testing'!
-
-hasAspect: anAspectSymbol
-	"true, if the aspect is supported by the dataset"
-	
-	^self allAspects includes: anAspectSymbol
-!
 
 isEmpty
 	^self series isEmpty

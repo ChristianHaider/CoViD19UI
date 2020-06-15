@@ -459,7 +459,13 @@ infoValueString: aNumber
 	"<String>
 	the number on a button"
 	
-	^aNumber separatedThousandsString
+	^aNumber asLocalizedString
+!
+
+lastConfirmed
+	"<Integer>"
+	
+	^self dataset lastValueOf: #confirmed
 !
 
 newDataset
@@ -901,7 +907,7 @@ valueAxis
 				'class' -> 'MajorText'.
 				'text-anchor' -> 'end'.
 				'x' -> (self chartRight + self valuescaleWidth - 2). 'y' -> (y + 2).
-				value separatedThousandsString}].
+				value asLocalizedString}].
 		baseY := self yAt: 0.
 		valueAxis LINE: {
 			'class' -> 'Baseline'.
@@ -951,6 +957,21 @@ Case data only grow, therefore, a logarithmic scale is most appropriate!
 
 newDataset
 	^self model dataset
+! !
+
+!Casechart methodsFor: 'presenting'!
+
+legendFor: anAspectSymbol
+	| legend number |
+	(self model primaryAspectGroup hasAspect: anAspectSymbol) ifFalse: [
+		^Silk SPAN].
+	number := self dataset lastValueOf: anAspectSymbol.
+	legend := self legendFor: anAspectSymbol value: number.
+	anAspectSymbol = #deaths ifTrue: [
+		legend add: (Silk SPAN: ' (', (number / self lastConfirmed * 100 asLocalizedString: #{'maximumFractionDigits' -> 1}), '%)')].
+	^Silk SPAN: {
+		'class' -> ('Legend', (self model primaryAspectGroup legendSelectionClassFor: anAspectSymbol)).
+		legend}
 ! !
 
 !Casechart class methodsFor: 'settings'!
@@ -1238,7 +1259,7 @@ territoryInfoPopulation: aNumber
 	^Silk DIV: {
 		'class' -> cssClass.
 		Silk SPAN: 'Population: '. 
-		Silk SPAN: aNumber separatedThousandsString}
+		Silk SPAN: aNumber asLocalizedString}
 ! !
 
 Component subclass: #Tree
@@ -1498,7 +1519,7 @@ asSilk
 !
 
 itemSilk
-	| css silk |
+	| css flag silk |
 	css := 'Treeitem'.
 	self isSelected ifTrue: [
 		css := css, ' selected'].
@@ -1506,10 +1527,14 @@ itemSilk
 		'class' -> css. 
 		Silk SPAN: {
 			'class' -> 'TerritoryName'. 
-			self model name}.
+			Silk IMG: {
+				'class' -> 'Flag'.
+				'src' -> self model flagUrl.
+				'alt' -> self model flagAlt}.
+			self model presentationName}.
 		Silk SPAN: {
 			'class' -> 'TerritoryValue'.
-			self model lastConfirmed separatedThousandsString}}.
+			self model lastConfirmed asLocalizedString}}.
 	silk on: #click bind: [self select].
 	^silk
 !
@@ -1892,6 +1917,23 @@ d: dayInteger m: monthInteger y: yearInteger h: hourInteger m: minutesInteger s:
 
 !Number methodsFor: '*Covid19view'!
 
+asLocalizedString
+	"<String>
+	localized String with thousands separator"
+	
+	<inlineJS: 'return self.toLocaleString()'>
+!
+
+asLocalizedString: anOptionsDictionary
+	"<String>
+	localized String with thousands separator and options for the host language.
+	See https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString for details.
+	1234.56789 asLocalizedString: #{'style' -> 'percent'. 'maximumFractionDigits' -> 1}
+	"
+	
+	<inlineJS: 'return self.toLocaleString(undefined, anOptionsDictionary)'>
+!
+
 exp
 	<inlineJS: 'return Math.exp(self);'>
 !
@@ -1902,12 +1944,5 @@ exponent
 	Wrong for 1.000 and 1.000.000"
 	
 	^(self log + 0.00000001) floor
-!
-
-separatedThousandsString
-	"<String>
-	localized String with thousands separator"
-	
-	<inlineJS: 'return self.toLocaleString()'>
 ! !
 

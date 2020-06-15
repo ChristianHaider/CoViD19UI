@@ -146,6 +146,12 @@ li.open > .Treeline > .opener {
 	cursor: pointer;
 }
 
+.Flag {
+    height: 1.5ex;
+    width: 1em;
+    margin-right: 0.2em;
+}
+
 .Treeitem.selected {
 	background: #cfcbc0;
 }

@@ -2528,17 +2528,17 @@ selector: "infoValueString:",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aNumber"],
-source: "infoValueString: aNumber\x0a\x09\x22<String>\x0a\x09the number on a button\x22\x0a\x09\x0a\x09^aNumber separatedThousandsString",
+source: "infoValueString: aNumber\x0a\x09\x22<String>\x0a\x09the number on a button\x22\x0a\x09\x0a\x09^aNumber asLocalizedString",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["separatedThousandsString"]
+messageSends: ["asLocalizedString"]
 }, function ($methodClass){ return function (aNumber){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv(aNumber)._separatedThousandsString();
+return $recv(aNumber)._asLocalizedString();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"infoValueString:",{aNumber:aNumber})});
 //>>excludeEnd("ctx");
@@ -2564,6 +2564,29 @@ return $core.withContext(function($ctx1) {
 return $recv($self._class())._logarithmic();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"isLogarithmic",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Barchart);
+
+$core.addMethod(
+$core.method({
+selector: "lastConfirmed",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "lastConfirmed\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09^self dataset lastValueOf: #confirmed",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["lastValueOf:", "dataset"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._dataset())._lastValueOf_("confirmed");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"lastConfirmed",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Barchart);
@@ -3310,11 +3333,11 @@ selector: "valueAxis",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "valueAxis\x0a\x09^self valuescale ticks allIn: [:majorTicks :minorTicks |\x0a\x09\x09| valueAxis baseY |\x0a\x09\x09valueAxis := SVG G: {\x0a\x09\x09\x09'class' -> 'ValueAxis'.\x0a\x09\x09\x09SVG RECT: {\x0a\x09\x09\x09\x09'x' -> self chartRight. 'y' -> self chartTop. \x0a\x09\x09\x09\x09'width' -> self valuescaleWidth. 'height' -> self chartHeight}}.\x0a\x09\x09minorTicks do: [:value |\x0a\x09\x09\x09| y |\x0a\x09\x09\x09y := self yAt: value.\x0a\x09\x09\x09valueAxis LINE: {\x0a\x09\x09\x09\x09'class' -> 'Minorline'.\x0a\x09\x09\x09\x09'x1' -> self chartLeft. 'y1' -> y.\x0a\x09\x09\x09\x09'x2' -> self chartRight. 'y2' -> y}].\x0a\x09\x09majorTicks do: [:value |\x0a\x09\x09\x09| y |\x0a\x09\x09\x09y := self yAt: value.\x0a\x09\x09\x09valueAxis LINE: {\x0a\x09\x09\x09\x09'class' -> 'Majorline'.\x0a\x09\x09\x09\x09'x1' -> self chartLeft. 'y1' -> y.\x0a\x09\x09\x09\x09'x2' -> self chartRight. 'y2' -> y}.\x0a\x09\x09\x09valueAxis TEXT: {\x0a\x09\x09\x09\x09'class' -> 'MajorText'.\x0a\x09\x09\x09\x09'text-anchor' -> 'end'.\x0a\x09\x09\x09\x09'x' -> (self chartRight + self valuescaleWidth - 2). 'y' -> (y + 2).\x0a\x09\x09\x09\x09value separatedThousandsString}].\x0a\x09\x09baseY := self yAt: 0.\x0a\x09\x09valueAxis LINE: {\x0a\x09\x09\x09'class' -> 'Baseline'.\x0a\x09\x09\x09'x1' -> self chartLeft. 'y1' -> baseY.\x0a\x09\x09\x09'x2' -> self chartRight. 'y2' -> baseY}.\x0a\x09\x09valueAxis]",
+source: "valueAxis\x0a\x09^self valuescale ticks allIn: [:majorTicks :minorTicks |\x0a\x09\x09| valueAxis baseY |\x0a\x09\x09valueAxis := SVG G: {\x0a\x09\x09\x09'class' -> 'ValueAxis'.\x0a\x09\x09\x09SVG RECT: {\x0a\x09\x09\x09\x09'x' -> self chartRight. 'y' -> self chartTop. \x0a\x09\x09\x09\x09'width' -> self valuescaleWidth. 'height' -> self chartHeight}}.\x0a\x09\x09minorTicks do: [:value |\x0a\x09\x09\x09| y |\x0a\x09\x09\x09y := self yAt: value.\x0a\x09\x09\x09valueAxis LINE: {\x0a\x09\x09\x09\x09'class' -> 'Minorline'.\x0a\x09\x09\x09\x09'x1' -> self chartLeft. 'y1' -> y.\x0a\x09\x09\x09\x09'x2' -> self chartRight. 'y2' -> y}].\x0a\x09\x09majorTicks do: [:value |\x0a\x09\x09\x09| y |\x0a\x09\x09\x09y := self yAt: value.\x0a\x09\x09\x09valueAxis LINE: {\x0a\x09\x09\x09\x09'class' -> 'Majorline'.\x0a\x09\x09\x09\x09'x1' -> self chartLeft. 'y1' -> y.\x0a\x09\x09\x09\x09'x2' -> self chartRight. 'y2' -> y}.\x0a\x09\x09\x09valueAxis TEXT: {\x0a\x09\x09\x09\x09'class' -> 'MajorText'.\x0a\x09\x09\x09\x09'text-anchor' -> 'end'.\x0a\x09\x09\x09\x09'x' -> (self chartRight + self valuescaleWidth - 2). 'y' -> (y + 2).\x0a\x09\x09\x09\x09value asLocalizedString}].\x0a\x09\x09baseY := self yAt: 0.\x0a\x09\x09valueAxis LINE: {\x0a\x09\x09\x09'class' -> 'Baseline'.\x0a\x09\x09\x09'x1' -> self chartLeft. 'y1' -> baseY.\x0a\x09\x09\x09'x2' -> self chartRight. 'y2' -> baseY}.\x0a\x09\x09valueAxis]",
 referencedClasses: ["SVG"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["allIn:", "ticks", "valuescale", "G:", "->", "RECT:", "chartRight", "chartTop", "valuescaleWidth", "chartHeight", "do:", "yAt:", "LINE:", "chartLeft", "TEXT:", "-", "+", "separatedThousandsString"]
+messageSends: ["allIn:", "ticks", "valuescale", "G:", "->", "RECT:", "chartRight", "chartTop", "valuescaleWidth", "chartHeight", "do:", "yAt:", "LINE:", "chartLeft", "TEXT:", "-", "+", "asLocalizedString"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -3472,7 +3495,7 @@ return $recv(valueAxis)._TEXT_([["class".__minus_gt("MajorText")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx3.sendIdx["->"]=19
 //>>excludeEnd("ctx");
-][0],$recv(value)._separatedThousandsString()]);
+][0],$recv(value)._asLocalizedString()]);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx3) {$ctx3.fillBlock({value:value,y:y},$ctx2,3)});
 //>>excludeEnd("ctx");
@@ -3775,6 +3798,58 @@ $core.addClass("Casechart", $globals.Barchart, "Covid19view");
 //>>excludeStart("ide", pragmas.excludeIdeData);
 $globals.Casechart.comment="A chart for case data\x0a\x0aCase data only grow, therefore, a logarithmic scale is most appropriate";
 //>>excludeEnd("ide");
+$core.addMethod(
+$core.method({
+selector: "legendFor:",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspectSymbol"],
+source: "legendFor: anAspectSymbol\x0a\x09| legend number |\x0a\x09(self model primaryAspectGroup hasAspect: anAspectSymbol) ifFalse: [\x0a\x09\x09^Silk SPAN].\x0a\x09number := self dataset lastValueOf: anAspectSymbol.\x0a\x09legend := self legendFor: anAspectSymbol value: number.\x0a\x09anAspectSymbol = #deaths ifTrue: [\x0a\x09\x09legend add: (Silk SPAN: ' (', (number / self lastConfirmed * 100 asLocalizedString: #{'maximumFractionDigits' -> 1}), '%)')].\x0a\x09^Silk SPAN: {\x0a\x09\x09'class' -> ('Legend', (self model primaryAspectGroup legendSelectionClassFor: anAspectSymbol)).\x0a\x09\x09legend}",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifFalse:", "hasAspect:", "primaryAspectGroup", "model", "SPAN", "lastValueOf:", "dataset", "legendFor:value:", "ifTrue:", "=", "add:", "SPAN:", ",", "asLocalizedString:", "*", "/", "lastConfirmed", "->", "legendSelectionClassFor:"]
+}, function ($methodClass){ return function (anAspectSymbol){
+var self=this,$self=this;
+var legend,number;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+if(!$core.assert($recv([$recv([$self._model()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["model"]=1
+//>>excludeEnd("ctx");
+][0])._primaryAspectGroup()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["primaryAspectGroup"]=1
+//>>excludeEnd("ctx");
+][0])._hasAspect_(anAspectSymbol))){
+return $recv($globals.Silk)._SPAN();
+}
+number=$recv($self._dataset())._lastValueOf_(anAspectSymbol);
+legend=$self._legendFor_value_(anAspectSymbol,number);
+if($core.assert($recv(anAspectSymbol).__eq("deaths"))){
+$recv(legend)._add_([$recv($globals.Silk)._SPAN_([$recv([" (".__comma($recv($recv($recv(number).__slash($self._lastConfirmed())).__star((100)))._asLocalizedString_($globals.HashedCollection._newFromPairs_(["maximumFractionDigits",(1)])))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx[","]=2
+//>>excludeEnd("ctx");
+][0]).__comma("%)")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx[","]=1
+//>>excludeEnd("ctx");
+][0])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["SPAN:"]=1
+//>>excludeEnd("ctx");
+][0]);
+}
+return $recv($globals.Silk)._SPAN_(["class".__minus_gt("Legend".__comma($recv($recv($self._model())._primaryAspectGroup())._legendSelectionClassFor_(anAspectSymbol))),legend]);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"legendFor:",{anAspectSymbol:anAspectSymbol,legend:legend,number:number})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Casechart);
+
 $core.addMethod(
 $core.method({
 selector: "newDataset",
@@ -4921,11 +4996,11 @@ selector: "territoryInfoPopulation:",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aNumber"],
-source: "territoryInfoPopulation: aNumber\x0a\x09\x22<Silk>\x22\x0a\x09\x0a\x09| cssClass |\x0a\x09cssClass := 'TerritoryInfo'.\x0a\x09aNumber isZero ifTrue: [\x0a\x09\x09cssClass := cssClass, ' empty'].\x0a\x09^Silk DIV: {\x0a\x09\x09'class' -> cssClass.\x0a\x09\x09Silk SPAN: 'Population: '. \x0a\x09\x09Silk SPAN: aNumber separatedThousandsString}",
+source: "territoryInfoPopulation: aNumber\x0a\x09\x22<Silk>\x22\x0a\x09\x0a\x09| cssClass |\x0a\x09cssClass := 'TerritoryInfo'.\x0a\x09aNumber isZero ifTrue: [\x0a\x09\x09cssClass := cssClass, ' empty'].\x0a\x09^Silk DIV: {\x0a\x09\x09'class' -> cssClass.\x0a\x09\x09Silk SPAN: 'Population: '. \x0a\x09\x09Silk SPAN: aNumber asLocalizedString}",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifTrue:", "isZero", ",", "DIV:", "->", "SPAN:", "separatedThousandsString"]
+messageSends: ["ifTrue:", "isZero", ",", "DIV:", "->", "SPAN:", "asLocalizedString"]
 }, function ($methodClass){ return function (aNumber){
 var self=this,$self=this;
 var cssClass;
@@ -4941,7 +5016,7 @@ return $recv($globals.Silk)._DIV_(["class".__minus_gt(cssClass),[$recv($globals.
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["SPAN:"]=1
 //>>excludeEnd("ctx");
-][0],$recv($globals.Silk)._SPAN_($recv(aNumber)._separatedThousandsString())]);
+][0],$recv($globals.Silk)._SPAN_($recv(aNumber)._asLocalizedString())]);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"territoryInfoPopulation:",{aNumber:aNumber,cssClass:cssClass})});
 //>>excludeEnd("ctx");
@@ -5830,14 +5905,14 @@ selector: "itemSilk",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "itemSilk\x0a\x09| css silk |\x0a\x09css := 'Treeitem'.\x0a\x09self isSelected ifTrue: [\x0a\x09\x09css := css, ' selected'].\x0a\x09silk := Silk SPAN: {\x0a\x09\x09'class' -> css. \x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'class' -> 'TerritoryName'. \x0a\x09\x09\x09self model name}.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'class' -> 'TerritoryValue'.\x0a\x09\x09\x09self model lastConfirmed separatedThousandsString}}.\x0a\x09silk on: #click bind: [self select].\x0a\x09^silk",
+source: "itemSilk\x0a\x09| css flag silk |\x0a\x09css := 'Treeitem'.\x0a\x09self isSelected ifTrue: [\x0a\x09\x09css := css, ' selected'].\x0a\x09silk := Silk SPAN: {\x0a\x09\x09'class' -> css. \x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'class' -> 'TerritoryName'. \x0a\x09\x09\x09Silk IMG: {\x0a\x09\x09\x09\x09'class' -> 'Flag'.\x0a\x09\x09\x09\x09'src' -> self model flagUrl.\x0a\x09\x09\x09\x09'alt' -> self model flagAlt}.\x0a\x09\x09\x09self model presentationName}.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'class' -> 'TerritoryValue'.\x0a\x09\x09\x09self model lastConfirmed asLocalizedString}}.\x0a\x09silk on: #click bind: [self select].\x0a\x09^silk",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifTrue:", "isSelected", ",", "SPAN:", "->", "name", "model", "separatedThousandsString", "lastConfirmed", "on:bind:", "select"]
+messageSends: ["ifTrue:", "isSelected", ",", "SPAN:", "->", "IMG:", "flagUrl", "model", "flagAlt", "presentationName", "asLocalizedString", "lastConfirmed", "on:bind:", "select"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
-var css,silk;
+var css,flag,silk;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
@@ -5854,15 +5929,35 @@ silk=[$recv($globals.Silk)._SPAN_([["class".__minus_gt(css)
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["->"]=2
 //>>excludeEnd("ctx");
-][0],$recv([$self._model()
+][0],$recv($globals.Silk)._IMG_([["class".__minus_gt("Flag")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=3
+//>>excludeEnd("ctx");
+][0],["src".__minus_gt($recv([$self._model()
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["model"]=1
 //>>excludeEnd("ctx");
-][0])._name()])
+][0])._flagUrl())
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=4
+//>>excludeEnd("ctx");
+][0],["alt".__minus_gt($recv([$self._model()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["model"]=2
+//>>excludeEnd("ctx");
+][0])._flagAlt())
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=5
+//>>excludeEnd("ctx");
+][0]]),$recv([$self._model()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["model"]=3
+//>>excludeEnd("ctx");
+][0])._presentationName()])
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["SPAN:"]=2
 //>>excludeEnd("ctx");
-][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("TerritoryValue"),$recv($recv($self._model())._lastConfirmed())._separatedThousandsString()])])
+][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("TerritoryValue"),$recv($recv($self._model())._lastConfirmed())._asLocalizedString()])])
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["SPAN:"]=1
 //>>excludeEnd("ctx");
@@ -5878,7 +5973,7 @@ return $self._select();
 }));
 return silk;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"itemSilk",{css:css,silk:silk})});
+}, function($ctx1) {$ctx1.fill(self,"itemSilk",{css:css,flag:flag,silk:silk})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.TreeItem);
@@ -7714,6 +7809,54 @@ $globals.Date.a$cls);
 
 $core.addMethod(
 $core.method({
+selector: "asLocalizedString",
+protocol: "*Covid19view",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "asLocalizedString\x0a\x09\x22<String>\x0a\x09localized String with thousands separator\x22\x0a\x09\x0a\x09<inlineJS: 'return self.toLocaleString()'>",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [["inlineJS:", ["return self.toLocaleString()"]]],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return self.toLocaleString();
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"asLocalizedString",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Number);
+
+$core.addMethod(
+$core.method({
+selector: "asLocalizedString:",
+protocol: "*Covid19view",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anOptionsDictionary"],
+source: "asLocalizedString: anOptionsDictionary\x0a\x09\x22<String>\x0a\x09localized String with thousands separator and options for the host language.\x0a\x09See https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString for details.\x0a\x091234.56789 asLocalizedString: #{'style' -> 'percent'. 'maximumFractionDigits' -> 1}\x0a\x09\x22\x0a\x09\x0a\x09<inlineJS: 'return self.toLocaleString(undefined, anOptionsDictionary)'>",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [["inlineJS:", ["return self.toLocaleString(undefined, anOptionsDictionary)"]]],
+messageSends: []
+}, function ($methodClass){ return function (anOptionsDictionary){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return self.toLocaleString(undefined, anOptionsDictionary);
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"asLocalizedString:",{anOptionsDictionary:anOptionsDictionary})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Number);
+
+$core.addMethod(
+$core.method({
 selector: "exp",
 protocol: "*Covid19view",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -7755,30 +7898,6 @@ return $core.withContext(function($ctx1) {
 return $recv($recv($self._log()).__plus((1e-8)))._floor();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"exponent",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Number);
-
-$core.addMethod(
-$core.method({
-selector: "separatedThousandsString",
-protocol: "*Covid19view",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "separatedThousandsString\x0a\x09\x22<String>\x0a\x09localized String with thousands separator\x22\x0a\x09\x0a\x09<inlineJS: 'return self.toLocaleString()'>",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [["inlineJS:", ["return self.toLocaleString()"]]],
-messageSends: []
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return self.toLocaleString();
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"separatedThousandsString",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Number);

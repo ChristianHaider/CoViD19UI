@@ -139,10 +139,21 @@ world
 
 !CoViD19Application methodsFor: 'data actions'!
 
-getData	
-	self world load: (self sources at: 'JHU') for: self doing: [:worldRoot | 
-		(worldRoot partNamed: 'US') load: (self sources at: 'JHUUS') for: self doing: #resetPopulation.
-		(worldRoot partNamed: 'Germany') load: (self sources at: 'RKI') for: self doing: [:root | ]]
+getData
+	TerritoryData loadAllDoing: [:wikiDataInstances |
+		console log: wikiDataInstances.
+		self world load: (self sources at: 'JHU') for: self doing: [:worldRoot | 
+			worldRoot parts do: [:territory |
+				territory wikiData: (wikiDataInstances detect: [:instance | instance name = territory name] ifNone: [
+					console log: territory name, ' not found'.
+					nil])].
+			(worldRoot partNamed: 'US') load: (self sources at: 'JHUUS') for: self doing: #resetPopulation.
+			GemeindeData loadAllBundeslandDoing: [:wikiDatas |
+				(worldRoot partNamed: 'Germany') load: (self sources at: 'RKI') for: self doing: [:root |
+					root parts do: [:territory |
+						territory wikiData: (wikiDatas detect: [:instance | instance key = territory id] ifNone: [
+							console log: territory name, ' not found'.
+							nil])]]]]]
 !
 
 pickMetadataFrom: aDictionary
@@ -1296,7 +1307,7 @@ id: anIdString url: anUrlString dataClass: aDatapointClass
 ! !
 
 Object subclass: #Territory
-	slots: {#name. #about. #datasets. #parts. #announcer. #loader}
+	slots: {#name. #about. #wikiData. #datasets. #parts. #announcer. #loader}
 	package: 'Covid19Model'!
 !Territory commentStamp!
 A country, state, county, even the world is modelled as territory with parts.
@@ -1333,6 +1344,30 @@ datasets
 	datasets from different providers"
 	
 	^datasets ifNil: [datasets := OrderedCollection new]
+!
+
+flagAlt
+	"<String>
+	alternative name of the flag"
+	
+	self wikiData ifNotNil: [
+		^'Flag of ', self name].
+	^''
+!
+
+flagUrl
+	"<String>
+	URL to the flag"
+	
+	self wikiData ifNotNil: [
+		^self wikiData flag].
+	^''
+!
+
+id
+	"<Integer | nil>"
+	
+	^self about at: #id ifAbsent: [nil]
 !
 
 lastConfirmed
@@ -1385,6 +1420,25 @@ population
 				self about at: #population put: (self parts inject: 0 into: [:sum :territory | sum + territory population]).
 				self about at: #population]
 			ifFalse: [0]]
+!
+
+presentationName
+	"<String>
+	the name for the UI"
+	
+	self wikiData ifNotNil: [
+		^self wikiData presentationName].
+	^self name
+!
+
+wikiData
+	"<TerritoryData | nil>"
+	
+	^wikiData
+!
+
+wikiData: aTerritoryData
+	wikiData := aTerritoryData
 ! !
 
 !Territory methodsFor: 'actions'!
@@ -1498,6 +1552,369 @@ totalDatasetFromAll: someTerritories
 	total from the only dataset"
 	
 	^Dataset totalOfAll: (someTerritories collect: [:territory | territory datasets first])
+! !
+
+Object subclass: #TerritoryData
+	slots: {#id. #name. #localName. #population. #flag}
+	package: 'Covid19Model'!
+!TerritoryData commentStamp!
+Data about a Territory from WikiData!
+
+!TerritoryData methodsFor: 'accessing'!
+
+entityUrl
+	"<String>
+	URL of the entity in WikiData"
+	
+	^'http://www.wikidata.org/entity/', self id
+!
+
+flag
+	"<String | nil>
+	URL to the SVG in Wikimedia Commons"
+	
+	^flag
+!
+
+id
+	"<String>
+	Identifier in WikiData.
+	To get the URL, 'http://www.wikidata.org/entity/' has to be prepended"
+	
+	^id
+!
+
+localName
+	"<String | nil>
+	label in the browser language"
+	
+	^localName
+!
+
+localName: aString
+	localName := aString
+!
+
+name
+	"<String>
+	English label in WikiData"
+	
+	^name
+!
+
+population
+	"<Integer>
+	Latest population count in WikiData"
+	
+	^population
+!
+
+presentationName
+	"<String>
+	label for the UI"
+	
+	self localName ifNotNil: [
+		^self localName].
+	^self name
+! !
+
+!TerritoryData methodsFor: 'initialization'!
+
+initializeId: idString name: nameString localName: localNameString population: populationInteger flag: flagUrlOrNil
+	id := idString.
+	name := nameString.
+	localName := localNameString.
+	population := populationInteger.
+	flag := flagUrlOrNil
+! !
+
+!TerritoryData methodsFor: 'printing'!
+
+printOn: aStream
+	aStream
+		nextPutAll: self class name;
+		nextPutAll: '(';
+		nextPutAll: self name;
+		nextPutAll: ')'
+! !
+
+!TerritoryData class methodsFor: 'accessing'!
+
+sparqlQuery
+	^'SELECT ?country ?countryLabel ?population (SAMPLE(?flagUrl) AS ?flag) WHERE {
+  ?country (wdt:P31/(wdt:P279*)) wd:Q3624078;
+    wdt:P1082 ?population.
+  OPTIONAL { ?country wdt:P41 ?flagUrl. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+GROUP BY ?country ?countryLabel ?population'
+!
+
+sparqlQueryNames
+	^'SELECT ?country ?countryLabel WHERE {
+  ?country (wdt:P31/(wdt:P279*)) wd:Q3624078.
+  FILTER(NOT EXISTS { ?country wdt:P31 wd:Q3024240. })
+  FILTER(NOT EXISTS { ?country wdt:P31 wd:Q28171280. })
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "', window navigator language, '". }
+}
+GROUP BY ?country ?countryLabel'
+! !
+
+!TerritoryData class methodsFor: 'instance creation'!
+
+createAllDoing: aBlock
+	WikiData query: self sparqlQuery then: [:bindings |
+		console log: bindings.
+		aBlock value: (bindings collect: [:object | self fromJson: object])]
+!
+
+fromJson: aJson
+	^self
+		id: (aJson country value tokenize: '/') last
+		name: aJson countryLabel value 
+		localName: nil
+		population: aJson population value asNumber 
+		flag: (aJson at: #flag ifAbsent: [nil]) value
+!
+
+id: idString name: nameString localName: localNameString population: populationInteger flag: flagUrlOrNil
+	| inst |
+	inst := self new.
+	inst initializeId: idString name: nameString localName: localNameString population: populationInteger flag: flagUrlOrNil.
+	^inst
+!
+
+loadAllDoing: aBlock
+	self createAllDoing: [:territoryData |
+		self localNamesDoing: [:namesDict |
+			territoryData do: [:item |
+				namesDict at: item id ifPresent: [:localName |
+					item localName: localName]].
+			aBlock value: territoryData]]
+!
+
+localNamesDoing: aBlock
+	WikiData query: self sparqlQueryNames then: [:bindings |
+		| dict |
+		dict := Dictionary new.
+		bindings do: [:object |
+			| id label |
+			id := (object country value tokenize: '/') last.
+			label := object countryLabel value.
+			label = id ifFalse: [
+				dict at: id put: label]].
+		aBlock value: dict]
+!
+
+onlineTest
+	"
+	TerritoryData onlineTest
+	"
+	self loadAllDoing: [:objects | console log: objects]
+!
+
+onlineTestLocalNames
+	"
+	TerritoryData onlineTestLocalNames
+	"
+	self localNamesDoing: [:objects | console log: objects]
+! !
+
+TerritoryData subclass: #GemeindeData
+	slots: {#key}
+	package: 'Covid19Model'!
+
+!GemeindeData methodsFor: 'accessing'!
+
+key
+	^ key
+! !
+
+!GemeindeData methodsFor: 'initialization'!
+
+initializeId: idString name: nameString key: keyString localName: localNameString population: populationInteger flag: flagUrlOrNil
+	self initializeId: idString name: nameString localName: localNameString population: populationInteger flag: flagUrlOrNil.
+	key := keyString
+! !
+
+!GemeindeData class methodsFor: 'accessing'!
+
+sparqlQueryBundesland
+	^'SELECT ?bundesland ?bundeslandLabel ?id ?population (SAMPLE(?flagUrl) AS ?flag) WHERE {
+  ?bundesland wdt:P31 wd:Q1221156;
+    wdt:P1082 ?population;
+    wdt:P1388 ?id.
+  OPTIONAL { ?bundesland wdt:P41 ?flagUrl. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "de". }
+}
+GROUP BY ?bundesland ?bundeslandLabel ?id ?population'
+!
+
+sparqlQueryBundeslandNames
+	^'SELECT ?bundesland ?bundeslandLabel WHERE {
+  ?bundesland wdt:P31 wd:Q1221156;
+    wdt:P1388 ?id.
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "', window navigator language, '". }
+}
+GROUP BY ?bundesland ?bundeslandLabel'
+!
+
+sparqlQueryLandkreisNames
+	^'SELECT ?gemeinde ?gemeindeLabel WHERE {
+  ?gemeinde (wdt:P31/(wdt:P279*)) wd:Q163359;
+    wdt:P440 ?id.
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "', window navigator language, '". }
+}
+GROUP BY ?gemeinde ?gemeindeLabel'
+!
+
+sparqlQueryLandkreise
+	^'SELECT ?gemeinde ?gemeindeLabel ?id (SAMPLE(?flagUrl) AS ?flag) WHERE {
+  ?gemeinde (wdt:P31/(wdt:P279*)) wd:Q163359;
+    wdt:P440 ?id.
+  OPTIONAL { ?gemeinde wdt:P41 ?flagUrl. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "de". }
+}
+GROUP BY ?gemeinde ?gemeindeLabel ?id'
+! !
+
+!GemeindeData class methodsFor: 'instance creation'!
+
+createAllBundeslandDoing: aBlock
+	WikiData query: self sparqlQueryBundesland then: [:bindings |
+		console log: bindings.
+		aBlock value: (bindings collect: [:object | self fromJsonBundesland: object])]
+!
+
+createAllLandkreiseDoing: aBlock
+	WikiData query: self sparqlQueryLandkreise then: [:bindings |
+		console log: bindings.
+		aBlock value: (bindings collect: [:object | self fromJsonLandkreis: object])]
+!
+
+fromJsonBundesland: aJson
+	^self
+		id: (aJson bundesland value tokenize: '/') last
+		name: aJson bundeslandLabel value 
+		key: aJson id value
+		localName: nil
+		population: aJson population value asNumber 
+		flag: (aJson at: #flag ifAbsent: [nil]) value
+!
+
+fromJsonLandkreis: aJson
+	^self
+		id: (aJson gemeinde value tokenize: '/') last
+		name: aJson gemeindeLabel value 
+		key: aJson id value
+		localName: nil
+		population: nil
+		flag: (aJson at: #flag ifAbsent: [nil]) value
+!
+
+id: idString name: nameString key: aKeyString localName: localNameString population: populationInteger flag: flagUrlOrNil
+	| inst |
+	inst := self new.
+	inst initializeId: idString name: nameString key: aKeyString localName: localNameString population: populationInteger flag: flagUrlOrNil.
+	^inst
+!
+
+loadAllBundeslandDoing: aBlock
+	self createAllBundeslandDoing: [:territoryData |
+		self localBundeslandNamesDoing: [:namesDict |
+			territoryData do: [:item |
+				namesDict at: item id ifPresent: [:localName |
+					item localName: localName]].
+			aBlock value: territoryData]]
+!
+
+loadAllLandkreiseDoing: aBlock
+	self createAllLandkreiseDoing: [:territoryData |
+		self localLandkreisNamesDoing: [:namesDict |
+			territoryData do: [:item |
+				namesDict at: item id ifPresent: [:localName |
+					item localName: localName]].
+			aBlock value: territoryData]]
+!
+
+localBundeslandNamesDoing: aBlock
+	WikiData query: self sparqlQueryBundeslandNames then: [:bindings |
+		| dict |
+		dict := Dictionary new.
+		bindings do: [:object |
+			| id label |
+			id := (object bundesland value tokenize: '/') last.
+			label := object bundeslandLabel value.
+			label = id ifFalse: [
+				dict at: id put: label]].
+		aBlock value: dict]
+!
+
+localLandkreisNamesDoing: aBlock
+	WikiData query: self sparqlQueryLandkreisNames then: [:bindings |
+		| dict |
+		dict := Dictionary new.
+		bindings do: [:object |
+			| id label |
+			id := (object gemeinde value tokenize: '/') last.
+			label := object gemeindeLabel value.
+			label = id ifFalse: [
+				dict at: id put: label]].
+		aBlock value: dict]
+!
+
+onlineBundeslandTest
+	"
+	GemeindeData onlineBundeslandTest
+	"
+	self loadAllBundeslandDoing: [:objects | console log: objects]
+!
+
+onlineLandkreisTest
+	"
+	GemeindeData onlineLandkreisTest
+	"
+	self loadAllLandkreiseDoing: [:objects | console log: objects]
+!
+
+onlineTestLocalBundeslandNames
+	"
+	GemeindeData onlineTestLocalBundeslandNames
+	"
+	self localBundeslandNamesDoing: [:objects | console log: objects]
+!
+
+onlineTestLocalLandkreisNames
+	"
+	GemeindeData onlineTestLocalLandkreisNames
+	"
+	self localLandkreisNamesDoing: [:objects | console log: objects]
+! !
+
+Object subclass: #WikiData
+	slots: {}
+	package: 'Covid19Model'!
+
+!WikiData class methodsFor: 'accessing'!
+
+endpointUrl
+	^'https://query.wikidata.org/sparql'
+!
+
+query: aQueryString then: aBlock
+	((Platform fetchUrl: (self urlForQuery: aQueryString) options: self requestHeaders) then: #json) then: [:json |
+		aBlock value: json results bindings]
+!
+
+requestHeaders
+	^#{'headers' -> #{
+		'Accept' -> 'application/sparql-results+json'.
+	"	'user-agent' -> 'CoViD-19 Charts (https://covidcrt.uber.space/)' "
+	}}
+!
+
+urlForQuery: aQueryString
+	^self endpointUrl, '?format=json&query=', aQueryString uriEncoded
 ! !
 
 !AssociativeCollection methodsFor: '*Covid19Model'!

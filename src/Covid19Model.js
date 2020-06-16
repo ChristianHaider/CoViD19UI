@@ -301,34 +301,29 @@ selector: "getData",
 protocol: "data actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "getData\x0a\x09TerritoryData loadAllDoing: [:wikiDataInstances |\x0a\x09\x09console log: wikiDataInstances.\x0a\x09\x09self world load: (self sources at: 'JHU') for: self doing: [:worldRoot | \x0a\x09\x09\x09worldRoot parts do: [:territory |\x0a\x09\x09\x09\x09territory wikiData: (wikiDataInstances detect: [:instance | instance name = territory name] ifNone: [\x0a\x09\x09\x09\x09\x09console log: territory name, ' not found'.\x0a\x09\x09\x09\x09\x09nil])].\x0a\x09\x09\x09(worldRoot partNamed: 'US') load: (self sources at: 'JHUUS') for: self doing: #resetPopulation.\x0a\x09\x09\x09GemeindeData loadAllBundeslandDoing: [:wikiDatas |\x0a\x09\x09\x09\x09(worldRoot partNamed: 'Germany') load: (self sources at: 'RKI') for: self doing: [:root |\x0a\x09\x09\x09\x09\x09root parts do: [:territory |\x0a\x09\x09\x09\x09\x09\x09territory wikiData: (wikiDatas detect: [:instance | instance key = territory id] ifNone: [\x0a\x09\x09\x09\x09\x09\x09\x09console log: territory name, ' not found'.\x0a\x09\x09\x09\x09\x09\x09\x09nil])]]]]]",
-referencedClasses: ["TerritoryData", "GemeindeData"],
+source: "getData\x0a\x09self world load: (self sources at: 'JHU') for: self doing: [:worldRoot | \x0a\x09\x09CountryData loadAllDoing: [:wikiDataInstances |\x0a\x09\x09\x09worldRoot parts do: [:territory |\x0a\x09\x09\x09\x09territory wikiData: (CountryData instanceFor: territory in: wikiDataInstances)].\x0a\x09\x09\x09(worldRoot partNamed: 'US') load: (self sources at: 'JHUUS') for: self doing: #resetPopulation.\x0a\x09\x09\x09(worldRoot partNamed: 'Germany') load: (self sources at: 'RKI') for: self doing: [:root |\x0a\x09\x09\x09\x09BundeslandData loadAllDoing: [:bundeslandDatas |\x0a\x09\x09\x09\x09\x09LandkreisData loadAllDoing: [:landkreisDatas |\x0a\x09\x09\x09\x09\x09\x09root parts do: [:bundesland |\x0a\x09\x09\x09\x09\x09\x09\x09bundesland wikiData: (BundeslandData instanceFor: bundesland in: bundeslandDatas).\x0a\x09\x09\x09\x09\x09\x09\x09bundesland parts do: [:landkreis |\x0a\x09\x09\x09\x09\x09\x09\x09\x09landkreis wikiData: (LandkreisData instanceFor: landkreis in: landkreisDatas)]]]]]]]",
+referencedClasses: ["CountryData", "BundeslandData", "LandkreisData"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["loadAllDoing:", "log:", "load:for:doing:", "world", "at:", "sources", "do:", "parts", "wikiData:", "detect:ifNone:", "=", "name", ",", "partNamed:", "loadAllBundeslandDoing:", "key", "id"]
+messageSends: ["load:for:doing:", "world", "at:", "sources", "loadAllDoing:", "do:", "parts", "wikiData:", "instanceFor:in:", "partNamed:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-$recv($globals.TerritoryData)._loadAllDoing_((function(wikiDataInstances){
+[$recv($self._world())._load_for_doing_([$recv([$self._sources()
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-[$recv(console)._log_(wikiDataInstances)
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx2.sendIdx["log:"]=1
-//>>excludeEnd("ctx");
-][0];
-return [$recv($self._world())._load_for_doing_([$recv([$self._sources()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx2.sendIdx["sources"]=1
+,$ctx1.sendIdx["sources"]=1
 //>>excludeEnd("ctx");
 ][0])._at_("JHU")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx2.sendIdx["at:"]=1
+,$ctx1.sendIdx["at:"]=1
 //>>excludeEnd("ctx");
 ][0],self,(function(worldRoot){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return [$recv($globals.CountryData)._loadAllDoing_((function(wikiDataInstances){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx3) {
 //>>excludeEnd("ctx");
@@ -340,50 +335,9 @@ return $core.withContext(function($ctx3) {
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx4) {
 //>>excludeEnd("ctx");
-return [$recv(territory)._wikiData_([$recv(wikiDataInstances)._detect_ifNone_((function(instance){
+return [$recv(territory)._wikiData_([$recv($globals.CountryData)._instanceFor_in_(territory,wikiDataInstances)
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx5) {
-//>>excludeEnd("ctx");
-return [$recv([$recv(instance)._name()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx5.sendIdx["name"]=1
-//>>excludeEnd("ctx");
-][0]).__eq([$recv(territory)._name()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx5.sendIdx["name"]=2
-//>>excludeEnd("ctx");
-][0])
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx5.sendIdx["="]=1
-//>>excludeEnd("ctx");
-][0];
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx5) {$ctx5.fillBlock({instance:instance},$ctx4,4)});
-//>>excludeEnd("ctx");
-}),(function(){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx5) {
-//>>excludeEnd("ctx");
-[$recv(console)._log_([$recv([$recv(territory)._name()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx5.sendIdx["name"]=3
-//>>excludeEnd("ctx");
-][0]).__comma(" not found")
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx5.sendIdx[","]=1
-//>>excludeEnd("ctx");
-][0])
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx5.sendIdx["log:"]=2
-//>>excludeEnd("ctx");
-][0];
-return nil;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx5) {$ctx5.fillBlock({},$ctx4,5)});
-//>>excludeEnd("ctx");
-}))
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx4.sendIdx["detect:ifNone:"]=1
+,$ctx4.sendIdx["instanceFor:in:"]=1
 //>>excludeEnd("ctx");
 ][0])
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -415,60 +369,84 @@ return nil;
 ,$ctx3.sendIdx["load:for:doing:"]=2
 //>>excludeEnd("ctx");
 ][0];
-return $recv($globals.GemeindeData)._loadAllBundeslandDoing_((function(wikiDatas){
+return $recv($recv(worldRoot)._partNamed_("Germany"))._load_for_doing_($recv($self._sources())._at_("RKI"),self,(function(root){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx4) {
 //>>excludeEnd("ctx");
-return $recv($recv(worldRoot)._partNamed_("Germany"))._load_for_doing_($recv($self._sources())._at_("RKI"),self,(function(root){
+return [$recv($globals.BundeslandData)._loadAllDoing_((function(bundeslandDatas){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx5) {
 //>>excludeEnd("ctx");
-return $recv($recv(root)._parts())._do_((function(territory){
+return $recv($globals.LandkreisData)._loadAllDoing_((function(landkreisDatas){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx6) {
 //>>excludeEnd("ctx");
-return $recv(territory)._wikiData_($recv(wikiDatas)._detect_ifNone_((function(instance){
+return [$recv([$recv(root)._parts()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx6.sendIdx["parts"]=2
+//>>excludeEnd("ctx");
+][0])._do_((function(bundesland){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx7) {
 //>>excludeEnd("ctx");
-return $recv($recv(instance)._key()).__eq($recv(territory)._id());
+[$recv(bundesland)._wikiData_([$recv($globals.BundeslandData)._instanceFor_in_(bundesland,bundeslandDatas)
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx7) {$ctx7.fillBlock({instance:instance},$ctx6,9)});
+,$ctx7.sendIdx["instanceFor:in:"]=2
 //>>excludeEnd("ctx");
-}),(function(){
+][0])
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx7) {
+,$ctx7.sendIdx["wikiData:"]=2
 //>>excludeEnd("ctx");
-$recv(console)._log_($recv($recv(territory)._name()).__comma(" not found"));
-return nil;
+][0];
+return $recv($recv(bundesland)._parts())._do_((function(landkreis){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx7) {$ctx7.fillBlock({},$ctx6,10)});
+return $core.withContext(function($ctx8) {
 //>>excludeEnd("ctx");
-})));
+return $recv(landkreis)._wikiData_($recv($globals.LandkreisData)._instanceFor_in_(landkreis,landkreisDatas));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx6) {$ctx6.fillBlock({territory:territory},$ctx5,8)});
-//>>excludeEnd("ctx");
-}));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx5) {$ctx5.fillBlock({root:root},$ctx4,7)});
+}, function($ctx8) {$ctx8.fillBlock({landkreis:landkreis},$ctx7,8)});
 //>>excludeEnd("ctx");
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx4) {$ctx4.fillBlock({wikiDatas:wikiDatas},$ctx3,6)});
-//>>excludeEnd("ctx");
-}));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({worldRoot:worldRoot},$ctx2,2)});
+}, function($ctx7) {$ctx7.fillBlock({bundesland:bundesland},$ctx6,7)});
 //>>excludeEnd("ctx");
 }))
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx2.sendIdx["load:for:doing:"]=1
+,$ctx6.sendIdx["do:"]=2
 //>>excludeEnd("ctx");
 ][0];
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({wikiDataInstances:wikiDataInstances},$ctx1,1)});
+}, function($ctx6) {$ctx6.fillBlock({landkreisDatas:landkreisDatas},$ctx5,6)});
 //>>excludeEnd("ctx");
 }));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx5) {$ctx5.fillBlock({bundeslandDatas:bundeslandDatas},$ctx4,5)});
+//>>excludeEnd("ctx");
+}))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx4.sendIdx["loadAllDoing:"]=2
+//>>excludeEnd("ctx");
+][0];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx4) {$ctx4.fillBlock({root:root},$ctx3,4)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({wikiDataInstances:wikiDataInstances},$ctx2,2)});
+//>>excludeEnd("ctx");
+}))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx2.sendIdx["loadAllDoing:"]=1
+//>>excludeEnd("ctx");
+][0];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({worldRoot:worldRoot},$ctx1,1)});
+//>>excludeEnd("ctx");
+}))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["load:for:doing:"]=1
+//>>excludeEnd("ctx");
+][0];
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"getData",{})});
@@ -779,11 +757,11 @@ selector: "world",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "world\x0a\x09\x22<Territory>\x22\x0a\x09\x0a\x09^world ifNil: [world := Territory name: 'World' about: nil parts: nil datasets: nil]",
-referencedClasses: ["Territory"],
+source: "world\x0a\x09\x22<Territory>\x22\x0a\x09\x0a\x09^world ifNil: [\x0a\x09\x09| inst |\x0a\x09\x09inst := Territory name: 'World' about: nil parts: nil datasets: nil.\x0a\x09\x09inst wikiData: CountryData world.\x0a\x09\x09world := inst]",
+referencedClasses: ["Territory", "CountryData"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifNil:", "name:about:parts:datasets:"]
+messageSends: ["ifNil:", "name:about:parts:datasets:", "wikiData:", "world"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -792,7 +770,10 @@ return $core.withContext(function($ctx1) {
 var $1;
 $1=$self.world;
 if($1 == null || $1.a$nil){
-$self.world=$recv($globals.Territory)._name_about_parts_datasets_("World",nil,nil,nil);
+var inst;
+inst=$recv($globals.Territory)._name_about_parts_datasets_("World",nil,nil,nil);
+$recv(inst)._wikiData_($recv($globals.CountryData)._world());
+$self.world=inst;
 return $self.world;
 } else {
 return $1;
@@ -5455,6 +5436,40 @@ $globals.Territory);
 
 $core.addMethod(
 $core.method({
+selector: "hasFlag",
+protocol: "testing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "hasFlag\x0a\x09self wikiData ifNil: [\x0a\x09\x09^false].\x0a\x09^self wikiData hasFlag",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifNil:", "wikiData", "hasFlag"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1;
+$1=[$self._wikiData()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["wikiData"]=1
+//>>excludeEnd("ctx");
+][0];
+if($1 == null || $1.a$nil){
+return false;
+} else {
+$1;
+}
+return $recv($self._wikiData())._hasFlag();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"hasFlag",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Territory);
+
+$core.addMethod(
+$core.method({
 selector: "hasParts",
 protocol: "testing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -6181,6 +6196,29 @@ $globals.TerritoryData);
 
 $core.addMethod(
 $core.method({
+selector: "hasFlag",
+protocol: "testing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "hasFlag\x0a\x09^self flag notNil",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["notNil", "flag"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._flag())._notNil();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"hasFlag",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.TerritoryData);
+
+$core.addMethod(
+$core.method({
 selector: "id",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -6217,6 +6255,29 @@ $self.population=populationInteger;
 $self.flag=flagUrlOrNil;
 return self;
 
+}; }),
+$globals.TerritoryData);
+
+$core.addMethod(
+$core.method({
+selector: "isFor:",
+protocol: "testing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aTerritory"],
+source: "isFor: aTerritory\x0a\x09\x22<Boolean>\x0a\x09does the receiver belong to aTerritory?\x22\x0a\x09\x0a\x09^self subclassResponsibility",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["subclassResponsibility"]
+}, function ($methodClass){ return function (aTerritory){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $self._subclassResponsibility();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"isFor:",{aTerritory:aTerritory})});
+//>>excludeEnd("ctx");
 }; }),
 $globals.TerritoryData);
 
@@ -6377,11 +6438,11 @@ selector: "createAllDoing:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aBlock"],
-source: "createAllDoing: aBlock\x0a\x09WikiData query: self sparqlQuery then: [:bindings |\x0a\x09\x09console log: bindings.\x0a\x09\x09aBlock value: (bindings collect: [:object | self fromJson: object])]",
+source: "createAllDoing: aBlock\x0a\x09WikiData query: self sparqlQuery then: [:bindings |\x0a\x09\x09aBlock value: (bindings collect: [:object | self fromJson: object])]",
 referencedClasses: ["WikiData"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["query:then:", "sparqlQuery", "log:", "value:", "collect:", "fromJson:"]
+messageSends: ["query:then:", "sparqlQuery", "value:", "collect:", "fromJson:"]
 }, function ($methodClass){ return function (aBlock){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -6391,7 +6452,6 @@ $recv($globals.WikiData)._query_then_($self._sparqlQuery(),(function(bindings){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-$recv(console)._log_(bindings);
 return $recv(aBlock)._value_($recv(bindings)._collect_((function(object){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx3) {
@@ -6418,32 +6478,17 @@ selector: "fromJson:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aJson"],
-source: "fromJson: aJson\x0a\x09^self\x0a\x09\x09id: (aJson country value tokenize: '/') last\x0a\x09\x09name: aJson countryLabel value \x0a\x09\x09localName: nil\x0a\x09\x09population: aJson population value asNumber \x0a\x09\x09flag: (aJson at: #flag ifAbsent: [nil]) value",
+source: "fromJson: aJson\x0a\x09\x22<TerritoryData>\x0a\x09creates a new instance using the data in aJson\x22\x0a\x09\x0a\x09^self subclassResponsibility",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["id:name:localName:population:flag:", "last", "tokenize:", "value", "country", "countryLabel", "asNumber", "population", "at:ifAbsent:"]
+messageSends: ["subclassResponsibility"]
 }, function ($methodClass){ return function (aJson){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $self._id_name_localName_population_flag_($recv($recv([$recv($recv(aJson)._country())._value()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["value"]=1
-//>>excludeEnd("ctx");
-][0])._tokenize_("/"))._last(),[$recv($recv(aJson)._countryLabel())._value()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["value"]=2
-//>>excludeEnd("ctx");
-][0],nil,$recv([$recv($recv(aJson)._population())._value()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["value"]=3
-//>>excludeEnd("ctx");
-][0])._asNumber(),$recv($recv(aJson)._at_ifAbsent_("flag",(function(){
-return nil;
-
-})))._value());
+return $self._subclassResponsibility();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"fromJson:",{aJson:aJson})});
 //>>excludeEnd("ctx");
@@ -6472,6 +6517,46 @@ $recv(inst)._initializeId_name_localName_population_flag_(idString,nameString,lo
 return inst;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"id:name:localName:population:flag:",{idString:idString,nameString:nameString,localNameString:localNameString,populationInteger:populationInteger,flagUrlOrNil:flagUrlOrNil,inst:inst})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.TerritoryData.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "instanceFor:in:",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aTerritory", "someInstances"],
+source: "instanceFor: aTerritory in: someInstances\x0a\x09\x22<TerritoryData | nil>\x22\x0a\x09\x0a\x09^someInstances detect: [:instance | instance isFor: aTerritory] ifNone: [\x0a\x09\x09console log: aTerritory name, ' not found'.\x0a\x09\x09nil]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["detect:ifNone:", "isFor:", "log:", ",", "name"]
+}, function ($methodClass){ return function (aTerritory,someInstances){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv(someInstances)._detect_ifNone_((function(instance){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv(instance)._isFor_(aTerritory);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({instance:instance},$ctx1,1)});
+//>>excludeEnd("ctx");
+}),(function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+$recv(console)._log_($recv($recv(aTerritory)._name()).__comma(" not found"));
+return nil;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,2)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"instanceFor:in:",{aTerritory:aTerritory,someInstances:someInstances})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.TerritoryData.a$cls);
@@ -6539,6 +6624,680 @@ selector: "localNamesDoing:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aBlock"],
+source: "localNamesDoing: aBlock\x0a\x09self subclassResponsibility",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["subclassResponsibility"]
+}, function ($methodClass){ return function (aBlock){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$self._subclassResponsibility();
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"localNamesDoing:",{aBlock:aBlock})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.TerritoryData.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "onlineTest",
+protocol: "instance creation",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "onlineTest\x0a\x09\x22\x0a\x09CountryData onlineTest\x0a\x09BundeslandData onlineTest\x0a\x09LandkreisData onlineTest\x0a\x09\x22\x0a\x09self loadAllDoing: [:objects | console log: objects]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["loadAllDoing:", "log:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$self._loadAllDoing_((function(objects){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv(console)._log_(objects);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({objects:objects},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"onlineTest",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.TerritoryData.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "onlineTestLocalNames",
+protocol: "instance creation",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "onlineTestLocalNames\x0a\x09\x22\x0a\x09CountryData onlineTestLocalNames\x0a\x09BundeslandData onlineTestLocalNames\x0a\x09LandkreisData onlineTestLocalNames\x0a\x09\x22\x0a\x09self localNamesDoing: [:objects | console log: objects]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["localNamesDoing:", "log:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$self._localNamesDoing_((function(objects){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv(console)._log_(objects);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({objects:objects},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"onlineTestLocalNames",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.TerritoryData.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "sparqlQuery",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "sparqlQuery\x0a\x09\x22<String>\x22\x0a\x09\x0a\x09^self subclassResponsibility",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["subclassResponsibility"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $self._subclassResponsibility();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"sparqlQuery",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.TerritoryData.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "sparqlQueryNames",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "sparqlQueryNames\x0a\x09\x22<String>\x22\x0a\x09\x0a\x09^self subclassResponsibility",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["subclassResponsibility"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $self._subclassResponsibility();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"sparqlQueryNames",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.TerritoryData.a$cls);
+
+
+$core.addClass("CountryData", $globals.TerritoryData, "Covid19Model");
+$core.addMethod(
+$core.method({
+selector: "isFor:",
+protocol: "testing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aTerritory"],
+source: "isFor: aTerritory\x0a\x09^(self id = 'Q30' and: [aTerritory name = 'US']) or: [\x0a\x09(self id = 'Q148' and: [aTerritory name = 'China']) or: [\x0a\x09(self id = 'Q29999' and: [aTerritory name = 'Netherlands']) or: [\x0a\x09(self id = 'Q884' and: [aTerritory name = 'Korea, South']) or: [\x0a\x09(self id = 'Q213' and: [aTerritory name = 'Czechia']) or: [\x0a\x09(self id = 'Q1008' and: [aTerritory name = 'Cote d''Ivoire']) or: [\x0a\x09(self id = 'Q974' and: [aTerritory name = 'Congo (Kinshasa)']) or: [\x0a\x09(self id = 'Q971' and: [aTerritory name = 'Congo (Brazzaville)']) or: [\x0a\x09(self id = 'Q1246' and: [aTerritory name = 'Kosovo']) or: [\x0a\x09(self id = 'Q1011' and: [aTerritory name = 'Cabo Verde']) or: [\x0a\x09(self id = 'Q1039' and: [aTerritory name = 'Sao Tome and Principe']) or: [\x0a\x09(self id = 'Q407199' and: [aTerritory name = 'West Bank and Gaza']) or: [\x0a\x09(self id = 'Q865' and: [aTerritory name = 'Taiwan*']) or: [\x0a\x09(self id = 'Q836' and: [aTerritory name = 'Burma']) or: [\x0a\x09(self id = 'Q778' and: [aTerritory name = 'Bahamas']) or: [\x0a\x09(self id = 'Q1005' and: [aTerritory name = 'Gambia']) or: [\x0a\x09(self id = 'Q574' and: [aTerritory name = 'Timor-Leste']) or: [\x0a\x09(self id = 'Q237' and: [aTerritory name = 'Holy See']) or: [\x0a\x09(self id = 'Q6250' and: [aTerritory name = 'Western Sahara']) or: [\x0a\x09self name = aTerritory name]]]]]]]]]]]]]]]]]]]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["or:", "and:", "=", "id", "name"]
+}, function ($methodClass){ return function (aTerritory){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19;
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=1
+//>>excludeEnd("ctx");
+][0]).__eq("Q30")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=1
+//>>excludeEnd("ctx");
+][0])){
+$1=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=1
+//>>excludeEnd("ctx");
+][0]).__eq("US")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=2
+//>>excludeEnd("ctx");
+][0];
+} else {
+$1=false;
+}
+if($core.assert($1)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=2
+//>>excludeEnd("ctx");
+][0]).__eq("Q148")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=3
+//>>excludeEnd("ctx");
+][0])){
+$2=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=2
+//>>excludeEnd("ctx");
+][0]).__eq("China")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=4
+//>>excludeEnd("ctx");
+][0];
+} else {
+$2=false;
+}
+if($core.assert($2)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=3
+//>>excludeEnd("ctx");
+][0]).__eq("Q29999")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=5
+//>>excludeEnd("ctx");
+][0])){
+$3=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=3
+//>>excludeEnd("ctx");
+][0]).__eq("Netherlands")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=6
+//>>excludeEnd("ctx");
+][0];
+} else {
+$3=false;
+}
+if($core.assert($3)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=4
+//>>excludeEnd("ctx");
+][0]).__eq("Q884")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=7
+//>>excludeEnd("ctx");
+][0])){
+$4=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=4
+//>>excludeEnd("ctx");
+][0]).__eq("Korea, South")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=8
+//>>excludeEnd("ctx");
+][0];
+} else {
+$4=false;
+}
+if($core.assert($4)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=5
+//>>excludeEnd("ctx");
+][0]).__eq("Q213")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=9
+//>>excludeEnd("ctx");
+][0])){
+$5=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=5
+//>>excludeEnd("ctx");
+][0]).__eq("Czechia")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=10
+//>>excludeEnd("ctx");
+][0];
+} else {
+$5=false;
+}
+if($core.assert($5)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=6
+//>>excludeEnd("ctx");
+][0]).__eq("Q1008")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=11
+//>>excludeEnd("ctx");
+][0])){
+$6=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=6
+//>>excludeEnd("ctx");
+][0]).__eq("Cote d'Ivoire")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=12
+//>>excludeEnd("ctx");
+][0];
+} else {
+$6=false;
+}
+if($core.assert($6)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=7
+//>>excludeEnd("ctx");
+][0]).__eq("Q974")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=13
+//>>excludeEnd("ctx");
+][0])){
+$7=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=7
+//>>excludeEnd("ctx");
+][0]).__eq("Congo (Kinshasa)")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=14
+//>>excludeEnd("ctx");
+][0];
+} else {
+$7=false;
+}
+if($core.assert($7)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=8
+//>>excludeEnd("ctx");
+][0]).__eq("Q971")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=15
+//>>excludeEnd("ctx");
+][0])){
+$8=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=8
+//>>excludeEnd("ctx");
+][0]).__eq("Congo (Brazzaville)")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=16
+//>>excludeEnd("ctx");
+][0];
+} else {
+$8=false;
+}
+if($core.assert($8)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=9
+//>>excludeEnd("ctx");
+][0]).__eq("Q1246")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=17
+//>>excludeEnd("ctx");
+][0])){
+$9=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=9
+//>>excludeEnd("ctx");
+][0]).__eq("Kosovo")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=18
+//>>excludeEnd("ctx");
+][0];
+} else {
+$9=false;
+}
+if($core.assert($9)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=10
+//>>excludeEnd("ctx");
+][0]).__eq("Q1011")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=19
+//>>excludeEnd("ctx");
+][0])){
+$10=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=10
+//>>excludeEnd("ctx");
+][0]).__eq("Cabo Verde")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=20
+//>>excludeEnd("ctx");
+][0];
+} else {
+$10=false;
+}
+if($core.assert($10)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=11
+//>>excludeEnd("ctx");
+][0]).__eq("Q1039")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=21
+//>>excludeEnd("ctx");
+][0])){
+$11=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=11
+//>>excludeEnd("ctx");
+][0]).__eq("Sao Tome and Principe")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=22
+//>>excludeEnd("ctx");
+][0];
+} else {
+$11=false;
+}
+if($core.assert($11)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=12
+//>>excludeEnd("ctx");
+][0]).__eq("Q407199")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=23
+//>>excludeEnd("ctx");
+][0])){
+$12=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=12
+//>>excludeEnd("ctx");
+][0]).__eq("West Bank and Gaza")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=24
+//>>excludeEnd("ctx");
+][0];
+} else {
+$12=false;
+}
+if($core.assert($12)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=13
+//>>excludeEnd("ctx");
+][0]).__eq("Q865")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=25
+//>>excludeEnd("ctx");
+][0])){
+$13=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=13
+//>>excludeEnd("ctx");
+][0]).__eq("Taiwan*")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=26
+//>>excludeEnd("ctx");
+][0];
+} else {
+$13=false;
+}
+if($core.assert($13)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=14
+//>>excludeEnd("ctx");
+][0]).__eq("Q836")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=27
+//>>excludeEnd("ctx");
+][0])){
+$14=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=14
+//>>excludeEnd("ctx");
+][0]).__eq("Burma")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=28
+//>>excludeEnd("ctx");
+][0];
+} else {
+$14=false;
+}
+if($core.assert($14)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=15
+//>>excludeEnd("ctx");
+][0]).__eq("Q778")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=29
+//>>excludeEnd("ctx");
+][0])){
+$15=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=15
+//>>excludeEnd("ctx");
+][0]).__eq("Bahamas")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=30
+//>>excludeEnd("ctx");
+][0];
+} else {
+$15=false;
+}
+if($core.assert($15)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=16
+//>>excludeEnd("ctx");
+][0]).__eq("Q1005")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=31
+//>>excludeEnd("ctx");
+][0])){
+$16=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=16
+//>>excludeEnd("ctx");
+][0]).__eq("Gambia")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=32
+//>>excludeEnd("ctx");
+][0];
+} else {
+$16=false;
+}
+if($core.assert($16)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=17
+//>>excludeEnd("ctx");
+][0]).__eq("Q574")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=33
+//>>excludeEnd("ctx");
+][0])){
+$17=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=17
+//>>excludeEnd("ctx");
+][0]).__eq("Timor-Leste")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=34
+//>>excludeEnd("ctx");
+][0];
+} else {
+$17=false;
+}
+if($core.assert($17)){
+return true;
+} else {
+if($core.assert([$recv([$self._id()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["id"]=18
+//>>excludeEnd("ctx");
+][0]).__eq("Q237")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=35
+//>>excludeEnd("ctx");
+][0])){
+$18=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=18
+//>>excludeEnd("ctx");
+][0]).__eq("Holy See")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=36
+//>>excludeEnd("ctx");
+][0];
+} else {
+$18=false;
+}
+if($core.assert($18)){
+return true;
+} else {
+if($core.assert([$recv($self._id()).__eq("Q6250")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=37
+//>>excludeEnd("ctx");
+][0])){
+$19=[$recv([$recv(aTerritory)._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=19
+//>>excludeEnd("ctx");
+][0]).__eq("Western Sahara")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=38
+//>>excludeEnd("ctx");
+][0];
+} else {
+$19=false;
+}
+if($core.assert($19)){
+return true;
+} else {
+return $recv([$self._name()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["name"]=20
+//>>excludeEnd("ctx");
+][0]).__eq($recv(aTerritory)._name());
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"isFor:",{aTerritory:aTerritory})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CountryData);
+
+
+$core.addMethod(
+$core.method({
+selector: "fromJson:",
+protocol: "instance creation",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aJson"],
+source: "fromJson: aJson\x0a\x09^self\x0a\x09\x09id: (aJson country value tokenize: '/') last\x0a\x09\x09name: aJson countryLabel value \x0a\x09\x09localName: nil\x0a\x09\x09population: aJson population value asNumber \x0a\x09\x09flag: (aJson at: #flag ifAbsent: [nil]) value",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["id:name:localName:population:flag:", "last", "tokenize:", "value", "country", "countryLabel", "asNumber", "population", "at:ifAbsent:"]
+}, function ($methodClass){ return function (aJson){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $self._id_name_localName_population_flag_($recv($recv([$recv($recv(aJson)._country())._value()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["value"]=1
+//>>excludeEnd("ctx");
+][0])._tokenize_("/"))._last(),[$recv($recv(aJson)._countryLabel())._value()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["value"]=2
+//>>excludeEnd("ctx");
+][0],nil,$recv([$recv($recv(aJson)._population())._value()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["value"]=3
+//>>excludeEnd("ctx");
+][0])._asNumber(),$recv($recv(aJson)._at_ifAbsent_("flag",(function(){
+return nil;
+
+})))._value());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"fromJson:",{aJson:aJson})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CountryData.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "localNamesDoing:",
+protocol: "instance creation",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aBlock"],
 source: "localNamesDoing: aBlock\x0a\x09WikiData query: self sparqlQueryNames then: [:bindings |\x0a\x09\x09| dict |\x0a\x09\x09dict := Dictionary new.\x0a\x09\x09bindings do: [:object |\x0a\x09\x09\x09| id label |\x0a\x09\x09\x09id := (object country value tokenize: '/') last.\x0a\x09\x09\x09label := object countryLabel value.\x0a\x09\x09\x09label = id ifFalse: [\x0a\x09\x09\x09\x09dict at: id put: label]].\x0a\x09\x09aBlock value: dict]",
 referencedClasses: ["WikiData", "Dictionary"],
 //>>excludeEnd("ide");
@@ -6583,71 +7342,7 @@ return self;
 }, function($ctx1) {$ctx1.fill(self,"localNamesDoing:",{aBlock:aBlock})});
 //>>excludeEnd("ctx");
 }; }),
-$globals.TerritoryData.a$cls);
-
-$core.addMethod(
-$core.method({
-selector: "onlineTest",
-protocol: "instance creation",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "onlineTest\x0a\x09\x22\x0a\x09TerritoryData onlineTest\x0a\x09\x22\x0a\x09self loadAllDoing: [:objects | console log: objects]",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["loadAllDoing:", "log:"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-$self._loadAllDoing_((function(objects){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $recv(console)._log_(objects);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({objects:objects},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"onlineTest",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.TerritoryData.a$cls);
-
-$core.addMethod(
-$core.method({
-selector: "onlineTestLocalNames",
-protocol: "instance creation",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "onlineTestLocalNames\x0a\x09\x22\x0a\x09TerritoryData onlineTestLocalNames\x0a\x09\x22\x0a\x09self localNamesDoing: [:objects | console log: objects]",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["localNamesDoing:", "log:"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-$self._localNamesDoing_((function(objects){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $recv(console)._log_(objects);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({objects:objects},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"onlineTestLocalNames",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.TerritoryData.a$cls);
+$globals.CountryData.a$cls);
 
 $core.addMethod(
 $core.method({
@@ -6665,7 +7360,7 @@ var self=this,$self=this;
 return "SELECT ?country ?countryLabel ?population (SAMPLE(?flagUrl) AS ?flag) WHERE {\x0a  ?country (wdt:P31/(wdt:P279*)) wd:Q3624078;\x0a    wdt:P1082 ?population.\x0a  OPTIONAL { ?country wdt:P41 ?flagUrl. }\x0a  SERVICE wikibase:label { bd:serviceParam wikibase:language \x22en\x22. }\x0a}\x0aGROUP BY ?country ?countryLabel ?population";
 
 }; }),
-$globals.TerritoryData.a$cls);
+$globals.CountryData.a$cls);
 
 $core.addMethod(
 $core.method({
@@ -6692,35 +7387,84 @@ return [$recv("SELECT ?country ?countryLabel WHERE {\x0a  ?country (wdt:P31/(wdt
 }, function($ctx1) {$ctx1.fill(self,"sparqlQueryNames",{})});
 //>>excludeEnd("ctx");
 }; }),
-$globals.TerritoryData.a$cls);
+$globals.CountryData.a$cls);
 
-
-$core.addClass("GemeindeData", $globals.TerritoryData, "Covid19Model");
-$core.setSlots($globals.GemeindeData, ["key"]);
 $core.addMethod(
 $core.method({
-selector: "initializeId:name:key:localName:population:flag:",
-protocol: "initialization",
+selector: "world",
+protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["idString", "nameString", "keyString", "localNameString", "populationInteger", "flagUrlOrNil"],
-source: "initializeId: idString name: nameString key: keyString localName: localNameString population: populationInteger flag: flagUrlOrNil\x0a\x09self initializeId: idString name: nameString localName: localNameString population: populationInteger flag: flagUrlOrNil.\x0a\x09key := keyString",
+args: [],
+source: "world\x0a\x09^self\x0a\x09\x09id: 'Q16502'\x0a\x09\x09name: 'World'\x0a\x09\x09localName: nil\x0a\x09\x09population: nil\x0a\x09\x09flag: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/World_Flag_%282004%29.svg'",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["initializeId:name:localName:population:flag:"]
+messageSends: ["id:name:localName:population:flag:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $self._id_name_localName_population_flag_("Q16502","World",nil,nil,"https://upload.wikimedia.org/wikipedia/commons/d/d4/World_Flag_%282004%29.svg");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"world",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CountryData.a$cls);
+
+
+$core.addClass("GermanData", $globals.TerritoryData, "Covid19Model");
+$core.setSlots($globals.GermanData, ["key"]);
+//>>excludeStart("ide", pragmas.excludeIdeData);
+$globals.GermanData.comment="WikiData from Germany with its unique key (German regional key (P1388))\x0a[[https://www.wikidata.org/wiki/Property:P1388]]";
+//>>excludeEnd("ide");
+$core.addMethod(
+$core.method({
+selector: "initializeId:name:key:localName:population:flag:",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["idString", "nameString", "keyString", "localNameString", "populationInteger", "flagUrlOrNil"],
+source: "initializeId: idString name: nameString key: keyString localName: localNameString population: populationInteger flag: flagUrlOrNil\x0a\x09self initializeId: idString name: nameString localName: localNameString population: populationInteger flag: flagUrlOrNil.\x0a\x09key := keyString asNumber",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["initializeId:name:localName:population:flag:", "asNumber"]
 }, function ($methodClass){ return function (idString,nameString,keyString,localNameString,populationInteger,flagUrlOrNil){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 $self._initializeId_name_localName_population_flag_(idString,nameString,localNameString,populationInteger,flagUrlOrNil);
-$self.key=keyString;
+$self.key=$recv(keyString)._asNumber();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"initializeId:name:key:localName:population:flag:",{idString:idString,nameString:nameString,keyString:keyString,localNameString:localNameString,populationInteger:populationInteger,flagUrlOrNil:flagUrlOrNil})});
 //>>excludeEnd("ctx");
 }; }),
-$globals.GemeindeData);
+$globals.GermanData);
+
+$core.addMethod(
+$core.method({
+selector: "isFor:",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aTerritory"],
+source: "isFor: aTerritory\x0a\x09^self key = aTerritory id asNumber",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["=", "key", "asNumber", "id"]
+}, function ($methodClass){ return function (aTerritory){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._key()).__eq($recv($recv(aTerritory)._id())._asNumber());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"isFor:",{aTerritory:aTerritory})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.GermanData);
 
 $core.addMethod(
 $core.method({
@@ -6728,7 +7472,7 @@ selector: "key",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "key\x0a\x09^ key",
+source: "key\x0a\x09\x22<Integer>\x0a\x09German regional key (P1388)\x22\x0a\x09\x0a\x09^key",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -6738,98 +7482,90 @@ var self=this,$self=this;
 return $self.key;
 
 }; }),
-$globals.GemeindeData);
+$globals.GermanData);
 
 
 $core.addMethod(
 $core.method({
-selector: "createAllBundeslandDoing:",
+selector: "id:name:key:localName:population:flag:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aBlock"],
-source: "createAllBundeslandDoing: aBlock\x0a\x09WikiData query: self sparqlQueryBundesland then: [:bindings |\x0a\x09\x09console log: bindings.\x0a\x09\x09aBlock value: (bindings collect: [:object | self fromJsonBundesland: object])]",
-referencedClasses: ["WikiData"],
+args: ["idString", "nameString", "aKeyString", "localNameString", "populationInteger", "flagUrlOrNil"],
+source: "id: idString name: nameString key: aKeyString localName: localNameString population: populationInteger flag: flagUrlOrNil\x0a\x09| inst |\x0a\x09inst := self new.\x0a\x09inst initializeId: idString name: nameString key: aKeyString localName: localNameString population: populationInteger flag: flagUrlOrNil.\x0a\x09^inst",
+referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["query:then:", "sparqlQueryBundesland", "log:", "value:", "collect:", "fromJsonBundesland:"]
-}, function ($methodClass){ return function (aBlock){
+messageSends: ["new", "initializeId:name:key:localName:population:flag:"]
+}, function ($methodClass){ return function (idString,nameString,aKeyString,localNameString,populationInteger,flagUrlOrNil){
+var self=this,$self=this;
+var inst;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+inst=$self._new();
+$recv(inst)._initializeId_name_key_localName_population_flag_(idString,nameString,aKeyString,localNameString,populationInteger,flagUrlOrNil);
+return inst;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"id:name:key:localName:population:flag:",{idString:idString,nameString:nameString,aKeyString:aKeyString,localNameString:localNameString,populationInteger:populationInteger,flagUrlOrNil:flagUrlOrNil,inst:inst})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.GermanData.a$cls);
+
+
+$core.addClass("BundeslandData", $globals.GermanData, "Covid19Model");
+$core.addMethod(
+$core.method({
+selector: "isFor:",
+protocol: "as yet unclassified",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aTerritory"],
+source: "isFor: aTerritory\x0a\x09\x22special for Hamburg\x22\x0a\x09\x0a\x09^(self key = 2 and: [\x0a\x09aTerritory id asNumber = 2000]) or: [\x0a\x09super isFor: aTerritory]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["or:", "and:", "=", "key", "asNumber", "id", "isFor:"]
+}, function ($methodClass){ return function (aTerritory){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-$recv($globals.WikiData)._query_then_($self._sparqlQueryBundesland(),(function(bindings){
+var $1;
+if($core.assert([$recv($self._key()).__eq((2))
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
+,$ctx1.sendIdx["="]=1
 //>>excludeEnd("ctx");
-$recv(console)._log_(bindings);
-return $recv(aBlock)._value_($recv(bindings)._collect_((function(object){
+][0])){
+$1=$recv($recv($recv(aTerritory)._id())._asNumber()).__eq((2000));
+} else {
+$1=false;
+}
+if($core.assert($1)){
+return true;
+} else {
+return [(
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx3) {
+$ctx1.supercall = true,
 //>>excludeEnd("ctx");
-return $self._fromJsonBundesland_(object);
+($methodClass.superclass||$boot.nilAsClass).fn.prototype._isFor_.call($self,aTerritory))
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({object:object},$ctx2,2)});
+,$ctx1.supercall = false
 //>>excludeEnd("ctx");
-})));
+][0];
+}
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({bindings:bindings},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"createAllBundeslandDoing:",{aBlock:aBlock})});
+}, function($ctx1) {$ctx1.fill(self,"isFor:",{aTerritory:aTerritory})});
 //>>excludeEnd("ctx");
 }; }),
-$globals.GemeindeData.a$cls);
+$globals.BundeslandData);
+
 
 $core.addMethod(
 $core.method({
-selector: "createAllLandkreiseDoing:",
-protocol: "instance creation",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aBlock"],
-source: "createAllLandkreiseDoing: aBlock\x0a\x09WikiData query: self sparqlQueryLandkreise then: [:bindings |\x0a\x09\x09console log: bindings.\x0a\x09\x09aBlock value: (bindings collect: [:object | self fromJsonLandkreis: object])]",
-referencedClasses: ["WikiData"],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["query:then:", "sparqlQueryLandkreise", "log:", "value:", "collect:", "fromJsonLandkreis:"]
-}, function ($methodClass){ return function (aBlock){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-$recv($globals.WikiData)._query_then_($self._sparqlQueryLandkreise(),(function(bindings){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-$recv(console)._log_(bindings);
-return $recv(aBlock)._value_($recv(bindings)._collect_((function(object){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx3) {
-//>>excludeEnd("ctx");
-return $self._fromJsonLandkreis_(object);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({object:object},$ctx2,2)});
-//>>excludeEnd("ctx");
-})));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({bindings:bindings},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"createAllLandkreiseDoing:",{aBlock:aBlock})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.GemeindeData.a$cls);
-
-$core.addMethod(
-$core.method({
-selector: "fromJsonBundesland:",
+selector: "fromJson:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aJson"],
-source: "fromJsonBundesland: aJson\x0a\x09^self\x0a\x09\x09id: (aJson bundesland value tokenize: '/') last\x0a\x09\x09name: aJson bundeslandLabel value \x0a\x09\x09key: aJson id value\x0a\x09\x09localName: nil\x0a\x09\x09population: aJson population value asNumber \x0a\x09\x09flag: (aJson at: #flag ifAbsent: [nil]) value",
+source: "fromJson: aJson\x0a\x09^self\x0a\x09\x09id: (aJson bundesland value tokenize: '/') last\x0a\x09\x09name: aJson bundeslandLabel value \x0a\x09\x09key: aJson id value\x0a\x09\x09localName: nil\x0a\x09\x09population: aJson population value asNumber \x0a\x09\x09flag: (aJson at: #flag ifAbsent: [nil]) value",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -6860,206 +7596,28 @@ return nil;
 
 })))._value());
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"fromJsonBundesland:",{aJson:aJson})});
+}, function($ctx1) {$ctx1.fill(self,"fromJson:",{aJson:aJson})});
 //>>excludeEnd("ctx");
 }; }),
-$globals.GemeindeData.a$cls);
+$globals.BundeslandData.a$cls);
 
 $core.addMethod(
 $core.method({
-selector: "fromJsonLandkreis:",
-protocol: "instance creation",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aJson"],
-source: "fromJsonLandkreis: aJson\x0a\x09^self\x0a\x09\x09id: (aJson gemeinde value tokenize: '/') last\x0a\x09\x09name: aJson gemeindeLabel value \x0a\x09\x09key: aJson id value\x0a\x09\x09localName: nil\x0a\x09\x09population: nil\x0a\x09\x09flag: (aJson at: #flag ifAbsent: [nil]) value",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["id:name:key:localName:population:flag:", "last", "tokenize:", "value", "gemeinde", "gemeindeLabel", "id", "at:ifAbsent:"]
-}, function ($methodClass){ return function (aJson){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return $self._id_name_key_localName_population_flag_($recv($recv([$recv($recv(aJson)._gemeinde())._value()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["value"]=1
-//>>excludeEnd("ctx");
-][0])._tokenize_("/"))._last(),[$recv($recv(aJson)._gemeindeLabel())._value()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["value"]=2
-//>>excludeEnd("ctx");
-][0],[$recv($recv(aJson)._id())._value()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["value"]=3
-//>>excludeEnd("ctx");
-][0],nil,nil,$recv($recv(aJson)._at_ifAbsent_("flag",(function(){
-return nil;
-
-})))._value());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"fromJsonLandkreis:",{aJson:aJson})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.GemeindeData.a$cls);
-
-$core.addMethod(
-$core.method({
-selector: "id:name:key:localName:population:flag:",
-protocol: "instance creation",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["idString", "nameString", "aKeyString", "localNameString", "populationInteger", "flagUrlOrNil"],
-source: "id: idString name: nameString key: aKeyString localName: localNameString population: populationInteger flag: flagUrlOrNil\x0a\x09| inst |\x0a\x09inst := self new.\x0a\x09inst initializeId: idString name: nameString key: aKeyString localName: localNameString population: populationInteger flag: flagUrlOrNil.\x0a\x09^inst",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["new", "initializeId:name:key:localName:population:flag:"]
-}, function ($methodClass){ return function (idString,nameString,aKeyString,localNameString,populationInteger,flagUrlOrNil){
-var self=this,$self=this;
-var inst;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-inst=$self._new();
-$recv(inst)._initializeId_name_key_localName_population_flag_(idString,nameString,aKeyString,localNameString,populationInteger,flagUrlOrNil);
-return inst;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"id:name:key:localName:population:flag:",{idString:idString,nameString:nameString,aKeyString:aKeyString,localNameString:localNameString,populationInteger:populationInteger,flagUrlOrNil:flagUrlOrNil,inst:inst})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.GemeindeData.a$cls);
-
-$core.addMethod(
-$core.method({
-selector: "loadAllBundeslandDoing:",
+selector: "localNamesDoing:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aBlock"],
-source: "loadAllBundeslandDoing: aBlock\x0a\x09self createAllBundeslandDoing: [:territoryData |\x0a\x09\x09self localBundeslandNamesDoing: [:namesDict |\x0a\x09\x09\x09territoryData do: [:item |\x0a\x09\x09\x09\x09namesDict at: item id ifPresent: [:localName |\x0a\x09\x09\x09\x09\x09item localName: localName]].\x0a\x09\x09\x09aBlock value: territoryData]]",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["createAllBundeslandDoing:", "localBundeslandNamesDoing:", "do:", "at:ifPresent:", "id", "localName:", "value:"]
-}, function ($methodClass){ return function (aBlock){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-$self._createAllBundeslandDoing_((function(territoryData){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $self._localBundeslandNamesDoing_((function(namesDict){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx3) {
-//>>excludeEnd("ctx");
-$recv(territoryData)._do_((function(item){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx4) {
-//>>excludeEnd("ctx");
-return $recv(namesDict)._at_ifPresent_($recv(item)._id(),(function(localName){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx5) {
-//>>excludeEnd("ctx");
-return $recv(item)._localName_(localName);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx5) {$ctx5.fillBlock({localName:localName},$ctx4,4)});
-//>>excludeEnd("ctx");
-}));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx4) {$ctx4.fillBlock({item:item},$ctx3,3)});
-//>>excludeEnd("ctx");
-}));
-return $recv(aBlock)._value_(territoryData);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({namesDict:namesDict},$ctx2,2)});
-//>>excludeEnd("ctx");
-}));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({territoryData:territoryData},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"loadAllBundeslandDoing:",{aBlock:aBlock})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.GemeindeData.a$cls);
-
-$core.addMethod(
-$core.method({
-selector: "loadAllLandkreiseDoing:",
-protocol: "instance creation",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aBlock"],
-source: "loadAllLandkreiseDoing: aBlock\x0a\x09self createAllLandkreiseDoing: [:territoryData |\x0a\x09\x09self localLandkreisNamesDoing: [:namesDict |\x0a\x09\x09\x09territoryData do: [:item |\x0a\x09\x09\x09\x09namesDict at: item id ifPresent: [:localName |\x0a\x09\x09\x09\x09\x09item localName: localName]].\x0a\x09\x09\x09aBlock value: territoryData]]",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["createAllLandkreiseDoing:", "localLandkreisNamesDoing:", "do:", "at:ifPresent:", "id", "localName:", "value:"]
-}, function ($methodClass){ return function (aBlock){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-$self._createAllLandkreiseDoing_((function(territoryData){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $self._localLandkreisNamesDoing_((function(namesDict){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx3) {
-//>>excludeEnd("ctx");
-$recv(territoryData)._do_((function(item){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx4) {
-//>>excludeEnd("ctx");
-return $recv(namesDict)._at_ifPresent_($recv(item)._id(),(function(localName){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx5) {
-//>>excludeEnd("ctx");
-return $recv(item)._localName_(localName);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx5) {$ctx5.fillBlock({localName:localName},$ctx4,4)});
-//>>excludeEnd("ctx");
-}));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx4) {$ctx4.fillBlock({item:item},$ctx3,3)});
-//>>excludeEnd("ctx");
-}));
-return $recv(aBlock)._value_(territoryData);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({namesDict:namesDict},$ctx2,2)});
-//>>excludeEnd("ctx");
-}));
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({territoryData:territoryData},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"loadAllLandkreiseDoing:",{aBlock:aBlock})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.GemeindeData.a$cls);
-
-$core.addMethod(
-$core.method({
-selector: "localBundeslandNamesDoing:",
-protocol: "instance creation",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aBlock"],
-source: "localBundeslandNamesDoing: aBlock\x0a\x09WikiData query: self sparqlQueryBundeslandNames then: [:bindings |\x0a\x09\x09| dict |\x0a\x09\x09dict := Dictionary new.\x0a\x09\x09bindings do: [:object |\x0a\x09\x09\x09| id label |\x0a\x09\x09\x09id := (object bundesland value tokenize: '/') last.\x0a\x09\x09\x09label := object bundeslandLabel value.\x0a\x09\x09\x09label = id ifFalse: [\x0a\x09\x09\x09\x09dict at: id put: label]].\x0a\x09\x09aBlock value: dict]",
+source: "localNamesDoing: aBlock\x0a\x09WikiData query: self sparqlQueryNames then: [:bindings |\x0a\x09\x09| dict |\x0a\x09\x09dict := Dictionary new.\x0a\x09\x09bindings do: [:object |\x0a\x09\x09\x09| id label |\x0a\x09\x09\x09id := (object bundesland value tokenize: '/') last.\x0a\x09\x09\x09label := object bundeslandLabel value.\x0a\x09\x09\x09label = id ifFalse: [\x0a\x09\x09\x09\x09dict at: id put: label]].\x0a\x09\x09aBlock value: dict]",
 referencedClasses: ["WikiData", "Dictionary"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["query:then:", "sparqlQueryBundeslandNames", "new", "do:", "last", "tokenize:", "value", "bundesland", "bundeslandLabel", "ifFalse:", "=", "at:put:", "value:"]
+messageSends: ["query:then:", "sparqlQueryNames", "new", "do:", "last", "tokenize:", "value", "bundesland", "bundeslandLabel", "ifFalse:", "=", "at:put:", "value:"]
 }, function ($methodClass){ return function (aBlock){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-$recv($globals.WikiData)._query_then_($self._sparqlQueryBundeslandNames(),(function(bindings){
+$recv($globals.WikiData)._query_then_($self._sparqlQueryNames(),(function(bindings){
 var dict;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
@@ -7090,28 +7648,114 @@ return $recv(aBlock)._value_(dict);
 }));
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"localBundeslandNamesDoing:",{aBlock:aBlock})});
+}, function($ctx1) {$ctx1.fill(self,"localNamesDoing:",{aBlock:aBlock})});
 //>>excludeEnd("ctx");
 }; }),
-$globals.GemeindeData.a$cls);
+$globals.BundeslandData.a$cls);
 
 $core.addMethod(
 $core.method({
-selector: "localLandkreisNamesDoing:",
+selector: "sparqlQuery",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "sparqlQuery\x0a\x09^'SELECT ?bundesland ?bundeslandLabel ?id ?population (SAMPLE(?flagUrl) AS ?flag) WHERE {\x0a  ?bundesland wdt:P31 wd:Q1221156;\x0a    wdt:P1082 ?population;\x0a    wdt:P1388 ?id.\x0a  OPTIONAL { ?bundesland wdt:P41 ?flagUrl. }\x0a  SERVICE wikibase:label { bd:serviceParam wikibase:language \x22de\x22. }\x0a}\x0aGROUP BY ?bundesland ?bundeslandLabel ?id ?population'",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return "SELECT ?bundesland ?bundeslandLabel ?id ?population (SAMPLE(?flagUrl) AS ?flag) WHERE {\x0a  ?bundesland wdt:P31 wd:Q1221156;\x0a    wdt:P1082 ?population;\x0a    wdt:P1388 ?id.\x0a  OPTIONAL { ?bundesland wdt:P41 ?flagUrl. }\x0a  SERVICE wikibase:label { bd:serviceParam wikibase:language \x22de\x22. }\x0a}\x0aGROUP BY ?bundesland ?bundeslandLabel ?id ?population";
+
+}; }),
+$globals.BundeslandData.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "sparqlQueryNames",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "sparqlQueryNames\x0a\x09^'SELECT ?bundesland ?bundeslandLabel WHERE {\x0a  ?bundesland wdt:P31 wd:Q1221156;\x0a    wdt:P1388 ?id.\x0a  SERVICE wikibase:label { bd:serviceParam wikibase:language \x22', window navigator language, '\x22. }\x0a}\x0aGROUP BY ?bundesland ?bundeslandLabel'",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: [",", "language", "navigator"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return [$recv("SELECT ?bundesland ?bundeslandLabel WHERE {\x0a  ?bundesland wdt:P31 wd:Q1221156;\x0a    wdt:P1388 ?id.\x0a  SERVICE wikibase:label { bd:serviceParam wikibase:language \x22".__comma($recv($recv(window)._navigator())._language())).__comma("\x22. }\x0a}\x0aGROUP BY ?bundesland ?bundeslandLabel")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx[","]=1
+//>>excludeEnd("ctx");
+][0];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"sparqlQueryNames",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.BundeslandData.a$cls);
+
+
+$core.addClass("LandkreisData", $globals.GermanData, "Covid19Model");
+
+$core.addMethod(
+$core.method({
+selector: "fromJson:",
+protocol: "instance creation",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aJson"],
+source: "fromJson: aJson\x0a\x09^self\x0a\x09\x09id: (aJson gemeinde value tokenize: '/') last\x0a\x09\x09name: aJson gemeindeLabel value \x0a\x09\x09key: aJson id value\x0a\x09\x09localName: nil\x0a\x09\x09population: nil\x0a\x09\x09flag: (aJson at: #flag ifAbsent: [nil]) value",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["id:name:key:localName:population:flag:", "last", "tokenize:", "value", "gemeinde", "gemeindeLabel", "id", "at:ifAbsent:"]
+}, function ($methodClass){ return function (aJson){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $self._id_name_key_localName_population_flag_($recv($recv([$recv($recv(aJson)._gemeinde())._value()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["value"]=1
+//>>excludeEnd("ctx");
+][0])._tokenize_("/"))._last(),[$recv($recv(aJson)._gemeindeLabel())._value()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["value"]=2
+//>>excludeEnd("ctx");
+][0],[$recv($recv(aJson)._id())._value()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["value"]=3
+//>>excludeEnd("ctx");
+][0],nil,nil,$recv($recv(aJson)._at_ifAbsent_("flag",(function(){
+return nil;
+
+})))._value());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"fromJson:",{aJson:aJson})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.LandkreisData.a$cls);
+
+$core.addMethod(
+$core.method({
+selector: "localNamesDoing:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aBlock"],
-source: "localLandkreisNamesDoing: aBlock\x0a\x09WikiData query: self sparqlQueryLandkreisNames then: [:bindings |\x0a\x09\x09| dict |\x0a\x09\x09dict := Dictionary new.\x0a\x09\x09bindings do: [:object |\x0a\x09\x09\x09| id label |\x0a\x09\x09\x09id := (object gemeinde value tokenize: '/') last.\x0a\x09\x09\x09label := object gemeindeLabel value.\x0a\x09\x09\x09label = id ifFalse: [\x0a\x09\x09\x09\x09dict at: id put: label]].\x0a\x09\x09aBlock value: dict]",
+source: "localNamesDoing: aBlock\x0a\x09WikiData query: self sparqlQueryNames then: [:bindings |\x0a\x09\x09| dict |\x0a\x09\x09dict := Dictionary new.\x0a\x09\x09bindings do: [:object |\x0a\x09\x09\x09| id label |\x0a\x09\x09\x09id := (object gemeinde value tokenize: '/') last.\x0a\x09\x09\x09label := object gemeindeLabel value.\x0a\x09\x09\x09label = id ifFalse: [\x0a\x09\x09\x09\x09dict at: id put: label]].\x0a\x09\x09aBlock value: dict]",
 referencedClasses: ["WikiData", "Dictionary"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["query:then:", "sparqlQueryLandkreisNames", "new", "do:", "last", "tokenize:", "value", "gemeinde", "gemeindeLabel", "ifFalse:", "=", "at:put:", "value:"]
+messageSends: ["query:then:", "sparqlQueryNames", "new", "do:", "last", "tokenize:", "value", "gemeinde", "gemeindeLabel", "ifFalse:", "=", "at:put:", "value:"]
 }, function ($methodClass){ return function (aBlock){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-$recv($globals.WikiData)._query_then_($self._sparqlQueryLandkreisNames(),(function(bindings){
+$recv($globals.WikiData)._query_then_($self._sparqlQueryNames(),(function(bindings){
 var dict;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
@@ -7142,191 +7786,36 @@ return $recv(aBlock)._value_(dict);
 }));
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"localLandkreisNamesDoing:",{aBlock:aBlock})});
+}, function($ctx1) {$ctx1.fill(self,"localNamesDoing:",{aBlock:aBlock})});
 //>>excludeEnd("ctx");
 }; }),
-$globals.GemeindeData.a$cls);
+$globals.LandkreisData.a$cls);
 
 $core.addMethod(
 $core.method({
-selector: "onlineBundeslandTest",
-protocol: "instance creation",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "onlineBundeslandTest\x0a\x09\x22\x0a\x09GemeindeData onlineBundeslandTest\x0a\x09\x22\x0a\x09self loadAllBundeslandDoing: [:objects | console log: objects]",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["loadAllBundeslandDoing:", "log:"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-$self._loadAllBundeslandDoing_((function(objects){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $recv(console)._log_(objects);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({objects:objects},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"onlineBundeslandTest",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.GemeindeData.a$cls);
-
-$core.addMethod(
-$core.method({
-selector: "onlineLandkreisTest",
-protocol: "instance creation",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "onlineLandkreisTest\x0a\x09\x22\x0a\x09GemeindeData onlineLandkreisTest\x0a\x09\x22\x0a\x09self loadAllLandkreiseDoing: [:objects | console log: objects]",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["loadAllLandkreiseDoing:", "log:"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-$self._loadAllLandkreiseDoing_((function(objects){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $recv(console)._log_(objects);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({objects:objects},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"onlineLandkreisTest",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.GemeindeData.a$cls);
-
-$core.addMethod(
-$core.method({
-selector: "onlineTestLocalBundeslandNames",
-protocol: "instance creation",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "onlineTestLocalBundeslandNames\x0a\x09\x22\x0a\x09GemeindeData onlineTestLocalBundeslandNames\x0a\x09\x22\x0a\x09self localBundeslandNamesDoing: [:objects | console log: objects]",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["localBundeslandNamesDoing:", "log:"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-$self._localBundeslandNamesDoing_((function(objects){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $recv(console)._log_(objects);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({objects:objects},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"onlineTestLocalBundeslandNames",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.GemeindeData.a$cls);
-
-$core.addMethod(
-$core.method({
-selector: "onlineTestLocalLandkreisNames",
-protocol: "instance creation",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "onlineTestLocalLandkreisNames\x0a\x09\x22\x0a\x09GemeindeData onlineTestLocalLandkreisNames\x0a\x09\x22\x0a\x09self localLandkreisNamesDoing: [:objects | console log: objects]",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["localLandkreisNamesDoing:", "log:"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-$self._localLandkreisNamesDoing_((function(objects){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $recv(console)._log_(objects);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({objects:objects},$ctx1,1)});
-//>>excludeEnd("ctx");
-}));
-return self;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"onlineTestLocalLandkreisNames",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.GemeindeData.a$cls);
-
-$core.addMethod(
-$core.method({
-selector: "sparqlQueryBundesland",
+selector: "sparqlQuery",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "sparqlQueryBundesland\x0a\x09^'SELECT ?bundesland ?bundeslandLabel ?id ?population (SAMPLE(?flagUrl) AS ?flag) WHERE {\x0a  ?bundesland wdt:P31 wd:Q1221156;\x0a    wdt:P1082 ?population;\x0a    wdt:P1388 ?id.\x0a  OPTIONAL { ?bundesland wdt:P41 ?flagUrl. }\x0a  SERVICE wikibase:label { bd:serviceParam wikibase:language \x22de\x22. }\x0a}\x0aGROUP BY ?bundesland ?bundeslandLabel ?id ?population'",
+source: "sparqlQuery\x0a\x09^'SELECT ?gemeinde ?gemeindeLabel ?id (SAMPLE(?flagUrl) AS ?flag) WHERE {\x0a  ?gemeinde (wdt:P31/(wdt:P279*)) wd:Q163359;\x0a    wdt:P440 ?id.\x0a  OPTIONAL { ?gemeinde wdt:P41 ?flagUrl. }\x0a  SERVICE wikibase:label { bd:serviceParam wikibase:language \x22de\x22. }\x0a}\x0aGROUP BY ?gemeinde ?gemeindeLabel ?id'",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
 messageSends: []
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
-return "SELECT ?bundesland ?bundeslandLabel ?id ?population (SAMPLE(?flagUrl) AS ?flag) WHERE {\x0a  ?bundesland wdt:P31 wd:Q1221156;\x0a    wdt:P1082 ?population;\x0a    wdt:P1388 ?id.\x0a  OPTIONAL { ?bundesland wdt:P41 ?flagUrl. }\x0a  SERVICE wikibase:label { bd:serviceParam wikibase:language \x22de\x22. }\x0a}\x0aGROUP BY ?bundesland ?bundeslandLabel ?id ?population";
+return "SELECT ?gemeinde ?gemeindeLabel ?id (SAMPLE(?flagUrl) AS ?flag) WHERE {\x0a  ?gemeinde (wdt:P31/(wdt:P279*)) wd:Q163359;\x0a    wdt:P440 ?id.\x0a  OPTIONAL { ?gemeinde wdt:P41 ?flagUrl. }\x0a  SERVICE wikibase:label { bd:serviceParam wikibase:language \x22de\x22. }\x0a}\x0aGROUP BY ?gemeinde ?gemeindeLabel ?id";
 
 }; }),
-$globals.GemeindeData.a$cls);
+$globals.LandkreisData.a$cls);
 
 $core.addMethod(
 $core.method({
-selector: "sparqlQueryBundeslandNames",
+selector: "sparqlQueryNames",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "sparqlQueryBundeslandNames\x0a\x09^'SELECT ?bundesland ?bundeslandLabel WHERE {\x0a  ?bundesland wdt:P31 wd:Q1221156;\x0a    wdt:P1388 ?id.\x0a  SERVICE wikibase:label { bd:serviceParam wikibase:language \x22', window navigator language, '\x22. }\x0a}\x0aGROUP BY ?bundesland ?bundeslandLabel'",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: [",", "language", "navigator"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return [$recv("SELECT ?bundesland ?bundeslandLabel WHERE {\x0a  ?bundesland wdt:P31 wd:Q1221156;\x0a    wdt:P1388 ?id.\x0a  SERVICE wikibase:label { bd:serviceParam wikibase:language \x22".__comma($recv($recv(window)._navigator())._language())).__comma("\x22. }\x0a}\x0aGROUP BY ?bundesland ?bundeslandLabel")
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx[","]=1
-//>>excludeEnd("ctx");
-][0];
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"sparqlQueryBundeslandNames",{})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.GemeindeData.a$cls);
-
-$core.addMethod(
-$core.method({
-selector: "sparqlQueryLandkreisNames",
-protocol: "accessing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "sparqlQueryLandkreisNames\x0a\x09^'SELECT ?gemeinde ?gemeindeLabel WHERE {\x0a  ?gemeinde (wdt:P31/(wdt:P279*)) wd:Q163359;\x0a    wdt:P440 ?id.\x0a  SERVICE wikibase:label { bd:serviceParam wikibase:language \x22', window navigator language, '\x22. }\x0a}\x0aGROUP BY ?gemeinde ?gemeindeLabel'",
+source: "sparqlQueryNames\x0a\x09^'SELECT ?gemeinde ?gemeindeLabel WHERE {\x0a  ?gemeinde (wdt:P31/(wdt:P279*)) wd:Q163359;\x0a    wdt:P440 ?id.\x0a  SERVICE wikibase:label { bd:serviceParam wikibase:language \x22', window navigator language, '\x22. }\x0a}\x0aGROUP BY ?gemeinde ?gemeindeLabel'",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -7342,28 +7831,10 @@ return [$recv("SELECT ?gemeinde ?gemeindeLabel WHERE {\x0a  ?gemeinde (wdt:P31/(
 //>>excludeEnd("ctx");
 ][0];
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"sparqlQueryLandkreisNames",{})});
+}, function($ctx1) {$ctx1.fill(self,"sparqlQueryNames",{})});
 //>>excludeEnd("ctx");
 }; }),
-$globals.GemeindeData.a$cls);
-
-$core.addMethod(
-$core.method({
-selector: "sparqlQueryLandkreise",
-protocol: "accessing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "sparqlQueryLandkreise\x0a\x09^'SELECT ?gemeinde ?gemeindeLabel ?id (SAMPLE(?flagUrl) AS ?flag) WHERE {\x0a  ?gemeinde (wdt:P31/(wdt:P279*)) wd:Q163359;\x0a    wdt:P440 ?id.\x0a  OPTIONAL { ?gemeinde wdt:P41 ?flagUrl. }\x0a  SERVICE wikibase:label { bd:serviceParam wikibase:language \x22de\x22. }\x0a}\x0aGROUP BY ?gemeinde ?gemeindeLabel ?id'",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: []
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-return "SELECT ?gemeinde ?gemeindeLabel ?id (SAMPLE(?flagUrl) AS ?flag) WHERE {\x0a  ?gemeinde (wdt:P31/(wdt:P279*)) wd:Q163359;\x0a    wdt:P440 ?id.\x0a  OPTIONAL { ?gemeinde wdt:P41 ?flagUrl. }\x0a  SERVICE wikibase:label { bd:serviceParam wikibase:language \x22de\x22. }\x0a}\x0aGROUP BY ?gemeinde ?gemeindeLabel ?id";
-
-}; }),
-$globals.GemeindeData.a$cls);
+$globals.LandkreisData.a$cls);
 
 
 $core.addClass("WikiData", $globals.Object, "Covid19Model");

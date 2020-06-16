@@ -134,26 +134,28 @@ sources
 world
 	"<Territory>"
 	
-	^world ifNil: [world := Territory name: 'World' about: nil parts: nil datasets: nil]
+	^world ifNil: [
+		| inst |
+		inst := Territory name: 'World' about: nil parts: nil datasets: nil.
+		inst wikiData: CountryData world.
+		world := inst]
 ! !
 
 !CoViD19Application methodsFor: 'data actions'!
 
 getData
-	TerritoryData loadAllDoing: [:wikiDataInstances |
-		console log: wikiDataInstances.
-		self world load: (self sources at: 'JHU') for: self doing: [:worldRoot | 
+	self world load: (self sources at: 'JHU') for: self doing: [:worldRoot | 
+		CountryData loadAllDoing: [:wikiDataInstances |
 			worldRoot parts do: [:territory |
-				territory wikiData: (wikiDataInstances detect: [:instance | instance name = territory name] ifNone: [
-					console log: territory name, ' not found'.
-					nil])].
+				territory wikiData: (CountryData instanceFor: territory in: wikiDataInstances)].
 			(worldRoot partNamed: 'US') load: (self sources at: 'JHUUS') for: self doing: #resetPopulation.
-			GemeindeData loadAllBundeslandDoing: [:wikiDatas |
-				(worldRoot partNamed: 'Germany') load: (self sources at: 'RKI') for: self doing: [:root |
-					root parts do: [:territory |
-						territory wikiData: (wikiDatas detect: [:instance | instance key = territory id] ifNone: [
-							console log: territory name, ' not found'.
-							nil])]]]]]
+			(worldRoot partNamed: 'Germany') load: (self sources at: 'RKI') for: self doing: [:root |
+				BundeslandData loadAllDoing: [:bundeslandDatas |
+					LandkreisData loadAllDoing: [:landkreisDatas |
+						root parts do: [:bundesland |
+							bundesland wikiData: (BundeslandData instanceFor: bundesland in: bundeslandDatas).
+							bundesland parts do: [:landkreis |
+								landkreis wikiData: (LandkreisData instanceFor: landkreis in: landkreisDatas)]]]]]]]
 !
 
 pickMetadataFrom: aDictionary
@@ -1504,6 +1506,12 @@ printOn: aStream
 
 !Territory methodsFor: 'testing'!
 
+hasFlag
+	self wikiData ifNil: [
+		^false].
+	^self wikiData hasFlag
+!
+
 hasParts
 	^self parts notEmpty
 !
@@ -1638,43 +1646,53 @@ printOn: aStream
 		nextPutAll: ')'
 ! !
 
+!TerritoryData methodsFor: 'testing'!
+
+hasFlag
+	^self flag notNil
+!
+
+isFor: aTerritory
+	"<Boolean>
+	does the receiver belong to aTerritory?"
+	
+	^self subclassResponsibility
+! !
+
 !TerritoryData class methodsFor: 'accessing'!
 
+instanceFor: aTerritory in: someInstances
+	"<TerritoryData | nil>"
+	
+	^someInstances detect: [:instance | instance isFor: aTerritory] ifNone: [
+		console log: aTerritory name, ' not found'.
+		nil]
+!
+
 sparqlQuery
-	^'SELECT ?country ?countryLabel ?population (SAMPLE(?flagUrl) AS ?flag) WHERE {
-  ?country (wdt:P31/(wdt:P279*)) wd:Q3624078;
-    wdt:P1082 ?population.
-  OPTIONAL { ?country wdt:P41 ?flagUrl. }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
-GROUP BY ?country ?countryLabel ?population'
+	"<String>"
+	
+	^self subclassResponsibility
 !
 
 sparqlQueryNames
-	^'SELECT ?country ?countryLabel WHERE {
-  ?country (wdt:P31/(wdt:P279*)) wd:Q3624078.
-  FILTER(NOT EXISTS { ?country wdt:P31 wd:Q3024240. })
-  FILTER(NOT EXISTS { ?country wdt:P31 wd:Q28171280. })
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "', window navigator language, '". }
-}
-GROUP BY ?country ?countryLabel'
+	"<String>"
+	
+	^self subclassResponsibility
 ! !
 
 !TerritoryData class methodsFor: 'instance creation'!
 
 createAllDoing: aBlock
 	WikiData query: self sparqlQuery then: [:bindings |
-		console log: bindings.
 		aBlock value: (bindings collect: [:object | self fromJson: object])]
 !
 
 fromJson: aJson
-	^self
-		id: (aJson country value tokenize: '/') last
-		name: aJson countryLabel value 
-		localName: nil
-		population: aJson population value asNumber 
-		flag: (aJson at: #flag ifAbsent: [nil]) value
+	"<TerritoryData>
+	creates a new instance using the data in aJson"
+	
+	^self subclassResponsibility
 !
 
 id: idString name: nameString localName: localNameString population: populationInteger flag: flagUrlOrNil
@@ -1694,6 +1712,99 @@ loadAllDoing: aBlock
 !
 
 localNamesDoing: aBlock
+	self subclassResponsibility
+!
+
+onlineTest
+	"
+	CountryData onlineTest
+	BundeslandData onlineTest
+	LandkreisData onlineTest
+	"
+	self loadAllDoing: [:objects | console log: objects]
+!
+
+onlineTestLocalNames
+	"
+	CountryData onlineTestLocalNames
+	BundeslandData onlineTestLocalNames
+	LandkreisData onlineTestLocalNames
+	"
+	self localNamesDoing: [:objects | console log: objects]
+! !
+
+TerritoryData subclass: #CountryData
+	slots: {}
+	package: 'Covid19Model'!
+
+!CountryData methodsFor: 'testing'!
+
+isFor: aTerritory
+	^(self id = 'Q30' and: [aTerritory name = 'US']) or: [
+	(self id = 'Q148' and: [aTerritory name = 'China']) or: [
+	(self id = 'Q29999' and: [aTerritory name = 'Netherlands']) or: [
+	(self id = 'Q884' and: [aTerritory name = 'Korea, South']) or: [
+	(self id = 'Q213' and: [aTerritory name = 'Czechia']) or: [
+	(self id = 'Q1008' and: [aTerritory name = 'Cote d''Ivoire']) or: [
+	(self id = 'Q974' and: [aTerritory name = 'Congo (Kinshasa)']) or: [
+	(self id = 'Q971' and: [aTerritory name = 'Congo (Brazzaville)']) or: [
+	(self id = 'Q1246' and: [aTerritory name = 'Kosovo']) or: [
+	(self id = 'Q1011' and: [aTerritory name = 'Cabo Verde']) or: [
+	(self id = 'Q1039' and: [aTerritory name = 'Sao Tome and Principe']) or: [
+	(self id = 'Q407199' and: [aTerritory name = 'West Bank and Gaza']) or: [
+	(self id = 'Q865' and: [aTerritory name = 'Taiwan*']) or: [
+	(self id = 'Q836' and: [aTerritory name = 'Burma']) or: [
+	(self id = 'Q778' and: [aTerritory name = 'Bahamas']) or: [
+	(self id = 'Q1005' and: [aTerritory name = 'Gambia']) or: [
+	(self id = 'Q574' and: [aTerritory name = 'Timor-Leste']) or: [
+	(self id = 'Q237' and: [aTerritory name = 'Holy See']) or: [
+	(self id = 'Q6250' and: [aTerritory name = 'Western Sahara']) or: [
+	self name = aTerritory name]]]]]]]]]]]]]]]]]]]
+! !
+
+!CountryData class methodsFor: 'accessing'!
+
+sparqlQuery
+	^'SELECT ?country ?countryLabel ?population (SAMPLE(?flagUrl) AS ?flag) WHERE {
+  ?country (wdt:P31/(wdt:P279*)) wd:Q3624078;
+    wdt:P1082 ?population.
+  OPTIONAL { ?country wdt:P41 ?flagUrl. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+GROUP BY ?country ?countryLabel ?population'
+!
+
+sparqlQueryNames
+	^'SELECT ?country ?countryLabel WHERE {
+  ?country (wdt:P31/(wdt:P279*)) wd:Q3624078.
+  FILTER(NOT EXISTS { ?country wdt:P31 wd:Q3024240. })
+  FILTER(NOT EXISTS { ?country wdt:P31 wd:Q28171280. })
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "', window navigator language, '". }
+}
+GROUP BY ?country ?countryLabel'
+!
+
+world
+	^self
+		id: 'Q16502'
+		name: 'World'
+		localName: nil
+		population: nil
+		flag: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/World_Flag_%282004%29.svg'
+! !
+
+!CountryData class methodsFor: 'instance creation'!
+
+fromJson: aJson
+	^self
+		id: (aJson country value tokenize: '/') last
+		name: aJson countryLabel value 
+		localName: nil
+		population: aJson population value asNumber 
+		flag: (aJson at: #flag ifAbsent: [nil]) value
+!
+
+localNamesDoing: aBlock
 	WikiData query: self sparqlQueryNames then: [:bindings |
 		| dict |
 		dict := Dictionary new.
@@ -1704,42 +1815,59 @@ localNamesDoing: aBlock
 			label = id ifFalse: [
 				dict at: id put: label]].
 		aBlock value: dict]
-!
-
-onlineTest
-	"
-	TerritoryData onlineTest
-	"
-	self loadAllDoing: [:objects | console log: objects]
-!
-
-onlineTestLocalNames
-	"
-	TerritoryData onlineTestLocalNames
-	"
-	self localNamesDoing: [:objects | console log: objects]
 ! !
 
-TerritoryData subclass: #GemeindeData
+TerritoryData subclass: #GermanData
 	slots: {#key}
 	package: 'Covid19Model'!
+!GermanData commentStamp!
+WikiData from Germany with its unique key (German regional key (P1388))
+[[https://www.wikidata.org/wiki/Property:P1388]]!
 
-!GemeindeData methodsFor: 'accessing'!
-
-key
-	^ key
-! !
-
-!GemeindeData methodsFor: 'initialization'!
+!GermanData methodsFor: 'accessing'!
 
 initializeId: idString name: nameString key: keyString localName: localNameString population: populationInteger flag: flagUrlOrNil
 	self initializeId: idString name: nameString localName: localNameString population: populationInteger flag: flagUrlOrNil.
-	key := keyString
+	key := keyString asNumber
+!
+
+isFor: aTerritory
+	^self key = aTerritory id asNumber
+!
+
+key
+	"<Integer>
+	German regional key (P1388)"
+	
+	^key
 ! !
 
-!GemeindeData class methodsFor: 'accessing'!
+!GermanData class methodsFor: 'instance creation'!
 
-sparqlQueryBundesland
+id: idString name: nameString key: aKeyString localName: localNameString population: populationInteger flag: flagUrlOrNil
+	| inst |
+	inst := self new.
+	inst initializeId: idString name: nameString key: aKeyString localName: localNameString population: populationInteger flag: flagUrlOrNil.
+	^inst
+! !
+
+GermanData subclass: #BundeslandData
+	slots: {}
+	package: 'Covid19Model'!
+
+!BundeslandData methodsFor: 'as yet unclassified'!
+
+isFor: aTerritory
+	"special for Hamburg"
+	
+	^(self key = 2 and: [
+	aTerritory id asNumber = 2000]) or: [
+	super isFor: aTerritory]
+! !
+
+!BundeslandData class methodsFor: 'accessing'!
+
+sparqlQuery
 	^'SELECT ?bundesland ?bundeslandLabel ?id ?population (SAMPLE(?flagUrl) AS ?flag) WHERE {
   ?bundesland wdt:P31 wd:Q1221156;
     wdt:P1082 ?population;
@@ -1750,49 +1878,18 @@ sparqlQueryBundesland
 GROUP BY ?bundesland ?bundeslandLabel ?id ?population'
 !
 
-sparqlQueryBundeslandNames
+sparqlQueryNames
 	^'SELECT ?bundesland ?bundeslandLabel WHERE {
   ?bundesland wdt:P31 wd:Q1221156;
     wdt:P1388 ?id.
   SERVICE wikibase:label { bd:serviceParam wikibase:language "', window navigator language, '". }
 }
 GROUP BY ?bundesland ?bundeslandLabel'
-!
-
-sparqlQueryLandkreisNames
-	^'SELECT ?gemeinde ?gemeindeLabel WHERE {
-  ?gemeinde (wdt:P31/(wdt:P279*)) wd:Q163359;
-    wdt:P440 ?id.
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "', window navigator language, '". }
-}
-GROUP BY ?gemeinde ?gemeindeLabel'
-!
-
-sparqlQueryLandkreise
-	^'SELECT ?gemeinde ?gemeindeLabel ?id (SAMPLE(?flagUrl) AS ?flag) WHERE {
-  ?gemeinde (wdt:P31/(wdt:P279*)) wd:Q163359;
-    wdt:P440 ?id.
-  OPTIONAL { ?gemeinde wdt:P41 ?flagUrl. }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "de". }
-}
-GROUP BY ?gemeinde ?gemeindeLabel ?id'
 ! !
 
-!GemeindeData class methodsFor: 'instance creation'!
+!BundeslandData class methodsFor: 'instance creation'!
 
-createAllBundeslandDoing: aBlock
-	WikiData query: self sparqlQueryBundesland then: [:bindings |
-		console log: bindings.
-		aBlock value: (bindings collect: [:object | self fromJsonBundesland: object])]
-!
-
-createAllLandkreiseDoing: aBlock
-	WikiData query: self sparqlQueryLandkreise then: [:bindings |
-		console log: bindings.
-		aBlock value: (bindings collect: [:object | self fromJsonLandkreis: object])]
-!
-
-fromJsonBundesland: aJson
+fromJson: aJson
 	^self
 		id: (aJson bundesland value tokenize: '/') last
 		name: aJson bundeslandLabel value 
@@ -1802,43 +1899,8 @@ fromJsonBundesland: aJson
 		flag: (aJson at: #flag ifAbsent: [nil]) value
 !
 
-fromJsonLandkreis: aJson
-	^self
-		id: (aJson gemeinde value tokenize: '/') last
-		name: aJson gemeindeLabel value 
-		key: aJson id value
-		localName: nil
-		population: nil
-		flag: (aJson at: #flag ifAbsent: [nil]) value
-!
-
-id: idString name: nameString key: aKeyString localName: localNameString population: populationInteger flag: flagUrlOrNil
-	| inst |
-	inst := self new.
-	inst initializeId: idString name: nameString key: aKeyString localName: localNameString population: populationInteger flag: flagUrlOrNil.
-	^inst
-!
-
-loadAllBundeslandDoing: aBlock
-	self createAllBundeslandDoing: [:territoryData |
-		self localBundeslandNamesDoing: [:namesDict |
-			territoryData do: [:item |
-				namesDict at: item id ifPresent: [:localName |
-					item localName: localName]].
-			aBlock value: territoryData]]
-!
-
-loadAllLandkreiseDoing: aBlock
-	self createAllLandkreiseDoing: [:territoryData |
-		self localLandkreisNamesDoing: [:namesDict |
-			territoryData do: [:item |
-				namesDict at: item id ifPresent: [:localName |
-					item localName: localName]].
-			aBlock value: territoryData]]
-!
-
-localBundeslandNamesDoing: aBlock
-	WikiData query: self sparqlQueryBundeslandNames then: [:bindings |
+localNamesDoing: aBlock
+	WikiData query: self sparqlQueryNames then: [:bindings |
 		| dict |
 		dict := Dictionary new.
 		bindings do: [:object |
@@ -1848,10 +1910,47 @@ localBundeslandNamesDoing: aBlock
 			label = id ifFalse: [
 				dict at: id put: label]].
 		aBlock value: dict]
+! !
+
+GermanData subclass: #LandkreisData
+	slots: {}
+	package: 'Covid19Model'!
+
+!LandkreisData class methodsFor: 'accessing'!
+
+sparqlQuery
+	^'SELECT ?gemeinde ?gemeindeLabel ?id (SAMPLE(?flagUrl) AS ?flag) WHERE {
+  ?gemeinde (wdt:P31/(wdt:P279*)) wd:Q163359;
+    wdt:P440 ?id.
+  OPTIONAL { ?gemeinde wdt:P41 ?flagUrl. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "de". }
+}
+GROUP BY ?gemeinde ?gemeindeLabel ?id'
 !
 
-localLandkreisNamesDoing: aBlock
-	WikiData query: self sparqlQueryLandkreisNames then: [:bindings |
+sparqlQueryNames
+	^'SELECT ?gemeinde ?gemeindeLabel WHERE {
+  ?gemeinde (wdt:P31/(wdt:P279*)) wd:Q163359;
+    wdt:P440 ?id.
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "', window navigator language, '". }
+}
+GROUP BY ?gemeinde ?gemeindeLabel'
+! !
+
+!LandkreisData class methodsFor: 'instance creation'!
+
+fromJson: aJson
+	^self
+		id: (aJson gemeinde value tokenize: '/') last
+		name: aJson gemeindeLabel value 
+		key: aJson id value
+		localName: nil
+		population: nil
+		flag: (aJson at: #flag ifAbsent: [nil]) value
+!
+
+localNamesDoing: aBlock
+	WikiData query: self sparqlQueryNames then: [:bindings |
 		| dict |
 		dict := Dictionary new.
 		bindings do: [:object |
@@ -1861,34 +1960,6 @@ localLandkreisNamesDoing: aBlock
 			label = id ifFalse: [
 				dict at: id put: label]].
 		aBlock value: dict]
-!
-
-onlineBundeslandTest
-	"
-	GemeindeData onlineBundeslandTest
-	"
-	self loadAllBundeslandDoing: [:objects | console log: objects]
-!
-
-onlineLandkreisTest
-	"
-	GemeindeData onlineLandkreisTest
-	"
-	self loadAllLandkreiseDoing: [:objects | console log: objects]
-!
-
-onlineTestLocalBundeslandNames
-	"
-	GemeindeData onlineTestLocalBundeslandNames
-	"
-	self localBundeslandNamesDoing: [:objects | console log: objects]
-!
-
-onlineTestLocalLandkreisNames
-	"
-	GemeindeData onlineTestLocalLandkreisNames
-	"
-	self localLandkreisNamesDoing: [:objects | console log: objects]
 ! !
 
 Object subclass: #WikiData

@@ -1241,7 +1241,11 @@ header
 		header := SilkLeafPresenter shows: [self territory] in: Silk DIV do: [:aTerritory |
 			{'class' -> 'GraphicsHeader'.
 				Silk H2: {
-					aTerritory name.
+					Silk IMG: {
+						'class' -> 'Flag'.
+						'src' -> aTerritory flagUrl.
+						'alt' -> aTerritory flagAlt}.
+					aTerritory presentationName.
 					self territoryInfoPopulation: aTerritory population}.
 				Silk UL: {'class' -> 'Datasets'. self datasets}.
 				Silk DIV: {'class' -> 'AspectButtons'. self primaryAspectGroup buttons}.
@@ -1518,6 +1522,15 @@ asSilk
 	^elements
 !
 
+flag
+	self model hasFlag ifTrue: [
+		^Silk IMG: {
+			'class' -> 'Flag'.
+			'src' -> self model flagUrl.
+			'alt' -> self model flagAlt}].
+	^SVG SVG: {'class' -> 'Flag'. 'viewBox' -> '0 0 5 3'}
+!
+
 itemSilk
 	| css flag silk |
 	css := 'Treeitem'.
@@ -1527,10 +1540,7 @@ itemSilk
 		'class' -> css. 
 		Silk SPAN: {
 			'class' -> 'TerritoryName'. 
-			Silk IMG: {
-				'class' -> 'Flag'.
-				'src' -> self model flagUrl.
-				'alt' -> self model flagAlt}.
+			self flag.
 			self model presentationName}.
 		Silk SPAN: {
 			'class' -> 'TerritoryValue'.

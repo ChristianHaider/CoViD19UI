@@ -1,16 +1,10 @@
 Smalltalk createPackage: 'Covid19Model'!
 (Smalltalk packageAt: 'Covid19Model' ifAbsent: [ self error: 'Package not created: Covid19Model' ]) imports: {'appTimestamp' -> 'app/timestamp'}!
-Object subclass: #Casecount
-	slots: {#confirmed. #deaths}
+Object subclass: #CaseCount
+	slots: {#confirmed. #deaths. #recovered}
 	package: 'Covid19Model'!
 
-!Casecount methodsFor: 'accessing'!
-
-aspects
-	"<Array of: Symbol>"
-	
-	^#(#confirmed #deaths)
-!
+!CaseCount methodsFor: 'accessing'!
 
 confirmed
 	"<Integer>"
@@ -22,39 +16,48 @@ deaths
 	"<Integer>"
 	
 	^deaths
-! !
-
-!Casecount methodsFor: 'arithmetic'!
-
-+ aCasecount
-	"<Casecount>"
-	
-	^self class 
-		confirmed: self confirmed + aCasecount confirmed
-		deaths: self deaths + aCasecount deaths
 !
 
-- aCasecount
-	"<Casecount>"
+recovered
+	"<Integer>"
+	
+	^recovered
+! !
+
+!CaseCount methodsFor: 'arithmetic'!
+
++ aCaseCount
+	"<CaseCount>"
 	
 	^self class 
-		confirmed: self confirmed - aCasecount confirmed
-		deaths: self deaths - aCasecount deaths
+		confirmed: self confirmed + aCaseCount confirmed
+		deaths: self deaths + aCaseCount deaths
+		recovered: self recovered + aCaseCount recovered
+!
+
+- aCaseCount
+	"<CaseCount>"
+	
+	^self class 
+		confirmed: self confirmed - aCaseCount confirmed
+		deaths: self deaths - aCaseCount deaths
+		recovered: self recovered - aCaseCount recovered
 ! !
 
-!Casecount methodsFor: 'initialization'!
+!CaseCount methodsFor: 'initialization'!
 
-initializeConfirmed: aConfirmedInteger deaths: aDeathsInteger
+initializeConfirmed: aConfirmedInteger deaths: aDeathsInteger recovered: aRecoveredInteger
 	confirmed := aConfirmedInteger.
-	deaths := aDeathsInteger
+	deaths := aDeathsInteger.
+	recovered := aRecoveredInteger
 ! !
 
-!Casecount class methodsFor: 'instance creation'!
+!CaseCount class methodsFor: 'instance creation'!
 
-confirmed: aConfirmedInteger deaths: aDeathsInteger
+confirmed: aConfirmedInteger deaths: aDeathsInteger recovered: aRecoveredInteger
 	| inst |
 	inst := self new.
-	inst initializeConfirmed: aConfirmedInteger deaths: aDeathsInteger.
+	inst initializeConfirmed: aConfirmedInteger deaths: aDeathsInteger recovered: aRecoveredInteger.
 	^inst
 !
 
@@ -62,33 +65,31 @@ fromJson: aJson
 	^self 
 		confirmed: (aJson at: #c ifAbsent: [0])
 		deaths: (aJson at: #d ifAbsent: [0])
+		recovered: (aJson at: #r ifAbsent: [0])
 !
 
 zero
-	^self confirmed: 0 deaths: 0
+	^self confirmed: 0 deaths: 0 recovered: 0
 ! !
 
 Object subclass: #CoViD19Application
-	slots: {#countries}
+	slots: {#world. #sources. #about}
 	package: 'Covid19Model'!
 
 !CoViD19Application methodsFor: 'accessing'!
 
-countries
-	"<Array of: Country>"
+about
+	"<Dictionary>
+	metadata about the receiver"
 	
-	^countries ifNil: [#()]
+	^about ifNil: [about := Dictionary new]
 !
 
-countries: someCountries
-	countries := someCountries
-!
-
-dataHome
-	"<String>
-	the directory with all data files"
-
-	^'https://covidcrt.uber.space/data/'
+initialSources
+	^Dictionary
+		with: 'JHU' -> (Datasource id: 'JHU' url: 'CoViD-19_JHU.json' dataClass: JHUDatapoint)
+		with: 'JHUUS' -> (Datasource id: 'JHUUS' url: 'CoViD-19_US_JHU.json' dataClass: JHUUSDatapoint)
+		with: 'RKI' -> (Datasource id: 'RKI' url: 'CoViD-19_RKI.json' dataClass: RKIDatapoint)
 !
 
 lastDate
@@ -96,14 +97,6 @@ lastDate
 	the most recent date in the data"
 	
 	^self world lastDate
-!
-
-metadata
-	"<Dictionary>"
-	
-	self countries isEmpty ifTrue: [
-		^Dictionary new].
-	^self countries first metadata
 !
 
 programModificationDate
@@ -117,53 +110,64 @@ programModificationDate
 serverModificationDate
 	"<Date>"
 	
-	(self metadata at: #softwareTimestamp ifAbsent: [nil]) ifNotNil: [:date | 
-		^Date fromString: date].
-	^Date now
+	^self about at: #DataserverTimestamp ifAbsent: [Date now]
 !
 
 serverName
 	"<String>"
 	
-	^self metadata at: #softwareName ifAbsent: ['']
+	^self about at: #DataserverName ifAbsent: ['(no data)']
 !
 
 serverVersion
 	"<String>"
 	
-	^self metadata at: #softwareVersion ifAbsent: ['']
+	^self about at: #DataserverVersion ifAbsent: ['']
+!
+
+sources
+	"<Dictionary key: String value: Datasource>"
+	
+	^sources ifNil: [sources := self initialSources]
 !
 
 world
-	"<Country>
-	the root of the country tree"
+	"<Territory>"
 	
-	^self countries first
+	^world ifNil: [
+		| inst |
+		inst := Territory name: 'World' about: nil parts: nil datasets: nil.
+		inst wikiData: CountryData world.
+		world := inst]
 ! !
 
 !CoViD19Application methodsFor: 'data actions'!
 
-getData
-	^(self withJson: 'CoViD-19_JHU.json') then: [:json |
-		self countries: (Country allFromJHUJson: json)]
+getDataFor: anApp
+	self world load: (self sources at: 'JHU') for: self doing: [:worldRoot | 
+		CountryData loadAllDoing: [:wikiDataInstances |
+			worldRoot parts do: [:territory |
+				territory wikiData: (CountryData instanceFor: territory in: wikiDataInstances)].
+			anApp refreshTree.
+			(worldRoot partNamed: 'US') load: (self sources at: 'JHUUS') for: self doing: #resetPopulation.
+			(worldRoot partNamed: 'Germany') load: (self sources at: 'RKI') for: self doing: [:root |
+				anApp refreshTree.
+				BundeslandData loadAllDoing: [:bundeslandDatas |
+					LandkreisData loadAllDoing: [:landkreisDatas |
+						root parts do: [:bundesland |
+							bundesland wikiData: (BundeslandData instanceFor: bundesland in: bundeslandDatas).
+							bundesland parts do: [:landkreis |
+								landkreis wikiData: (LandkreisData instanceFor: landkreis in: landkreisDatas)]]]]]]]
 !
 
-getGermanData
-	^(self withJson: 'CoViD-19_RKI.json') then: [:json |
-		| germany |
-		germany := self countries detect: [:country | country name = 'Germany'].
-		germany parts addAll: ((Country allFromRKIJson: json) sort: [:a :b | a > b])]
-!
-
-getUSData
-	^(self withJson: 'CoViD-19_US_JHU.json') then: [:json |
-		| us |
-		us := self countries detect: [:country | country name = 'US'].
-		us parts addAll: (Country allFromUSJHUJson: json)]
-!
-
-withJson: aFilename
-	^(Platform fetch: self dataHome, aFilename) then: #json
+pickMetadataFrom: aDictionary
+	"take infos about the application itself from aDictionary.
+	The data come from the first JHU data response"
+	
+	aDictionary at: #softwareName ifPresent: [:string | self about at: #DataserverName put: string].
+	aDictionary at: #softwareVersion ifPresent: [:string | self about at: #DataserverVersion put: string].
+	aDictionary at: #softwareTimestamp ifPresent: [:string | self about at: #DataserverTimestamp put: (Date fromString: string)].
+	aDictionary at: #modificationDate ifPresent: [:string | self about at: #updated put: (Date fromString: string)]
 ! !
 
 CoViD19Application class slots: {#current}!
@@ -176,36 +180,34 @@ current
 	^current ifNil: [current := self new]
 ! !
 
+SystemAnnouncement subclass: #ComponentAnnouncement
+	slots: {}
+	package: 'Covid19Model'!
+
+ComponentAnnouncement subclass: #AppearanceChanged
+	slots: {}
+	package: 'Covid19Model'!
+
+ComponentAnnouncement subclass: #StructureChanged
+	slots: {}
+	package: 'Covid19Model'!
+
 Object subclass: #Datapoint
 	slots: {#date. #confirmed. #deaths}
 	package: 'Covid19Model'!
 
 !Datapoint methodsFor: 'accessing'!
 
-aspects
-	"<Array of: Symbol>"
-	
-	^#(#confirmed #deaths)
+active
+	"<Integer>"
+
+	^self confirmed - self deaths
 !
 
 confirmed
 	"<Integer>"
 
 	^confirmed
-!
-
-dataProvider
-	"<String>
-	name of the data provider"
-	
-	^self subclassResponsibility
-!
-
-dataProviderAnchor
-	"<a>
-	link to the data provider"
-	
-	^self subclassResponsibility
 !
 
 date
@@ -229,7 +231,8 @@ decided
 maxValue
 	"<Integer>"
 	
-	^self aspects inject: 0 into: [:max :aspect | max max: (self perform:  aspect)]
+	^self primaryAspects allButFirst inject: (self perform: self primaryAspects first) into: [:max :aspect | 
+		max max: (self perform:  aspect)]
 !
 
 maxValueForAspects: someAspects
@@ -237,13 +240,52 @@ maxValueForAspects: someAspects
 	
 	someAspects isEmpty ifTrue: [
 		^self maxValue].
-	^someAspects inject: 0 into: [:max :aspect | max max: (self perform:  aspect)]
+	^someAspects allButFirst inject: (self perform: someAspects first) into: [:max :aspect | max max: (self perform:  aspect)]
+!
+
+minValue
+	"<Integer>"
+	
+	^self primaryAspects allButFirst inject: (self perform: self primaryAspects first) into: [:min :aspect | 
+		min min: (self perform: aspect)]
+!
+
+minValueForAspects: someAspects
+	"<Integer>"
+	
+	someAspects isEmpty ifTrue: [
+		^self minValue].
+	^someAspects allButFirst inject: (self perform: someAspects first) into: [:min :aspect | min min: (self perform:  aspect)]
+!
+
+numbers
+	"<Array of: Number>"
+	
+	^self primaryAspects collect: [:selector | self perform: selector]
+!
+
+primaryAspects
+	"<Array of: Symbol>"
+	
+	^self subclassResponsibility
 !
 
 recovered
 	"<Integer>"
 	
 	^0
+!
+
+secondaryAspects
+	"<Array of: Symbol>"
+	
+	^#()
+!
+
+tertiaryAspects
+	"<Array of: Symbol>"
+	
+	^#()
 ! !
 
 !Datapoint methodsFor: 'arithmetic'!
@@ -275,6 +317,18 @@ copyWithDate: aDate
 	"<Datapoint>"
 	
 	^self class date: aDate confirmed: self confirmed deaths: self deaths
+!
+
+filteredBySecondaryAspects: anAspectGroup
+	"<Datapoint>"
+	
+	^self
+!
+
+filteredByTerniaryAspects: anAspectGroup
+	"<Datapoint>"
+	
+	^self
 ! !
 
 !Datapoint methodsFor: 'initialization'!
@@ -299,6 +353,35 @@ printOn: aStream
 		nextPut: $)
 ! !
 
+!Datapoint methodsFor: 'testing'!
+
+positive
+	^self numbers allSatisfy: #positive
+! !
+
+!Datapoint class methodsFor: 'accessing'!
+
+dataLabel
+	"<String>
+	user facing string for selecting the receiver"
+	
+	^self subclassResponsibility
+!
+
+firstLevelSelector
+	"<Symbol>
+	selector in a json holding the name of the top level"
+	
+	^self subclassResponsibility
+!
+
+secondLevelSelector
+	"<Symbol>
+	selector in a json holding the name of the second level"
+	
+	^self subclassResponsibility
+! !
+
 !Datapoint class methodsFor: 'instance creation'!
 
 date: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger
@@ -309,6 +392,14 @@ date: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger
 !
 
 fromJson: aJson
+	^self subclassResponsibility
+! !
+
+!Datapoint class methodsFor: 'instances'!
+
+example
+	"<Datapoint>"
+	
 	^self subclassResponsibility
 !
 
@@ -325,51 +416,64 @@ dateFromJson: aJson
 	^Date d: aJson d m: aJson m y: aJson y
 ! !
 
-Datapoint subclass: #ConfirmedAndDeathsDatapoint
-	slots: {}
-	package: 'Covid19Model'!
+!Datapoint class methodsFor: 'services'!
 
-!ConfirmedAndDeathsDatapoint methodsFor: 'accessing'!
-
-dataProvider
-	^'Johns Hopkins University'
-!
-
-dataProviderAnchor
-	^Silk A: {
-		'href' -> 'https://github.com/CSSEGISandData/COVID-19'.
-		'target' -> '_blank'.
-		'rel' -> 'noopener'.
-		self dataProvider}
-! !
-
-!ConfirmedAndDeathsDatapoint methodsFor: 'arithmetic'!
-
-+ aDatapoint
-	"<JHUDatapoint>"
+datasetFrom: aSourceString json: aJson meta: aDictionary
+	"<Dataset>"
 	
-	self date = aDatapoint date ifFalse: [
-		self error: 'the dates are not the same'].
-	^self class 
-		date: self date 
-		confirmed: self confirmed + aDatapoint confirmed 
-		deaths: self deaths + aDatapoint deaths
+	^Dataset 
+		source: aSourceString
+		meta: aDictionary
+		series: (aJson series collect: [:json | self fromJson: json])
 !
 
-changeFrom: aDatapoint
-	^self class 
-		date: self date
-		confirmed: self confirmed - aDatapoint confirmed
-		deaths: self deaths - aDatapoint deaths
-! !
+firstLevelTerritoryAboutFromJson: aJson
+	^self territoryAboutFromJson: aJson
+!
 
-!ConfirmedAndDeathsDatapoint class methodsFor: 'instance creation'!
+secondLevelTerritoryAboutFromJson: aJson
+	^self territoryAboutFromJson: aJson
+!
 
-fromJson: aJson
-	^self 
-		date: (self dateFromJson: aJson date)
-		confirmed: (aJson at: #c ifAbsent: [0])
-		deaths: (aJson at: #d ifAbsent: [0])
+territoriesFrom: aSourceString json: aJson
+	"<Array of: Territory>"
+	
+	| meta territories |
+	meta := aJson meta.
+	territories := OrderedCollection new.
+	(aJson data groupedBy: self firstLevelSelector) keysAndValuesDo: [:name :jsons |
+		territories add: (jsons size = 1 
+			ifTrue: [
+				self territory: name from: aSourceString json: jsons first meta: meta]
+			ifFalse: [
+				self 
+					territory: name 
+					parts: (jsons collect: [:json |
+						self territory: (json at: self secondLevelSelector) from: aSourceString json: json meta: meta])
+					fromJson: jsons first])].
+	^territories
+!
+
+territory: aString from: aSourceString json: aJson meta: aDictionary
+	"<Territory>"
+	
+	^Territory 
+		name: aString 
+		about: (self secondLevelTerritoryAboutFromJson: aJson)
+		dataset: (self datasetFrom: aSourceString json: aJson meta: aDictionary)
+!
+
+territory: aString parts: someTerritories fromJson: aJson
+	"<Territory>"
+	
+	^Territory 
+		name: aString 
+		about: (self firstLevelTerritoryAboutFromJson: aJson)
+		parts: someTerritories
+!
+
+territoryAboutFromJson: aJson
+	^Dictionary new
 ! !
 
 Datapoint subclass: #JHUDatapoint
@@ -378,20 +482,12 @@ Datapoint subclass: #JHUDatapoint
 
 !JHUDatapoint methodsFor: 'accessing'!
 
-aspects
-	^super aspects, #(#recovered)
+active
+	^self confirmed - self recovered - self deaths
 !
 
-dataProvider
-	^'Johns Hopkins University'
-!
-
-dataProviderAnchor
-	^Silk A: {
-		'href' -> 'https://github.com/CSSEGISandData/COVID-19'.
-		'target' -> '_blank'.
-		'rel' -> 'noopener'.
-		self dataProvider}
+primaryAspects
+	^#(#confirmed #recovered #deaths #active)
 !
 
 recovered
@@ -445,6 +541,20 @@ initializeDate: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger recove
 	recovered := aRecoveredInteger
 ! !
 
+!JHUDatapoint class methodsFor: 'accessing'!
+
+dataLabel
+	^'World data'
+!
+
+firstLevelSelector
+	^#country
+!
+
+secondLevelSelector
+	^#state
+! !
+
 !JHUDatapoint class methodsFor: 'instance creation'!
 
 date: aDate confirmed: aConfirmedInteger deaths: aDeathsInteger recovered: aRecoveredInteger
@@ -460,6 +570,18 @@ fromJson: aJson
 		confirmed: (aJson at: #c ifAbsent: [0])
 		deaths: (aJson at: #d ifAbsent: [0])
 		recovered: (aJson at: #r ifAbsent: [0])
+! !
+
+!JHUDatapoint class methodsFor: 'instances'!
+
+example
+	"JHUDatapoint example"
+	
+	^self 
+		date: (Date d: 11 m: 4 y: 2020) 
+		confirmed: 124908
+		deaths: 2736
+		recovered: 57400
 !
 
 zero
@@ -470,11 +592,92 @@ zero
 		recovered: 0
 ! !
 
-Datapoint subclass: #RKIDatapoint
-	slots: {#byAge}
+Datapoint subclass: #JHUUSDatapoint
+	slots: {}
 	package: 'Covid19Model'!
 
+!JHUUSDatapoint methodsFor: 'accessing'!
+
+primaryAspects
+	^#(#confirmed #deaths)
+! !
+
+!JHUUSDatapoint methodsFor: 'arithmetic'!
+
++ aDatapoint
+	"<JHUDatapoint>"
+	
+	self date = aDatapoint date ifFalse: [
+		self error: 'the dates are not the same'].
+	^self class 
+		date: self date 
+		confirmed: self confirmed + aDatapoint confirmed 
+		deaths: self deaths + aDatapoint deaths
+!
+
+changeFrom: aDatapoint
+	^self class 
+		date: self date
+		confirmed: self confirmed - aDatapoint confirmed
+		deaths: self deaths - aDatapoint deaths
+! !
+
+!JHUUSDatapoint class methodsFor: 'accessing'!
+
+dataLabel
+	^'US data'
+!
+
+firstLevelSelector
+	^#state
+!
+
+secondLevelSelector
+	^#county
+! !
+
+!JHUUSDatapoint class methodsFor: 'instance creation'!
+
+fromJson: aJson
+	^self 
+		date: (self dateFromJson: aJson date)
+		confirmed: (aJson at: #c ifAbsent: [0])
+		deaths: (aJson at: #d ifAbsent: [0])
+! !
+
+!JHUUSDatapoint class methodsFor: 'instances'!
+
+example
+	"JHUUSDatapoint example"
+	
+	^self 
+		date: (Date d: 11 m: 4 y: 2020) 
+		confirmed: 181026
+		deaths: 8627
+! !
+
+!JHUUSDatapoint class methodsFor: 'services'!
+
+territoryAboutFromJson: aJson
+	^#{#uid -> aJson uid. 
+		#population -> aJson population}
+! !
+
+Datapoint subclass: #RKIDatapoint
+	slots: {#byAge. #caseCount}
+	package: 'Covid19Model'!
+!RKIDatapoint commentStamp!
+Datapoint for RKI data
+
+A dictionary `byAge` holds the cases by age group in another dictionary keyed by sex.
+
+`caseCount` is a cache for thew total numbers!
+
 !RKIDatapoint methodsFor: 'accessing'!
+
+active
+	^self confirmed - self recovered - self deaths
+!
 
 byAge
 	"<Dictionary key: String value: Integer>"
@@ -482,44 +685,39 @@ byAge
 	^byAge
 !
 
-casecount
-	"<Casecount>"
+caseCount
+	"<CaseCount>"
 	
-	^self byAge values inject: Casecount zero into: [:sum :sexDict |
-		sexDict values  inject: sum into: [:count :casecount |
-			count + casecount]]
+	^caseCount ifNil: [
+		caseCount := self byAge values inject: CaseCount zero into: [:sum :sexDict |
+			sexDict values  inject: sum into: [:all :count | 
+				all + count]]]
 !
 
 confirmed
-	^confirmed ifNil: [confirmed := self casecount confirmed]
-!
-
-dataProvider
-	^'Robert Koch Institut'
-!
-
-dataProviderAnchor
-	^Silk A: {
-		'href' -> 'https://npgeo-corona-npgeo-de.hub.arcgis.com/datasets/dd4580c810204019a7b8eb3e0b329dd6_0/data'.
-		'target' -> '_blank'.
-		'rel' -> 'noopener'.
-		self dataProvider}
+	^self caseCount confirmed
 !
 
 deaths
-	^deaths ifNil: [deaths := self casecount deaths]
+	^self caseCount deaths
 !
 
-female
-	"<Casecount>"
-	
-	^self byAge values inject: 0 into: [:sum :sexDict | sum + (sexDict at: 'W')]
+primaryAspects
+	^#(#confirmed #recovered #deaths #active)
 !
 
-male
-	"<Casecount>"
-	
-	^self byAge values inject: 0 into: [:sum :sexDict | sum + (sexDict at: 'M')]
+recovered
+	^self caseCount recovered
+!
+
+secondaryAspects
+	^self byAge keys
+!
+
+tertiaryAspects
+	^self byAge values inject: Set new into: [:set :ageDict |
+		set addAll: ageDict keys.
+		set]
 ! !
 
 !RKIDatapoint methodsFor: 'arithmetic'!
@@ -535,7 +733,7 @@ male
 		| newSexDict |
 		newSexDict := (newByAge at: age ifAbsent: [Dictionary new]) copy.
 		sexDict keysAndValuesDo: [:sex :count |
-			newSexDict at: sex put: (newSexDict at: sex ifAbsent: [Casecount zero]) + count].
+			newSexDict at: sex put: (newSexDict at: sex ifAbsent: [CaseCount zero]) + count].
 		newByAge at: age put: newSexDict].
 	^self class date: self date byAge: newByAge
 !
@@ -547,7 +745,7 @@ changeFrom: aDatapoint
 		| newSexDict |
 		newSexDict := (newByAge at: age ifAbsent: [Dictionary new]) copy.
 		sexDict keysAndValuesDo: [:sex :count |
-			newSexDict at: sex put: (newSexDict at: sex ifAbsent: [Casecount zero]) - count].
+			newSexDict at: sex put: (newSexDict at: sex ifAbsent: [CaseCount zero]) - count].
 		newByAge at: age put: newSexDict].
 	^self class date: self date byAge: newByAge
 ! !
@@ -562,6 +760,30 @@ asZero
 
 copyWithDate: aDate
 	^self class date: aDate byAge: self byAge
+!
+
+filteredBySecondaryAspects: anAspectGroup
+	| dict |
+	dict := Dictionary new.
+	anAspectGroup selectedAspects do: [:aspect |
+		(self byAge includesKey: aspect) ifTrue: [
+			dict at: aspect put: (self byAge at: aspect)]].
+	^self class date: self date byAge: dict
+!
+
+filteredByTerniaryAspects: anAspectGroup
+	| newAgeDict |
+	newAgeDict := Dictionary new.
+	self byAge keys do: [:age |
+		| sexDict newSexDict |
+		sexDict := self byAge at: age.
+		newSexDict := Dictionary new.
+		anAspectGroup selectedAspects do: [:aspect |
+			(sexDict includesKey: aspect) ifTrue: [
+				newSexDict at: aspect put: (sexDict at: aspect)]].
+		newSexDict ifNotEmpty: [
+			newAgeDict at: age put: newSexDict]].
+	^self class date: self date byAge: newAgeDict
 ! !
 
 !RKIDatapoint methodsFor: 'initialization'!
@@ -569,6 +791,20 @@ copyWithDate: aDate
 initializeDate: aDate byAge: aByAgeDictionary
 	date := aDate.
 	byAge := aByAgeDictionary
+! !
+
+!RKIDatapoint class methodsFor: 'accessing'!
+
+dataLabel
+	^'German data'
+!
+
+firstLevelSelector
+	^#bundesland
+!
+
+secondLevelSelector
+	^#landkreis
 ! !
 
 !RKIDatapoint class methodsFor: 'instance creation'!
@@ -587,9 +823,19 @@ fromJson: aJson
 		| dict |
 		dict := Dictionary new.
 		sexDict keysAndValuesDo: [:sex :value |
-			dict at: sex put: (Casecount fromJson: value)].
+			dict at: sex put: (CaseCount fromJson: value)].
 		newByAge at: age put: dict].
 	^self date: (self dateFromJson: aJson date) byAge: newByAge
+! !
+
+!RKIDatapoint class methodsFor: 'instances'!
+
+example
+	"RKIDatapoint example"
+	
+	^self 
+		date: (Date d: 11 m: 4 y: 2020) 
+		byAge: Dictionary new
 !
 
 zero
@@ -598,41 +844,43 @@ zero
 		byAge: Dictionary new
 ! !
 
-Object subclass: #Dataseries
-	slots: {#series}
+!RKIDatapoint class methodsFor: 'services'!
+
+firstLevelTerritoryAboutFromJson: aJson
+	^#{#id -> aJson idBundesland}
+!
+
+secondLevelTerritoryAboutFromJson: aJson
+	^#{#id -> aJson idLandkreis}
+! !
+
+Object subclass: #Dataset
+	slots: {#source. #about. #series}
 	package: 'Covid19Model'!
+!Dataset commentStamp!
+A dataset is a date series of datapoints for a territory from a provider at a certain time
 
-!Dataseries methodsFor: 'accessing'!
+The `series` is keyed by `date` representing a *day* (not a timestamp).
+The datapoints in `series` are ordered from the frist date at the beginning and the last at the end of the collection.
 
-caseSeries
-	"<Dataseries>"
+The datapoints contain the current accumulated numbers.
+Therefore the values are growing monotonously.
+
+Adding two instances results in a new instance with both series added. For missing entries in one series, the previous value of that series is used (not zero!!).!
+
+!Dataset methodsFor: 'accessing'!
+
+about
+	"<Dictionary>
+	metadata about the receiver"
 	
-	^self
+	^about ifNil: [Dictionary new]
 !
 
-changeSeries
-	"<Dataseries>"
-	
-	| wst rst last |
-	wst := OrderedCollection new writeStream.
-	rst := self series readStream.
-	last := nil.
-	[rst atEnd] whileFalse: [
-		| datapoint | 
-		datapoint := rst next.
-		wst nextPut: (last 
-			ifNil: [datapoint]
-			ifNotNil: [datapoint changeFrom: last]).
-		last := datapoint].
-	^self class series: wst contents
-!
-
-dataProvider
-	^self series first dataProvider
-!
-
-dataProviderAnchor
-	^self series first dataProviderAnchor
+dataDateString
+	^(self about at: #updated ifAbsent: [nil])
+		ifNotNil: #asLocaleString
+		ifNil: [self lastDate asLocaleDateString]
 !
 
 firstDate
@@ -647,16 +895,10 @@ last
 	^self series last
 !
 
-lastConfirmed
-	"<Integer>"
-	
-	^self series last confirmed
-!
-
 lastDate
 	"<Date>"
 	
-	^self series last date
+	^self last date
 !
 
 lastDateOfMonths
@@ -678,35 +920,79 @@ lastDateOfWeeks
 	^(self series collect: #date) select: [:date | date dayOfWeek = 7]
 !
 
-lastDeaths
+lastValueOf: anAspect
 	"<Integer>"
 	
-	^self series last deaths
+	self isEmpty ifTrue: [
+		^0].
+	^[self last perform: anAspect] on: MessageNotUnderstood do: [:ex | ex return: 0]
 !
 
-lastRecovered
-	"<Integer>"
+primaryAspects
+	"<Array of: Symbol>
+	selectors of datapoint instances in the series which may be shown"
 	
-	^self series last recovered
+	^self last primaryAspects
+!
+
+secondaryAspects
+	"<Array of: Symbol>
+	selectors of datapoint instances in the series which may be shown"
+	
+	^(self series inject: Set new into: [:set :datapoint | set addAll: datapoint secondaryAspects. set]) asArray sorted
 !
 
 series
-	"<Array of: Datapoints>"
+	"<Array of: Datapoint>
+	datapoints for one territory from one provider"
 	
-	^series
+	^series ifNil: [#()]
+!
+
+source
+	"<String>
+	the id of the datasource from where I come"
+	
+	^source
+!
+
+tertiaryAspects
+	"<Array of: Symbol>
+	selectors of datapoint instances in the series which may be shown"
+	
+	^(self series inject: Set new into: [:set :datapoint | set addAll: datapoint tertiaryAspects. set]) asArray sorted
 ! !
 
-!Dataseries methodsFor: 'arithmetic'!
+!Dataset methodsFor: 'arithmetic'!
 
-+ aDataseries
-	"<Dataseries>"
++ aDataset
+	"<Dataset>"
+	
+	| newAbout |
+	self isEmpty ifTrue: [
+		^aDataset].
+	aDataset isEmpty ifTrue: [
+		^self].
+	newAbout := self about copy.
+	newAbout at: #updated
+		ifPresent: [:updateTimestamp |
+			aDataset about at: #updated ifPresent: [:newUpdateTimestamp |
+				newAbout at: #updated put: (updateTimestamp max: newUpdateTimestamp)]]
+		ifAbsent: [
+			aDataset about at: #updated ifPresent: [:newUpdateTimestamp |
+				newAbout at: #updated put: newUpdateTimestamp]].
+	^self class source: self source about: newAbout series: (self plusSeries: aDataset)
+!
 
+plusSeries: aDataset
+	"<Array of: Datapoint>"
+	
 	| wst lastSelf lastArg |
 	wst := OrderedCollection new writeStream.
 	lastSelf := nil.
 	lastArg := nil.
 	self
-		with: aDataseries
+		with: aDataset
 		onlyInSelf: [:datapoint | 
 			| lastOther |
 			lastOther := lastArg ifNil: [datapoint asZero].
@@ -721,15 +1007,15 @@ series
 			wst nextPut: datapoint1 + datapoint2.
 			lastSelf := datapoint1.
 			lastArg := datapoint2].
-	^self class series: wst contents
+	^wst contents
 !
 
-with: aSeries onlyInSelf: onlyInSelfBlock onlyInArg: onlyInArgBlock inBoth: inBothBlock
+with: aDataset onlyInSelf: onlyInSelfBlock onlyInArg: onlyInArgBlock inBoth: inBothBlock
 	"iterates throu both collections of datapoints and processes them in date order"
 	
 	| rstSelf rstArg |
 	rstSelf := self series readStream.
-	rstArg := aSeries series readStream.
+	rstArg := aDataset series readStream.
 	[
 	rstSelf atEnd and: [
 	rstArg atEnd]] whileFalse: [
@@ -751,192 +1037,471 @@ with: aSeries onlyInSelf: onlyInSelfBlock onlyInArg: onlyInArgBlock inBoth: inBo
 							ifFalse: [onlyInArgBlock value: rstArg next]]]]]
 ! !
 
-!Dataseries methodsFor: 'initialization'!
+!Dataset methodsFor: 'copying'!
 
-initializeSeries: someDatapoints
+changeDataset
+	"<Dataset>"
+	
+	| last |
+	last := self series first.
+	^self copyWithSeries: {last}, (self series collect: [:datapoint |
+			[datapoint changeFrom: last] ensure: [
+				last := datapoint]])
+!
+
+copyWithSeries: someDatapoints
+	"<Dataset>"
+	
+	^self class source: self source about: self about series: someDatapoints
+!
+
+extendedTo: aDate
+	"<Dataset>"
+	
+	| extension last |
+	last := self last.
+	extension := (self lastDate nextDay to: aDate) collect: [:date |
+		last copyWithDate: date].
+	^self copyWithSeries: self series, extension
+!
+
+filteredBySecondaryAspects: anAspectGroup
+	"<Dataset>"
+	
+	anAspectGroup nothingSelected ifTrue: [
+		^self].
+	^self copyWithSeries: (self series collect: [:datapoint |
+		datapoint filteredBySecondaryAspects: anAspectGroup])
+!
+
+filteredByTerniaryAspects: anAspectGroup
+	"<Dataset>"
+	
+	anAspectGroup nothingSelected ifTrue: [
+		^self].
+	^self copyWithSeries: (self series collect: [:datapoint |
+		datapoint filteredByTerniaryAspects: anAspectGroup])
+! !
+
+!Dataset methodsFor: 'initialization'!
+
+initializeSource: aSourceString about: aDictionary series: someDatapoints
+	source := aSourceString.
+	about := aDictionary.
 	series := someDatapoints
 ! !
 
-!Dataseries class methodsFor: 'instance creation'!
+!Dataset methodsFor: 'printing'!
 
-series: someDatapoints
-	| inst |
-	inst := self new.
-	inst initializeSeries: someDatapoints.
-	^inst
+printOn: aStream
+	aStream 
+		nextPutAll: self class name;
+		nextPut: $[;
+		nextPutAll: self source;
+		nextPutAll: ', ';
+		nextPutAll: self series size printString;
+		nextPut: $]
 ! !
 
-Object subclass: #Dataset
-	slots: {#area. #provider. #metadata. #dataseries}
-	package: 'Covid19Model'!
-!Dataset commentStamp!
-A dataset is a time series for an area (country or such) from a provider at a certain time
+!Dataset methodsFor: 'testing'!
 
-An area can have multiple datasets from differt providers.!
+isEmpty
+	^self series isEmpty
+!
+
+positive
+	"<Boolean>
+	true, if all data are positive"
+	
+	^self series allSatisfy: #positive
+! !
 
 !Dataset class methodsFor: 'instance creation'!
 
-area: anArea provider: aProvider metadata: aDictionary dataseries: aDataseries
+aboutFrom: aDictionary
+	"<Dictionary>"
+	
+	| dict |
+	dict := Dictionary new.
+	dict at: #updated put: (Date fromString: (aDictionary at: #modificationDate)).
+	^dict
+!
+
+source: aSourceString about: aDictionary series: someDatapoints
+	| inst |
+	inst := self new.
+	inst initializeSource: aSourceString about: aDictionary series: someDatapoints.
+	^inst
+!
+
+source: aSourceString meta: aDictionary series: someDatapoints
+	^self source: aSourceString about: (self aboutFrom: aDictionary) series: someDatapoints
 ! !
 
-Object subclass: #GeographicArea
-	slots: {#name. #series. #properties}
+!Dataset class methodsFor: 'instances'!
+
+example
+	"Dataset example"
+	
+	^self 
+		source: 'JHU'
+		about: #{} 
+		series: ((OrderedCollection new)
+			add: (JHUDatapoint date: (Date d: 1 m: 4 y: 2020) confirmed: 20 deaths: 3 recovered: 6);
+			add: (JHUDatapoint date: (Date d: 2 m: 4 y: 2020) confirmed: 42 deaths: 4 recovered: 11);
+			add: (JHUDatapoint date: (Date d: 3 m: 4 y: 2020) confirmed: 56 deaths: 6 recovered: 18);
+			add: (JHUDatapoint date: (Date d: 4 m: 4 y: 2020) confirmed: 83 deaths: 8 recovered: 27);
+			add: (JHUDatapoint date: (Date d: 5 m: 4 y: 2020) confirmed: 108 deaths: 8 recovered: 40);
+			add: (JHUDatapoint date: (Date d: 6 m: 4 y: 2020) confirmed: 154 deaths: 9 recovered: 51);
+			add: (JHUDatapoint date: (Date d: 7 m: 4 y: 2020) confirmed: 185 deaths: 9 recovered: 58);
+			add: (JHUDatapoint date: (Date d: 8 m: 4 y: 2020) confirmed: 227 deaths: 14 recovered: 82);
+			add: (JHUDatapoint date: (Date d: 9 m: 4 y: 2020) confirmed: 276 deaths: 21 recovered: 113);
+			yourself)
+!
+
+examplePlus5Days
+	"Dataset examplePlus5Days"
+	
+	^self 
+		source: 'JHU'
+		about: #{} 
+		series: ((OrderedCollection new)
+			add: (JHUDatapoint date: (Date d: 6 m: 4 y: 2020) confirmed: 20 deaths: 3 recovered: 6);
+			add: (JHUDatapoint date: (Date d: 7 m: 4 y: 2020) confirmed: 42 deaths: 4 recovered: 11);
+			add: (JHUDatapoint date: (Date d: 8 m: 4 y: 2020) confirmed: 56 deaths: 6 recovered: 18);
+			add: (JHUDatapoint date: (Date d: 9 m: 4 y: 2020) confirmed: 83 deaths: 8 recovered: 27);
+			add: (JHUDatapoint date: (Date d: 10 m: 4 y: 2020) confirmed: 108 deaths: 8 recovered: 40);
+			add: (JHUDatapoint date: (Date d: 11 m: 4 y: 2020) confirmed: 154 deaths: 9 recovered: 51);
+			add: (JHUDatapoint date: (Date d: 12 m: 4 y: 2020) confirmed: 185 deaths: 9 recovered: 58);
+			add: (JHUDatapoint date: (Date d: 13 m: 4 y: 2020) confirmed: 227 deaths: 14 recovered: 82);
+			add: (JHUDatapoint date: (Date d: 14 m: 4 y: 2020) confirmed: 276 deaths: 21 recovered: 113);
+			yourself)
+!
+
+zero
+	^self new
+! !
+
+!Dataset class methodsFor: 'services'!
+
+totalOfAll: someDatasets
+	"<Dataset>"
+	
+	^someDatasets inject: self zero into: [:sum :dataset | sum + dataset]
+! !
+
+Object subclass: #Datasource
+	slots: {#id. #url. #dataClass. #about. #updated}
 	package: 'Covid19Model'!
 
-!GeographicArea methodsFor: 'accessing'!
+!Datasource methodsFor: 'accessing'!
 
-caseSeries
-	"<Dataseries>"
+about
+	"<Dictionary>
+	metadata about the receiver"
 	
-	^self series caseSeries
+	^about ifNil: [about := Dictionary new]
 !
 
-changeSeries
-	"<Dataseries>"
+dataClass
+	"<Datapoint class>
+	the specific data class for this source"
+
+	^dataClass
+!
+
+dataHome
+	"<String>
+	the directory with all data files"
+
+	^'https://covidcrt.uber.space/data/'
+!
+
+dataLabel
+	"<String>
+	user facing string for selecting a datasource"
+
+	^self dataClass dataLabel
+!
+
+id
+	"<String>
+	short unique name of the receiver.
+	Used as key for the #datasources dictionary of the application"
 	
-	^self series changeSeries
+	^id
 !
 
-dataDateString
-	^self modificationDate 
-		ifNotNil: #asLocaleString
-		ifNil: [self series lastDate asLocaleDateString]
+provider
+	"<String>"
+	
+	^self about at: #ProviderName ifAbsent: ['(no provider)']
 !
 
-dataVersionInfo
-	^{	Silk SPAN: {'class' -> 'VersionLabel'. 'Data:'}.
-		Silk SPAN: {'class' -> 'VersionName'. self series dataProviderAnchor}.
-		Silk SPAN: {'class' -> 'VersionDate'. self dataDateString}}
+updated
+	"<Date>
+	timestamp of the last update of the receiver"
+	
+	^updated
+!
+
+url
+	"<String>
+	the json file"
+	
+	^url
+! !
+
+!Datasource methodsFor: 'actions'!
+
+getJson
+	"<Promise>"
+	
+	^((Platform fetch: self dataHome, self url) then: #json) then: [:json |
+		self pickMetadataFrom: json meta.
+		json]
+!
+
+pickMetadataFrom: aDictionary
+	aDictionary at: #providerShortname ifPresent: [:string | self about at: #ProviderId put: string].
+	aDictionary at: #providerName ifPresent: [:string | self about at: #ProviderName put: string].
+	aDictionary at: #providerUrl ifPresent: [:string | self about at: #ProviderUrl put: string].
+	aDictionary at: #url ifPresent: [:string | self about at: #DataUrl put: string].
+	aDictionary at: #modificationDate ifPresent: [:string | self about at: #updated put: (Date fromString: string)]
+!
+
+rootTerritoryFromJson: aJson
+	"<Territory>
+	a synthetic territory with all top level territories from aJson as parts.
+	Used to sort the parts and sum up the datasets"
+	
+	^Territory name: '' about: nil parts: (self dataClass territoriesFrom: self id json: aJson)
+! !
+
+!Datasource methodsFor: 'initialization'!
+
+initializeId: anIdString url: anUrlString dataClass: aDatapointClass
+	id := anIdString.
+	url := anUrlString.
+	dataClass := aDatapointClass.
+	updated := Date now
+! !
+
+!Datasource methodsFor: 'printing'!
+
+printOn: aStream
+	aStream 
+		nextPutAll: self class name;
+		space;
+		nextPutAll: self id;
+		nextPut: $(;
+		nextPutAll: self dataClass name asString;
+		nextPutAll: ' ';
+		nextPutAll: self url;
+		nextPut: $)
+! !
+
+!Datasource class methodsFor: 'instance creation'!
+
+id: anIdString url: anUrlString dataClass: aDatapointClass
+	| inst |
+	inst := self new.
+	inst initializeId: anIdString url: anUrlString dataClass: aDatapointClass.
+	^inst
+! !
+
+Object subclass: #Territory
+	slots: {#name. #about. #wikiData. #datasets. #parts. #announcer. #loader}
+	package: 'Covid19Model'!
+!Territory commentStamp!
+A country, state, county, even the world is modelled as territory with parts.
+The world is the root of the hierarchy of territories with countries as parts. (Continents maybe next).
+
+A territory has one or more `datasets` with provider information and a time series of datapoints. When a territory has `parts`, its datasets are the sum of the datasets of the parts.
+
+More specific information about the territory is available as dictionary in `about`.!
+
+!Territory methodsFor: 'accessing'!
+
+about
+	"<Dictionary>
+	metadata about the receiver"
+	
+	^about ifNil: [about := Dictionary new]
+!
+
+announcer
+	"<Announcer>
+	holds all subscriptions to changes of the receiver"
+	
+	^announcer ifNil: [announcer := Announcer new]
+!
+
+datasetAt: aString
+	"<Dataset | nil>"
+	
+	^self datasets detect: [:dataset | dataset source = aString] ifNone: [nil]
+!
+
+datasets
+	"<SequenceableCollection of: Dataset>
+	datasets from different providers"
+	
+	^datasets ifNil: [datasets := OrderedCollection new]
+!
+
+flagAlt
+	"<String>
+	alternative name of the flag"
+	
+	self wikiData ifNotNil: [
+		^'Flag of ', self name].
+	^''
+!
+
+flagUrl
+	"<String>
+	URL to the flag"
+	
+	self wikiData ifNotNil: [
+		^self wikiData flag].
+	^''
+!
+
+id
+	"<Integer | nil>"
+	
+	^self about at: #id ifAbsent: [nil]
 !
 
 lastConfirmed
 	"<Integer>"
 	
-	^self series lastConfirmed
+	self datasets isEmpty ifTrue: [
+		^0].
+	^self datasets first lastValueOf: #confirmed
 !
 
 lastDate
 	"<Date>"
 	
-	^self series lastDate
+	^self datasets allButFirst inject: self datasets first lastDate into: [:max :dataset | max max: dataset lastDate]
 !
 
-lastDeaths
-	"<Integer>"
+loader
+	"<Promise | nil>
+	primise to load data"
 	
-	^self series lastDeaths
-!
-
-lastRecovered
-	"<Integer>"
-	
-	^self series lastRecovered
-!
-
-metadata
-	"<Dictionary>"
-	
-	^self properties at: #metadata ifAbsent: [Dictionary new]
-!
-
-metadata: aDictionary
-	self properties at: #metadata put: aDictionary
-!
-
-modificationDate
-	"<Date>"
-
-	(self metadata at: #modificationDate) ifNotNil: [:date | 
-		^Date fromString: date].
-	^Date now
+	^loader
 !
 
 name
-	"<String>"
+	"<String>
+	the name from data"
 	
 	^name
+!
+
+partNamed: aString
+	"<Territory | nil>"
+	
+	^self parts detect: [:part | part name = aString] ifNone: [nil]
+!
+
+parts
+	"<OrderedCollection of: Territory>
+	direct children of the receiver"
+	
+	^parts ifNil: [parts := OrderedCollection new]
 !
 
 population
 	"<Integer>"
 	
-	^self properties at: #population ifAbsent: [0]
+	^self about at: #population ifAbsent: [
+		self hasParts 
+			ifTrue: [
+				self about at: #population put: (self parts inject: 0 into: [:sum :territory | sum + territory population]).
+				self about at: #population]
+			ifFalse: [0]]
 !
 
-population: anInteger
-	self properties at: #population put: anInteger
-!
-
-properties
-	"<Dictionary>"
+presentationName
+	"<String>
+	the name for the UI"
 	
-	^properties ifNil: [properties := Dictionary new]
+	self wikiData ifNotNil: [
+		^self wikiData presentationName].
+	^self name
 !
 
-series
-	"<Dataseries>"
+wikiData
+	"<TerritoryData | nil>"
 	
-	^series
+	^wikiData
 !
 
-seriesDeaths
-	"<Dataseries>"
-	
-	^self series
+wikiData: aTerritoryData
+	wikiData := aTerritoryData
 ! !
 
-!GeographicArea methodsFor: 'actions'!
+!Territory methodsFor: 'actions'!
 
-addVersionInfo
-	| versions |
-	versions := '#Versions' asSilk.
-	versions resetContents.
-	versions << self dataVersionInfo
+announceChanged
+	self announcer announce: StructureChanged new
 !
 
-areaInfo
-	| span |
-	span := Silk SPAN: 'class' -> 'AreaInfo'.
-	self population isZero ifFalse: [
-		^span << {Silk SPAN: 'Population: '. Silk SPAN: self population separatedThousandsString}].
-	^span
-!
-
-recreateCharts
-	| graphics |
-	graphics := '#Graphics' asSilk.
-	graphics resetContents.
-	graphics << {
-		self graphicsHeader.
-	 	self casechart.
-	 	self changechart.
-		Silk DIV: 'id' -> 'Tooltip'}
-!
-
-showInfo
-	"add nice info graphics"
-	
-	self recreateCharts.
-	self addVersionInfo
+load: aDatasource for: anApplication doing: oneArgumentBlock
+	loader := aDatasource getJson then: [:json |
+		| root |
+		anApplication pickMetadataFrom: json meta.
+		root := aDatasource rootTerritoryFromJson: json.
+		oneArgumentBlock value: root.
+		parts := root parts.
+		self datasets add: root datasets first.
+		loader := nil.
+		self announceChanged].
+	self announceChanged
 ! !
 
-!GeographicArea methodsFor: 'comparing'!
+!Territory methodsFor: 'comparing'!
 
-< aGeographicArea
-	^self lastConfirmed < aGeographicArea lastConfirmed
+< aTerritory
+	^self lastConfirmed < aTerritory lastConfirmed
 !
 
-<= aGeographicArea
-	^self lastConfirmed <= aGeographicArea lastConfirmed
+<= aTerritory
+	^self lastConfirmed <= aTerritory lastConfirmed
 !
 
-> aGeographicArea
-	^self lastConfirmed > aGeographicArea lastConfirmed
+> aTerritory
+	^self lastConfirmed > aTerritory lastConfirmed
 !
 
->= aGeographicArea
-	^self lastConfirmed >= aGeographicArea lastConfirmed
+>= aTerritory
+	^self lastConfirmed >= aTerritory lastConfirmed
+! !
+
+!Territory methodsFor: 'initialization'!
+
+initializeName: aString about: aDictionary parts: someTerritories datasets: someDatasets
+	name := aString.
+	(aDictionary notNil and: [
+	aDictionary notEmpty]) ifTrue: [about := aDictionary].
+	(someTerritories notNil and: [
+	someTerritories notEmpty]) ifTrue: [parts := someTerritories].
+	(someDatasets notNil and: [
+	someDatasets notEmpty]) ifTrue: [datasets := someDatasets]
 !
+
+resetPopulation
+	self hasParts ifFalse: [
+		^self].
+	self about removeKey: #population ifAbsent: [].
+	self parts do: #resetPopulation
+! !
+
+!Territory methodsFor: 'printing'!
 
 printOn: aStream
 	aStream 
@@ -946,420 +1511,508 @@ printOn: aStream
 		nextPut: $)
 ! !
 
-!GeographicArea methodsFor: 'html'!
+!Territory methodsFor: 'testing'!
 
-asListItem
-	"add html elements to anElement"
-	
-	^{self emptySpan. self emptySubspan. self asNameSpan. self asValueSpan}
+hasFlag
+	self wikiData ifNil: [
+		^false].
+	^self wikiData hasFlag
 !
 
-asNameSpan
-	"<span>
-	the name of the list item"
-	
-	| item |
-	item := Silk SPAN: {
-		'class' -> 'ListItem'. 
-		(Silk SPAN: {'class' -> 'StateName'. self name})}.
-	item on: #click bind: [
-		('#CountryList' asSilk allAt: '.selected') do: [:selected |
-			selected attrAt: 'class' put: 'ListItem'].
-		item attrAt: 'class' put: 'ListItem selected'. 
-		self showInfo].
-	^item
+hasParts
+	^self parts notEmpty
 !
 
-asPartListItem
-	^self asListItem
-!
-
-asValueSpan
-	"<span>
-	the value of the list item"
-	
-	^Silk SPAN: {
-		'class' -> 'ListValue'. 
-		self lastConfirmed separatedThousandsString}
-!
-
-casechart
-	^Silk DIV: {
-		'id' -> 'Casechart'.
-		(Casechart for: self on: self caseSeries aspects: Casechart currentAspects) html}
-!
-
-changechart
-	^Silk DIV: {
-		'id' -> 'Changechart'.
-		(Changechart for: self on: self changeSeries aspects: Changechart currentAspects) html}
-!
-
-emptySpan
-	"<span>
-	in place of a +/- button"
-	
-	^Silk SPAN: 'class' -> 'treeSpan'
-!
-
-emptySubspan
-	"<span>
-	in place of a +/- button"
-	
-	^Silk SPAN: 'class' -> 'subtreeSpan'
-!
-
-graphicsHeader
-	^Silk DIV << {
-		'class' -> 'GraphicsHeader'.
-		Silk H2: self name.
-		self areaInfo}
+isLoading
+	^self loader notNil
 ! !
 
-!GeographicArea methodsFor: 'initialization'!
+!Territory class methodsFor: 'instance creation'!
 
-initializeName: aString series: aDataseries properties: aDictionary
-	name := aString.
-	series := aDataseries.
-	properties := aDictionary
-! !
-
-!GeographicArea class methodsFor: 'instance creation'!
-
-allFromJHUJson: aJson
-	"<Array of: GeographicArea>"
-
-	| countries |
-	countries := self allFromJHUSeries: (aJson data collect: [:countryJson | JHUSeries fromJson: countryJson]).
-	countries do: [:country | country metadata: aJson meta].
-	^countries
+name: aString about: aDictionary dataset: aDataset
+	^self 
+		name: aString 
+		about: aDictionary 
+		parts: #()
+		dataset: aDataset
 !
 
-allFromJHUSeries: someSeries
-	"<Array of: GeographicArea>"
-	
-	^self subclassResponsability
+name: aString about: aDictionary parts: someTerritories
+	^self 
+		name: aString 
+		about: aDictionary 
+		parts: someTerritories
+		dataset: (Territory totalDatasetFromAll: someTerritories)
 !
 
-allFromRKIJson: aJson
-	"<Array of: GeographicArea>"
-	
-	| countries |
-	countries := self allFromRKISeries: (aJson data collect: [:countryJson | RKISeries fromJson: countryJson]).
-	countries do: [:country | country metadata: aJson meta].
-	^countries
+name: aString about: aDictionary parts: someTerritories dataset: aDataset
+	^self 
+		name: aString 
+		about: aDictionary 
+		parts: (someTerritories sort: [:a :b | a > b])
+		datasets: {aDataset}
 !
 
-allFromRKISeries: someSeries
-	"<Array of: GeographicArea>"
-	
-	^self subclassResponsability
-!
-
-allFromUSJHUJson: aJson
-	"<Array of: GeographicArea>"
-
-	| countries |
-	countries := self allFromUSJHUSeries: (aJson data collect: [:countryJson | JHUUSSeries fromJson: countryJson]).
-	countries do: [:country | country metadata: aJson meta].
-	^countries
-!
-
-allFromUSJHUSeries: someSeries
-	"<Array of: GeographicArea>"
-	
-	^self subclassResponsability
-!
-
-name: aString series: aDataseries
-	^self name: aString series: aDataseries properties: nil
-!
-
-name: aString series: aDataseries properties: aDictionary
+name: aString about: aDictionary parts: someTerritories datasets: someDatasets
 	| inst |
 	inst := self new.
-	inst initializeName: aString series: aDataseries properties: aDictionary.
+	inst initializeName: aString about: aDictionary parts: someTerritories datasets: someDatasets.
 	^inst
 ! !
 
-GeographicArea subclass: #Country
-	slots: {#parts}
+!Territory class methodsFor: 'services'!
+
+totalDatasetFromAll: someTerritories
+	"<Dataset>
+	total from the only dataset"
+	
+	^Dataset totalOfAll: (someTerritories collect: [:territory | territory datasets first])
+! !
+
+Object subclass: #TerritoryData
+	slots: {#id. #name. #localName. #population. #flag}
 	package: 'Covid19Model'!
+!TerritoryData commentStamp!
+Data about a Territory from WikiData!
 
-!Country methodsFor: 'accessing'!
+!TerritoryData methodsFor: 'accessing'!
 
-metadata: aDictionary
-	super metadata: aDictionary.
-	self parts do: [:part | part metadata: aDictionary]
+entityUrl
+	"<String>
+	URL of the entity in WikiData"
+	
+	^'http://www.wikidata.org/entity/', self id
 !
 
-parts
-	"<Collection of: State>"
+flag
+	"<String | nil>
+	URL to the SVG in Wikimedia Commons"
 	
-	^parts ifNil: [parts := OrderedCollection new]
+	^flag
+!
+
+id
+	"<String>
+	Identifier in WikiData.
+	To get the URL, 'http://www.wikidata.org/entity/' has to be prepended"
+	
+	^id
+!
+
+localName
+	"<String | nil>
+	label in the browser language"
+	
+	^localName
+!
+
+localName: aString
+	localName := aString
+!
+
+name
+	"<String>
+	English label in WikiData"
+	
+	^name
 !
 
 population
-	"<Integer | nil>"
+	"<Integer>
+	Latest population count in WikiData"
 	
-	^self properties at: #population ifAbsentPut: [
-		self parts inject: 0 into: [:sum :area | sum + area population]]
+	^population
 !
 
-series
-	"<Dataseries>"
+presentationName
+	"<String>
+	label for the UI"
 	
-	^series ifNil: [series := self seriesFromParts]
-!
-
-seriesFromParts
-	"<Dataseries>"
-	
-	| firstSeries |
-	firstSeries := self parts first series.
-	self parts size = 1 ifTrue: [
-		^firstSeries].
-	^self parts allButFirst inject: firstSeries into: [:sum :partSeries | sum + partSeries series]
+	self localName ifNotNil: [
+		^self localName].
+	^self name
 ! !
 
-!Country methodsFor: 'copying'!
+!TerritoryData methodsFor: 'initialization'!
 
-copyWithParts: someParts
-	^self class 
-		name: self name 
-		series: nil
-		properties: self properties 
-		parts: someParts
+initializeId: idString name: nameString localName: localNameString population: populationInteger flag: flagUrlOrNil
+	id := idString.
+	name := nameString.
+	localName := localNameString.
+	population := populationInteger.
+	flag := flagUrlOrNil
 ! !
 
-!Country methodsFor: 'html'!
+!TerritoryData methodsFor: 'printing'!
 
-asListItem
-	"add html elements to anElement"
-	
-	| plusButton minusButton plusAction minusAction |
-	self parts ifEmpty: [
-		^super asListItem].
-	plusButton := Silk BUTTON: {'class' -> 'treeButton'. 'type' -> 'button'. '+'}.
-	minusButton := Silk BUTTON: {'class' -> 'treeButton'. 'type' -> 'button'. '–'}.
-	plusAction := [:event |
-		| button after next2 insert |
-		button := Silk fromElement: event target.
-		button resetContents.
-		button off: #click unbind: plusAction.
-		button << '–'.
-		button on: #click bind: minusAction.
-		after := button setToAfter.
-		after next.
-		after next.
-		next2 := after next.
-		insert := next2 setToAfter.
-		self parts do: [:part | insert << part asPartListItem]].
-	minusAction := [:event |
-		| button after next2 insert last |
-		button := Silk fromElement: event target.
-		button resetContents.
-		button off: #click unbind: minusAction.
-		button << '+'.
-		button on: #click bind: plusAction.
-		after := button setToAfter.
-		after next.
-		after next.
-		next2 := after next.
-		insert := next2 setToAfter.
-		self parts size * 4 timesRepeat: [
-			last := after next.
-			((last attrAt: 'class') = 'subtreeButton' and: [
-			last element innerText = '–']) ifTrue: [
-				| after2 eol line |
-				after2 := last setToAfter.
-				after2 next.
-				eol := after2 next setToAfter.
-				line := {after2 next. after2 next. after2 next. after2 next}.
-				[[:first :second :third :forth |
-					first isEmpty and: [
-					second isEmpty and: [
-					(third attrAt: 'class') = 'ListItem' and: [
-					(third at: '.StateName') notNil]]]
-				] valueWithPossibleArguments: line] whileTrue: [
-					line := {after2 next. after2 next. after2 next. after2 next}].
-				after2 back; back; back; back.
-				eol cutUpTo: after2]].
-		insert cutUpTo: last setToAfter].
-	plusButton on: #click bind: plusAction.
-	minusButton on: #click bind: minusAction.
-	^{plusButton. self emptySubspan. self asNameSpan. self asValueSpan}
-!
-
-asNameSpan
-	"<span>
-	the name of the list item"
-	
-	| item |
-	item := Silk SPAN: {
-		'class' -> 'ListItem'. 
-		(Silk SPAN: {'class' -> 'CountryName'. self name})}.
-	self name = 'World' ifTrue: [
-		item << ('id' -> 'World')].
-	item on: #click bind: [:event |
-		('#CountryList' asSilk allAt: '.selected') do: [:selected |
-			selected attrAt: 'class' put: 'ListItem'].
-		item attrAt: 'class' put: 'ListItem selected'. 
-		self showInfo].
-	^item
-!
-
-asPartListItem
-	"list element which is part of another"
-	
-	| plusAction minusAction plusButton |
-	self parts ifEmpty: [
-		^{self emptySpan. self emptySubspan. self asSubnameSpan. self asValueSpan}].
-	plusAction := [:event |
-		| button after next2 insert |
-		button := Silk fromElement: event target.
-		button resetContents.
-		button off: #click unbind: plusAction.
-		button << '–'.
-		button on: #click bind: minusAction.
-		after := button setToAfter.
-		after next.
-		next2 := after next.
-		insert := next2 setToAfter.
-		self parts do: [:part | insert << part asPartListItem]].
-	minusAction := [:event |
-		| button after next2 insert last |
-		button := Silk fromElement: event target.
-		button resetContents.
-		button off: #click unbind: minusAction.
-		button attrAt: 'class' put: 'subtreeButton'.
-		button << '+'.
-		button on: #click bind: plusAction.
-		after := button setToAfter.
-		after next.
-		next2 := after next.
-		insert := next2 setToAfter.
-		self parts size * 4 timesRepeat: [last := after next].
-		insert cutUpTo: last setToAfter].
-	plusButton := (Silk BUTTON: {'class' -> 'subtreeButton'. 'type' -> 'button'. '+'}) on: #click bind: plusAction.
-	^{self emptySpan. plusButton. self asSubnameSpan. self asValueSpan}.
-!
-
-asSubnameSpan
-	"<span>
-	the name of the list item when on the second level"
-	
-	| item |
-	item := Silk SPAN: {
-		'class' -> 'ListItem'. 
-		(Silk SPAN: {'class' -> 'LandName'. self name})}.
-	item on: #click bind: [:event |
-		('#CountryList' asSilk allAt: '.selected') do: [:selected |
-			selected attrAt: 'class' put: 'ListItem'].
-		item attrAt: 'class' put: 'ListItem selected'. 
-		self showInfo].
-	^item
-!
-
-selectWorld
-	"mark the World list item as selected and show the infos"
-	
-	'#World' asSilk attrAt: 'class' put: 'ListItem selected'. 
-	self showInfo
+printOn: aStream
+	aStream
+		nextPutAll: self class name;
+		nextPutAll: '(';
+		nextPutAll: self name;
+		nextPutAll: ')'
 ! !
 
-!Country methodsFor: 'initialization'!
+!TerritoryData methodsFor: 'testing'!
 
-initializeName: aString series: aDataseries properties: aDictionary parts: someParts
-	name := aString.
-	series := aDataseries.
-	properties := aDictionary.
-	parts := someParts
+hasFlag
+	^self flag notNil
+!
+
+isFor: aTerritory
+	"<Boolean>
+	does the receiver belong to aTerritory?"
+	
+	^self subclassResponsibility
 ! !
 
-!Country class methodsFor: 'instance creation'!
+!TerritoryData class methodsFor: 'accessing'!
 
-allFromJHUSeries: someSeries
-	"<Array of: Country>"
+instanceFor: aTerritory in: someInstances
+	"<TerritoryData | nil>"
 	
-	| globalSeries countryList |
-	globalSeries := someSeries allButFirst inject: someSeries first series into: [:sum :series | sum + series series].
-	countryList := OrderedCollection with: (self name: 'World' series: globalSeries).
-	(someSeries groupedBy: #country) keysAndValuesDo: [:countryName :listOfSeries |
-		countryList add: (listOfSeries size = 1
-			ifTrue: [self name: countryName series: listOfSeries first series]
-			ifFalse: [self name: countryName parts: (State allFromJHUSeries: (listOfSeries sort: [:a :b | a > b]))])].
-	^countryList sort: [:a :b | a > b]
+	^someInstances detect: [:instance | instance isFor: aTerritory] ifNone: [
+		console log: aTerritory name, ' not found'.
+		nil]
 !
 
-allFromRKISeries: someSeries
-	"<Array of: Country>"
+sparqlQuery
+	"<String>"
 	
-	|  list |
-	list := OrderedCollection new.
-	(someSeries groupedBy: #bundesland) keysAndValuesDo: [:name :listOfSeries |
-		list add: (listOfSeries size = 1
-			ifTrue: [self name: name series: listOfSeries first series]
-			ifFalse: [self name: name parts: (State allFromRKISeries: (listOfSeries sort: [:a :b | a > b]))])].
-	^list
+	^self subclassResponsibility
 !
 
-allFromUSJHUSeries: someSeries
-	"<Array of: Country>"
+sparqlQueryNames
+	"<String>"
 	
-	| list |
-	list := OrderedCollection new.
-	(someSeries groupedBy: #state) keysAndValuesDo: [:name :listOfSeries |
-		list add: (listOfSeries size = 1
-			ifTrue: [self name: name series: listOfSeries first series]
-			ifFalse: [self name: name parts: (State allFromUSJHUSeries: (listOfSeries sort: [:a :b | a > b]))])].
-	^list sort: [:a :b | a > b]
+	^self subclassResponsibility
+! !
+
+!TerritoryData class methodsFor: 'instance creation'!
+
+createAllDoing: aBlock
+	WikiData query: self sparqlQuery then: [:bindings |
+		aBlock value: (bindings collect: [:object | self fromJson: object])]
 !
 
-name: aString parts: someSeries
-	^self name: aString series: nil properties: nil parts: someSeries
+fromJson: aJson
+	"<TerritoryData>
+	creates a new instance using the data in aJson"
+	
+	^self subclassResponsibility
 !
 
-name: aString series: aDataseries properties: aDictionary parts: someSeries
+id: idString name: nameString localName: localNameString population: populationInteger flag: flagUrlOrNil
 	| inst |
 	inst := self new.
-	inst initializeName: aString series: aDataseries properties: aDictionary parts: someSeries.
+	inst initializeId: idString name: nameString localName: localNameString population: populationInteger flag: flagUrlOrNil.
 	^inst
+!
+
+loadAllDoing: aBlock
+	self createAllDoing: [:territoryData |
+		self localNamesDoing: [:namesDict |
+			territoryData do: [:item |
+				namesDict at: item id ifPresent: [:localName |
+					item localName: localName]].
+			aBlock value: territoryData]]
+!
+
+localNamesDoing: aBlock
+	self subclassResponsibility
+!
+
+onlineTest
+	"
+	CountryData onlineTest
+	BundeslandData onlineTest
+	LandkreisData onlineTest
+	"
+	self loadAllDoing: [:objects | console log: objects]
+!
+
+onlineTestLocalNames
+	"
+	CountryData onlineTestLocalNames
+	BundeslandData onlineTestLocalNames
+	LandkreisData onlineTestLocalNames
+	"
+	self localNamesDoing: [:objects | console log: objects]
 ! !
 
-GeographicArea subclass: #State
+TerritoryData subclass: #CountryData
 	slots: {}
 	package: 'Covid19Model'!
 
-!State class methodsFor: 'instance creation'!
+!CountryData methodsFor: 'testing'!
 
-allFromJHUSeries: someSeries
-	"<Array of: State>"
-	
-	^someSeries collect: [:series |
-		self 
-			name: series state
-			series: series series]
+isFor: aTerritory
+	^(self id = 'Q30' and: [aTerritory name = 'US']) or: [
+	(self id = 'Q148' and: [aTerritory name = 'China']) or: [
+	(self id = 'Q29999' and: [aTerritory name = 'Netherlands']) or: [
+	(self id = 'Q884' and: [aTerritory name = 'Korea, South']) or: [
+	(self id = 'Q213' and: [aTerritory name = 'Czechia']) or: [
+	(self id = 'Q1008' and: [aTerritory name = 'Cote d''Ivoire']) or: [
+	(self id = 'Q974' and: [aTerritory name = 'Congo (Kinshasa)']) or: [
+	(self id = 'Q971' and: [aTerritory name = 'Congo (Brazzaville)']) or: [
+	(self id = 'Q1246' and: [aTerritory name = 'Kosovo']) or: [
+	(self id = 'Q1011' and: [aTerritory name = 'Cabo Verde']) or: [
+	(self id = 'Q1039' and: [aTerritory name = 'Sao Tome and Principe']) or: [
+	(self id = 'Q407199' and: [aTerritory name = 'West Bank and Gaza']) or: [
+	(self id = 'Q865' and: [aTerritory name = 'Taiwan*']) or: [
+	(self id = 'Q836' and: [aTerritory name = 'Burma']) or: [
+	(self id = 'Q778' and: [aTerritory name = 'Bahamas']) or: [
+	(self id = 'Q1005' and: [aTerritory name = 'Gambia']) or: [
+	(self id = 'Q574' and: [aTerritory name = 'Timor-Leste']) or: [
+	(self id = 'Q237' and: [aTerritory name = 'Holy See']) or: [
+	(self id = 'Q6250' and: [aTerritory name = 'Western Sahara']) or: [
+	self name = aTerritory name]]]]]]]]]]]]]]]]]]]
+! !
+
+!CountryData class methodsFor: 'accessing'!
+
+sparqlQuery
+	^'SELECT ?country ?countryLabel ?population (SAMPLE(?flagUrl) AS ?flag) WHERE {
+  ?country (wdt:P31/(wdt:P279*)) wd:Q3624078;
+    wdt:P1082 ?population.
+  OPTIONAL { ?country wdt:P41 ?flagUrl. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+}
+GROUP BY ?country ?countryLabel ?population'
 !
 
-allFromRKISeries: someSeries
-	"<Array of: State>"
-	
-	^someSeries collect: [:series |
-		self 
-			name: series landkreis
-			series: series series]
+sparqlQueryNames
+	^'SELECT ?country ?countryLabel WHERE {
+  ?country (wdt:P31/(wdt:P279*)) wd:Q3624078.
+  FILTER(NOT EXISTS { ?country wdt:P31 wd:Q3024240. })
+  FILTER(NOT EXISTS { ?country wdt:P31 wd:Q28171280. })
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "', window navigator language, '". }
+}
+GROUP BY ?country ?countryLabel'
 !
 
-allFromUSJHUSeries: someSeries
-	"<Array of: State>"
+world
+	^self
+		id: 'Q16502'
+		name: 'World'
+		localName: nil
+		population: nil
+		flag: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/World_Flag_%282004%29.svg'
+! !
+
+!CountryData class methodsFor: 'instance creation'!
+
+fromJson: aJson
+	^self
+		id: (aJson country value tokenize: '/') last
+		name: aJson countryLabel value 
+		localName: nil
+		population: aJson population value asNumber 
+		flag: (aJson at: #flag ifAbsent: [nil]) value
+!
+
+localNamesDoing: aBlock
+	WikiData query: self sparqlQueryNames then: [:bindings |
+		| dict |
+		dict := Dictionary new.
+		bindings do: [:object |
+			| id label |
+			id := (object country value tokenize: '/') last.
+			label := object countryLabel value.
+			label = id ifFalse: [
+				dict at: id put: label]].
+		aBlock value: dict]
+! !
+
+TerritoryData subclass: #GermanData
+	slots: {#key}
+	package: 'Covid19Model'!
+!GermanData commentStamp!
+WikiData from Germany with its unique key (German regional key (P1388))
+[[https://www.wikidata.org/wiki/Property:P1388]]!
+
+!GermanData methodsFor: 'accessing'!
+
+initializeId: idString name: nameString key: keyString localName: localNameString population: populationInteger flag: flagUrlOrNil
+	self initializeId: idString name: nameString localName: localNameString population: populationInteger flag: flagUrlOrNil.
+	key := keyString asNumber
+!
+
+isFor: aTerritory
+	^self key = aTerritory id asNumber
+!
+
+key
+	"<Integer>
+	German regional key (P1388)"
 	
-	^someSeries collect: [:series |
-		self 
-			name: series county
-			series: series series
-			properties: (Dictionary
-				with: #uid -> series uid 
-				with: #population -> series population)]
+	^key
+! !
+
+!GermanData class methodsFor: 'instance creation'!
+
+id: idString name: nameString key: aKeyString localName: localNameString population: populationInteger flag: flagUrlOrNil
+	| inst |
+	inst := self new.
+	inst initializeId: idString name: nameString key: aKeyString localName: localNameString population: populationInteger flag: flagUrlOrNil.
+	^inst
+! !
+
+GermanData subclass: #BundeslandData
+	slots: {}
+	package: 'Covid19Model'!
+
+!BundeslandData methodsFor: 'as yet unclassified'!
+
+isFor: aTerritory
+	"special for Hamburg"
+	
+	^(self key = 2 and: [
+	aTerritory id asNumber = 2000]) or: [
+	super isFor: aTerritory]
+! !
+
+!BundeslandData class methodsFor: 'accessing'!
+
+sparqlQuery
+	^'SELECT ?bundesland ?bundeslandLabel ?id ?population (SAMPLE(?flagUrl) AS ?flag) WHERE {
+  ?bundesland wdt:P31 wd:Q1221156;
+    wdt:P1082 ?population;
+    wdt:P1388 ?id.
+  OPTIONAL { ?bundesland wdt:P41 ?flagUrl. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "de". }
+}
+GROUP BY ?bundesland ?bundeslandLabel ?id ?population'
+!
+
+sparqlQueryNames
+	^'SELECT ?bundesland ?bundeslandLabel WHERE {
+  ?bundesland wdt:P31 wd:Q1221156;
+    wdt:P1388 ?id.
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "', window navigator language, '". }
+}
+GROUP BY ?bundesland ?bundeslandLabel'
+! !
+
+!BundeslandData class methodsFor: 'instance creation'!
+
+fromJson: aJson
+	^self
+		id: (aJson bundesland value tokenize: '/') last
+		name: aJson bundeslandLabel value 
+		key: aJson id value
+		localName: nil
+		population: aJson population value asNumber 
+		flag: (aJson at: #flag ifAbsent: [nil]) value
+!
+
+localNamesDoing: aBlock
+	WikiData query: self sparqlQueryNames then: [:bindings |
+		| dict |
+		dict := Dictionary new.
+		bindings do: [:object |
+			| id label |
+			id := (object bundesland value tokenize: '/') last.
+			label := object bundeslandLabel value.
+			label = id ifFalse: [
+				dict at: id put: label]].
+		aBlock value: dict]
+! !
+
+GermanData subclass: #LandkreisData
+	slots: {}
+	package: 'Covid19Model'!
+
+!LandkreisData class methodsFor: 'accessing'!
+
+sparqlQuery
+	^'SELECT ?gemeinde ?gemeindeLabel ?id (SAMPLE(?flagUrl) AS ?flag) WHERE {
+  ?gemeinde (wdt:P31/(wdt:P279*)) wd:Q163359;
+    wdt:P440 ?id.
+  OPTIONAL { ?gemeinde wdt:P41 ?flagUrl. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "de". }
+}
+GROUP BY ?gemeinde ?gemeindeLabel ?id'
+!
+
+sparqlQueryNames
+	^'SELECT ?gemeinde ?gemeindeLabel WHERE {
+  ?gemeinde (wdt:P31/(wdt:P279*)) wd:Q163359;
+    wdt:P440 ?id.
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "', window navigator language, '". }
+}
+GROUP BY ?gemeinde ?gemeindeLabel'
+! !
+
+!LandkreisData class methodsFor: 'instance creation'!
+
+fromJson: aJson
+	^self
+		id: (aJson gemeinde value tokenize: '/') last
+		name: aJson gemeindeLabel value 
+		key: aJson id value
+		localName: nil
+		population: nil
+		flag: (aJson at: #flag ifAbsent: [nil]) value
+!
+
+localNamesDoing: aBlock
+	WikiData query: self sparqlQueryNames then: [:bindings |
+		| dict |
+		dict := Dictionary new.
+		bindings do: [:object |
+			| id label |
+			id := (object gemeinde value tokenize: '/') last.
+			label := object gemeindeLabel value.
+			label = id ifFalse: [
+				dict at: id put: label]].
+		aBlock value: dict]
+! !
+
+Object subclass: #WikiData
+	slots: {}
+	package: 'Covid19Model'!
+
+!WikiData class methodsFor: 'accessing'!
+
+endpointUrl
+	^'https://query.wikidata.org/sparql'
+!
+
+query: aQueryString then: aBlock
+	((Platform fetchUrl: (self urlForQuery: aQueryString) options: self requestHeaders) then: #json) then: [:json |
+		aBlock value: json results bindings]
+!
+
+requestHeaders
+	^#{'headers' -> #{
+		'Accept' -> 'application/sparql-results+json'.
+	"	'user-agent' -> 'CoViD-19 Charts (https://covidcrt.uber.space/)' "
+	}}
+!
+
+urlForQuery: aQueryString
+	^self endpointUrl, '?format=json&query=', aQueryString uriEncoded
+! !
+
+!AssociativeCollection methodsFor: '*Covid19Model'!
+
+= anAssocitativeCollection
+	^ self class = anAssocitativeCollection class and: [
+	self size = anAssocitativeCollection size and: [
+	self keys asSet = anAssocitativeCollection keys asSet and: [
+	self keys allSatisfy: [:key | (self at: key) = (anAssocitativeCollection at: key)]]]]
+! !
+
+!DictionaryTest methodsFor: '*Covid19Model'!
+
+testEqual
+	self assert: (Dictionary with: 'a' -> 1 with: 'b' -> 2) equals: (Dictionary with: 'b' -> 2 with: 'a' -> 1)
+! !
+
+!HashedCollectionTest methodsFor: '*Covid19Model'!
+
+testEqual
+	self assert: #{'a' -> 1. 'b' -> 2} equals: #{'b' -> 2. 'a' -> 1}
 ! !
 

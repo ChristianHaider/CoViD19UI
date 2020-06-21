@@ -90,7 +90,7 @@ module.exports = function (grunt) {
                     rawText: {
                         "app": mkDefine(["require", "es6-promise/auto"], cbRequireAndPromiseMain),
 						"app/timestamp": mkDefine([], Date.now()),
-                        "app/main": mkDefine(["devel", "amber/core/Platform-Browser"], id)
+                        "app/main": mkDefine(["devel", "amber/core/Platform-Browser", "helios/all"], id)
                     },
                     include: ['config', 'app/timestamp', 'node_modules/requirejs/require', 'app', 'app/main'],
                     exclude: ['devel', 'amber/core/Platform-Browser'],

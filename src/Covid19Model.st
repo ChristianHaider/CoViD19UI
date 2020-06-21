@@ -143,13 +143,15 @@ world
 
 !CoViD19Application methodsFor: 'data actions'!
 
-getData
+getDataFor: anApp
 	self world load: (self sources at: 'JHU') for: self doing: [:worldRoot | 
 		CountryData loadAllDoing: [:wikiDataInstances |
 			worldRoot parts do: [:territory |
 				territory wikiData: (CountryData instanceFor: territory in: wikiDataInstances)].
+			anApp refreshTree.
 			(worldRoot partNamed: 'US') load: (self sources at: 'JHUUS') for: self doing: #resetPopulation.
 			(worldRoot partNamed: 'Germany') load: (self sources at: 'RKI') for: self doing: [:root |
+				anApp refreshTree.
 				BundeslandData loadAllDoing: [:bundeslandDatas |
 					LandkreisData loadAllDoing: [:landkreisDatas |
 						root parts do: [:bundesland |
@@ -1445,6 +1447,10 @@ wikiData: aTerritoryData
 
 !Territory methodsFor: 'actions'!
 
+announceChanged
+	self announcer announce: StructureChanged new
+!
+
 load: aDatasource for: anApplication doing: oneArgumentBlock
 	loader := aDatasource getJson then: [:json |
 		| root |
@@ -1454,7 +1460,8 @@ load: aDatasource for: anApplication doing: oneArgumentBlock
 		parts := root parts.
 		self datasets add: root datasets first.
 		loader := nil.
-		self announcer announce: StructureChanged new]
+		self announceChanged].
+	self announceChanged
 ! !
 
 !Territory methodsFor: 'comparing'!

@@ -712,11 +712,11 @@ selector: "augmentPage",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "augmentPage\x0a\x09Silk new << self asSilk.\x0a\x09self tree refresh.\x0a\x09self model getData",
+source: "augmentPage\x0a\x09Silk new << self asSilk.\x0a\x09self tree refresh.\x0a\x09self model getDataFor: self",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["<<", "new", "asSilk", "refresh", "tree", "getData", "model"]
+messageSends: ["<<", "new", "asSilk", "refresh", "tree", "getDataFor:", "model"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -724,7 +724,7 @@ return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 $recv($recv($globals.Silk)._new()).__lt_lt($self._asSilk());
 $recv($self._tree())._refresh();
-$recv($self._model())._getData();
+$recv($self._model())._getDataFor_(self);
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"augmentPage",{})});
@@ -862,6 +862,35 @@ return $1;
 }
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"model",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19);
+
+$core.addMethod(
+$core.method({
+selector: "refreshTree",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "refreshTree\x0a\x09self tree refresh.\x0a\x09self graphics refresh",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["refresh", "tree", "graphics"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+[$recv($self._tree())._refresh()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["refresh"]=1
+//>>excludeEnd("ctx");
+][0];
+$recv($self._graphics())._refresh();
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"refreshTree",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19);
@@ -4311,13 +4340,14 @@ selector: "asSilk",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "asSilk\x0a\x09self territory ifNil: [\x0a\x09\x09^#()].\x0a\x09^{\x09self header refresh frame.\x0a\x09 \x09Silk DIV: {\x0a\x09\x09\x09'class' -> 'Charts'.\x0a\x09\x09\x09self casesChart refresh frame.\x0a\x09\x09\x09self changesChart refresh frame}.\x0a\x09\x09Silk DIV: 'id' -> 'Tooltip'}",
+source: "asSilk\x0a\x09| chartsDiv |\x0a\x09self territory ifNil: [\x0a\x09\x09^#()].\x0a\x09chartsDiv := Silk DIV: 'class' -> 'Charts'.\x0a\x09self datasets ifNotEmpty: [:ignore |\x0a\x09\x09chartsDiv << {\x0a\x09\x09\x09self casesChart refresh frame.\x0a\x09\x09\x09self changesChart refresh frame}].\x0a\x09^{\x09self header refresh frame.\x0a\x09 \x09chartsDiv.\x0a\x09\x09Silk DIV: 'id' -> 'Tooltip'}",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifNil:", "territory", "frame", "refresh", "header", "DIV:", "->", "casesChart", "changesChart"]
+messageSends: ["ifNil:", "territory", "DIV:", "->", "ifNotEmpty:", "datasets", "<<", "frame", "refresh", "casesChart", "changesChart", "header"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
+var chartsDiv;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
@@ -4328,33 +4358,43 @@ return [];
 } else {
 $1;
 }
-return [[$recv([$recv($self._header())._refresh()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["refresh"]=1
-//>>excludeEnd("ctx");
-][0])._frame()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["frame"]=1
-//>>excludeEnd("ctx");
-][0],[$recv($globals.Silk)._DIV_([["class".__minus_gt("Charts")
+chartsDiv=[$recv($globals.Silk)._DIV_(["class".__minus_gt("Charts")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["->"]=1
 //>>excludeEnd("ctx");
-][0],[$recv([$recv($self._casesChart())._refresh()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["refresh"]=2
-//>>excludeEnd("ctx");
-][0])._frame()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["frame"]=2
-//>>excludeEnd("ctx");
-][0],$recv($recv($self._changesChart())._refresh())._frame()])
+][0])
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["DIV:"]=1
 //>>excludeEnd("ctx");
-][0],$recv($globals.Silk)._DIV_("id".__minus_gt("Tooltip"))];
+][0];
+$recv($self._datasets())._ifNotEmpty_((function(ignore){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"asSilk",{})});
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv(chartsDiv).__lt_lt([[$recv([$recv($self._casesChart())._refresh()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx2.sendIdx["refresh"]=1
+//>>excludeEnd("ctx");
+][0])._frame()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx2.sendIdx["frame"]=1
+//>>excludeEnd("ctx");
+][0],[$recv([$recv($self._changesChart())._refresh()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx2.sendIdx["refresh"]=2
+//>>excludeEnd("ctx");
+][0])._frame()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx2.sendIdx["frame"]=2
+//>>excludeEnd("ctx");
+][0]]);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({ignore:ignore},$ctx1,2)});
+//>>excludeEnd("ctx");
+}));
+return [$recv($recv($self._header())._refresh())._frame(),chartsDiv,$recv($globals.Silk)._DIV_("id".__minus_gt("Tooltip"))];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"asSilk",{chartsDiv:chartsDiv})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Graphics);
@@ -4624,6 +4664,86 @@ $globals.Graphics);
 
 $core.addMethod(
 $core.method({
+selector: "datasetSilks",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "datasetSilks\x0a\x09\x22<Silk | (Array of: Silk)>\x22\x0a\x09\x0a\x09self datasets ifEmpty: [\x0a\x09\x09^Silk UL: {'class' -> 'Datasets'. self datasets}].\x0a\x09^{Silk UL: {'class' -> 'Datasets'. self datasets}.\x0a\x09Silk DIV: {'class' -> 'AspectButtons'. self primaryAspectGroup buttons}.\x0a\x09Silk DIV: {'class' -> 'SecondaryAspectButtons'. self secondaryAspectGroup buttons}.\x0a\x09Silk DIV: {'class' -> 'TertiaryAspectButtons'. self tertiaryAspectGroup buttons}}",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifEmpty:", "datasets", "UL:", "->", "DIV:", "buttons", "primaryAspectGroup", "secondaryAspectGroup", "tertiaryAspectGroup"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $early={};
+try {
+$recv([$self._datasets()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["datasets"]=1
+//>>excludeEnd("ctx");
+][0])._ifEmpty_((function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+throw $early=[[$recv($globals.Silk)._UL_([["class".__minus_gt("Datasets")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx2.sendIdx["->"]=1
+//>>excludeEnd("ctx");
+][0],[$self._datasets()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx2.sendIdx["datasets"]=2
+//>>excludeEnd("ctx");
+][0]])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx2.sendIdx["UL:"]=1
+//>>excludeEnd("ctx");
+][0]];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+return [$recv($globals.Silk)._UL_([["class".__minus_gt("Datasets")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=2
+//>>excludeEnd("ctx");
+][0],$self._datasets()]),[$recv($globals.Silk)._DIV_([["class".__minus_gt("AspectButtons")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=3
+//>>excludeEnd("ctx");
+][0],[$recv($self._primaryAspectGroup())._buttons()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["buttons"]=1
+//>>excludeEnd("ctx");
+][0]])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["DIV:"]=1
+//>>excludeEnd("ctx");
+][0],[$recv($globals.Silk)._DIV_([["class".__minus_gt("SecondaryAspectButtons")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=4
+//>>excludeEnd("ctx");
+][0],[$recv($self._secondaryAspectGroup())._buttons()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["buttons"]=2
+//>>excludeEnd("ctx");
+][0]])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["DIV:"]=2
+//>>excludeEnd("ctx");
+][0],$recv($globals.Silk)._DIV_(["class".__minus_gt("TertiaryAspectButtons"),$recv($self._tertiaryAspectGroup())._buttons()])];
+}
+catch(e) {if(e===$early)return e[0]; throw e}
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"datasetSilks",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Graphics);
+
+$core.addMethod(
+$core.method({
 selector: "datasets",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -4705,11 +4825,11 @@ selector: "header",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "header\x0a\x09\x22<Presenter>\x22\x0a\x09\x0a\x09^header ifNil: [\x0a\x09\x09header := SilkLeafPresenter shows: [self territory] in: Silk DIV do: [:aTerritory |\x0a\x09\x09\x09{'class' -> 'GraphicsHeader'.\x0a\x09\x09\x09\x09Silk H2: {\x0a\x09\x09\x09\x09\x09Silk IMG: {\x0a\x09\x09\x09\x09\x09\x09'class' -> 'Flag'.\x0a\x09\x09\x09\x09\x09\x09'src' -> aTerritory flagUrl.\x0a\x09\x09\x09\x09\x09\x09'alt' -> aTerritory flagAlt}.\x0a\x09\x09\x09\x09\x09aTerritory presentationName.\x0a\x09\x09\x09\x09\x09self territoryInfoPopulation: aTerritory population}.\x0a\x09\x09\x09\x09Silk UL: {'class' -> 'Datasets'. self datasets}.\x0a\x09\x09\x09\x09Silk DIV: {'class' -> 'AspectButtons'. self primaryAspectGroup buttons}.\x0a\x09\x09\x09\x09Silk DIV: {'class' -> 'SecondaryAspectButtons'. self secondaryAspectGroup buttons}.\x0a\x09\x09\x09\x09Silk DIV: {'class' -> 'TertiaryAspectButtons'. self tertiaryAspectGroup buttons}}]]",
+source: "header\x0a\x09\x22<Presenter>\x22\x0a\x09\x0a\x09^header ifNil: [\x0a\x09\x09header := SilkLeafPresenter shows: [self territory] in: Silk DIV do: [:aTerritory |\x0a\x09\x09\x09{'class' -> 'GraphicsHeader'.\x0a\x09\x09\x09\x09Silk H2: {\x0a\x09\x09\x09\x09\x09Silk IMG: {\x0a\x09\x09\x09\x09\x09\x09'class' -> 'Flag'.\x0a\x09\x09\x09\x09\x09\x09'src' -> aTerritory flagUrl.\x0a\x09\x09\x09\x09\x09\x09'alt' -> aTerritory flagAlt}.\x0a\x09\x09\x09\x09\x09aTerritory presentationName.\x0a\x09\x09\x09\x09\x09self territoryInfoPopulation: aTerritory population}.\x0a\x09\x09\x09\x09self datasetSilks}]]",
 referencedClasses: ["SilkLeafPresenter", "Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifNil:", "shows:in:do:", "territory", "DIV", "->", "H2:", "IMG:", "flagUrl", "flagAlt", "presentationName", "territoryInfoPopulation:", "population", "UL:", "datasets", "DIV:", "buttons", "primaryAspectGroup", "secondaryAspectGroup", "tertiaryAspectGroup"]
+messageSends: ["ifNil:", "shows:in:do:", "territory", "DIV", "->", "H2:", "IMG:", "flagUrl", "flagAlt", "presentationName", "territoryInfoPopulation:", "population", "datasetSilks"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -4742,39 +4862,7 @@ return [["class".__minus_gt("GraphicsHeader")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx2.sendIdx["->"]=3
 //>>excludeEnd("ctx");
-][0],["alt".__minus_gt($recv(aTerritory)._flagAlt())
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx2.sendIdx["->"]=4
-//>>excludeEnd("ctx");
-][0]]),$recv(aTerritory)._presentationName(),$self._territoryInfoPopulation_($recv(aTerritory)._population())]),$recv($globals.Silk)._UL_([["class".__minus_gt("Datasets")
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx2.sendIdx["->"]=5
-//>>excludeEnd("ctx");
-][0],$self._datasets()]),[$recv($globals.Silk)._DIV_([["class".__minus_gt("AspectButtons")
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx2.sendIdx["->"]=6
-//>>excludeEnd("ctx");
-][0],[$recv($self._primaryAspectGroup())._buttons()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx2.sendIdx["buttons"]=1
-//>>excludeEnd("ctx");
-][0]])
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx2.sendIdx["DIV:"]=1
-//>>excludeEnd("ctx");
-][0],[$recv($globals.Silk)._DIV_([["class".__minus_gt("SecondaryAspectButtons")
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx2.sendIdx["->"]=7
-//>>excludeEnd("ctx");
-][0],[$recv($self._secondaryAspectGroup())._buttons()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx2.sendIdx["buttons"]=2
-//>>excludeEnd("ctx");
-][0]])
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx2.sendIdx["DIV:"]=2
-//>>excludeEnd("ctx");
-][0],$recv($globals.Silk)._DIV_(["class".__minus_gt("TertiaryAspectButtons"),$recv($self._tertiaryAspectGroup())._buttons()])];
+][0],"alt".__minus_gt($recv(aTerritory)._flagAlt())]),$recv(aTerritory)._presentationName(),$self._territoryInfoPopulation_($recv(aTerritory)._population())]),$self._datasetSilks()];
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx2) {$ctx2.fillBlock({aTerritory:aTerritory},$ctx1,3)});
 //>>excludeEnd("ctx");

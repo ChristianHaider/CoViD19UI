@@ -208,6 +208,13 @@ version
 			Silk SPAN: {'class' -> 'VersionDate'. application serverModificationDate asLocaleString}}]]
 ! !
 
+!CoViD19 methodsFor: 'actions'!
+
+refreshTree
+	self tree refresh.
+	self graphics refresh
+! !
+
 !CoViD19 methodsFor: 'events'!
 
 dataReceived
@@ -232,7 +239,7 @@ asSilk
 augmentPage
 	Silk new << self asSilk.
 	self tree refresh.
-	self model getData
+	self model getDataFor: self
 !
 
 footer
@@ -1208,13 +1215,16 @@ sexAspectChanged
 !Graphics methodsFor: 'presenting'!
 
 asSilk
+	| chartsDiv |
 	self territory ifNil: [
 		^#()].
-	^{	self header refresh frame.
-	 	Silk DIV: {
-			'class' -> 'Charts'.
+	chartsDiv := Silk DIV: 'class' -> 'Charts'.
+	self datasets ifNotEmpty: [:ignore |
+		chartsDiv << {
 			self casesChart refresh frame.
-			self changesChart refresh frame}.
+			self changesChart refresh frame}].
+	^{	self header refresh frame.
+	 	chartsDiv.
 		Silk DIV: 'id' -> 'Tooltip'}
 !
 
@@ -1234,6 +1244,17 @@ datasetInfoOf: aDataset
 	}
 !
 
+datasetSilks
+	"<Silk | (Array of: Silk)>"
+	
+	self datasets ifEmpty: [
+		^Silk UL: {'class' -> 'Datasets'. self datasets}].
+	^{Silk UL: {'class' -> 'Datasets'. self datasets}.
+	Silk DIV: {'class' -> 'AspectButtons'. self primaryAspectGroup buttons}.
+	Silk DIV: {'class' -> 'SecondaryAspectButtons'. self secondaryAspectGroup buttons}.
+	Silk DIV: {'class' -> 'TertiaryAspectButtons'. self tertiaryAspectGroup buttons}}
+!
+
 header
 	"<Presenter>"
 	
@@ -1247,10 +1268,7 @@ header
 						'alt' -> aTerritory flagAlt}.
 					aTerritory presentationName.
 					self territoryInfoPopulation: aTerritory population}.
-				Silk UL: {'class' -> 'Datasets'. self datasets}.
-				Silk DIV: {'class' -> 'AspectButtons'. self primaryAspectGroup buttons}.
-				Silk DIV: {'class' -> 'SecondaryAspectButtons'. self secondaryAspectGroup buttons}.
-				Silk DIV: {'class' -> 'TertiaryAspectButtons'. self tertiaryAspectGroup buttons}}]]
+				self datasetSilks}]]
 !
 
 territoryInfoPopulation: aNumber

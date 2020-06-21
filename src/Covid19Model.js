@@ -297,16 +297,16 @@ $globals.CoViD19Application);
 
 $core.addMethod(
 $core.method({
-selector: "getData",
+selector: "getDataFor:",
 protocol: "data actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "getData\x0a\x09self world load: (self sources at: 'JHU') for: self doing: [:worldRoot | \x0a\x09\x09CountryData loadAllDoing: [:wikiDataInstances |\x0a\x09\x09\x09worldRoot parts do: [:territory |\x0a\x09\x09\x09\x09territory wikiData: (CountryData instanceFor: territory in: wikiDataInstances)].\x0a\x09\x09\x09(worldRoot partNamed: 'US') load: (self sources at: 'JHUUS') for: self doing: #resetPopulation.\x0a\x09\x09\x09(worldRoot partNamed: 'Germany') load: (self sources at: 'RKI') for: self doing: [:root |\x0a\x09\x09\x09\x09BundeslandData loadAllDoing: [:bundeslandDatas |\x0a\x09\x09\x09\x09\x09LandkreisData loadAllDoing: [:landkreisDatas |\x0a\x09\x09\x09\x09\x09\x09root parts do: [:bundesland |\x0a\x09\x09\x09\x09\x09\x09\x09bundesland wikiData: (BundeslandData instanceFor: bundesland in: bundeslandDatas).\x0a\x09\x09\x09\x09\x09\x09\x09bundesland parts do: [:landkreis |\x0a\x09\x09\x09\x09\x09\x09\x09\x09landkreis wikiData: (LandkreisData instanceFor: landkreis in: landkreisDatas)]]]]]]]",
+args: ["anApp"],
+source: "getDataFor: anApp\x0a\x09self world load: (self sources at: 'JHU') for: self doing: [:worldRoot | \x0a\x09\x09CountryData loadAllDoing: [:wikiDataInstances |\x0a\x09\x09\x09worldRoot parts do: [:territory |\x0a\x09\x09\x09\x09territory wikiData: (CountryData instanceFor: territory in: wikiDataInstances)].\x0a\x09\x09\x09anApp refreshTree.\x0a\x09\x09\x09(worldRoot partNamed: 'US') load: (self sources at: 'JHUUS') for: self doing: #resetPopulation.\x0a\x09\x09\x09(worldRoot partNamed: 'Germany') load: (self sources at: 'RKI') for: self doing: [:root |\x0a\x09\x09\x09\x09anApp refreshTree.\x0a\x09\x09\x09\x09BundeslandData loadAllDoing: [:bundeslandDatas |\x0a\x09\x09\x09\x09\x09LandkreisData loadAllDoing: [:landkreisDatas |\x0a\x09\x09\x09\x09\x09\x09root parts do: [:bundesland |\x0a\x09\x09\x09\x09\x09\x09\x09bundesland wikiData: (BundeslandData instanceFor: bundesland in: bundeslandDatas).\x0a\x09\x09\x09\x09\x09\x09\x09bundesland parts do: [:landkreis |\x0a\x09\x09\x09\x09\x09\x09\x09\x09landkreis wikiData: (LandkreisData instanceFor: landkreis in: landkreisDatas)]]]]]]]",
 referencedClasses: ["CountryData", "BundeslandData", "LandkreisData"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["load:for:doing:", "world", "at:", "sources", "loadAllDoing:", "do:", "parts", "wikiData:", "instanceFor:in:", "partNamed:"]
-}, function ($methodClass){ return function (){
+messageSends: ["load:for:doing:", "world", "at:", "sources", "loadAllDoing:", "do:", "parts", "wikiData:", "instanceFor:in:", "refreshTree", "partNamed:"]
+}, function ($methodClass){ return function (anApp){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
@@ -352,6 +352,11 @@ return [$recv(territory)._wikiData_([$recv($globals.CountryData)._instanceFor_in
 ,$ctx3.sendIdx["do:"]=1
 //>>excludeEnd("ctx");
 ][0];
+[$recv(anApp)._refreshTree()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx3.sendIdx["refreshTree"]=1
+//>>excludeEnd("ctx");
+][0];
 [$recv([$recv(worldRoot)._partNamed_("US")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx3.sendIdx["partNamed:"]=1
@@ -373,6 +378,7 @@ return $recv($recv(worldRoot)._partNamed_("Germany"))._load_for_doing_($recv($se
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx4) {
 //>>excludeEnd("ctx");
+$recv(anApp)._refreshTree();
 return [$recv($globals.BundeslandData)._loadAllDoing_((function(bundeslandDatas){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx5) {
@@ -449,7 +455,7 @@ return $recv(landkreis)._wikiData_($recv($globals.LandkreisData)._instanceFor_in
 ][0];
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"getData",{})});
+}, function($ctx1) {$ctx1.fill(self,"getDataFor:",{anApp:anApp})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19Application);
@@ -5278,6 +5284,30 @@ $globals.Territory);
 
 $core.addMethod(
 $core.method({
+selector: "announceChanged",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "announceChanged\x0a\x09self announcer announce: StructureChanged new",
+referencedClasses: ["StructureChanged"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["announce:", "announcer", "new"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv($self._announcer())._announce_($recv($globals.StructureChanged)._new());
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"announceChanged",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Territory);
+
+$core.addMethod(
+$core.method({
 selector: "announcer",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -5683,11 +5713,11 @@ selector: "load:for:doing:",
 protocol: "actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aDatasource", "anApplication", "oneArgumentBlock"],
-source: "load: aDatasource for: anApplication doing: oneArgumentBlock\x0a\x09loader := aDatasource getJson then: [:json |\x0a\x09\x09| root |\x0a\x09\x09anApplication pickMetadataFrom: json meta.\x0a\x09\x09root := aDatasource rootTerritoryFromJson: json.\x0a\x09\x09oneArgumentBlock value: root.\x0a\x09\x09parts := root parts.\x0a\x09\x09self datasets add: root datasets first.\x0a\x09\x09loader := nil.\x0a\x09\x09self announcer announce: StructureChanged new]",
-referencedClasses: ["StructureChanged"],
+source: "load: aDatasource for: anApplication doing: oneArgumentBlock\x0a\x09loader := aDatasource getJson then: [:json |\x0a\x09\x09| root |\x0a\x09\x09anApplication pickMetadataFrom: json meta.\x0a\x09\x09root := aDatasource rootTerritoryFromJson: json.\x0a\x09\x09oneArgumentBlock value: root.\x0a\x09\x09parts := root parts.\x0a\x09\x09self datasets add: root datasets first.\x0a\x09\x09loader := nil.\x0a\x09\x09self announceChanged].\x0a\x09self announceChanged",
+referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["then:", "getJson", "pickMetadataFrom:", "meta", "rootTerritoryFromJson:", "value:", "parts", "add:", "datasets", "first", "announce:", "announcer", "new"]
+messageSends: ["then:", "getJson", "pickMetadataFrom:", "meta", "rootTerritoryFromJson:", "value:", "parts", "add:", "datasets", "first", "announceChanged"]
 }, function ($methodClass){ return function (aDatasource,anApplication,oneArgumentBlock){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -5708,11 +5738,16 @@ $recv([$self._datasets()
 //>>excludeEnd("ctx");
 ][0])._add_($recv($recv(root)._datasets())._first());
 $self.loader=nil;
-return $recv($self._announcer())._announce_($recv($globals.StructureChanged)._new());
+return [$self._announceChanged()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx2.sendIdx["announceChanged"]=1
+//>>excludeEnd("ctx");
+][0];
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx2) {$ctx2.fillBlock({json:json,root:root},$ctx1,1)});
 //>>excludeEnd("ctx");
 }));
+$self._announceChanged();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"load:for:doing:",{aDatasource:aDatasource,anApplication:anApplication,oneArgumentBlock:oneArgumentBlock})});

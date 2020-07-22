@@ -1297,20 +1297,15 @@ selector: "primaryAspects",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "primaryAspects\x0a\x09\x22<Array of: Symbol>\x22\x0a\x09\x0a\x09^self subclassResponsibility",
+source: "primaryAspects\x0a\x09^#(#confirmed #deaths)",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["subclassResponsibility"]
+messageSends: []
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return $self._subclassResponsibility();
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"primaryAspects",{})});
-//>>excludeEnd("ctx");
+return ["confirmed", "deaths"];
+
 }; }),
 $globals.Datapoint);
 
@@ -2023,15 +2018,28 @@ selector: "primaryAspects",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "primaryAspects\x0a\x09^#(#confirmed #recovered #deaths #active)",
+source: "primaryAspects\x0a\x09^super primaryAspects, #(#recovered #active)",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: []
+messageSends: [",", "primaryAspects"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
-return ["confirmed", "recovered", "deaths", "active"];
-
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv([(
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.supercall = true,
+//>>excludeEnd("ctx");
+($methodClass.superclass||$boot.nilAsClass).fn.prototype._primaryAspects.call($self))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.supercall = false
+//>>excludeEnd("ctx");
+][0]).__comma(["recovered", "active"]);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"primaryAspects",{})});
+//>>excludeEnd("ctx");
 }; }),
 $globals.JHUDatapoint);
 
@@ -2311,24 +2319,6 @@ return $recv($self._class())._date_confirmed_deaths_($self._date(),[$recv([$self
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"changeFrom:",{aDatapoint:aDatapoint})});
 //>>excludeEnd("ctx");
-}; }),
-$globals.JHUUSDatapoint);
-
-$core.addMethod(
-$core.method({
-selector: "primaryAspects",
-protocol: "accessing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "primaryAspects\x0a\x09^#(#confirmed #deaths)",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: []
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-return ["confirmed", "deaths"];
-
 }; }),
 $globals.JHUUSDatapoint);
 
@@ -2978,15 +2968,28 @@ selector: "primaryAspects",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "primaryAspects\x0a\x09^#(#confirmed #recovered #deaths #active)",
+source: "primaryAspects\x0a\x09^super primaryAspects, #(#recovered #active)",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: []
+messageSends: [",", "primaryAspects"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
-return ["confirmed", "recovered", "deaths", "active"];
-
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv([(
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.supercall = true,
+//>>excludeEnd("ctx");
+($methodClass.superclass||$boot.nilAsClass).fn.prototype._primaryAspects.call($self))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.supercall = false
+//>>excludeEnd("ctx");
+][0]).__comma(["recovered", "active"]);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"primaryAspects",{})});
+//>>excludeEnd("ctx");
 }; }),
 $globals.RKIDatapoint);
 

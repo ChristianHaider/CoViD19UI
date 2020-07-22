@@ -1,0 +1,121 @@
+ul {
+	padding-left: 0.7em;
+	margin: 0;
+}
+
+#WorldTree > ul {
+	padding: 0;
+}
+
+li {
+	list-style-type: none;
+}
+
+#WorldTree {
+	background: #fffbf0;
+	grid-column: 1;
+	overflow-y: auto;
+}
+
+div #WorldTree {
+	padding-left: 0;
+}
+
+#WorldTree button {
+}
+
+.Treeline {
+	/* One line in the tree with button and item */
+	display: grid;
+	grid-template-columns: min-content auto;
+}
+
+/* first element of a tree item: 
+	nothing (for the items without children), 
+	opener (for tree openable nodes) */
+
+.noButton {
+	visibility: hidden;
+}
+
+.opener, .noButton {
+	background: none;
+	border: none;
+	outline: none;
+	transition: transform 0.3s ease-in-out;
+}
+
+.opener::after, .noButton::after {
+	font-size: 14px;
+	content: "▷";
+}
+
+.opener.open::after {
+	font-size: 14px;
+	content: "▶";
+}
+
+li.open > .Treeline > .opener {
+	transform: rotateZ(90deg);
+	transform-origin: 50% 50%;
+}
+
+.loader {
+	margin: 0 0.4em;
+	align-self: center;
+	border: 0.2em solid #cfcbc0; /* #f3f3f3; Light grey */
+	border-top: 0.2em solid black; /* #3498db; Blue */
+	border-radius: 50%;
+	width: 0.5em;
+	height: 0.5em;
+	animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+.Treeitem {
+	/* Span with a name and a number */
+	display: grid;
+	grid-template-columns: auto auto;
+	cursor: pointer;
+}
+
+.Flag {
+    height: 1.5ex;
+    width: 1em;
+    margin-right: 0.2em;
+}
+
+.Treeitem.selected {
+	background: #cfcbc0;
+}
+
+.TerritoryName {
+	font-weight: bold;
+}
+
+.TerritoryValue {
+	font-weight: bold;
+	align-self: end;
+	justify-self: end;
+}
+
+.Confirmed {
+	font-weight: bold;
+	margin-left: 1em;
+}
+
+.Deaths {
+	color: red;
+	font-weight: bold;
+	margin-left: 1em;
+}
+
+.Recovered {
+	color: green;
+	font-weight: bold;
+	margin-left: 1em;
+}

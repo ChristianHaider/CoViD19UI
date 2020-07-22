@@ -265,9 +265,7 @@ numbers
 !
 
 primaryAspects
-	"<Array of: Symbol>"
-	
-	^self subclassResponsibility
+	^#(#confirmed #deaths)
 !
 
 recovered
@@ -487,7 +485,7 @@ active
 !
 
 primaryAspects
-	^#(#confirmed #recovered #deaths #active)
+	^super primaryAspects, #(#recovered #active)
 !
 
 recovered
@@ -596,12 +594,6 @@ Datapoint subclass: #JHUUSDatapoint
 	slots: {}
 	package: 'Covid19Model'!
 
-!JHUUSDatapoint methodsFor: 'accessing'!
-
-primaryAspects
-	^#(#confirmed #deaths)
-! !
-
 !JHUUSDatapoint methodsFor: 'arithmetic'!
 
 + aDatapoint
@@ -703,7 +695,7 @@ deaths
 !
 
 primaryAspects
-	^#(#confirmed #recovered #deaths #active)
+	^super primaryAspects, #(#recovered #active)
 !
 
 recovered

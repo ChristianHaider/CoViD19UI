@@ -1,0 +1,83 @@
+body {
+}
+
+#Contents {
+	display: grid;
+	grid-template-columns: auto auto;
+	grid-template-rows: min-content 1fr min-content;
+	height: 98vh;
+	margin: 0em;
+}
+
+header {
+	grid-row:    1;	
+	background: #F1F3F4;
+}
+
+#About {
+	grid-row:    1;	
+	background: #F1F3F4;
+}
+
+.TerritoryAbout {
+	margin-top: 0.5em;
+	margin-bottom: 0em;
+	font-size: xx-large;
+}
+
+footer {
+	grid-column: 1 / span 2;
+	grid-row:    3;	
+	display: grid;
+	grid-template-columns: auto auto;
+	justify-content: space-between;
+	background: #e4ebf2;
+}
+
+#ServerVersion {
+	justify-self: end;
+}
+
+h1 {
+	margin-top: 0.5em;
+	margin-bottom: 0em;
+}
+
+h2 {
+	margin-top: 0.5em;
+	margin-bottom: 0;
+}
+
+.Subtitle {
+	font-size: smaller;
+	font-weight: lighter;
+}
+
+#Versions {
+	justify-self: end;
+	align-self: end;
+	display: grid;
+	grid-template-columns: auto auto auto;
+}
+
+.VersionLabel {
+	margin-right: 0.5em;
+}
+
+.VersionName {
+	margin-right: 0.5em;
+}
+
+.VersionDate {
+}
+
+header,
+#About,
+footer,
+#WorldTree,
+#Graphics {
+	border-radius: 0px 0.5em 0.5em;
+	border: 1px solid;
+	padding: .5em;
+	margin: .5em;
+}

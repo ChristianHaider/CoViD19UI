@@ -55,7 +55,13 @@ name
 selectedAspects
 	"<Array of: Symbol>"
 	
-	^self aspects keys select: [:key | self aspectAt: key]
+	^self selectors select: [:key | self aspectAt: key]
+!
+
+selectors
+	"<Array of: Symbol>"
+	
+	^self aspects keys
 !
 
 sessionAt: aKey
@@ -111,7 +117,7 @@ buttonFor: anAspect
 buttons
 	"<Array of: Silk BUTTON>"
 	
-	^self aspects keys collect: [:aspect | self buttonFor: aspect]
+	^self selectors collect: [:aspect | self buttonFor: aspect]
 !
 
 fullBoxClassed: aClassString
@@ -122,9 +128,19 @@ fullBoxClassed: aClassString
 !
 
 legendFor: aString
+	| string |
+	string := aString.
+	string = 'unbekannt' ifTrue: [
+		string := '?'].
+	string first = $A ifTrue: [
+		string := string allButFirst].
+	string = 'M' ifTrue: [
+		string := '♂'].
+	string = 'W' ifTrue: [
+		string := '♀'].
 	^{
 		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: aString}}.
-		Silk SPAN: {'class' -> 'LegendLabel'. aString}}
+		Silk SPAN: {'class' -> 'LegendLabel'. string}}
 !
 
 legendSelectionClassFor: anAspect
@@ -164,19 +180,33 @@ name: aString aspects: someSymbols
 ! !
 
 Object subclass: #CoViD19
-	slots: {#model. #tree. #graphics. #version}
+	slots: {#model. #tree. #about. #graphics. #version}
 	package: 'Covid19view'!
 !CoViD19 commentStamp!
 The one page web application fro browsing CoViD-19 data!
 
 !CoViD19 methodsFor: 'accessing'!
 
+about
+	"<TerritoryInfo>
+	information about a territory"
+	
+	^about ifNil: [
+		| component |
+		component := TerritoryView on: self tree in: (Silk DIV: 'id' -> 'About').
+		component announcer on: DatasetSelected send: #datasetSelected to: self.
+		about := component]
+!
+
 graphics
 	"<Graphics>
 	the graphics of a territory"
 	
 	^graphics ifNil: [
-		graphics := Graphics on: self tree in: (Silk DIV: 'id' -> 'Graphics')]
+		| component |
+		component := Graphics on: self tree in: (Silk DIV: 'id' -> 'Graphics').
+		component territoryView: self about.
+		graphics := component]
 !
 
 model
@@ -212,6 +242,7 @@ version
 
 refreshTree
 	self tree refresh.
+	self about refresh.
 	self graphics refresh
 ! !
 
@@ -221,7 +252,13 @@ dataReceived
 	self version refresh
 !
 
+datasetSelected
+	self about refresh.
+	self graphics refresh
+!
+
 territorySelected
+	self about refresh.
 	self graphics refresh
 ! !
 
@@ -231,6 +268,7 @@ asSilk
 	^Silk DIV: {
 		'id' -> 'Contents'. 
 		self header.
+		self about frame.
 		self tree frame.
 		self graphics frame.
 		self footer}
@@ -350,7 +388,7 @@ localAt: anAspect put: anObject
 
 model
 	"<Object>
-	Object responding to #announcer"
+	essential required domain object of the receiver. Never nil"
 	
 	^model
 !
@@ -381,21 +419,9 @@ sessionKeys
 
 !Component methodsFor: 'actions'!
 
-hide
-	(self frame asDomNode at: 'style') at: #display put: 'none'
-!
-
 refresh
-	self model ifNil: [
-		self hide.
-		^self].
-	self show.
 	self frame resetContents.
 	self frame << self asSilk
-!
-
-show
-	(self frame asDomNode at: 'style') removeProperty: 'display'
 ! !
 
 !Component methodsFor: 'initialization'!
@@ -447,7 +473,7 @@ aspects
 	selectors of datapoint instances in the series.
 	When the list is empty, all aspects are shown"
 	
-	^self model primaryAspectGroup selectedAspects
+	^self primaryAspects selectedAspects
 !
 
 datapoints
@@ -479,6 +505,13 @@ newDataset
 	"<Dataset>"
 	
 	^self subclassResponsibility
+!
+
+primaryAspects
+	"<AspectGroup>
+	group of all primary aspects of datapoint instances in the series"
+	
+	^self model primaryAspectGroup
 ! !
 
 !Barchart methodsFor: 'accessing datescale'!
@@ -719,12 +752,7 @@ yAt: aDomainValue
 asSilk
 	^{	Silk DIV: {
 			'class' -> 'ChartHeader'.
-			Silk SPAN: {
-				'class' -> 'ChartLegend'.
-				self legendFor: #confirmed.
-				self legendFor: #recovered.
-				self legendFor: #deaths.
-				self legendFor: #active}}.
+			(Silk SPAN: 'class' -> 'ChartLegend') << (self primaryAspects selectors collect: [:aspect | self legendFor: aspect])}.
 		self svg}
 !
 
@@ -837,10 +865,10 @@ fullBoxClassed: aClassString
 !
 
 legendFor: anAspectSymbol
-	(self model primaryAspectGroup hasAspect: anAspectSymbol) ifFalse: [
+	(self primaryAspects hasAspect: anAspectSymbol) ifFalse: [
 		^Silk SPAN].
 	^Silk SPAN: {
-		'class' -> ('Legend', (self model primaryAspectGroup legendSelectionClassFor: anAspectSymbol)).
+		'class' -> ('Legend', (self primaryAspects legendSelectionClassFor: anAspectSymbol)).
 		self legendFor: anAspectSymbol value: (self dataset lastValueOf: anAspectSymbol)}
 !
 
@@ -970,14 +998,14 @@ newDataset
 
 legendFor: anAspectSymbol
 	| legend number |
-	(self model primaryAspectGroup hasAspect: anAspectSymbol) ifFalse: [
+	(self primaryAspects hasAspect: anAspectSymbol) ifFalse: [
 		^Silk SPAN].
 	number := self dataset lastValueOf: anAspectSymbol.
 	legend := self legendFor: anAspectSymbol value: number.
 	anAspectSymbol = #deaths ifTrue: [
 		legend add: (Silk SPAN: ' (', (number / self lastConfirmed * 100 asLocalizedString: #{'maximumFractionDigits' -> 1}), '%)')].
 	^Silk SPAN: {
-		'class' -> ('Legend', (self model primaryAspectGroup legendSelectionClassFor: anAspectSymbol)).
+		'class' -> ('Legend', (self primaryAspects legendSelectionClassFor: anAspectSymbol)).
 		legend}
 ! !
 
@@ -1063,7 +1091,7 @@ showRelative: aBoolean
 ! !
 
 Component subclass: #Graphics
-	slots: {#datasetId. #dataset. #primaryAspectGroup. #secondaryAspectGroup. #tertiaryAspectGroup. #header. #casesChart. #changesChart}
+	slots: {#territoryView. #dataset. #primaryAspectGroup. #secondaryAspectGroup. #tertiaryAspectGroup. #casesChart. #changesChart}
 	package: 'Covid19view'!
 !Graphics commentStamp!
 The details for the selected territory
@@ -1100,24 +1128,10 @@ dataset
 	^dataset ifNil: [dataset := self filteredDataset]
 !
 
-datasetId
-	"<String>
-	the id of the selected datasource"
-	
-	^datasetId ifNil: [datasetId := self territory datasets first source]
-!
-
-datasetId: aString
-	datasetId := aString.
-	dataset := nil.
-	self refresh
-!
-
 datasets
 	"<Array of: Silk>"
 	
-	^self territory datasets collect: [:aDataset |
-		self datasetInfoOf: aDataset]
+	^self territoryView datasets
 !
 
 extendedDataset
@@ -1145,9 +1159,7 @@ modelDataset
 	"<Dataset>
 	Dataset from the model with domain datapoints"
 	
-	^(self territory datasetAt: self datasetId) ifNil: [
-		datasetId := nil.
-		self modelDataset]
+	^self territoryView dataset
 !
 
 primaryAspectGroup
@@ -1156,6 +1168,8 @@ primaryAspectGroup
 	^primaryAspectGroup ifNil: [
 		| group |
 		group := AspectGroup name: 'Cases' aspects: self modelDataset primaryAspects.
+		group aspectAt: #confirmed put: true.
+		group aspectAt: #deaths put: true.
 		group announcer on: AspectChanged send: #aspectChanged to: self.
 		primaryAspectGroup := group]
 !
@@ -1173,9 +1187,18 @@ secondaryAspectGroup
 territory
 	"<Territory | nil>"
 	
-	self model hasSelection ifFalse: [
-		^nil].
-	^self model selection model
+	^self territoryView territory
+!
+
+territoryView
+	"<TerritoryView>
+	knows the selected dataset"
+	
+	^territoryView
+!
+
+territoryView: aTerritoryView
+	territoryView := aTerritoryView
 !
 
 tertiaryAspectGroup
@@ -1215,7 +1238,7 @@ sexAspectChanged
 !Graphics methodsFor: 'presenting'!
 
 asSilk
-	| chartsDiv |
+	| chartsDiv primaryButtons extraButtons |
 	self territory ifNil: [
 		^#()].
 	chartsDiv := Silk DIV: 'class' -> 'Charts'.
@@ -1223,52 +1246,117 @@ asSilk
 		chartsDiv << {
 			self casesChart refresh frame.
 			self changesChart refresh frame}].
-	^{	self header refresh frame.
-	 	chartsDiv.
+	primaryButtons := #().
+	extraButtons := #().
+	self datasets ifNotEmpty: [
+		primaryButtons := self primaryAspectButtons.
+		extraButtons := self extraAspectButtons].
+	^{
+		Silk DIV: {'class' -> 'ChartColumn'.
+			primaryButtons.
+	 		chartsDiv}.
+		extraButtons.
 		Silk DIV: 'id' -> 'Tooltip'}
 !
 
-datasetInfoOf: aDataset
+aspectButtons
+	"<Array of: Silk>"
+
+	self datasets ifEmpty: [
+		^#()].
+	^{
+		self primaryAspectButtons.
+		self extraAspectButtons
+	}
+!
+
+extraAspectButtons
+	"<Array of: Silk>"
+
+	^Silk DIV: {'class' -> 'ExtraAspectButtons'.
+			Silk DIV: {'class' -> 'SecondaryAspectButtons'. self secondaryAspectGroup buttons}.
+			Silk DIV: {'class' -> 'TertiaryAspectButtons'. self tertiaryAspectGroup buttons}}
+!
+
+primaryAspectButtons
+	"<Array of: Silk>"
+
+	^Silk DIV: {'class' -> 'AspectButtons'. self primaryAspectGroup buttons}.
+! !
+
+Component subclass: #TerritoryView
+	slots: {#dataset}
+	package: 'Covid19view'!
+
+!TerritoryView methodsFor: 'accessing'!
+
+dataset
+	"<Dataset>
+	selected Dataset to be shown"
+	
+	^dataset ifNil: [dataset := self datasets first]
+!
+
+dataset: aDataset
+	dataset := aDataset.
+	self announcer announce: DatasetSelected new
+!
+
+datasets
+	"<Array of: Dataset>"
+	
+	^self territory datasets
+!
+
+territory
+	"<Territory | nil>"
+	
+	self model hasSelection ifFalse: [
+		^nil].
+	^self model selection model
+! !
+
+!TerritoryView methodsFor: 'actions'!
+
+refresh
+	| id |
+	id := dataset ifNotNil: [self dataset source].
+	dataset := self territory datasetAt: id.
+	super refresh
+! !
+
+!TerritoryView methodsFor: 'presenting'!
+
+asSilk
+	self territory ifNil: [
+		^#()].
+	^Silk DIV: {
+		Silk DIV: {'class' -> 'TerritoryAbout'.
+			Silk IMG: {
+				'class' -> 'Flag'.
+				'src' -> self territory flagUrl.
+				'alt' -> self territory flagAlt}.
+			self territory presentationName}.
+		self territoryInfoPopulation: self territory population.
+		Silk DIV: {'class' -> 'Datasets'. self datasets collect: [:aDataset | self datasetButtonFor: aDataset]}}
+!
+
+datasetButtonFor: aDataset
 	| datasource cssClass |
 	datasource := CoViD19Application current sources at: aDataset source.
 	cssClass := 'DatasetInfo'.
 	self dataset = aDataset ifTrue: [
 		cssClass := cssClass, ' selected'].
-	^{	(Silk LI: {'class' -> cssClass.
+	^{	(Silk BUTTON: {
+			'class' -> cssClass.
+			'type' -> 'button'. 
 			Silk SPAN: {'class' -> 'DatasetLabel'. datasource dataLabel}.
 			Silk A: {datasource provider.
 				'href' -> (datasource about at: #ProviderUrl).
 				'target' -> '_blank'.
 				'rel' -> 'noopener'}.
-			Silk SPAN: {'class' -> 'DatasetDate'. aDataset dataDateString}}) on: #click bind: [self datasetId: aDataset source]
+			Silk SPAN: {'class' -> 'DatasetDate'. aDataset dataDateString}}) on: #click bind: [self dataset: aDataset]
 	}
-!
-
-datasetSilks
-	"<Silk | (Array of: Silk)>"
-	
-	self datasets ifEmpty: [
-		^Silk UL: {'class' -> 'Datasets'. self datasets}].
-	^{Silk UL: {'class' -> 'Datasets'. self datasets}.
-	Silk DIV: {'class' -> 'AspectButtons'. self primaryAspectGroup buttons}.
-	Silk DIV: {'class' -> 'SecondaryAspectButtons'. self secondaryAspectGroup buttons}.
-	Silk DIV: {'class' -> 'TertiaryAspectButtons'. self tertiaryAspectGroup buttons}}
-!
-
-header
-	"<Presenter>"
-	
-	^header ifNil: [
-		header := SilkLeafPresenter shows: [self territory] in: Silk DIV do: [:aTerritory |
-			{'class' -> 'GraphicsHeader'.
-				Silk H2: {
-					Silk IMG: {
-						'class' -> 'Flag'.
-						'src' -> aTerritory flagUrl.
-						'alt' -> aTerritory flagAlt}.
-					aTerritory presentationName.
-					self territoryInfoPopulation: aTerritory population}.
-				self datasetSilks}]]
 !
 
 territoryInfoPopulation: aNumber
@@ -1633,6 +1721,10 @@ InteractionAnnouncement subclass: #AspectChanged
 	package: 'Covid19view'!
 
 InteractionAnnouncement subclass: #DataReceived
+	slots: {}
+	package: 'Covid19view'!
+
+InteractionAnnouncement subclass: #DatasetSelected
 	slots: {}
 	package: 'Covid19view'!
 

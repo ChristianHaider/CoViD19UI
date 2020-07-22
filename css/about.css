@@ -1,0 +1,32 @@
+.TerritoryInfo {
+	font-size: small;
+	font-weight: normal;
+}
+
+.TerritoryInfo.empty {
+	visibility: hidden;
+}
+
+.DatasetInfo {
+	width: max-content;
+	margin-right: 0.5em;
+}
+
+.DatasetInfo.selected {
+	border-style: solid;
+	border-color: blue;
+}
+
+.DatasetLabel {
+	font-weight: bold;
+	margin-left: 0.3em;
+	margin-right: 0.5em;
+}
+
+.DatasetDate {
+	float: right;
+}
+
+.Datasets {
+	align-self: end;
+}

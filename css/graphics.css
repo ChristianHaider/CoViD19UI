@@ -1,0 +1,238 @@
+#Graphics {
+	background: #ffede0;
+	display: grid;
+	grid-template-columns: auto auto;
+	margin-bottom: 0.5em;
+}
+
+.ChartColumn {
+	grid-column: 1;
+	display: grid;
+}
+
+.AspectButtons {
+	grid-row: 1;
+}
+
+.ExtraAspectButtons {
+	grid-column: 2;
+	display: grid;
+	grid-template-columns: auto;
+}
+
+.SecondaryAspectButtons {
+	grid-column: 1;
+}
+
+.TertiaryAspectButtons 
+	grid-column: 2;
+}
+
+.Charts {
+	grid-column: 1;	
+}
+
+#Casechart > svg {
+	height: 30vh;
+}
+
+#Changechart > svg {
+	height: 30vh;
+}
+
+svg {
+	fill: #fff8ea;
+}
+
+svg > rect {
+	stroke-width: 0.3;
+	stroke: black;
+}
+
+.subtitle {
+	margin-left: 1em;
+	font-size: smaller;
+	font-weight: lighter;
+}
+
+.ValueAxis {
+	fill: none;
+}
+
+.ScalingButton {
+	cursor: pointer;
+}
+
+.ScalingButton.disabled {
+	cursor: default;
+}
+
+.ScalingRectangle {
+	stroke-width: 0.2;
+	stroke: darkslategray;
+	fill: lightgray;
+}
+
+.disabled > .ScalingRectangle {
+	stroke: gray;
+	fill: #ddd;
+}
+
+.ScalingText {
+	font-size: 5px;
+	fill: black;
+}
+
+.disabled > .ScalingText {
+	fill: gray;
+}
+
+.Majorline {
+	stroke: #aaa;
+	stroke-width: 0.5;
+}
+
+.Minorline {
+	stroke: #ddd;
+	stroke-width: 0.5;
+}
+
+.MajorText {
+	font-size: 6px;
+	fill: gray;
+}
+
+.DateAxis {
+	fill: none;
+}
+
+.Monthline {
+	stroke: #aaa;
+	stroke-width: 0.5;
+}
+
+.Weekline {
+	stroke: #ddd;
+	stroke-width: 0.5;
+}
+
+.Baseline {
+	stroke: black;
+}
+
+.MonthText {
+	font-family: sans-serif;
+	font-size: 7px;
+	fill: black;
+}
+
+.GraphicsArea {
+	fill: none;
+}
+
+.Bar:hover {
+	opacity: 0.5;
+}
+
+.Bar rect {
+	stroke: gray;
+	stroke-width: 0.2;
+}
+
+.confirmed {
+	fill: orange;
+}
+
+.deaths {
+	fill: red;
+}
+
+.recovered {
+	fill: green;
+}
+
+.decided {
+	fill: green;
+}
+
+.active {
+	fill: #33ccff;
+}
+
+.ButtonText {
+	font-family: sans-serif;
+	font-size: 6px;
+	fill: black;
+}
+
+.AspectButton {
+	width: max-content;
+	margin-right: 0.5em;
+}
+
+.AspectButton.selected {
+	border-style: solid;
+	border-color: blue;
+}
+
+.ChartHeader {
+	display: grid;
+	grid-template-columns: auto auto; 
+}
+
+.ChartLegend {
+	justify-self: start;
+}
+
+.Legend {
+	width: max-content;
+	margin-right: 0.5em;
+	opacity: 0.3;
+}
+
+.Legend.selected {
+	opacity: 1;
+}
+
+.LegendBar {
+	display: inline-block;
+	width: 1em;
+}
+
+.LegendLabel {
+	margin-left: 0.3em;
+}
+
+.LegendValue {
+	margin-left: 0.3em;
+	font-weight: bolder;
+}
+
+#Tooltip .LegendBar {
+	grid-column: 1;
+}
+
+#Tooltip .LegendLabel {
+	grid-column: 2;
+}
+
+#Tooltip .LegendValue {
+	grid-column: 3;
+	justify-self: end;
+}
+
+#Tooltip {
+	display: grid;
+	grid-template-columns: auto auto auto;
+	
+	visibility: hidden;
+	position: fixed;
+	
+	z-index: 1;
+	background-color: white;
+	padding: 0.3em;
+	border-style: solid;
+	border-radius: 0.4em;
+	border-width: 2px;
+	border-color: blue;
+}

@@ -44,6 +44,60 @@ $globals.AspectGroup);
 
 $core.addMethod(
 $core.method({
+selector: "arrowDown",
+protocol: "events",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "arrowDown\x0a\x09self hasSelection ifFalse: [\x0a\x09\x09^self].\x0a\x09self selectNext",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifFalse:", "hasSelection", "selectNext"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+if(!$core.assert($self._hasSelection())){
+return self;
+}
+$self._selectNext();
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"arrowDown",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.AspectGroup);
+
+$core.addMethod(
+$core.method({
+selector: "arrowUp",
+protocol: "events",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "arrowUp\x0a\x09self hasSelection ifFalse: [\x0a\x09\x09^self].\x0a\x09self selectPrevious",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifFalse:", "hasSelection", "selectPrevious"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+if(!$core.assert($self._hasSelection())){
+return self;
+}
+$self._selectPrevious();
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"arrowUp",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.AspectGroup);
+
+$core.addMethod(
+$core.method({
 selector: "aspectAt:",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -168,6 +222,37 @@ $globals.AspectGroup);
 
 $core.addMethod(
 $core.method({
+selector: "buttonList",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "buttonList\x09\x0a\x09^self selectors collect: [:aspect | self listButtonFor: aspect]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["collect:", "selectors", "listButtonFor:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._selectors())._collect_((function(aspect){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._listButtonFor_(aspect);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({aspect:aspect},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"buttonList",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.AspectGroup);
+
+$core.addMethod(
+$core.method({
 selector: "buttons",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -193,6 +278,38 @@ return $self._buttonFor_(aspect);
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"buttons",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.AspectGroup);
+
+$core.addMethod(
+$core.method({
+selector: "clear",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "clear\x0a\x09self selectors do: [:selector | self aspectAt: selector put: false]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["do:", "selectors", "aspectAt:put:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv($self._selectors())._do_((function(selector){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._aspectAt_put_(selector,false);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({selector:selector},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"clear",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.AspectGroup);
@@ -313,6 +430,32 @@ $globals.AspectGroup);
 
 $core.addMethod(
 $core.method({
+selector: "hasSelection",
+protocol: "testing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "hasSelection\x0a\x09^self aspects values anySatisfy: [:bool | bool]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["anySatisfy:", "values", "aspects"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($recv($self._aspects())._values())._anySatisfy_((function(bool){
+return bool;
+
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"hasSelection",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.AspectGroup);
+
+$core.addMethod(
+$core.method({
 selector: "initializeName:aspects:",
 protocol: "initialization",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -353,50 +496,98 @@ $globals.AspectGroup);
 
 $core.addMethod(
 $core.method({
-selector: "legendFor:",
-protocol: "presenting",
+selector: "keyPressed:",
+protocol: "events",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aString"],
-source: "legendFor: aString\x0a\x09| string |\x0a\x09string := aString.\x0a\x09string = 'unbekannt' ifTrue: [\x0a\x09\x09string := '?'].\x0a\x09string first = $A ifTrue: [\x0a\x09\x09string := string allButFirst].\x0a\x09string = 'M' ifTrue: [\x0a\x09\x09string := '♂'].\x0a\x09string = 'W' ifTrue: [\x0a\x09\x09string := '♀'].\x0a\x09^{\x0a\x09\x09Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: aString}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. string}}",
-referencedClasses: ["Silk", "SVG"],
+args: ["aKeyboardEvent"],
+source: "keyPressed: aKeyboardEvent\x0a\x09console log: aKeyboardEvent.\x0a\x09aKeyboardEvent key = 'ArrowDown' ifTrue: [\x0a\x09\x09aKeyboardEvent preventDefault.\x0a\x09\x09^self arrowDown].\x0a\x09aKeyboardEvent key = 'ArrowUp' ifTrue: [\x0a\x09\x09aKeyboardEvent preventDefault.\x0a\x09\x09^self arrowUp]",
+referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifTrue:", "=", "first", "allButFirst", "SPAN:", "->", "SVG:", "fullBoxClassed:"]
-}, function ($methodClass){ return function (aString){
+messageSends: ["log:", "ifTrue:", "=", "key", "preventDefault", "arrowDown", "arrowUp"]
+}, function ($methodClass){ return function (aKeyboardEvent){
 var self=this,$self=this;
-var string;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-string=aString;
-if($core.assert([$recv(string).__eq("unbekannt")
+$recv(console)._log_(aKeyboardEvent);
+if($core.assert([$recv([$recv(aKeyboardEvent)._key()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["key"]=1
+//>>excludeEnd("ctx");
+][0]).__eq("ArrowDown")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["="]=1
 //>>excludeEnd("ctx");
 ][0])){
-string="?";
-string;
-}
-if($core.assert([$recv($recv(string)._first()).__eq("A")
+[$recv(aKeyboardEvent)._preventDefault()
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["="]=2
+,$ctx1.sendIdx["preventDefault"]=1
 //>>excludeEnd("ctx");
-][0])){
-string=$recv(string)._allButFirst();
-string;
+][0];
+return $self._arrowDown();
 }
-if($core.assert([$recv(string).__eq("M")
+if($core.assert($recv($recv(aKeyboardEvent)._key()).__eq("ArrowUp"))){
+$recv(aKeyboardEvent)._preventDefault();
+return $self._arrowUp();
+}
+return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["="]=3
+}, function($ctx1) {$ctx1.fill(self,"keyPressed:",{aKeyboardEvent:aKeyboardEvent})});
 //>>excludeEnd("ctx");
-][0])){
-string="♂";
-string;
-}
-if($core.assert($recv(string).__eq("W"))){
-string="♀";
-string;
-}
+}; }),
+$globals.AspectGroup);
+
+$core.addMethod(
+$core.method({
+selector: "lastSelection",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "lastSelection\x0a\x09\x22<Symbol | nil>\x22\x0a\x09\x0a\x09^self selectors reversed detect: [:selector | self aspectAt: selector] ifNone: [nil]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["detect:ifNone:", "reversed", "selectors", "aspectAt:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($recv($self._selectors())._reversed())._detect_ifNone_((function(selector){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._aspectAt_(selector);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({selector:selector},$ctx1,1)});
+//>>excludeEnd("ctx");
+}),(function(){
+return nil;
+
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"lastSelection",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.AspectGroup);
+
+$core.addMethod(
+$core.method({
+selector: "legendFor:",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aString"],
+source: "legendFor: aString\x0a\x09^{\x0a\x09\x09Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: aString}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. (self legendStringFor: aString)}}",
+referencedClasses: ["Silk", "SVG"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["SPAN:", "->", "SVG:", "fullBoxClassed:", "legendStringFor:"]
+}, function ($methodClass){ return function (aString){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
 return [[$recv($globals.Silk)._SPAN_([["class".__minus_gt("LegendBar")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["->"]=1
@@ -409,9 +600,9 @@ return [[$recv($globals.Silk)._SPAN_([["class".__minus_gt("LegendBar")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["SPAN:"]=1
 //>>excludeEnd("ctx");
-][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("LegendLabel"),string])];
+][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("LegendLabel"),$self._legendStringFor_(aString)])];
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"legendFor:",{aString:aString,string:string})});
+}, function($ctx1) {$ctx1.fill(self,"legendFor:",{aString:aString})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.AspectGroup);
@@ -450,6 +641,176 @@ $globals.AspectGroup);
 
 $core.addMethod(
 $core.method({
+selector: "legendStringFor:",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aString"],
+source: "legendStringFor: aString\x0a\x09aString = 'unbekannt' ifTrue: [\x0a\x09\x09^'?'].\x0a\x09aString first = $A ifTrue: [\x0a\x09\x09^aString copyWithout: $A].\x0a\x09aString = 'M' ifTrue: [\x0a\x09\x09^'♂'].\x0a\x09aString = 'W' ifTrue: [\x0a\x09\x09^'♀'].\x0a\x09^aString",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifTrue:", "=", "first", "copyWithout:"]
+}, function ($methodClass){ return function (aString){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+if($core.assert([$recv(aString).__eq("unbekannt")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=1
+//>>excludeEnd("ctx");
+][0])){
+return "?";
+}
+if($core.assert([$recv($recv(aString)._first()).__eq("A")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=2
+//>>excludeEnd("ctx");
+][0])){
+return $recv(aString)._copyWithout_("A");
+}
+if($core.assert([$recv(aString).__eq("M")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["="]=3
+//>>excludeEnd("ctx");
+][0])){
+return "♂";
+}
+if($core.assert($recv(aString).__eq("W"))){
+return "♀";
+}
+return aString;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"legendStringFor:",{aString:aString})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.AspectGroup);
+
+$core.addMethod(
+$core.method({
+selector: "list",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "list\x0a\x09\x22<Silk UL>\x22\x0a\x09\x0a\x09| list |\x0a\x09list := Silk UL: 'tabindex' -> 2.\x0a\x09list << (self selectors collect: [:aspect | self listitemFor: aspect]).\x0a\x09list on: #keydown bind: [:event | self keyPressed: event].\x0a\x09^list",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["UL:", "->", "<<", "collect:", "selectors", "listitemFor:", "on:bind:", "keyPressed:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+var list;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+list=$recv($globals.Silk)._UL_("tabindex".__minus_gt((2)));
+$recv(list).__lt_lt($recv($self._selectors())._collect_((function(aspect){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._listitemFor_(aspect);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({aspect:aspect},$ctx1,1)});
+//>>excludeEnd("ctx");
+})));
+$recv(list)._on_bind_("keydown",(function(event){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._keyPressed_(event);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({event:event},$ctx1,2)});
+//>>excludeEnd("ctx");
+}));
+return list;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"list",{list:list})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.AspectGroup);
+
+$core.addMethod(
+$core.method({
+selector: "listButtonFor:",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspect"],
+source: "listButtonFor: anAspect\x0a\x09\x22<Silk BUTTON>\x22\x0a\x09\x0a\x09| button |\x0a\x09button := Silk BUTTON: {\x0a\x09\x09'class' -> ('AspectListButton', (self selectionClassFor: anAspect)).\x0a\x09\x09'type' -> 'button'. \x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. (self legendStringFor: anAspect)}}.\x0a\x09button on: #click bind: [self toggleAspect: anAspect].\x0a\x09^button",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["BUTTON:", "->", ",", "selectionClassFor:", "SPAN:", "legendStringFor:", "on:bind:", "toggleAspect:"]
+}, function ($methodClass){ return function (anAspect){
+var self=this,$self=this;
+var button;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+button=$recv($globals.Silk)._BUTTON_([["class".__minus_gt("AspectListButton".__comma($self._selectionClassFor_(anAspect)))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=1
+//>>excludeEnd("ctx");
+][0],["type".__minus_gt("button")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=2
+//>>excludeEnd("ctx");
+][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("LegendLabel"),$self._legendStringFor_(anAspect)])]);
+$recv(button)._on_bind_("click",(function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._toggleAspect_(anAspect);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+return button;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"listButtonFor:",{anAspect:anAspect,button:button})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.AspectGroup);
+
+$core.addMethod(
+$core.method({
+selector: "listitemFor:",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspect"],
+source: "listitemFor: anAspect\x0a\x09\x22<Silk LI>\x22\x0a\x09\x0a\x09| item |\x0a\x09item := Silk LI: {\x0a\x09\x09'class' -> ('AspectItem', (self selectionClassFor: anAspect)).\x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. (self legendStringFor: anAspect)}}.\x0a\x09item on: #click bind: [self toggleAspect: anAspect].\x0a\x09^item",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["LI:", "->", ",", "selectionClassFor:", "SPAN:", "legendStringFor:", "on:bind:", "toggleAspect:"]
+}, function ($methodClass){ return function (anAspect){
+var self=this,$self=this;
+var item;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+item=$recv($globals.Silk)._LI_([["class".__minus_gt("AspectItem".__comma($self._selectionClassFor_(anAspect)))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=1
+//>>excludeEnd("ctx");
+][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("LegendLabel"),$self._legendStringFor_(anAspect)])]);
+$recv(item)._on_bind_("click",(function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._toggleAspect_(anAspect);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+return item;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"listitemFor:",{anAspect:anAspect,item:item})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.AspectGroup);
+
+$core.addMethod(
+$core.method({
 selector: "name",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -472,23 +833,92 @@ selector: "nothingSelected",
 protocol: "testing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "nothingSelected\x0a\x09^(self aspects values anySatisfy: [:bool | bool]) not",
+source: "nothingSelected\x0a\x09^self hasSelection not",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["not", "anySatisfy:", "values", "aspects"]
+messageSends: ["not", "hasSelection"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $recv($recv($recv($self._aspects())._values())._anySatisfy_((function(bool){
-return bool;
-
-})))._not();
+return $recv($self._hasSelection())._not();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"nothingSelected",{})});
 //>>excludeEnd("ctx");
+}; }),
+$globals.AspectGroup);
+
+$core.addMethod(
+$core.method({
+selector: "selectNext",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "selectNext\x0a\x09| lastSelected nextIndex |\x0a\x09lastSelected := self lastSelection.\x0a\x09lastSelected = self selectors last ifTrue: [\x0a\x09\x09^self].\x0a\x09self clear.\x0a\x09lastSelected ifNil: [\x0a\x09\x09^self aspectAt: self selectors first put: true].\x0a\x09nextIndex := (self selectors indexOf: lastSelected) + 1.\x0a\x09self aspectAt: (self selectors at: nextIndex) put: true",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["lastSelection", "ifTrue:", "=", "last", "selectors", "clear", "ifNil:", "aspectAt:put:", "first", "+", "indexOf:", "at:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+var lastSelected,nextIndex;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1;
+lastSelected=$self._lastSelection();
+if($core.assert($recv(lastSelected).__eq($recv([$self._selectors()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["selectors"]=1
+//>>excludeEnd("ctx");
+][0])._last()))){
+return self;
+}
+$self._clear();
+$1=lastSelected;
+if($1 == null || $1.a$nil){
+return [$self._aspectAt_put_($recv([$self._selectors()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["selectors"]=2
+//>>excludeEnd("ctx");
+][0])._first(),true)
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["aspectAt:put:"]=1
+//>>excludeEnd("ctx");
+][0];
+} else {
+$1;
+}
+nextIndex=$recv($recv([$self._selectors()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["selectors"]=3
+//>>excludeEnd("ctx");
+][0])._indexOf_(lastSelected)).__plus((1));
+$self._aspectAt_put_($recv($self._selectors())._at_(nextIndex),true);
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"selectNext",{lastSelected:lastSelected,nextIndex:nextIndex})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.AspectGroup);
+
+$core.addMethod(
+$core.method({
+selector: "selectPrevious",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "selectPrevious",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return self;
+
 }; }),
 $globals.AspectGroup);
 
@@ -677,6 +1107,79 @@ $globals.AspectGroup);
 
 $core.addMethod(
 $core.method({
+selector: "simpleButtonFor:",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspect"],
+source: "simpleButtonFor: anAspect\x0a\x09\x22<Silk BUTTON>\x22\x0a\x09\x0a\x09| button |\x0a\x09button := Silk BUTTON: {\x0a\x09\x09'class' -> ('AspectSimpleButton', (self selectionClassFor: anAspect)).\x0a\x09\x09'type' -> 'button'. \x0a\x09\x09Silk SPAN: {'class' -> 'LegendLabel'. (self legendStringFor: anAspect)}}.\x0a\x09button on: #click bind: [self toggleAspect: anAspect].\x0a\x09^button",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["BUTTON:", "->", ",", "selectionClassFor:", "SPAN:", "legendStringFor:", "on:bind:", "toggleAspect:"]
+}, function ($methodClass){ return function (anAspect){
+var self=this,$self=this;
+var button;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+button=$recv($globals.Silk)._BUTTON_([["class".__minus_gt("AspectSimpleButton".__comma($self._selectionClassFor_(anAspect)))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=1
+//>>excludeEnd("ctx");
+][0],["type".__minus_gt("button")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=2
+//>>excludeEnd("ctx");
+][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("LegendLabel"),$self._legendStringFor_(anAspect)])]);
+$recv(button)._on_bind_("click",(function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._toggleAspect_(anAspect);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+return button;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"simpleButtonFor:",{anAspect:anAspect,button:button})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.AspectGroup);
+
+$core.addMethod(
+$core.method({
+selector: "simpleButtons",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "simpleButtons\x0a\x09\x22<Array of: Silk BUTTON>\x22\x0a\x09\x0a\x09^self selectors collect: [:aspect | self simpleButtonFor: aspect]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["collect:", "selectors", "simpleButtonFor:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._selectors())._collect_((function(aspect){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._simpleButtonFor_(aspect);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({aspect:aspect},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"simpleButtons",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.AspectGroup);
+
+$core.addMethod(
+$core.method({
 selector: "toggleAspect:",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -852,22 +1355,18 @@ selector: "datasetSelected",
 protocol: "events",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "datasetSelected\x0a\x09self about refresh.\x0a\x09self graphics refresh",
+source: "datasetSelected\x0a\x09self about refresh.\x0a\x09self graphics reset",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["refresh", "about", "graphics"]
+messageSends: ["refresh", "about", "reset", "graphics"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-[$recv($self._about())._refresh()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["refresh"]=1
-//>>excludeEnd("ctx");
-][0];
-$recv($self._graphics())._refresh();
+$recv($self._about())._refresh();
+$recv($self._graphics())._reset();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"datasetSelected",{})});
@@ -1102,22 +1601,18 @@ selector: "territorySelected",
 protocol: "events",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "territorySelected\x0a\x09self about refresh.\x0a\x09self graphics refresh",
+source: "territorySelected\x0a\x09self about refresh.\x0a\x09self graphics reset",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["refresh", "about", "graphics"]
+messageSends: ["refresh", "about", "reset", "graphics"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-[$recv($self._about())._refresh()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["refresh"]=1
-//>>excludeEnd("ctx");
-][0];
-$recv($self._graphics())._refresh();
+$recv($self._about())._refresh();
+$recv($self._graphics())._reset();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"territorySelected",{})});
@@ -1760,11 +2255,11 @@ selector: "asSilk",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "asSilk\x0a\x09^{\x09Silk DIV: {\x0a\x09\x09\x09'class' -> 'ChartHeader'.\x0a\x09\x09\x09(Silk SPAN: 'class' -> 'ChartLegend') << (self primaryAspects selectors collect: [:aspect | self legendFor: aspect])}.\x0a\x09\x09self svg}",
+source: "asSilk\x0a\x09^{\x09Silk DIV: {\x0a\x09\x09\x09'class' -> 'ChartHeader'.\x0a\x09\x09\x09(Silk SPAN: {'class' -> 'ChartLegend'.  Silk SPAN: self symbol, ' '}) << (self primaryAspects selectors collect: [:aspect | self legendFor: aspect])}.\x0a\x09\x09self svg}",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["DIV:", "->", "<<", "SPAN:", "collect:", "selectors", "primaryAspects", "legendFor:", "svg"]
+messageSends: ["DIV:", "->", "<<", "SPAN:", ",", "symbol", "collect:", "selectors", "primaryAspects", "legendFor:", "svg"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -1774,7 +2269,11 @@ return [$recv($globals.Silk)._DIV_([["class".__minus_gt("ChartHeader")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["->"]=1
 //>>excludeEnd("ctx");
-][0],$recv($recv($globals.Silk)._SPAN_("class".__minus_gt("ChartLegend"))).__lt_lt($recv($recv($self._primaryAspects())._selectors())._collect_((function(aspect){
+][0],$recv([$recv($globals.Silk)._SPAN_(["class".__minus_gt("ChartLegend"),$recv($globals.Silk)._SPAN_($recv($self._symbol()).__comma(" "))])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["SPAN:"]=1
+//>>excludeEnd("ctx");
+][0]).__lt_lt($recv($recv($self._primaryAspects())._selectors())._collect_((function(aspect){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
@@ -1871,129 +2370,25 @@ selector: "barForDatapoint:at:width:",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aDatapoint", "aBarLeft", "aWidth"],
-source: "barForDatapoint: aDatapoint at: aBarLeft width: aWidth\x0a\x09\x22<g>\x22\x0a\x09\x0a\x09| zero bars g |\x0a\x09zero := self yAt: 0.\x0a\x09bars :=OrderedCollection new.\x0a\x09(self aspects isEmpty or: [\x0a\x09self aspects includes: #confirmed]) ifTrue: [\x0a\x09\x09bars add: (self bar: #confirmed forDatapoint: aDatapoint at: aBarLeft width: aWidth)].\x0a\x09self aspects isEmpty ifTrue: [\x0a\x09\x09bars add: (self bar: #decided forDatapoint: aDatapoint at: aBarLeft width: aWidth)].\x0a\x09(self aspects includes: #recovered) ifTrue: [\x0a\x09\x09bars add: (self bar: #recovered forDatapoint: aDatapoint at: aBarLeft width: aWidth)].\x0a\x09(self aspects includes: #active) ifTrue: [\x0a\x09\x09bars add: (self bar: #active forDatapoint: aDatapoint at: aBarLeft width: aWidth)].\x0a\x09(self aspects isEmpty or: [\x0a\x09self aspects includes: #deaths]) ifTrue: [\x0a\x09\x09bars add: (self bar: #deaths forDatapoint: aDatapoint at: aBarLeft width: aWidth)].\x0a\x09g := SVG G: {\x0a\x09\x09'class' -> 'Bar'.\x0a\x09\x09bars}.\x0a\x09g on: #mouseover bind: [:event | self mouseover: event datapoint: aDatapoint].\x0a\x09g on: #mouseout bind: [:event | self mouseout: event datapoint: aDatapoint].\x0a\x09^g",
-referencedClasses: ["OrderedCollection", "SVG"],
+source: "barForDatapoint: aDatapoint at: aBarLeft width: aWidth\x0a\x09\x22<g>\x22\x0a\x09\x0a\x09| g |\x0a\x09g := SVG G: {\x0a\x09\x09'class' -> 'Bar'.\x0a\x09\x09self barsForDatapoint: aDatapoint at: aBarLeft width: aWidth}.\x0a\x09g on: #mouseover bind: [:event | self mouseover: event datapoint: aDatapoint].\x0a\x09g on: #mouseout bind: [:event | self mouseout: event datapoint: aDatapoint].\x0a\x09^g",
+referencedClasses: ["SVG"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["yAt:", "new", "ifTrue:", "or:", "isEmpty", "aspects", "includes:", "add:", "bar:forDatapoint:at:width:", "G:", "->", "on:bind:", "mouseover:datapoint:", "mouseout:datapoint:"]
+messageSends: ["G:", "->", "barsForDatapoint:at:width:", "on:bind:", "mouseover:datapoint:", "mouseout:datapoint:"]
 }, function ($methodClass){ return function (aDatapoint,aBarLeft,aWidth){
 var self=this,$self=this;
-var zero,bars,g;
+var g;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-var $1,$2;
-zero=$self._yAt_((0));
-bars=$recv($globals.OrderedCollection)._new();
-if($core.assert([$recv([$self._aspects()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["aspects"]=1
-//>>excludeEnd("ctx");
-][0])._isEmpty()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["isEmpty"]=1
-//>>excludeEnd("ctx");
-][0])){
-$1=true;
-} else {
-$1=[$recv([$self._aspects()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["aspects"]=2
-//>>excludeEnd("ctx");
-][0])._includes_("confirmed")
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["includes:"]=1
-//>>excludeEnd("ctx");
-][0];
-}
-if($core.assert($1)){
-[$recv(bars)._add_([$self._bar_forDatapoint_at_width_("confirmed",aDatapoint,aBarLeft,aWidth)
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["bar:forDatapoint:at:width:"]=1
-//>>excludeEnd("ctx");
-][0])
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["add:"]=1
-//>>excludeEnd("ctx");
-][0];
-}
-if($core.assert([$recv([$self._aspects()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["aspects"]=3
-//>>excludeEnd("ctx");
-][0])._isEmpty()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["isEmpty"]=2
-//>>excludeEnd("ctx");
-][0])){
-[$recv(bars)._add_([$self._bar_forDatapoint_at_width_("decided",aDatapoint,aBarLeft,aWidth)
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["bar:forDatapoint:at:width:"]=2
-//>>excludeEnd("ctx");
-][0])
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["add:"]=2
-//>>excludeEnd("ctx");
-][0];
-}
-if($core.assert([$recv([$self._aspects()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["aspects"]=4
-//>>excludeEnd("ctx");
-][0])._includes_("recovered")
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["includes:"]=2
-//>>excludeEnd("ctx");
-][0])){
-[$recv(bars)._add_([$self._bar_forDatapoint_at_width_("recovered",aDatapoint,aBarLeft,aWidth)
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["bar:forDatapoint:at:width:"]=3
-//>>excludeEnd("ctx");
-][0])
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["add:"]=3
-//>>excludeEnd("ctx");
-][0];
-}
-if($core.assert([$recv([$self._aspects()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["aspects"]=5
-//>>excludeEnd("ctx");
-][0])._includes_("active")
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["includes:"]=3
-//>>excludeEnd("ctx");
-][0])){
-[$recv(bars)._add_([$self._bar_forDatapoint_at_width_("active",aDatapoint,aBarLeft,aWidth)
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["bar:forDatapoint:at:width:"]=4
-//>>excludeEnd("ctx");
-][0])
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["add:"]=4
-//>>excludeEnd("ctx");
-][0];
-}
-if($core.assert($recv([$self._aspects()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["aspects"]=6
-//>>excludeEnd("ctx");
-][0])._isEmpty())){
-$2=true;
-} else {
-$2=$recv($self._aspects())._includes_("deaths");
-}
-if($core.assert($2)){
-$recv(bars)._add_($self._bar_forDatapoint_at_width_("deaths",aDatapoint,aBarLeft,aWidth));
-}
-g=$recv($globals.SVG)._G_(["class".__minus_gt("Bar"),bars]);
+g=$recv($globals.SVG)._G_(["class".__minus_gt("Bar"),$self._barsForDatapoint_at_width_(aDatapoint,aBarLeft,aWidth)]);
 [$recv(g)._on_bind_("mouseover",(function(event){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
 return $self._mouseover_datapoint_(event,aDatapoint);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({event:event},$ctx1,8)});
+}, function($ctx2) {$ctx2.fillBlock({event:event},$ctx1,1)});
 //>>excludeEnd("ctx");
 }))
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -2006,12 +2401,12 @@ return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
 return $self._mouseout_datapoint_(event,aDatapoint);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({event:event},$ctx1,9)});
+}, function($ctx2) {$ctx2.fillBlock({event:event},$ctx1,2)});
 //>>excludeEnd("ctx");
 }));
 return g;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"barForDatapoint:at:width:",{aDatapoint:aDatapoint,aBarLeft:aBarLeft,aWidth:aWidth,zero:zero,bars:bars,g:g})});
+}, function($ctx1) {$ctx1.fill(self,"barForDatapoint:at:width:",{aDatapoint:aDatapoint,aBarLeft:aBarLeft,aWidth:aWidth,g:g})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Barchart);
@@ -2035,6 +2430,69 @@ return $core.withContext(function($ctx1) {
 return $self._barForDatapoint_at_width_(aDatapoint,$recv($self._xAt_($recv(aDatapoint)._date())).__minus(aWidth),aWidth);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"barForDatapoint:width:",{aDatapoint:aDatapoint,aWidth:aWidth})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Barchart);
+
+$core.addMethod(
+$core.method({
+selector: "barsForDatapoint:at:width:",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aDatapoint", "aBarLeft", "aWidth"],
+source: "barsForDatapoint: aDatapoint at: aBarLeft width: aWidth\x0a\x09\x22<Array of: g>\x22\x0a\x09\x0a\x09self aspects ifEmpty: [\x0a\x09\x09^#(#confirmed #decided #deaths) collect: [:aspect |\x0a\x09\x09\x09self bar: aspect forDatapoint: aDatapoint at: aBarLeft width: aWidth]].\x0a\x09^#(#confirmed #recovered #active #deaths) inject: OrderedCollection new into: [:list :aspect |\x0a\x09\x09(self aspects includes: aspect) ifTrue: [\x0a\x09\x09\x09list add: (self bar: aspect forDatapoint: aDatapoint at: aBarLeft width: aWidth)].\x0a\x09\x09list]",
+referencedClasses: ["OrderedCollection"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifEmpty:", "aspects", "collect:", "bar:forDatapoint:at:width:", "inject:into:", "new", "ifTrue:", "includes:", "add:"]
+}, function ($methodClass){ return function (aDatapoint,aBarLeft,aWidth){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $early={};
+try {
+$recv([$self._aspects()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["aspects"]=1
+//>>excludeEnd("ctx");
+][0])._ifEmpty_((function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+throw $early=[["confirmed", "decided", "deaths"]._collect_((function(aspect){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
+return [$self._bar_forDatapoint_at_width_(aspect,aDatapoint,aBarLeft,aWidth)
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx3.sendIdx["bar:forDatapoint:at:width:"]=1
+//>>excludeEnd("ctx");
+][0];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({aspect:aspect},$ctx2,2)});
+//>>excludeEnd("ctx");
+}))];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+return ["confirmed", "recovered", "active", "deaths"]._inject_into_($recv($globals.OrderedCollection)._new(),(function(list,aspect){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+if($core.assert($recv($self._aspects())._includes_(aspect))){
+$recv(list)._add_($self._bar_forDatapoint_at_width_(aspect,aDatapoint,aBarLeft,aWidth));
+}
+return list;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({list:list,aspect:aspect},$ctx1,3)});
+//>>excludeEnd("ctx");
+}));
+}
+catch(e) {if(e===$early)return e[0]; throw e}
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"barsForDatapoint:at:width:",{aDatapoint:aDatapoint,aBarLeft:aBarLeft,aWidth:aWidth})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Barchart);
@@ -2720,11 +3178,11 @@ selector: "legendFor:",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["anAspectSymbol"],
-source: "legendFor: anAspectSymbol\x0a\x09(self primaryAspects hasAspect: anAspectSymbol) ifFalse: [\x0a\x09\x09^Silk SPAN].\x0a\x09^Silk SPAN: {\x0a\x09\x09'class' -> ('Legend', (self primaryAspects legendSelectionClassFor: anAspectSymbol)).\x0a\x09\x09self legendFor: anAspectSymbol value: (self dataset lastValueOf: anAspectSymbol)}",
+source: "legendFor: anAspectSymbol\x0a\x09(self primaryAspects hasAspect: anAspectSymbol) ifFalse: [\x0a\x09\x09^Silk SPAN].\x0a\x09^Silk SPAN: {\x0a\x09\x09'class' -> ('Legend', (self primaryAspects legendSelectionClassFor: anAspectSymbol)).\x0a\x09\x09self legendFor: anAspectSymbol dataset: self dataset}",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifFalse:", "hasAspect:", "primaryAspects", "SPAN", "SPAN:", "->", ",", "legendSelectionClassFor:", "legendFor:value:", "lastValueOf:", "dataset"]
+messageSends: ["ifFalse:", "hasAspect:", "primaryAspects", "SPAN", "SPAN:", "->", ",", "legendSelectionClassFor:", "legendFor:dataset:", "dataset"]
 }, function ($methodClass){ return function (anAspectSymbol){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -2737,7 +3195,7 @@ if(!$core.assert($recv([$self._primaryAspects()
 ][0])._hasAspect_(anAspectSymbol))){
 return $recv($globals.Silk)._SPAN();
 }
-return $recv($globals.Silk)._SPAN_(["class".__minus_gt("Legend".__comma($recv($self._primaryAspects())._legendSelectionClassFor_(anAspectSymbol))),$self._legendFor_value_(anAspectSymbol,$recv($self._dataset())._lastValueOf_(anAspectSymbol))]);
+return $recv($globals.Silk)._SPAN_(["class".__minus_gt("Legend".__comma($recv($self._primaryAspects())._legendSelectionClassFor_(anAspectSymbol))),$self._legendFor_dataset_(anAspectSymbol,$self._dataset())]);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"legendFor:",{anAspectSymbol:anAspectSymbol})});
 //>>excludeEnd("ctx");
@@ -2746,16 +3204,16 @@ $globals.Barchart);
 
 $core.addMethod(
 $core.method({
-selector: "legendFor:value:",
+selector: "legendFor:dataset:",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aString", "aNumber"],
-source: "legendFor: aString value: aNumber\x0a\x09^{\x0a\x09\x09Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: aString}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'. self infoValueString: aNumber}}",
+args: ["anAspectSymbol", "aDataset"],
+source: "legendFor: anAspectSymbol dataset: aDataset\x0a\x09^{\x0a\x09\x09Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: anAspectSymbol}}.\x0a\x09\x09Silk SPAN: {'class' -> 'LegendValue'. self infoValueString: (aDataset lastValueOf: anAspectSymbol)}}",
 referencedClasses: ["Silk", "SVG"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["SPAN:", "->", "SVG:", "fullBoxClassed:", "infoValueString:"]
-}, function ($methodClass){ return function (aString,aNumber){
+messageSends: ["SPAN:", "->", "SVG:", "fullBoxClassed:", "infoValueString:", "lastValueOf:"]
+}, function ($methodClass){ return function (anAspectSymbol,aDataset){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
@@ -2768,13 +3226,13 @@ return [[$recv($globals.Silk)._SPAN_([["class".__minus_gt("LegendBar")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["->"]=2
 //>>excludeEnd("ctx");
-][0],$self._fullBoxClassed_(aString)])])
+][0],$self._fullBoxClassed_(anAspectSymbol)])])
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["SPAN:"]=1
 //>>excludeEnd("ctx");
-][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("LegendValue"),$self._infoValueString_(aNumber)])];
+][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("LegendValue"),$self._infoValueString_($recv(aDataset)._lastValueOf_(anAspectSymbol))])];
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"legendFor:value:",{aString:aString,aNumber:aNumber})});
+}, function($ctx1) {$ctx1.fill(self,"legendFor:dataset:",{anAspectSymbol:anAspectSymbol,aDataset:aDataset})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Barchart);
@@ -3063,6 +3521,135 @@ $recv(tooltip).__lt_lt([["style".__minus_gt([$recv([$recv([$recv([$recv([$recv("
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"mouseover:datapoint:",{anEvent:anEvent,aDatapoint:aDatapoint,tooltip:tooltip})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Barchart);
+
+$core.addMethod(
+$core.method({
+selector: "movingAverageLineFor:",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspect"],
+source: "movingAverageLineFor: anAspect\x0a\x09\x22<SVG g with: polyline>\x22\x0a\x09\x0a\x09| wst points |\x0a\x09wst := String new writeStream.\x0a\x09self dataset movingAverage do: [:datapoint |\x0a\x09\x09wst atStart ifFalse: [wst space].\x0a\x09\x09wst\x0a\x09\x09\x09nextPutAll: (self xAt: datapoint date) printString;\x0a\x09\x09\x09nextPut: $,;\x0a\x09\x09\x09nextPutAll: (self yAt: (datapoint perform: anAspect)) printString].\x0a\x09points := wst contents.\x0a\x09^SVG G: {\x0a\x09\x09SVG POLYLINE: {\x0a\x09\x09\x09'class' -> 'groundline'.\x0a\x09\x09\x09'points' -> points}.\x0a\x09\x09SVG POLYLINE: {\x0a\x09\x09\x09'class' -> (anAspect asString, ' aspectline').\x0a\x09\x09\x09'points' -> points}}",
+referencedClasses: ["String", "SVG"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["writeStream", "new", "do:", "movingAverage", "dataset", "ifFalse:", "atStart", "space", "nextPutAll:", "printString", "xAt:", "date", "nextPut:", "yAt:", "perform:", "contents", "G:", "POLYLINE:", "->", ",", "asString"]
+}, function ($methodClass){ return function (anAspect){
+var self=this,$self=this;
+var wst,points;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1;
+wst=$recv($recv($globals.String)._new())._writeStream();
+$recv($recv($self._dataset())._movingAverage())._do_((function(datapoint){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+if(!$core.assert($recv(wst)._atStart())){
+$recv(wst)._space();
+}
+$1=wst;
+[$recv($1)._nextPutAll_([$recv($self._xAt_($recv(datapoint)._date()))._printString()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx2.sendIdx["printString"]=1
+//>>excludeEnd("ctx");
+][0])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx2.sendIdx["nextPutAll:"]=1
+//>>excludeEnd("ctx");
+][0];
+$recv($1)._nextPut_(",");
+return $recv($1)._nextPutAll_($recv($self._yAt_($recv(datapoint)._perform_(anAspect)))._printString());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({datapoint:datapoint},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+points=$recv(wst)._contents();
+return $recv($globals.SVG)._G_([[$recv($globals.SVG)._POLYLINE_([["class".__minus_gt("groundline")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=1
+//>>excludeEnd("ctx");
+][0],["points".__minus_gt(points)
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=2
+//>>excludeEnd("ctx");
+][0]])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["POLYLINE:"]=1
+//>>excludeEnd("ctx");
+][0],$recv($globals.SVG)._POLYLINE_([["class".__minus_gt($recv($recv(anAspect)._asString()).__comma(" aspectline"))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=3
+//>>excludeEnd("ctx");
+][0],"points".__minus_gt(points)])]);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"movingAverageLineFor:",{anAspect:anAspect,wst:wst,points:points})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Barchart);
+
+$core.addMethod(
+$core.method({
+selector: "movingAverageLines",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "movingAverageLines\x0a\x09\x22<Array of: g>\x22\x0a\x09\x0a\x09self aspects ifEmpty: [\x0a\x09\x09^#(#confirmed #decided #deaths) collect: [:aspect |\x0a\x09\x09\x09self movingAverageLineFor: aspect]].\x0a\x09^#(#confirmed #recovered #active #deaths) inject: OrderedCollection new into: [:list :aspect |\x0a\x09\x09(self aspects includes: aspect) ifTrue: [\x0a\x09\x09\x09list add: (self movingAverageLineFor: aspect)].\x0a\x09\x09list]",
+referencedClasses: ["OrderedCollection"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifEmpty:", "aspects", "collect:", "movingAverageLineFor:", "inject:into:", "new", "ifTrue:", "includes:", "add:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $early={};
+try {
+$recv([$self._aspects()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["aspects"]=1
+//>>excludeEnd("ctx");
+][0])._ifEmpty_((function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+throw $early=[["confirmed", "decided", "deaths"]._collect_((function(aspect){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
+return [$self._movingAverageLineFor_(aspect)
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx3.sendIdx["movingAverageLineFor:"]=1
+//>>excludeEnd("ctx");
+][0];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx3) {$ctx3.fillBlock({aspect:aspect},$ctx2,2)});
+//>>excludeEnd("ctx");
+}))];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+return ["confirmed", "recovered", "active", "deaths"]._inject_into_($recv($globals.OrderedCollection)._new(),(function(list,aspect){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+if($core.assert($recv($self._aspects())._includes_(aspect))){
+$recv(list)._add_($self._movingAverageLineFor_(aspect));
+}
+return list;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({list:list,aspect:aspect},$ctx1,3)});
+//>>excludeEnd("ctx");
+}));
+}
+catch(e) {if(e===$early)return e[0]; throw e}
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"movingAverageLines",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Barchart);
@@ -3370,6 +3957,29 @@ return $recv($globals.SVG)._SVG_([["viewBox".__minus_gt([(0),(0),$self._viewWidt
 ][0],"height".__minus_gt("100%")]),$self._valueAxis(),$self._dateAxis(),$self._chartArea(),$self._scalingButton()]);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"svg",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Barchart);
+
+$core.addMethod(
+$core.method({
+selector: "symbol",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "symbol\x0a\x09\x22<String>\x22\x0a\x09\x0a\x09^self subclassResponsibility",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["subclassResponsibility"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $self._subclassResponsibility();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"symbol",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Barchart);
@@ -3919,48 +4529,40 @@ $globals.Casechart.comment="A chart for case data\x0a\x0aCase data only grow, th
 //>>excludeEnd("ide");
 $core.addMethod(
 $core.method({
-selector: "legendFor:",
+selector: "legendFor:dataset:",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["anAspectSymbol"],
-source: "legendFor: anAspectSymbol\x0a\x09| legend number |\x0a\x09(self primaryAspects hasAspect: anAspectSymbol) ifFalse: [\x0a\x09\x09^Silk SPAN].\x0a\x09number := self dataset lastValueOf: anAspectSymbol.\x0a\x09legend := self legendFor: anAspectSymbol value: number.\x0a\x09anAspectSymbol = #deaths ifTrue: [\x0a\x09\x09legend add: (Silk SPAN: ' (', (number / self lastConfirmed * 100 asLocalizedString: #{'maximumFractionDigits' -> 1}), '%)')].\x0a\x09^Silk SPAN: {\x0a\x09\x09'class' -> ('Legend', (self primaryAspects legendSelectionClassFor: anAspectSymbol)).\x0a\x09\x09legend}",
+args: ["anAspectSymbol", "aDataset"],
+source: "legendFor: anAspectSymbol dataset: aDataset\x0a\x09| legend |\x0a\x09legend := super legendFor: anAspectSymbol dataset: aDataset.\x0a\x09anAspectSymbol = #deaths ifTrue: [\x0a\x09\x09legend add: (Silk SPAN: ' (', (aDataset caseFatalityRate asLocalizedString: #{'maximumFractionDigits' -> 1}), '%)')].\x0a\x09^legend",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifFalse:", "hasAspect:", "primaryAspects", "SPAN", "lastValueOf:", "dataset", "legendFor:value:", "ifTrue:", "=", "add:", "SPAN:", ",", "asLocalizedString:", "*", "/", "lastConfirmed", "->", "legendSelectionClassFor:"]
-}, function ($methodClass){ return function (anAspectSymbol){
+messageSends: ["legendFor:dataset:", "ifTrue:", "=", "add:", "SPAN:", ",", "asLocalizedString:", "caseFatalityRate"]
+}, function ($methodClass){ return function (anAspectSymbol,aDataset){
 var self=this,$self=this;
-var legend,number;
+var legend;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-if(!$core.assert($recv([$self._primaryAspects()
+legend=[(
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["primaryAspects"]=1
+$ctx1.supercall = true,
 //>>excludeEnd("ctx");
-][0])._hasAspect_(anAspectSymbol))){
-return $recv($globals.Silk)._SPAN();
-}
-number=$recv($self._dataset())._lastValueOf_(anAspectSymbol);
-legend=$self._legendFor_value_(anAspectSymbol,number);
+($methodClass.superclass||$boot.nilAsClass).fn.prototype._legendFor_dataset_.call($self,anAspectSymbol,aDataset))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.supercall = false
+//>>excludeEnd("ctx");
+][0];
 if($core.assert($recv(anAspectSymbol).__eq("deaths"))){
-$recv(legend)._add_([$recv($globals.Silk)._SPAN_([$recv([" (".__comma($recv($recv($recv(number).__slash($self._lastConfirmed())).__star((100)))._asLocalizedString_($globals.HashedCollection._newFromPairs_(["maximumFractionDigits",(1)])))
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx[","]=2
-//>>excludeEnd("ctx");
-][0]).__comma("%)")
+$recv(legend)._add_($recv($globals.Silk)._SPAN_([$recv(" (".__comma($recv($recv(aDataset)._caseFatalityRate())._asLocalizedString_($globals.HashedCollection._newFromPairs_(["maximumFractionDigits",(1)])))).__comma("%)")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx[","]=1
 //>>excludeEnd("ctx");
-][0])
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["SPAN:"]=1
-//>>excludeEnd("ctx");
-][0]);
+][0]));
 }
-return $recv($globals.Silk)._SPAN_(["class".__minus_gt("Legend".__comma($recv($self._primaryAspects())._legendSelectionClassFor_(anAspectSymbol))),legend]);
+return legend;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"legendFor:",{anAspectSymbol:anAspectSymbol,legend:legend,number:number})});
+}, function($ctx1) {$ctx1.fill(self,"legendFor:dataset:",{anAspectSymbol:anAspectSymbol,aDataset:aDataset,legend:legend})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Casechart);
@@ -3985,6 +4587,24 @@ return $recv($self._model())._dataset();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"newDataset",{})});
 //>>excludeEnd("ctx");
+}; }),
+$globals.Casechart);
+
+$core.addMethod(
+$core.method({
+selector: "symbol",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "symbol\x0a\x09^'Σ'",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return "Σ";
+
 }; }),
 $globals.Casechart);
 
@@ -4186,8 +4806,42 @@ $globals.Changechart.comment="A chart for changes\x0a\x0achanges go up and down 
 //>>excludeEnd("ide");
 $core.addMethod(
 $core.method({
+selector: "chartArea",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "chartArea\x0a\x09\x22the chart\x22\x0a\x09\x0a\x09| chartArea |\x0a\x09chartArea := super chartArea.\x0a\x09chartArea << self movingAverageLines.\x0a\x09^chartArea",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["chartArea", "<<", "movingAverageLines"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+var chartArea;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+chartArea=[(
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.supercall = true,
+//>>excludeEnd("ctx");
+($methodClass.superclass||$boot.nilAsClass).fn.prototype._chartArea.call($self))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.supercall = false
+//>>excludeEnd("ctx");
+][0];
+$recv(chartArea).__lt_lt($self._movingAverageLines());
+return chartArea;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"chartArea",{chartArea:chartArea})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Changechart);
+
+$core.addMethod(
+$core.method({
 selector: "dataArePositive",
-protocol: "accessing",
+protocol: "testing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
 source: "dataArePositive\x0a\x09\x22caching for speed - the logarithmic valuescale uses this heavily\x22\x0a\x09\x0a\x09^dataArePositive ifNil: [dataArePositive := super dataArePositive]",
@@ -4228,34 +4882,17 @@ selector: "infoValueString:",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aNumber"],
-source: "infoValueString: aNumber\x0a\x09| prefix |\x0a\x09aNumber isZero ifTrue: [\x0a\x09\x09^super infoValueString: aNumber].\x0a\x09prefix := ''.\x0a\x09aNumber negative ifFalse: [\x0a\x09\x09prefix := '+'].\x0a\x09^prefix, (super infoValueString: aNumber)",
+source: "infoValueString: aNumber\x0a\x09^(self prefixFor: aNumber), (super infoValueString: aNumber)",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifTrue:", "isZero", "infoValueString:", "ifFalse:", "negative", ","]
+messageSends: [",", "prefixFor:", "infoValueString:"]
 }, function ($methodClass){ return function (aNumber){
 var self=this,$self=this;
-var prefix;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-if($core.assert($recv(aNumber)._isZero())){
-return [(
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.supercall = true,
-//>>excludeEnd("ctx");
-($methodClass.superclass||$boot.nilAsClass).fn.prototype._infoValueString_.call($self,aNumber))
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["infoValueString:"]=1,$ctx1.supercall = false
-//>>excludeEnd("ctx");
-][0];
-}
-prefix="";
-if(!$core.assert($recv(aNumber)._negative())){
-prefix="+";
-prefix;
-}
-return $recv(prefix).__comma([(
+return $recv($self._prefixFor_(aNumber)).__comma([(
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 $ctx1.supercall = true,
 //>>excludeEnd("ctx");
@@ -4265,7 +4902,51 @@ $ctx1.supercall = true,
 //>>excludeEnd("ctx");
 ][0]);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"infoValueString:",{aNumber:aNumber,prefix:prefix})});
+}, function($ctx1) {$ctx1.fill(self,"infoValueString:",{aNumber:aNumber})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Changechart);
+
+$core.addMethod(
+$core.method({
+selector: "legendFor:dataset:",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["anAspectSymbol", "aDataset"],
+source: "legendFor: anAspectSymbol dataset: aDataset\x0a\x09| legend number prefix string |\x0a\x09legend := super legendFor: anAspectSymbol dataset: aDataset.\x0a\x09(#(#confirmed #deaths) includes: anAspectSymbol) ifFalse: [\x0a\x09\x09^legend].\x0a\x09number := aDataset movingAverage last perform: anAspectSymbol.\x0a\x09prefix := self prefixFor: number.\x0a\x09string := number asLocalizedString: #{'maximumFractionDigits' -> 1}.\x0a\x09legend add: (Silk SPAN: {\x0a\x09\x09' (Ø₇ '. \x0a\x09\x09Silk SPAN: {'class' -> 'movValue'. prefix, string}. \x0a\x09\x09')'}).\x0a\x09^legend",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["legendFor:dataset:", "ifFalse:", "includes:", "perform:", "last", "movingAverage", "prefixFor:", "asLocalizedString:", "add:", "SPAN:", "->", ","]
+}, function ($methodClass){ return function (anAspectSymbol,aDataset){
+var self=this,$self=this;
+var legend,number,prefix,string;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+legend=[(
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+$ctx1.supercall = true,
+//>>excludeEnd("ctx");
+($methodClass.superclass||$boot.nilAsClass).fn.prototype._legendFor_dataset_.call($self,anAspectSymbol,aDataset))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.supercall = false
+//>>excludeEnd("ctx");
+][0];
+if(!$core.assert(["confirmed", "deaths"]._includes_(anAspectSymbol))){
+return legend;
+}
+number=$recv($recv($recv(aDataset)._movingAverage())._last())._perform_(anAspectSymbol);
+prefix=$self._prefixFor_(number);
+string=$recv(number)._asLocalizedString_($globals.HashedCollection._newFromPairs_(["maximumFractionDigits",(1)]));
+$recv(legend)._add_([$recv($globals.Silk)._SPAN_([" (Ø₇ ",$recv($globals.Silk)._SPAN_(["class".__minus_gt("movValue"),$recv(prefix).__comma(string)]),")"])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["SPAN:"]=1
+//>>excludeEnd("ctx");
+][0]);
+return legend;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"legendFor:dataset:",{anAspectSymbol:anAspectSymbol,aDataset:aDataset,legend:legend,number:number,prefix:prefix,string:string})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Changechart);
@@ -4289,6 +4970,38 @@ return $core.withContext(function($ctx1) {
 return $recv($self._model())._changeDataset();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"newDataset",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Changechart);
+
+$core.addMethod(
+$core.method({
+selector: "prefixFor:",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aNumber"],
+source: "prefixFor: aNumber\x0a\x09(aNumber isZero or: [\x0a\x09aNumber negative]) ifTrue: [\x0a\x09\x09^''].\x0a\x09^'+'",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifTrue:", "or:", "isZero", "negative"]
+}, function ($methodClass){ return function (aNumber){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1;
+if($core.assert($recv(aNumber)._isZero())){
+$1=true;
+} else {
+$1=$recv(aNumber)._negative();
+}
+if($core.assert($1)){
+return "";
+}
+return "+";
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"prefixFor:",{aNumber:aNumber})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Changechart);
@@ -4323,6 +5036,24 @@ return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"refresh",{})});
 //>>excludeEnd("ctx");
+}; }),
+$globals.Changechart);
+
+$core.addMethod(
+$core.method({
+selector: "symbol",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "symbol\x0a\x09^'Δ'",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return "Δ";
+
 }; }),
 $globals.Changechart);
 
@@ -4402,7 +5133,7 @@ selector: "ageAspectChanged",
 protocol: "events",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "ageAspectChanged\x0a\x09self refresh",
+source: "ageAspectChanged\x0a\x09dataset := nil.\x0a\x09secondaryAspectGroup := nil.\x0a\x09self refresh",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -4412,6 +5143,8 @@ var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
+$self.dataset=nil;
+$self.secondaryAspectGroup=nil;
 $self._refresh();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -4426,11 +5159,11 @@ selector: "asSilk",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "asSilk\x0a\x09| chartsDiv primaryButtons extraButtons |\x0a\x09self territory ifNil: [\x0a\x09\x09^#()].\x0a\x09chartsDiv := Silk DIV: 'class' -> 'Charts'.\x0a\x09self datasets ifNotEmpty: [:ignore |\x0a\x09\x09chartsDiv << {\x0a\x09\x09\x09self casesChart refresh frame.\x0a\x09\x09\x09self changesChart refresh frame}].\x0a\x09primaryButtons := #().\x0a\x09extraButtons := #().\x0a\x09self datasets ifNotEmpty: [\x0a\x09\x09primaryButtons := self primaryAspectButtons.\x0a\x09\x09extraButtons := self extraAspectButtons].\x0a\x09^{\x0a\x09\x09Silk DIV: {'class' -> 'ChartColumn'.\x0a\x09\x09\x09primaryButtons.\x0a\x09 \x09\x09chartsDiv}.\x0a\x09\x09extraButtons.\x0a\x09\x09Silk DIV: 'id' -> 'Tooltip'}",
+source: "asSilk\x0a\x09| chartsDiv primaryButtons extraButtons |\x0a\x09self territory ifNil: [\x0a\x09\x09^#()].\x0a\x09chartsDiv := Silk DIV: 'class' -> 'Charts'.\x0a\x09self datasets ifNotEmpty: [:ignore |\x0a\x09\x09chartsDiv << {\x0a\x09\x09\x09self changesChart refresh frame.\x0a\x09\x09\x09self casesChart refresh frame}].\x0a\x09primaryButtons := #().\x0a\x09extraButtons := #().\x0a\x09self datasets ifNotEmpty: [\x0a\x09\x09primaryButtons := self primaryAspectButtons.\x0a\x09\x09self modelDataset secondaryAspects ifNotEmpty: [\x0a\x09\x09\x09extraButtons := self extraAspectButtons]].\x0a\x09^{\x0a\x09\x09Silk DIV: {'class' -> 'ChartColumn'.\x0a\x09\x09\x09primaryButtons.\x0a\x09 \x09\x09chartsDiv}.\x0a\x09\x09extraButtons.\x0a\x09\x09Silk DIV: 'id' -> 'Tooltip'}",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifNil:", "territory", "DIV:", "->", "ifNotEmpty:", "datasets", "<<", "frame", "refresh", "casesChart", "changesChart", "primaryAspectButtons", "extraAspectButtons"]
+messageSends: ["ifNil:", "territory", "DIV:", "->", "ifNotEmpty:", "datasets", "<<", "frame", "refresh", "changesChart", "casesChart", "primaryAspectButtons", "secondaryAspects", "modelDataset", "extraAspectButtons"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 var chartsDiv,primaryButtons,extraButtons;
@@ -4461,7 +5194,7 @@ chartsDiv=[$recv($globals.Silk)._DIV_(["class".__minus_gt("Charts")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
-return $recv(chartsDiv).__lt_lt([[$recv([$recv($self._casesChart())._refresh()
+return $recv(chartsDiv).__lt_lt([[$recv([$recv($self._changesChart())._refresh()
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx2.sendIdx["refresh"]=1
 //>>excludeEnd("ctx");
@@ -4469,7 +5202,7 @@ return $recv(chartsDiv).__lt_lt([[$recv([$recv($self._casesChart())._refresh()
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx2.sendIdx["frame"]=1
 //>>excludeEnd("ctx");
-][0],$recv($recv($self._changesChart())._refresh())._frame()]);
+][0],$recv($recv($self._casesChart())._refresh())._frame()]);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx2) {$ctx2.fillBlock({ignore:ignore},$ctx1,2)});
 //>>excludeEnd("ctx");
@@ -4480,17 +5213,29 @@ return $recv(chartsDiv).__lt_lt([[$recv([$recv($self._casesChart())._refresh()
 ][0];
 primaryButtons=[];
 extraButtons=[];
-$recv($self._datasets())._ifNotEmpty_((function(){
+[$recv($self._datasets())._ifNotEmpty_((function(){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
 primaryButtons=$self._primaryAspectButtons();
+return $recv($recv($self._modelDataset())._secondaryAspects())._ifNotEmpty_((function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx3) {
+//>>excludeEnd("ctx");
 extraButtons=$self._extraAspectButtons();
 return extraButtons;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,3)});
+}, function($ctx3) {$ctx3.fillBlock({},$ctx2,4)});
 //>>excludeEnd("ctx");
 }));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,3)});
+//>>excludeEnd("ctx");
+}))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["ifNotEmpty:"]=2
+//>>excludeEnd("ctx");
+][0];
 return [[$recv($globals.Silk)._DIV_([["class".__minus_gt("ChartColumn")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["->"]=2
@@ -4502,37 +5247,6 @@ return [[$recv($globals.Silk)._DIV_([["class".__minus_gt("ChartColumn")
 ][0],extraButtons,$recv($globals.Silk)._DIV_("id".__minus_gt("Tooltip"))];
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"asSilk",{chartsDiv:chartsDiv,primaryButtons:primaryButtons,extraButtons:extraButtons})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Graphics);
-
-$core.addMethod(
-$core.method({
-selector: "aspectButtons",
-protocol: "presenting",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: [],
-source: "aspectButtons\x0a\x09\x22<Array of: Silk>\x22\x0a\x0a\x09self datasets ifEmpty: [\x0a\x09\x09^#()].\x0a\x09^{\x0a\x09\x09self primaryAspectButtons.\x0a\x09\x09self extraAspectButtons\x0a\x09}",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["ifEmpty:", "datasets", "primaryAspectButtons", "extraAspectButtons"]
-}, function ($methodClass){ return function (){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-var $early={};
-try {
-$recv($self._datasets())._ifEmpty_((function(){
-throw $early=[[]];
-
-}));
-return [$self._primaryAspectButtons(),$self._extraAspectButtons()];
-}
-catch(e) {if(e===$early)return e[0]; throw e}
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"aspectButtons",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Graphics);
@@ -4726,11 +5440,11 @@ selector: "extraAspectButtons",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "extraAspectButtons\x0a\x09\x22<Array of: Silk>\x22\x0a\x0a\x09^Silk DIV: {'class' -> 'ExtraAspectButtons'.\x0a\x09\x09\x09Silk DIV: {'class' -> 'SecondaryAspectButtons'. self secondaryAspectGroup buttons}.\x0a\x09\x09\x09Silk DIV: {'class' -> 'TertiaryAspectButtons'. self tertiaryAspectGroup buttons}}",
+source: "extraAspectButtons\x0a\x09\x22<Array of: Silk>\x22\x0a\x0a\x09^Silk DIV: {'class' -> 'ExtraAspectButtons'.\x0a\x09\x09\x09Silk DIV: {'class' -> 'SecondaryAspectButtons'. self secondaryAspectGroup buttonList}.\x0a\x09\x09\x09Silk DIV: {'class' -> 'TertiaryAspectButtons'. self tertiaryAspectGroup buttonList}}",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["DIV:", "->", "buttons", "secondaryAspectGroup", "tertiaryAspectGroup"]
+messageSends: ["DIV:", "->", "buttonList", "secondaryAspectGroup", "tertiaryAspectGroup"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -4744,15 +5458,15 @@ return [$recv($globals.Silk)._DIV_([["class".__minus_gt("ExtraAspectButtons")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["->"]=2
 //>>excludeEnd("ctx");
-][0],[$recv($self._secondaryAspectGroup())._buttons()
+][0],[$recv($self._secondaryAspectGroup())._buttonList()
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["buttons"]=1
+,$ctx1.sendIdx["buttonList"]=1
 //>>excludeEnd("ctx");
 ][0]])
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["DIV:"]=2
 //>>excludeEnd("ctx");
-][0],$recv($globals.Silk)._DIV_(["class".__minus_gt("TertiaryAspectButtons"),$recv($self._tertiaryAspectGroup())._buttons()])])
+][0],$recv($globals.Silk)._DIV_(["class".__minus_gt("TertiaryAspectButtons"),$recv($self._tertiaryAspectGroup())._buttonList()])])
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["DIV:"]=1
 //>>excludeEnd("ctx");
@@ -4896,11 +5610,11 @@ $globals.Graphics);
 
 $core.addMethod(
 $core.method({
-selector: "refresh",
-protocol: "actions",
+selector: "reset",
+protocol: "events",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "refresh\x0a\x09dataset := nil.\x0a\x09primaryAspectGroup := nil.\x0a\x09secondaryAspectGroup := nil.\x0a\x09tertiaryAspectGroup := nil.\x0a\x09super refresh",
+source: "reset\x0a\x09dataset := nil.\x0a\x09primaryAspectGroup := nil.\x0a\x09secondaryAspectGroup := nil.\x0a\x09tertiaryAspectGroup := nil.\x0a\x09self refresh",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -4914,18 +5628,10 @@ $self.dataset=nil;
 $self.primaryAspectGroup=nil;
 $self.secondaryAspectGroup=nil;
 $self.tertiaryAspectGroup=nil;
-[(
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-$ctx1.supercall = true,
-//>>excludeEnd("ctx");
-($methodClass.superclass||$boot.nilAsClass).fn.prototype._refresh.call($self))
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.supercall = false
-//>>excludeEnd("ctx");
-][0];
+$self._refresh();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"refresh",{})});
+}, function($ctx1) {$ctx1.fill(self,"reset",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Graphics);
@@ -4969,7 +5675,7 @@ selector: "sexAspectChanged",
 protocol: "events",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "sexAspectChanged\x0a\x09self refresh",
+source: "sexAspectChanged\x0a\x09dataset := nil.\x0a\x09tertiaryAspectGroup := nil.\x0a\x09self refresh",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -4979,6 +5685,8 @@ var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
+$self.dataset=nil;
+$self.tertiaryAspectGroup=nil;
 $self._refresh();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -5223,11 +5931,11 @@ selector: "datasetButtonFor:",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aDataset"],
-source: "datasetButtonFor: aDataset\x0a\x09| datasource cssClass |\x0a\x09datasource := CoViD19Application current sources at: aDataset source.\x0a\x09cssClass := 'DatasetInfo'.\x0a\x09self dataset = aDataset ifTrue: [\x0a\x09\x09cssClass := cssClass, ' selected'].\x0a\x09^{\x09(Silk BUTTON: {\x0a\x09\x09\x09'class' -> cssClass.\x0a\x09\x09\x09'type' -> 'button'. \x0a\x09\x09\x09Silk SPAN: {'class' -> 'DatasetLabel'. datasource dataLabel}.\x0a\x09\x09\x09Silk A: {datasource provider.\x0a\x09\x09\x09\x09'href' -> (datasource about at: #ProviderUrl).\x0a\x09\x09\x09\x09'target' -> '_blank'.\x0a\x09\x09\x09\x09'rel' -> 'noopener'}.\x0a\x09\x09\x09Silk SPAN: {'class' -> 'DatasetDate'. aDataset dataDateString}}) on: #click bind: [self dataset: aDataset]\x0a\x09}",
+source: "datasetButtonFor: aDataset\x0a\x09| datasource cssClass |\x0a\x09datasource := CoViD19Application current sources at: aDataset source.\x0a\x09cssClass := 'DatasetInfo'.\x0a\x09self dataset = aDataset ifTrue: [\x0a\x09\x09cssClass := cssClass, ' selected'].\x0a\x09^{\x09(Silk BUTTON: {\x0a\x09\x09\x09'class' -> cssClass.\x0a\x09\x09\x09'type' -> 'button'. \x0a\x09\x09\x09Silk SPAN: {\x0a\x09\x09\x09\x09'class' -> 'DatasetLabel'. \x0a\x09\x09\x09\x09datasource dataLabel.\x0a\x09\x09\x09\x09Silk A: {self iconExternalLink.\x0a\x09\x09\x09\x09\x09'href' -> (datasource about at: #ProviderUrl).\x0a\x09\x09\x09\x09\x09'target' -> '_blank'.\x0a\x09\x09\x09\x09\x09'rel' -> 'noopener'}}.\x0a\x09\x09\x09Silk SPAN: {'class' -> 'DatasetDate'. aDataset dataDateString}}) on: #click bind: [self dataset: aDataset]\x0a\x09}",
 referencedClasses: ["CoViD19Application", "Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["at:", "sources", "current", "source", "ifTrue:", "=", "dataset", ",", "on:bind:", "BUTTON:", "->", "SPAN:", "dataLabel", "A:", "provider", "about", "dataDateString", "dataset:"]
+messageSends: ["at:", "sources", "current", "source", "ifTrue:", "=", "dataset", ",", "on:bind:", "BUTTON:", "->", "SPAN:", "dataLabel", "A:", "iconExternalLink", "about", "dataDateString", "dataset:"]
 }, function ($methodClass){ return function (aDataset){
 var self=this,$self=this;
 var datasource,cssClass;
@@ -5256,11 +5964,7 @@ return [$recv($recv($globals.Silk)._BUTTON_([["class".__minus_gt(cssClass)
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["->"]=3
 //>>excludeEnd("ctx");
-][0],$recv(datasource)._dataLabel()])
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["SPAN:"]=1
-//>>excludeEnd("ctx");
-][0],$recv($globals.Silk)._A_([$recv(datasource)._provider(),["href".__minus_gt($recv($recv(datasource)._about())._at_("ProviderUrl"))
+][0],$recv(datasource)._dataLabel(),$recv($globals.Silk)._A_([$self._iconExternalLink(),["href".__minus_gt($recv($recv(datasource)._about())._at_("ProviderUrl"))
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["->"]=4
 //>>excludeEnd("ctx");
@@ -5272,7 +5976,11 @@ return [$recv($recv($globals.Silk)._BUTTON_([["class".__minus_gt(cssClass)
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["->"]=6
 //>>excludeEnd("ctx");
-][0]]),$recv($globals.Silk)._SPAN_(["class".__minus_gt("DatasetDate"),$recv(aDataset)._dataDateString()])]))._on_bind_("click",(function(){
+][0]])])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["SPAN:"]=1
+//>>excludeEnd("ctx");
+][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("DatasetDate"),$recv(aDataset)._dataDateString()])]))._on_bind_("click",(function(){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
@@ -5307,6 +6015,59 @@ return $recv($self._territory())._datasets();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"datasets",{})});
 //>>excludeEnd("ctx");
+}; }),
+$globals.TerritoryView);
+
+$core.addMethod(
+$core.method({
+selector: "iconExternalLink",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "iconExternalLink\x0a\x09^SVG SVG: {\x0a\x09\x09'viewBox' -> '0 0 32 32'.\x0a\x09\x09'width' -> '16px'.\x0a\x09\x09'height' -> '16px'.\x0a\x09\x09SVG PATH: {\x0a\x09\x09\x09'd' -> 'M 18 5 \x0a\x09\x09\x09\x09\x09L 18 7\x09\x09\x09\x09L 23.5625 7\x09\x09L 11.28125 19.28125\x09\x09L 12.71875 20.71875 \x0a\x09\x09\x09\x09\x09L 25 8.4375  \x09 L 25 14\x09\x09   L 27 14\x09\x09\x09\x09\x09\x09   L 27 5 \x0a\x09\x09\x09\x09Z \x0a\x09\x09\x09\x09M 5 9 \x0a\x09\x09\x09\x09\x09L 5 27\x09\x09L 23 27\x09\x09L 23 14\x09\x09L 21 16 \x0a\x09\x09\x09\x09\x09L 21 25\x09\x09L 7 25\x09\x09L 7 11\x09\x09L 16 11\x09\x09L 18 9 \x0a\x09\x09\x09\x09Z'}}",
+referencedClasses: ["SVG"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["SVG:", "->", "PATH:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($globals.SVG)._SVG_([["viewBox".__minus_gt("0 0 32 32")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=1
+//>>excludeEnd("ctx");
+][0],["width".__minus_gt("16px")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=2
+//>>excludeEnd("ctx");
+][0],["height".__minus_gt("16px")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=3
+//>>excludeEnd("ctx");
+][0],$recv($globals.SVG)._PATH_(["d".__minus_gt("M 18 5 \x0a\x09\x09\x09\x09\x09L 18 7\x09\x09\x09\x09L 23.5625 7\x09\x09L 11.28125 19.28125\x09\x09L 12.71875 20.71875 \x0a\x09\x09\x09\x09\x09L 25 8.4375  \x09 L 25 14\x09\x09   L 27 14\x09\x09\x09\x09\x09\x09   L 27 5 \x0a\x09\x09\x09\x09Z \x0a\x09\x09\x09\x09M 5 9 \x0a\x09\x09\x09\x09\x09L 5 27\x09\x09L 23 27\x09\x09L 23 14\x09\x09L 21 16 \x0a\x09\x09\x09\x09\x09L 21 25\x09\x09L 7 25\x09\x09L 7 11\x09\x09L 16 11\x09\x09L 18 9 \x0a\x09\x09\x09\x09Z")])]);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"iconExternalLink",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.TerritoryView);
+
+$core.addMethod(
+$core.method({
+selector: "iconExternalLinkSource",
+protocol: "presenting",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "iconExternalLinkSource\x0a\x09^'<svg \x0a\x09\x09fill=\x22#000000\x22 \x0a\x09\x09viewBox=\x220 0 32 32\x22 \x0a\x09\x09width=\x2232px\x22 \x0a\x09\x09height=\x2232px\x22>\x0a\x09\x09<path \x0a\x09\x09\x09d=\x22M 18 5 \x0a\x09\x09\x09\x09\x09L 18 7\x09\x09\x09\x09L 23.5625 7\x09\x09L 11.28125 19.28125\x09\x09L 12.71875 20.71875 \x0a\x09\x09\x09\x09\x09L 25 8.4375  \x09 L 25 14\x09\x09   L 27 14\x09\x09\x09\x09\x09\x09   L 27 5 \x0a\x09\x09\x09\x09Z \x0a\x09\x09\x09\x09M 5 9 \x0a\x09\x09\x09\x09\x09L 5 27\x09\x09L 23 27\x09\x09L 23 14\x09\x09L 21 16 \x0a\x09\x09\x09\x09\x09L 21 25\x09\x09L 7 25\x09\x09L 7 11\x09\x09L 16 11\x09\x09L 18 9 \x0a\x09\x09\x09\x09Z\x22/>\x0a\x09</svg>'",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return "<svg \x0a\x09\x09fill=\x22#000000\x22 \x0a\x09\x09viewBox=\x220 0 32 32\x22 \x0a\x09\x09width=\x2232px\x22 \x0a\x09\x09height=\x2232px\x22>\x0a\x09\x09<path \x0a\x09\x09\x09d=\x22M 18 5 \x0a\x09\x09\x09\x09\x09L 18 7\x09\x09\x09\x09L 23.5625 7\x09\x09L 11.28125 19.28125\x09\x09L 12.71875 20.71875 \x0a\x09\x09\x09\x09\x09L 25 8.4375  \x09 L 25 14\x09\x09   L 27 14\x09\x09\x09\x09\x09\x09   L 27 5 \x0a\x09\x09\x09\x09Z \x0a\x09\x09\x09\x09M 5 9 \x0a\x09\x09\x09\x09\x09L 5 27\x09\x09L 23 27\x09\x09L 23 14\x09\x09L 21 16 \x0a\x09\x09\x09\x09\x09L 21 25\x09\x09L 7 25\x09\x09L 7 11\x09\x09L 16 11\x09\x09L 18 9 \x0a\x09\x09\x09\x09Z\x22/>\x0a\x09</svg>";
+
 }; }),
 $globals.TerritoryView);
 
@@ -5656,7 +6417,7 @@ selector: "root",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "root\x0a\x09\x22<TreeItem>\x22\x0a\x09\x0a\x09^root ifNil: [\x0a\x09\x09| component |\x0a\x09\x09component := TreeItem on: self model in: (Silk LI: 'tabindex' -> 0) parent: self.\x0a\x09\x09component expanded: true.\x0a\x09\x09component frame on: #keydown bind: [:event | self keyPressed: event].\x0a\x09\x09root := component]",
+source: "root\x0a\x09\x22<TreeItem>\x22\x0a\x09\x0a\x09^root ifNil: [\x0a\x09\x09| component |\x0a\x09\x09component := TreeItem on: self model in: (Silk LI: 'tabindex' -> 1) parent: self.\x0a\x09\x09component expanded: true.\x0a\x09\x09component frame on: #keydown bind: [:event | self keyPressed: event].\x0a\x09\x09root := component]",
 referencedClasses: ["TreeItem", "Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
@@ -5670,7 +6431,7 @@ var $1;
 $1=$self.root;
 if($1 == null || $1.a$nil){
 var component;
-component=$recv($globals.TreeItem)._on_in_parent_($self._model(),$recv($globals.Silk)._LI_("tabindex".__minus_gt((0))),self);
+component=$recv($globals.TreeItem)._on_in_parent_($self._model(),$recv($globals.Silk)._LI_("tabindex".__minus_gt((1))),self);
 $recv(component)._expanded_(true);
 $recv($recv(component)._frame())._on_bind_("keydown",(function(event){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);

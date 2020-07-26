@@ -10,11 +10,16 @@
 .DatasetInfo {
 	width: max-content;
 	margin-right: 0.5em;
+	
 }
 
 .DatasetInfo.selected {
 	border-style: solid;
 	border-color: blue;
+}
+
+.DatasetInfo a {
+	fill: blue;
 }
 
 .DatasetLabel {
@@ -24,7 +29,6 @@
 }
 
 .DatasetDate {
-	float: right;
 }
 
 .Datasets {

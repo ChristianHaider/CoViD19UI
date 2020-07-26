@@ -1,0 +1,207 @@
+.Charts {
+	grid-column: 1;	
+}
+
+#Casechart > svg {
+	height: 30vh;
+	padding-bottom: 0.5em;
+}
+
+#Changechart > svg {
+	height: 30vh;
+	padding-bottom: 0.5em;
+}
+
+.Charts svg {
+	fill: #fff8ea;
+}
+
+svg > rect {
+	stroke-width: 0.3;
+	stroke: black;
+}
+
+.groundline {
+	fill: none;
+	stroke: black;
+	stroke-width: 2;
+}
+
+.aspectline {
+	fill: none;
+	stroke: blue;
+	stroke-width: 1;
+}
+
+.aspectline.confirmed {
+	stroke: orange;
+}
+
+.aspectline.deaths {
+	stroke: red;
+}
+
+.aspectline.recovered {
+	stroke: green;
+}
+
+.aspectline.decided {
+	stroke: green;
+}
+
+.aspectline.active {
+	stroke: #33ccff;
+}
+
+.subtitle {
+	margin-left: 1em;
+	font-size: smaller;
+	font-weight: lighter;
+}
+
+.ValueAxis {
+	fill: none;
+}
+
+.ScalingButton {
+	cursor: pointer;
+}
+
+.ScalingButton.disabled {
+	cursor: default;
+}
+
+.ScalingRectangle {
+	stroke-width: 0.2;
+	stroke: darkslategray;
+	fill: lightgray;
+}
+
+.disabled > .ScalingRectangle {
+	stroke: gray;
+	fill: #ddd;
+}
+
+.ScalingText {
+	font-size: 5px;
+	fill: black;
+}
+
+.disabled > .ScalingText {
+	fill: gray;
+}
+
+.Majorline {
+	stroke: #aaa;
+	stroke-width: 0.5;
+}
+
+.Minorline {
+	stroke: #ddd;
+	stroke-width: 0.5;
+}
+
+.MajorText {
+	font-size: 6px;
+	fill: gray;
+}
+
+.DateAxis {
+	fill: none;
+}
+
+.Monthline {
+	stroke: #aaa;
+	stroke-width: 0.5;
+}
+
+.Weekline {
+	stroke: #ddd;
+	stroke-width: 0.5;
+}
+
+.Baseline {
+	stroke: black;
+}
+
+.MonthText {
+	font-family: sans-serif;
+	font-size: 7px;
+	fill: black;
+}
+
+.GraphicsArea {
+	fill: none;
+}
+
+.Bar:hover {
+	opacity: 0.5;
+}
+
+.Bar rect {
+	stroke: gray;
+	stroke-width: 0.2;
+}
+
+.ChartHeader {
+}
+
+.ChartLegend {
+}
+
+.Legend {
+	width: max-content;
+	margin-right: 0.5em;
+	opacity: 0.3;
+}
+
+.Legend.selected {
+	opacity: 1;
+}
+
+.LegendBar {
+	display: inline-block;
+	width: 1em;
+}
+
+.LegendLabel {
+	margin-left: 0.3em;
+}
+
+.LegendValue {
+	margin-left: 0.3em;
+	font-weight: bolder;
+}
+
+.movValue {
+	font-weight: bolder;
+}
+
+#Tooltip .LegendBar {
+	grid-column: 1;
+}
+
+#Tooltip .LegendLabel {
+	grid-column: 2;
+}
+
+#Tooltip .LegendValue {
+	grid-column: 3;
+	justify-self: end;
+}
+
+#Tooltip {
+	display: grid;
+	grid-template-columns: auto auto auto;
+	
+	visibility: hidden;
+	position: fixed;
+	
+	z-index: 1;
+	background-color: white;
+	padding: 0.3em;
+	border-style: solid;
+	border-radius: 0.4em;
+	border-width: 2px;
+	border-color: blue;
+}

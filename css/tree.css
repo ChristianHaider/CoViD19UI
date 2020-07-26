@@ -25,7 +25,6 @@ div #WorldTree {
 }
 
 .Treeline {
-	/* One line in the tree with button and item */
 	display: grid;
 	grid-template-columns: min-content auto;
 }
@@ -77,7 +76,6 @@ li.open > .Treeline > .opener {
 }
 
 .Treeitem {
-	/* Span with a name and a number */
 	display: grid;
 	grid-template-columns: auto auto;
 	cursor: pointer;

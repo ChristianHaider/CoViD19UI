@@ -1,5 +1,86 @@
 Smalltalk createPackage: 'Covid19Model'!
 (Smalltalk packageAt: 'Covid19Model' ifAbsent: [ self error: 'Package not created: Covid19Model' ]) imports: {'appTimestamp' -> 'app/timestamp'}!
+Object subclass: #Averager
+	slots: {#series. #total. #buffer. #index}
+	package: 'Covid19Model'!
+
+!Averager methodsFor: 'accessing'!
+
+buffer
+	"<Array of: Datapoint>"
+	
+	^buffer
+!
+
+incrementIndex
+	index := self index + 1.
+	index > self buffer size ifTrue: [
+		index := 1]
+!
+
+index
+	"<Integer>"
+	
+	^index ifNil: [index := 1]
+!
+
+movingAverage
+	"<Array of: Datapoint>"
+	
+	| rst wst |
+	rst := self series readStream.
+	wst := (Array new: self series size) writeStream.
+	[rst atEnd] whileFalse: [
+		| next last |
+		next := rst next.
+		last := self buffer at: self index.
+		total := self total - last + next.
+		wst nextPut: ((self total / 7) copyWithDate: next date).
+		self buffer at: self index put: next.
+		self incrementIndex].
+	^wst contents
+!
+
+series
+	"<Array of: Datapoint>"
+	
+	^series
+!
+
+total
+	"<Datapoint>"
+	
+	^total ifNil: [total := self zero]
+!
+
+zero
+	"<Datapoint>"
+	
+	^self series last class zero
+! !
+
+!Averager methodsFor: 'initialization'!
+
+initialize: anInteger series: aSeriesOfDatapoints
+	series := aSeriesOfDatapoints.
+	buffer := Array new: anInteger.
+	1 to: anInteger do: [:i | self buffer at: i put: self zero]
+! !
+
+!Averager class methodsFor: 'instance creation'!
+
+average: anInteger of: aSeriesOfDatapoints
+	"<Array of: Datapoint>
+	each data point is the average of anInteger previous data points"
+	
+	| inst |
+	aSeriesOfDatapoints ifEmpty: [
+		^#()].
+	inst := self new.
+	inst initialize: anInteger series: aSeriesOfDatapoints.
+	^inst movingAverage
+! !
+
 Object subclass: #CaseCount
 	slots: {#confirmed. #deaths. #recovered}
 	package: 'Covid19Model'!
@@ -26,6 +107,15 @@ recovered
 
 !CaseCount methodsFor: 'arithmetic'!
 
+* aNumber
+	"<CaseCount>"
+	
+	^self class		
+		confirmed: self confirmed * aNumber
+		deaths: self deaths * aNumber
+		recovered: self recovered * aNumber
+!
+
 + aCaseCount
 	"<CaseCount>"
 	
@@ -42,6 +132,15 @@ recovered
 		confirmed: self confirmed - aCaseCount confirmed
 		deaths: self deaths - aCaseCount deaths
 		recovered: self recovered - aCaseCount recovered
+!
+
+/ aNumber
+	"<CaseCount>"
+	
+	^self class		
+		confirmed: self confirmed / aNumber
+		deaths: self deaths / aNumber
+		recovered: self recovered / aNumber
 ! !
 
 !CaseCount methodsFor: 'initialization'!
@@ -288,7 +387,25 @@ tertiaryAspects
 
 !Datapoint methodsFor: 'arithmetic'!
 
+* aNumber
+	"<Datapoint>"
+	
+	^self subclassResponsibility
+!
+
 + aDatapoint
+	"<Datapoint>"
+	
+	^self subclassResponsibility
+!
+
+- aDatapoint
+	"<Datapoint>"
+	
+	^self subclassResponsibility
+!
+
+/ aNumber
 	"<Datapoint>"
 	
 	^self subclassResponsibility
@@ -299,6 +416,19 @@ changeFrom: aDatapoint
 	new Datapoint with the change from aDatapoint"
 	
 	^self subclassResponsibility
+! !
+
+!Datapoint methodsFor: 'comparing'!
+
+= anObject
+	^self class = anObject class and: [
+	self date = anObject date and: [
+	self confirmed = anObject confirmed and: [
+	self deaths = anObject deaths]]]
+!
+
+hash
+	^(self date hash bitXor: self confirmed hash) bitXor: self deaths hash
 ! !
 
 !Datapoint methodsFor: 'converting'!
@@ -496,16 +626,44 @@ recovered
 
 !JHUDatapoint methodsFor: 'arithmetic'!
 
+* aNumber
+	"<JHUDatapoint>"
+	
+	^self class 
+		date: self date 
+		confirmed: self confirmed * aNumber
+		deaths: self deaths * aNumber
+		recovered: self recovered * aNumber
+!
+
 + aDatapoint
 	"<JHUDatapoint>"
 	
-	self date = aDatapoint date ifFalse: [
-		self error: 'the dates are not the same'].
 	^self class 
 		date: self date 
 		confirmed: self confirmed + aDatapoint confirmed 
 		deaths: self deaths + aDatapoint deaths 
 		recovered: self recovered + aDatapoint recovered
+!
+
+- aDatapoint
+	"<JHUDatapoint>"
+	
+	^self class 
+		date: self date 
+		confirmed: self confirmed - aDatapoint confirmed 
+		deaths: self deaths - aDatapoint deaths 
+		recovered: self recovered - aDatapoint recovered
+!
+
+/ aNumber
+	"<JHUDatapoint>"
+	
+	^self class 
+		date: self date 
+		confirmed: self confirmed / aNumber
+		deaths: self deaths / aNumber
+		recovered: self recovered / aNumber
 !
 
 changeFrom: aDatapoint
@@ -514,6 +672,17 @@ changeFrom: aDatapoint
 		confirmed: self confirmed - aDatapoint confirmed
 		deaths: self deaths - aDatapoint deaths
 		recovered: self recovered - aDatapoint recovered
+! !
+
+!JHUDatapoint methodsFor: 'comparing'!
+
+= anObject
+	^super = anObject and: [
+	self recovered = anObject recovered]
+!
+
+hash
+	^super hash bitXor: self recovered hash
 ! !
 
 !JHUDatapoint methodsFor: 'converting'!
@@ -596,15 +765,40 @@ Datapoint subclass: #JHUUSDatapoint
 
 !JHUUSDatapoint methodsFor: 'arithmetic'!
 
+* aNumber
+	"<JHUDatapoint>"
+	
+	^self class 
+		date: self date 
+		confirmed: self confirmed * aNumber
+		deaths: self deaths * aNumber
+!
+
 + aDatapoint
 	"<JHUDatapoint>"
 	
-	self date = aDatapoint date ifFalse: [
-		self error: 'the dates are not the same'].
 	^self class 
 		date: self date 
 		confirmed: self confirmed + aDatapoint confirmed 
 		deaths: self deaths + aDatapoint deaths
+!
+
+- aDatapoint
+	"<JHUDatapoint>"
+	
+	^self class 
+		date: self date 
+		confirmed: self confirmed - aDatapoint confirmed 
+		deaths: self deaths - aDatapoint deaths
+!
+
+/ aNumber
+	"<JHUDatapoint>"
+	
+	^self class 
+		date: self date 
+		confirmed: self confirmed / aNumber
+		deaths: self deaths / aNumber
 !
 
 changeFrom: aDatapoint
@@ -714,18 +908,58 @@ tertiaryAspects
 
 !RKIDatapoint methodsFor: 'arithmetic'!
 
+* aNumber
+	"<RKIDatapoint>"
+	
+	| newByAge |
+	newByAge := self byAge copy.
+	self byAge keysAndValuesDo: [:age :sexDict |
+		| newSexDict |
+		newSexDict := (newByAge at: age) copy.
+		sexDict keysAndValuesDo: [:sex :count |
+			newSexDict at: sex put: (newSexDict at: sex) * aNumber].
+		newByAge at: age put: newSexDict].
+	^self class date: self date byAge: newByAge
+!
+
 + aDatapoint
 	"<RKIDatapoint>"
 	
 	| newByAge |
-	self date = aDatapoint date ifFalse: [
-		self error: 'the dates are not the same'].
 	newByAge := self byAge copy.
 	aDatapoint byAge keysAndValuesDo: [:age :sexDict |
 		| newSexDict |
 		newSexDict := (newByAge at: age ifAbsent: [Dictionary new]) copy.
 		sexDict keysAndValuesDo: [:sex :count |
 			newSexDict at: sex put: (newSexDict at: sex ifAbsent: [CaseCount zero]) + count].
+		newByAge at: age put: newSexDict].
+	^self class date: self date byAge: newByAge
+!
+
+- aDatapoint
+	"<RKIDatapoint>"
+	
+	| newByAge |
+	newByAge := self byAge copy.
+	aDatapoint byAge keysAndValuesDo: [:age :sexDict |
+		| newSexDict |
+		newSexDict := (newByAge at: age ifAbsent: [Dictionary new]) copy.
+		sexDict keysAndValuesDo: [:sex :count |
+			newSexDict at: sex put: (newSexDict at: sex ifAbsent: [CaseCount zero]) - count].
+		newByAge at: age put: newSexDict].
+	^self class date: self date byAge: newByAge
+!
+
+/ aNumber
+	"<RKIDatapoint>"
+	
+	| newByAge |
+	newByAge := self byAge copy.
+	self byAge keysAndValuesDo: [:age :sexDict |
+		| newSexDict |
+		newSexDict := (newByAge at: age) copy.
+		sexDict keysAndValuesDo: [:sex :count |
+			newSexDict at: sex put: (newSexDict at: sex) / aNumber].
 		newByAge at: age put: newSexDict].
 	^self class date: self date byAge: newByAge
 !
@@ -740,6 +974,17 @@ changeFrom: aDatapoint
 			newSexDict at: sex put: (newSexDict at: sex ifAbsent: [CaseCount zero]) - count].
 		newByAge at: age put: newSexDict].
 	^self class date: self date byAge: newByAge
+! !
+
+!RKIDatapoint methodsFor: 'comparing'!
+
+= anObject
+	^self class = anObject class and: [
+	self byAge = anObject byAge]
+!
+
+hash
+	^self byAge hash
 ! !
 
 !RKIDatapoint methodsFor: 'converting'!
@@ -847,7 +1092,7 @@ secondLevelTerritoryAboutFromJson: aJson
 ! !
 
 Object subclass: #Dataset
-	slots: {#source. #about. #series}
+	slots: {#source. #about. #series. #movingAverage}
 	package: 'Covid19Model'!
 !Dataset commentStamp!
 A dataset is a date series of datapoints for a territory from a provider at a certain time
@@ -867,6 +1112,14 @@ about
 	metadata about the receiver"
 	
 	^about ifNil: [Dictionary new]
+!
+
+caseFatalityRate
+	"<Number> in percent"
+	
+	self isEmpty ifTrue: [
+		^0].
+	^(self lastValueOf: #deaths) / (self lastValueOf: #confirmed) * 100
 !
 
 dataDateString
@@ -918,6 +1171,21 @@ lastValueOf: anAspect
 	self isEmpty ifTrue: [
 		^0].
 	^[self last perform: anAspect] on: MessageNotUnderstood do: [:ex | ex return: 0]
+!
+
+movingAverage
+	"<Array of: Datapoint>
+	- cache -
+	datapoints with the average of the last 7 days"
+	
+	^movingAverage ifNil: [movingAverage := self movingAverage7Days]
+!
+
+movingAverage7Days
+	"<Array of: Datapoint>
+	datapoints with the average of the last 7 days"
+	
+	^Averager average: 7 of: self series
 !
 
 primaryAspects

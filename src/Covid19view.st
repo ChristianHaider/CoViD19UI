@@ -46,6 +46,12 @@ filteredDataset: aDataset
 		self filteredDatapoint: datapoint])
 !
 
+lastSelection
+	"<Symbol | nil>"
+	
+	^self selectors reversed detect: [:selector | self aspectAt: selector] ifNone: [nil]
+!
+
 name
 	"<String>"
 	
@@ -92,6 +98,51 @@ toggleAspect: aSymbol
 	self aspectAt: aSymbol put: (self aspectAt: aSymbol) not
 ! !
 
+!AspectGroup methodsFor: 'actions'!
+
+clear
+	self selectors do: [:selector | self aspectAt: selector put: false]
+!
+
+selectNext
+	| lastSelected nextIndex |
+	lastSelected := self lastSelection.
+	lastSelected = self selectors last ifTrue: [
+		^self].
+	self clear.
+	lastSelected ifNil: [
+		^self aspectAt: self selectors first put: true].
+	nextIndex := (self selectors indexOf: lastSelected) + 1.
+	self aspectAt: (self selectors at: nextIndex) put: true
+!
+
+selectPrevious
+! !
+
+!AspectGroup methodsFor: 'events'!
+
+arrowDown
+	self hasSelection ifFalse: [
+		^self].
+	self selectNext
+!
+
+arrowUp
+	self hasSelection ifFalse: [
+		^self].
+	self selectPrevious
+!
+
+keyPressed: aKeyboardEvent
+	console log: aKeyboardEvent.
+	aKeyboardEvent key = 'ArrowDown' ifTrue: [
+		aKeyboardEvent preventDefault.
+		^self arrowDown].
+	aKeyboardEvent key = 'ArrowUp' ifTrue: [
+		aKeyboardEvent preventDefault.
+		^self arrowUp]
+! !
+
 !AspectGroup methodsFor: 'initialization'!
 
 initializeName: aString aspects: someSymbols
@@ -114,6 +165,10 @@ buttonFor: anAspect
 	^button
 !
 
+buttonList	
+	^self selectors collect: [:aspect | self listButtonFor: aspect]
+!
+
 buttons
 	"<Array of: Silk BUTTON>"
 	
@@ -128,19 +183,9 @@ fullBoxClassed: aClassString
 !
 
 legendFor: aString
-	| string |
-	string := aString.
-	string = 'unbekannt' ifTrue: [
-		string := '?'].
-	string first = $A ifTrue: [
-		string := string allButFirst].
-	string = 'M' ifTrue: [
-		string := '♂'].
-	string = 'W' ifTrue: [
-		string := '♀'].
 	^{
 		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: aString}}.
-		Silk SPAN: {'class' -> 'LegendLabel'. string}}
+		Silk SPAN: {'class' -> 'LegendLabel'. (self legendStringFor: aString)}}
 !
 
 legendSelectionClassFor: anAspect
@@ -152,12 +197,75 @@ legendSelectionClassFor: anAspect
 	^''
 !
 
+legendStringFor: aString
+	aString = 'unbekannt' ifTrue: [
+		^'?'].
+	aString first = $A ifTrue: [
+		^aString copyWithout: $A].
+	aString = 'M' ifTrue: [
+		^'♂'].
+	aString = 'W' ifTrue: [
+		^'♀'].
+	^aString
+!
+
+list
+	"<Silk UL>"
+	
+	| list |
+	list := Silk UL: 'tabindex' -> 2.
+	list << (self selectors collect: [:aspect | self listitemFor: aspect]).
+	list on: #keydown bind: [:event | self keyPressed: event].
+	^list
+!
+
+listButtonFor: anAspect
+	"<Silk BUTTON>"
+	
+	| button |
+	button := Silk BUTTON: {
+		'class' -> ('AspectListButton', (self selectionClassFor: anAspect)).
+		'type' -> 'button'. 
+		Silk SPAN: {'class' -> 'LegendLabel'. (self legendStringFor: anAspect)}}.
+	button on: #click bind: [self toggleAspect: anAspect].
+	^button
+!
+
+listitemFor: anAspect
+	"<Silk LI>"
+	
+	| item |
+	item := Silk LI: {
+		'class' -> ('AspectItem', (self selectionClassFor: anAspect)).
+		Silk SPAN: {'class' -> 'LegendLabel'. (self legendStringFor: anAspect)}}.
+	item on: #click bind: [self toggleAspect: anAspect].
+	^item
+!
+
 selectionClassFor: anAspect
 	"<String>"
 	
 	(self aspectAt: anAspect) ifTrue: [
 		^' selected'].
 	^''
+!
+
+simpleButtonFor: anAspect
+	"<Silk BUTTON>"
+	
+	| button |
+	button := Silk BUTTON: {
+		'class' -> ('AspectSimpleButton', (self selectionClassFor: anAspect)).
+		'type' -> 'button'. 
+		Silk SPAN: {'class' -> 'LegendLabel'. (self legendStringFor: anAspect)}}.
+	button on: #click bind: [self toggleAspect: anAspect].
+	^button
+!
+
+simpleButtons
+	"<Array of: Silk BUTTON>"
+	
+	^self selectors collect: [:aspect | self simpleButtonFor: aspect]
 ! !
 
 !AspectGroup methodsFor: 'testing'!
@@ -166,8 +274,12 @@ hasAspect: anAspect
 	^self aspects includesKey: anAspect
 !
 
+hasSelection
+	^self aspects values anySatisfy: [:bool | bool]
+!
+
 nothingSelected
-	^(self aspects values anySatisfy: [:bool | bool]) not
+	^self hasSelection not
 ! !
 
 !AspectGroup class methodsFor: 'initialization'!
@@ -254,12 +366,12 @@ dataReceived
 
 datasetSelected
 	self about refresh.
-	self graphics refresh
+	self graphics reset
 !
 
 territorySelected
 	self about refresh.
-	self graphics refresh
+	self graphics reset
 ! !
 
 !CoViD19 methodsFor: 'presenting'!
@@ -512,6 +624,12 @@ primaryAspects
 	group of all primary aspects of datapoint instances in the series"
 	
 	^self model primaryAspectGroup
+!
+
+symbol
+	"<String>"
+	
+	^self subclassResponsibility
 ! !
 
 !Barchart methodsFor: 'accessing datescale'!
@@ -752,7 +870,7 @@ yAt: aDomainValue
 asSilk
 	^{	Silk DIV: {
 			'class' -> 'ChartHeader'.
-			(Silk SPAN: 'class' -> 'ChartLegend') << (self primaryAspects selectors collect: [:aspect | self legendFor: aspect])}.
+			(Silk SPAN: {'class' -> 'ChartLegend'.  Silk SPAN: self symbol, ' '}) << (self primaryAspects selectors collect: [:aspect | self legendFor: aspect])}.
 		self svg}
 !
 
@@ -776,24 +894,10 @@ bar: anAspectSymbol forDatapoint: aDatapoint at: aBarLeft width: aWidth
 barForDatapoint: aDatapoint at: aBarLeft width: aWidth
 	"<g>"
 	
-	| zero bars g |
-	zero := self yAt: 0.
-	bars :=OrderedCollection new.
-	(self aspects isEmpty or: [
-	self aspects includes: #confirmed]) ifTrue: [
-		bars add: (self bar: #confirmed forDatapoint: aDatapoint at: aBarLeft width: aWidth)].
-	self aspects isEmpty ifTrue: [
-		bars add: (self bar: #decided forDatapoint: aDatapoint at: aBarLeft width: aWidth)].
-	(self aspects includes: #recovered) ifTrue: [
-		bars add: (self bar: #recovered forDatapoint: aDatapoint at: aBarLeft width: aWidth)].
-	(self aspects includes: #active) ifTrue: [
-		bars add: (self bar: #active forDatapoint: aDatapoint at: aBarLeft width: aWidth)].
-	(self aspects isEmpty or: [
-	self aspects includes: #deaths]) ifTrue: [
-		bars add: (self bar: #deaths forDatapoint: aDatapoint at: aBarLeft width: aWidth)].
+	| g |
 	g := SVG G: {
 		'class' -> 'Bar'.
-		bars}.
+		self barsForDatapoint: aDatapoint at: aBarLeft width: aWidth}.
 	g on: #mouseover bind: [:event | self mouseover: event datapoint: aDatapoint].
 	g on: #mouseout bind: [:event | self mouseout: event datapoint: aDatapoint].
 	^g
@@ -806,6 +910,18 @@ barForDatapoint: aDatapoint width: aWidth
 		barForDatapoint: aDatapoint 
 		at: ((self xAt: aDatapoint date) - aWidth) 
 		width: aWidth
+!
+
+barsForDatapoint: aDatapoint at: aBarLeft width: aWidth
+	"<Array of: g>"
+	
+	self aspects ifEmpty: [
+		^#(#confirmed #decided #deaths) collect: [:aspect |
+			self bar: aspect forDatapoint: aDatapoint at: aBarLeft width: aWidth]].
+	^#(#confirmed #recovered #active #deaths) inject: OrderedCollection new into: [:list :aspect |
+		(self aspects includes: aspect) ifTrue: [
+			list add: (self bar: aspect forDatapoint: aDatapoint at: aBarLeft width: aWidth)].
+		list]
 !
 
 chartArea
@@ -869,13 +985,46 @@ legendFor: anAspectSymbol
 		^Silk SPAN].
 	^Silk SPAN: {
 		'class' -> ('Legend', (self primaryAspects legendSelectionClassFor: anAspectSymbol)).
-		self legendFor: anAspectSymbol value: (self dataset lastValueOf: anAspectSymbol)}
+		self legendFor: anAspectSymbol dataset: self dataset}
 !
 
-legendFor: aString value: aNumber
+legendFor: anAspectSymbol dataset: aDataset
 	^{
-		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: aString}}.
-		Silk SPAN: {'class' -> 'LegendValue'. self infoValueString: aNumber}}
+		Silk SPAN: {'class' -> 'LegendBar'. SVG SVG: {'viewBox' -> '0 0 10 6'. self fullBoxClassed: anAspectSymbol}}.
+		Silk SPAN: {'class' -> 'LegendValue'. self infoValueString: (aDataset lastValueOf: anAspectSymbol)}}
+!
+
+movingAverageLineFor: anAspect
+	"<SVG g with: polyline>"
+	
+	| wst points |
+	wst := String new writeStream.
+	self dataset movingAverage do: [:datapoint |
+		wst atStart ifFalse: [wst space].
+		wst
+			nextPutAll: (self xAt: datapoint date) printString;
+			nextPut: $,;
+			nextPutAll: (self yAt: (datapoint perform: anAspect)) printString].
+	points := wst contents.
+	^SVG G: {
+		SVG POLYLINE: {
+			'class' -> 'groundline'.
+			'points' -> points}.
+		SVG POLYLINE: {
+			'class' -> (anAspect asString, ' aspectline').
+			'points' -> points}}
+!
+
+movingAverageLines
+	"<Array of: g>"
+	
+	self aspects ifEmpty: [
+		^#(#confirmed #decided #deaths) collect: [:aspect |
+			self movingAverageLineFor: aspect]].
+	^#(#confirmed #recovered #active #deaths) inject: OrderedCollection new into: [:list :aspect |
+		(self aspects includes: aspect) ifTrue: [
+			list add: (self movingAverageLineFor: aspect)].
+		list]
 !
 
 scalingButton
@@ -992,21 +1141,20 @@ Case data only grow, therefore, a logarithmic scale is most appropriate!
 
 newDataset
 	^self model dataset
+!
+
+symbol
+	^'Σ'
 ! !
 
 !Casechart methodsFor: 'presenting'!
 
-legendFor: anAspectSymbol
-	| legend number |
-	(self primaryAspects hasAspect: anAspectSymbol) ifFalse: [
-		^Silk SPAN].
-	number := self dataset lastValueOf: anAspectSymbol.
-	legend := self legendFor: anAspectSymbol value: number.
+legendFor: anAspectSymbol dataset: aDataset
+	| legend |
+	legend := super legendFor: anAspectSymbol dataset: aDataset.
 	anAspectSymbol = #deaths ifTrue: [
-		legend add: (Silk SPAN: ' (', (number / self lastConfirmed * 100 asLocalizedString: #{'maximumFractionDigits' -> 1}), '%)')].
-	^Silk SPAN: {
-		'class' -> ('Legend', (self primaryAspects legendSelectionClassFor: anAspectSymbol)).
-		legend}
+		legend add: (Silk SPAN: ' (', (aDataset caseFatalityRate asLocalizedString: #{'maximumFractionDigits' -> 1}), '%)')].
+	^legend
 ! !
 
 !Casechart class methodsFor: 'settings'!
@@ -1051,24 +1199,23 @@ changes go up and down and should, therefore, be shown with a linear scale!
 
 !Changechart methodsFor: 'accessing'!
 
-dataArePositive
-	"caching for speed - the logarithmic valuescale uses this heavily"
-	
-	^dataArePositive ifNil: [dataArePositive := super dataArePositive]
-!
-
 infoValueString: aNumber
-	| prefix |
-	aNumber isZero ifTrue: [
-		^super infoValueString: aNumber].
-	prefix := ''.
-	aNumber negative ifFalse: [
-		prefix := '+'].
-	^prefix, (super infoValueString: aNumber)
+	^(self prefixFor: aNumber), (super infoValueString: aNumber)
 !
 
 newDataset
 	^self model changeDataset
+!
+
+prefixFor: aNumber
+	(aNumber isZero or: [
+	aNumber negative]) ifTrue: [
+		^''].
+	^'+'
+!
+
+symbol
+	^'Δ'
 ! !
 
 !Changechart methodsFor: 'actions'!
@@ -1076,6 +1223,40 @@ newDataset
 refresh
 	dataArePositive := nil.
 	super refresh
+! !
+
+!Changechart methodsFor: 'presenting'!
+
+chartArea
+	"the chart"
+	
+	| chartArea |
+	chartArea := super chartArea.
+	chartArea << self movingAverageLines.
+	^chartArea
+!
+
+legendFor: anAspectSymbol dataset: aDataset
+	| legend number prefix string |
+	legend := super legendFor: anAspectSymbol dataset: aDataset.
+	(#(#confirmed #deaths) includes: anAspectSymbol) ifFalse: [
+		^legend].
+	number := aDataset movingAverage last perform: anAspectSymbol.
+	prefix := self prefixFor: number.
+	string := number asLocalizedString: #{'maximumFractionDigits' -> 1}.
+	legend add: (Silk SPAN: {
+		' (Ø₇ '. 
+		Silk SPAN: {'class' -> 'movValue'. prefix, string}. 
+		')'}).
+	^legend
+! !
+
+!Changechart methodsFor: 'testing'!
+
+dataArePositive
+	"caching for speed - the logarithmic valuescale uses this heavily"
+	
+	^dataArePositive ifNil: [dataArePositive := super dataArePositive]
 ! !
 
 !Changechart class methodsFor: 'settings'!
@@ -1211,19 +1392,11 @@ tertiaryAspectGroup
 		tertiaryAspectGroup := group]
 ! !
 
-!Graphics methodsFor: 'actions'!
-
-refresh
-	dataset := nil.
-	primaryAspectGroup := nil.
-	secondaryAspectGroup := nil.
-	tertiaryAspectGroup := nil.
-	super refresh
-! !
-
 !Graphics methodsFor: 'events'!
 
 ageAspectChanged
+	dataset := nil.
+	secondaryAspectGroup := nil.
 	self refresh
 !
 
@@ -1231,7 +1404,17 @@ aspectChanged
 	self refresh
 !
 
+reset
+	dataset := nil.
+	primaryAspectGroup := nil.
+	secondaryAspectGroup := nil.
+	tertiaryAspectGroup := nil.
+	self refresh
+!
+
 sexAspectChanged
+	dataset := nil.
+	tertiaryAspectGroup := nil.
 	self refresh
 ! !
 
@@ -1244,13 +1427,14 @@ asSilk
 	chartsDiv := Silk DIV: 'class' -> 'Charts'.
 	self datasets ifNotEmpty: [:ignore |
 		chartsDiv << {
-			self casesChart refresh frame.
-			self changesChart refresh frame}].
+			self changesChart refresh frame.
+			self casesChart refresh frame}].
 	primaryButtons := #().
 	extraButtons := #().
 	self datasets ifNotEmpty: [
 		primaryButtons := self primaryAspectButtons.
-		extraButtons := self extraAspectButtons].
+		self modelDataset secondaryAspects ifNotEmpty: [
+			extraButtons := self extraAspectButtons]].
 	^{
 		Silk DIV: {'class' -> 'ChartColumn'.
 			primaryButtons.
@@ -1259,23 +1443,12 @@ asSilk
 		Silk DIV: 'id' -> 'Tooltip'}
 !
 
-aspectButtons
-	"<Array of: Silk>"
-
-	self datasets ifEmpty: [
-		^#()].
-	^{
-		self primaryAspectButtons.
-		self extraAspectButtons
-	}
-!
-
 extraAspectButtons
 	"<Array of: Silk>"
 
 	^Silk DIV: {'class' -> 'ExtraAspectButtons'.
-			Silk DIV: {'class' -> 'SecondaryAspectButtons'. self secondaryAspectGroup buttons}.
-			Silk DIV: {'class' -> 'TertiaryAspectButtons'. self tertiaryAspectGroup buttons}}
+			Silk DIV: {'class' -> 'SecondaryAspectButtons'. self secondaryAspectGroup buttonList}.
+			Silk DIV: {'class' -> 'TertiaryAspectButtons'. self tertiaryAspectGroup buttonList}}
 !
 
 primaryAspectButtons
@@ -1350,13 +1523,49 @@ datasetButtonFor: aDataset
 	^{	(Silk BUTTON: {
 			'class' -> cssClass.
 			'type' -> 'button'. 
-			Silk SPAN: {'class' -> 'DatasetLabel'. datasource dataLabel}.
-			Silk A: {datasource provider.
-				'href' -> (datasource about at: #ProviderUrl).
-				'target' -> '_blank'.
-				'rel' -> 'noopener'}.
+			Silk SPAN: {
+				'class' -> 'DatasetLabel'. 
+				datasource dataLabel.
+				Silk A: {self iconExternalLink.
+					'href' -> (datasource about at: #ProviderUrl).
+					'target' -> '_blank'.
+					'rel' -> 'noopener'}}.
 			Silk SPAN: {'class' -> 'DatasetDate'. aDataset dataDateString}}) on: #click bind: [self dataset: aDataset]
 	}
+!
+
+iconExternalLink
+	^SVG SVG: {
+		'viewBox' -> '0 0 32 32'.
+		'width' -> '16px'.
+		'height' -> '16px'.
+		SVG PATH: {
+			'd' -> 'M 18 5 
+					L 18 7				L 23.5625 7		L 11.28125 19.28125		L 12.71875 20.71875 
+					L 25 8.4375  	 L 25 14		   L 27 14						   L 27 5 
+				Z 
+				M 5 9 
+					L 5 27		L 23 27		L 23 14		L 21 16 
+					L 21 25		L 7 25		L 7 11		L 16 11		L 18 9 
+				Z'}}
+!
+
+iconExternalLinkSource
+	^'<svg 
+		fill="#000000" 
+		viewBox="0 0 32 32" 
+		width="32px" 
+		height="32px">
+		<path 
+			d="M 18 5 
+					L 18 7				L 23.5625 7		L 11.28125 19.28125		L 12.71875 20.71875 
+					L 25 8.4375  	 L 25 14		   L 27 14						   L 27 5 
+				Z 
+				M 5 9 
+					L 5 27		L 23 27		L 23 14		L 21 16 
+					L 21 25		L 7 25		L 7 11		L 16 11		L 18 9 
+				Z"/>
+	</svg>'
 !
 
 territoryInfoPopulation: aNumber
@@ -1383,7 +1592,7 @@ root
 	
 	^root ifNil: [
 		| component |
-		component := TreeItem on: self model in: (Silk LI: 'tabindex' -> 0) parent: self.
+		component := TreeItem on: self model in: (Silk LI: 'tabindex' -> 1) parent: self.
 		component expanded: true.
 		component frame on: #keydown bind: [:event | self keyPressed: event].
 		root := component]

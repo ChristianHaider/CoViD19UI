@@ -436,7 +436,9 @@ heliosToDo
 !CoViD19 class methodsFor: 'starting'!
 
 start
-	  self current augmentPage
+	sessionStorage setItem: 'Cases.confirmed' to: 'true'.
+	sessionStorage setItem: 'Cases.deaths' to: 'true'.
+	self current augmentPage
 ! !
 
 Object subclass: #Component
@@ -1349,8 +1351,6 @@ primaryAspectGroup
 	^primaryAspectGroup ifNil: [
 		| group |
 		group := AspectGroup name: 'Cases' aspects: self modelDataset primaryAspects.
-		group aspectAt: #confirmed put: true.
-		group aspectAt: #deaths put: true.
 		group announcer on: AspectChanged send: #aspectChanged to: self.
 		primaryAspectGroup := group]
 !

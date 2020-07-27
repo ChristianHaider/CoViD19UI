@@ -1788,16 +1788,22 @@ selector: "start",
 protocol: "starting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "start\x0a\x09  self current augmentPage",
+source: "start\x0a\x09sessionStorage setItem: 'Cases.confirmed' to: 'true'.\x0a\x09sessionStorage setItem: 'Cases.deaths' to: 'true'.\x0a\x09self current augmentPage",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["augmentPage", "current"]
+messageSends: ["setItem:to:", "augmentPage", "current"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
+[$recv(sessionStorage)._setItem_to_("Cases.confirmed","true")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["setItem:to:"]=1
+//>>excludeEnd("ctx");
+][0];
+$recv(sessionStorage)._setItem_to_("Cases.deaths","true");
 $recv($self._current())._augmentPage();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -5575,11 +5581,11 @@ selector: "primaryAspectGroup",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "primaryAspectGroup\x0a\x09\x22<AspectGroup>\x22\x0a\x09\x0a\x09^primaryAspectGroup ifNil: [\x0a\x09\x09| group |\x0a\x09\x09group := AspectGroup name: 'Cases' aspects: self modelDataset primaryAspects.\x0a\x09\x09group aspectAt: #confirmed put: true.\x0a\x09\x09group aspectAt: #deaths put: true.\x0a\x09\x09group announcer on: AspectChanged send: #aspectChanged to: self.\x0a\x09\x09primaryAspectGroup := group]",
+source: "primaryAspectGroup\x0a\x09\x22<AspectGroup>\x22\x0a\x09\x0a\x09^primaryAspectGroup ifNil: [\x0a\x09\x09| group |\x0a\x09\x09group := AspectGroup name: 'Cases' aspects: self modelDataset primaryAspects.\x0a\x09\x09group announcer on: AspectChanged send: #aspectChanged to: self.\x0a\x09\x09primaryAspectGroup := group]",
 referencedClasses: ["AspectGroup", "AspectChanged"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifNil:", "name:aspects:", "primaryAspects", "modelDataset", "aspectAt:put:", "on:send:to:", "announcer"]
+messageSends: ["ifNil:", "name:aspects:", "primaryAspects", "modelDataset", "on:send:to:", "announcer"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -5590,12 +5596,6 @@ $1=$self.primaryAspectGroup;
 if($1 == null || $1.a$nil){
 var group;
 group=$recv($globals.AspectGroup)._name_aspects_("Cases",$recv($self._modelDataset())._primaryAspects());
-[$recv(group)._aspectAt_put_("confirmed",true)
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["aspectAt:put:"]=1
-//>>excludeEnd("ctx");
-][0];
-$recv(group)._aspectAt_put_("deaths",true);
 $recv($recv(group)._announcer())._on_send_to_($globals.AspectChanged,"aspectChanged",self);
 $self.primaryAspectGroup=group;
 return $self.primaryAspectGroup;

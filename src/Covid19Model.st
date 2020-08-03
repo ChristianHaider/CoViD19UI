@@ -247,16 +247,18 @@ getDataFor: anApp
 		CountryData loadAllDoing: [:wikiDataInstances |
 			worldRoot parts do: [:territory |
 				territory wikiData: (CountryData instanceFor: territory in: wikiDataInstances)].
-			anApp refreshTree.
-			(worldRoot partNamed: 'US') load: (self sources at: 'JHUUS') for: self doing: #resetPopulation.
-			(worldRoot partNamed: 'Germany') load: (self sources at: 'RKI') for: self doing: [:root |
-				anApp refreshTree.
-				BundeslandData loadAllDoing: [:bundeslandDatas |
-					LandkreisData loadAllDoing: [:landkreisDatas |
-						root parts do: [:bundesland |
-							bundesland wikiData: (BundeslandData instanceFor: bundesland in: bundeslandDatas).
-							bundesland parts do: [:landkreis |
-								landkreis wikiData: (LandkreisData instanceFor: landkreis in: landkreisDatas)]]]]]]]
+			(worldRoot partNamed: 'US') loadAction: [:territory |
+				territory load: (self sources at: 'JHUUS') for: self doing: #resetPopulation].
+			(worldRoot partNamed: 'Germany') loadAction: [:territory |
+				territory load: (self sources at: 'RKI') for: self doing: [:root |
+					anApp refreshTree.
+					BundeslandData loadAllDoing: [:bundeslandDatas |
+						LandkreisData loadAllDoing: [:landkreisDatas |
+							root parts do: [:bundesland |
+								bundesland wikiData: (BundeslandData instanceFor: bundesland in: bundeslandDatas).
+								bundesland parts do: [:landkreis |
+									landkreis wikiData: (LandkreisData instanceFor: landkreis in: landkreisDatas)]]]]]].
+			anApp refreshTree]]
 !
 
 pickMetadataFrom: aDictionary
@@ -284,6 +286,10 @@ SystemAnnouncement subclass: #ComponentAnnouncement
 	package: 'Covid19Model'!
 
 ComponentAnnouncement subclass: #AppearanceChanged
+	slots: {}
+	package: 'Covid19Model'!
+
+ComponentAnnouncement subclass: #PartsLoaded
 	slots: {}
 	package: 'Covid19Model'!
 
@@ -1571,7 +1577,7 @@ id: anIdString url: anUrlString dataClass: aDatapointClass
 ! !
 
 Object subclass: #Territory
-	slots: {#name. #about. #wikiData. #datasets. #parts. #announcer. #loader}
+	slots: {#name. #about. #wikiData. #datasets. #parts. #announcer. #loader. #loadAction}
 	package: 'Covid19Model'!
 !Territory commentStamp!
 A country, state, county, even the world is modelled as territory with parts.
@@ -1648,6 +1654,17 @@ lastDate
 	^self datasets allButFirst inject: self datasets first lastDate into: [:max :dataset | max max: dataset lastDate]
 !
 
+loadAction
+	"<Block>
+	One argument block (territory) to load the datasets for the parts"
+	
+	^loadAction
+!
+
+loadAction: aOneArgumentBlock
+	loadAction := aOneArgumentBlock
+!
+
 loader
 	"<Promise | nil>
 	primise to load data"
@@ -1711,6 +1728,17 @@ announceChanged
 	self announcer announce: StructureChanged new
 !
 
+announceLoaded
+	self announcer announce: PartsLoaded new
+!
+
+load
+	| loadBlock |
+	loadBlock := self loadAction.
+	self loadAction: nil.
+	loadBlock value: self
+!
+
 load: aDatasource for: anApplication doing: oneArgumentBlock
 	loader := aDatasource getJson then: [:json |
 		| root |
@@ -1720,7 +1748,7 @@ load: aDatasource for: anApplication doing: oneArgumentBlock
 		parts := root parts.
 		self datasets add: root datasets first.
 		loader := nil.
-		self announceChanged].
+		self announceLoaded].
 	self announceChanged
 ! !
 
@@ -1777,6 +1805,10 @@ hasFlag
 	self wikiData ifNil: [
 		^false].
 	^self wikiData hasFlag
+!
+
+hasLoadAction
+	^self loadAction notNil
 !
 
 hasParts

@@ -24,13 +24,12 @@ svg > rect {
 .groundline {
 	fill: none;
 	stroke: black;
-	stroke-width: 2;
+	stroke-width: 1.5;
 }
 
 .aspectline {
 	fill: none;
-	stroke: blue;
-	stroke-width: 1;
+	stroke-width: 0.75;
 }
 
 .aspectline.confirmed {

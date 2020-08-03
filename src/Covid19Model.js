@@ -647,11 +647,11 @@ selector: "getDataFor:",
 protocol: "data actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["anApp"],
-source: "getDataFor: anApp\x0a\x09self world load: (self sources at: 'JHU') for: self doing: [:worldRoot | \x0a\x09\x09CountryData loadAllDoing: [:wikiDataInstances |\x0a\x09\x09\x09worldRoot parts do: [:territory |\x0a\x09\x09\x09\x09territory wikiData: (CountryData instanceFor: territory in: wikiDataInstances)].\x0a\x09\x09\x09anApp refreshTree.\x0a\x09\x09\x09(worldRoot partNamed: 'US') load: (self sources at: 'JHUUS') for: self doing: #resetPopulation.\x0a\x09\x09\x09(worldRoot partNamed: 'Germany') load: (self sources at: 'RKI') for: self doing: [:root |\x0a\x09\x09\x09\x09anApp refreshTree.\x0a\x09\x09\x09\x09BundeslandData loadAllDoing: [:bundeslandDatas |\x0a\x09\x09\x09\x09\x09LandkreisData loadAllDoing: [:landkreisDatas |\x0a\x09\x09\x09\x09\x09\x09root parts do: [:bundesland |\x0a\x09\x09\x09\x09\x09\x09\x09bundesland wikiData: (BundeslandData instanceFor: bundesland in: bundeslandDatas).\x0a\x09\x09\x09\x09\x09\x09\x09bundesland parts do: [:landkreis |\x0a\x09\x09\x09\x09\x09\x09\x09\x09landkreis wikiData: (LandkreisData instanceFor: landkreis in: landkreisDatas)]]]]]]]",
+source: "getDataFor: anApp\x0a\x09self world load: (self sources at: 'JHU') for: self doing: [:worldRoot | \x0a\x09\x09CountryData loadAllDoing: [:wikiDataInstances |\x0a\x09\x09\x09worldRoot parts do: [:territory |\x0a\x09\x09\x09\x09territory wikiData: (CountryData instanceFor: territory in: wikiDataInstances)].\x0a\x09\x09\x09(worldRoot partNamed: 'US') loadAction: [:territory |\x0a\x09\x09\x09\x09territory load: (self sources at: 'JHUUS') for: self doing: #resetPopulation].\x0a\x09\x09\x09(worldRoot partNamed: 'Germany') loadAction: [:territory |\x0a\x09\x09\x09\x09territory load: (self sources at: 'RKI') for: self doing: [:root |\x0a\x09\x09\x09\x09\x09anApp refreshTree.\x0a\x09\x09\x09\x09\x09BundeslandData loadAllDoing: [:bundeslandDatas |\x0a\x09\x09\x09\x09\x09\x09LandkreisData loadAllDoing: [:landkreisDatas |\x0a\x09\x09\x09\x09\x09\x09\x09root parts do: [:bundesland |\x0a\x09\x09\x09\x09\x09\x09\x09\x09bundesland wikiData: (BundeslandData instanceFor: bundesland in: bundeslandDatas).\x0a\x09\x09\x09\x09\x09\x09\x09\x09bundesland parts do: [:landkreis |\x0a\x09\x09\x09\x09\x09\x09\x09\x09\x09landkreis wikiData: (LandkreisData instanceFor: landkreis in: landkreisDatas)]]]]]].\x0a\x09\x09\x09anApp refreshTree]]",
 referencedClasses: ["CountryData", "BundeslandData", "LandkreisData"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["load:for:doing:", "world", "at:", "sources", "loadAllDoing:", "do:", "parts", "wikiData:", "instanceFor:in:", "refreshTree", "partNamed:"]
+messageSends: ["load:for:doing:", "world", "at:", "sources", "loadAllDoing:", "do:", "parts", "wikiData:", "instanceFor:in:", "loadAction:", "partNamed:", "refreshTree"]
 }, function ($methodClass){ return function (anApp){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -698,91 +698,111 @@ return [$recv(territory)._wikiData_([$recv($globals.CountryData)._instanceFor_in
 ,$ctx3.sendIdx["do:"]=1
 //>>excludeEnd("ctx");
 ][0];
-[$recv(anApp)._refreshTree()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx3.sendIdx["refreshTree"]=1
-//>>excludeEnd("ctx");
-][0];
 [$recv([$recv(worldRoot)._partNamed_("US")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx3.sendIdx["partNamed:"]=1
 //>>excludeEnd("ctx");
-][0])._load_for_doing_([$recv([$self._sources()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx3.sendIdx["sources"]=2
-//>>excludeEnd("ctx");
-][0])._at_("JHUUS")
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx3.sendIdx["at:"]=2
-//>>excludeEnd("ctx");
-][0],self,"resetPopulation")
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx3.sendIdx["load:for:doing:"]=2
-//>>excludeEnd("ctx");
-][0];
-return $recv($recv(worldRoot)._partNamed_("Germany"))._load_for_doing_($recv($self._sources())._at_("RKI"),self,(function(root){
+][0])._loadAction_((function(territory){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx4) {
 //>>excludeEnd("ctx");
-$recv(anApp)._refreshTree();
-return [$recv($globals.BundeslandData)._loadAllDoing_((function(bundeslandDatas){
+return [$recv(territory)._load_for_doing_([$recv([$self._sources()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx4.sendIdx["sources"]=2
+//>>excludeEnd("ctx");
+][0])._at_("JHUUS")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx4.sendIdx["at:"]=2
+//>>excludeEnd("ctx");
+][0],self,"resetPopulation")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx4.sendIdx["load:for:doing:"]=2
+//>>excludeEnd("ctx");
+][0];
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx4) {$ctx4.fillBlock({territory:territory},$ctx3,4)});
+//>>excludeEnd("ctx");
+}))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx3.sendIdx["loadAction:"]=1
+//>>excludeEnd("ctx");
+][0];
+$recv($recv(worldRoot)._partNamed_("Germany"))._loadAction_((function(territory){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx4) {
+//>>excludeEnd("ctx");
+return $recv(territory)._load_for_doing_($recv($self._sources())._at_("RKI"),self,(function(root){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx5) {
 //>>excludeEnd("ctx");
-return $recv($globals.LandkreisData)._loadAllDoing_((function(landkreisDatas){
+[$recv(anApp)._refreshTree()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx5.sendIdx["refreshTree"]=1
+//>>excludeEnd("ctx");
+][0];
+return [$recv($globals.BundeslandData)._loadAllDoing_((function(bundeslandDatas){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx6) {
 //>>excludeEnd("ctx");
-return [$recv([$recv(root)._parts()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx6.sendIdx["parts"]=2
-//>>excludeEnd("ctx");
-][0])._do_((function(bundesland){
+return $recv($globals.LandkreisData)._loadAllDoing_((function(landkreisDatas){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx7) {
 //>>excludeEnd("ctx");
+return [$recv([$recv(root)._parts()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx7.sendIdx["parts"]=2
+//>>excludeEnd("ctx");
+][0])._do_((function(bundesland){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx8) {
+//>>excludeEnd("ctx");
 [$recv(bundesland)._wikiData_([$recv($globals.BundeslandData)._instanceFor_in_(bundesland,bundeslandDatas)
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx7.sendIdx["instanceFor:in:"]=2
+,$ctx8.sendIdx["instanceFor:in:"]=2
 //>>excludeEnd("ctx");
 ][0])
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx7.sendIdx["wikiData:"]=2
+,$ctx8.sendIdx["wikiData:"]=2
 //>>excludeEnd("ctx");
 ][0];
 return $recv($recv(bundesland)._parts())._do_((function(landkreis){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx8) {
+return $core.withContext(function($ctx9) {
 //>>excludeEnd("ctx");
 return $recv(landkreis)._wikiData_($recv($globals.LandkreisData)._instanceFor_in_(landkreis,landkreisDatas));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx8) {$ctx8.fillBlock({landkreis:landkreis},$ctx7,8)});
+}, function($ctx9) {$ctx9.fillBlock({landkreis:landkreis},$ctx8,10)});
 //>>excludeEnd("ctx");
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx7) {$ctx7.fillBlock({bundesland:bundesland},$ctx6,7)});
+}, function($ctx8) {$ctx8.fillBlock({bundesland:bundesland},$ctx7,9)});
 //>>excludeEnd("ctx");
 }))
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx6.sendIdx["do:"]=2
+,$ctx7.sendIdx["do:"]=2
 //>>excludeEnd("ctx");
 ][0];
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx6) {$ctx6.fillBlock({landkreisDatas:landkreisDatas},$ctx5,6)});
+}, function($ctx7) {$ctx7.fillBlock({landkreisDatas:landkreisDatas},$ctx6,8)});
 //>>excludeEnd("ctx");
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx5) {$ctx5.fillBlock({bundeslandDatas:bundeslandDatas},$ctx4,5)});
+}, function($ctx6) {$ctx6.fillBlock({bundeslandDatas:bundeslandDatas},$ctx5,7)});
 //>>excludeEnd("ctx");
 }))
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx4.sendIdx["loadAllDoing:"]=2
+,$ctx5.sendIdx["loadAllDoing:"]=2
 //>>excludeEnd("ctx");
 ][0];
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx4) {$ctx4.fillBlock({root:root},$ctx3,4)});
+}, function($ctx5) {$ctx5.fillBlock({root:root},$ctx4,6)});
 //>>excludeEnd("ctx");
 }));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx4) {$ctx4.fillBlock({territory:territory},$ctx3,5)});
+//>>excludeEnd("ctx");
+}));
+return $recv(anApp)._refreshTree();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx3) {$ctx3.fillBlock({wikiDataInstances:wikiDataInstances},$ctx2,2)});
 //>>excludeEnd("ctx");
@@ -1173,6 +1193,9 @@ $core.addClass("ComponentAnnouncement", $globals.SystemAnnouncement, "Covid19Mod
 
 
 $core.addClass("AppearanceChanged", $globals.ComponentAnnouncement, "Covid19Model");
+
+
+$core.addClass("PartsLoaded", $globals.ComponentAnnouncement, "Covid19Model");
 
 
 $core.addClass("StructureChanged", $globals.ComponentAnnouncement, "Covid19Model");
@@ -6243,7 +6266,7 @@ $globals.Datasource.a$cls);
 
 
 $core.addClass("Territory", $globals.Object, "Covid19Model");
-$core.setSlots($globals.Territory, ["name", "about", "wikiData", "datasets", "parts", "announcer", "loader"]);
+$core.setSlots($globals.Territory, ["name", "about", "wikiData", "datasets", "parts", "announcer", "loader", "loadAction"]);
 //>>excludeStart("ide", pragmas.excludeIdeData);
 $globals.Territory.comment="A country, state, county, even the world is modelled as territory with parts.\x0aThe world is the root of the hierarchy of territories with countries as parts. (Continents maybe next).\x0a\x0aA territory has one or more `datasets` with provider information and a time series of datapoints. When a territory has `parts`, its datasets are the sum of the datasets of the parts.\x0a\x0aMore specific information about the territory is available as dictionary in `about`.";
 //>>excludeEnd("ide");
@@ -6405,6 +6428,30 @@ $recv($self._announcer())._announce_($recv($globals.StructureChanged)._new());
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"announceChanged",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Territory);
+
+$core.addMethod(
+$core.method({
+selector: "announceLoaded",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "announceLoaded\x0a\x09self announcer announce: PartsLoaded new",
+referencedClasses: ["PartsLoaded"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["announce:", "announcer", "new"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv($self._announcer())._announce_($recv($globals.PartsLoaded)._new());
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"announceLoaded",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Territory);
@@ -6597,6 +6644,29 @@ $1;
 return $recv($self._wikiData())._hasFlag();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"hasFlag",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Territory);
+
+$core.addMethod(
+$core.method({
+selector: "hasLoadAction",
+protocol: "testing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "hasLoadAction\x0a\x09^self loadAction notNil",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["notNil", "loadAction"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._loadAction())._notNil();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"hasLoadAction",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Territory);
@@ -6812,15 +6882,42 @@ $globals.Territory);
 
 $core.addMethod(
 $core.method({
+selector: "load",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "load\x0a\x09| loadBlock |\x0a\x09loadBlock := self loadAction.\x0a\x09self loadAction: nil.\x0a\x09loadBlock value: self",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["loadAction", "loadAction:", "value:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+var loadBlock;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+loadBlock=$self._loadAction();
+$self._loadAction_(nil);
+$recv(loadBlock)._value_(self);
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"load",{loadBlock:loadBlock})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Territory);
+
+$core.addMethod(
+$core.method({
 selector: "load:for:doing:",
 protocol: "actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aDatasource", "anApplication", "oneArgumentBlock"],
-source: "load: aDatasource for: anApplication doing: oneArgumentBlock\x0a\x09loader := aDatasource getJson then: [:json |\x0a\x09\x09| root |\x0a\x09\x09anApplication pickMetadataFrom: json meta.\x0a\x09\x09root := aDatasource rootTerritoryFromJson: json.\x0a\x09\x09oneArgumentBlock value: root.\x0a\x09\x09parts := root parts.\x0a\x09\x09self datasets add: root datasets first.\x0a\x09\x09loader := nil.\x0a\x09\x09self announceChanged].\x0a\x09self announceChanged",
+source: "load: aDatasource for: anApplication doing: oneArgumentBlock\x0a\x09loader := aDatasource getJson then: [:json |\x0a\x09\x09| root |\x0a\x09\x09anApplication pickMetadataFrom: json meta.\x0a\x09\x09root := aDatasource rootTerritoryFromJson: json.\x0a\x09\x09oneArgumentBlock value: root.\x0a\x09\x09parts := root parts.\x0a\x09\x09self datasets add: root datasets first.\x0a\x09\x09loader := nil.\x0a\x09\x09self announceLoaded].\x0a\x09self announceChanged",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["then:", "getJson", "pickMetadataFrom:", "meta", "rootTerritoryFromJson:", "value:", "parts", "add:", "datasets", "first", "announceChanged"]
+messageSends: ["then:", "getJson", "pickMetadataFrom:", "meta", "rootTerritoryFromJson:", "value:", "parts", "add:", "datasets", "first", "announceLoaded", "announceChanged"]
 }, function ($methodClass){ return function (aDatasource,anApplication,oneArgumentBlock){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -6841,11 +6938,7 @@ $recv([$self._datasets()
 //>>excludeEnd("ctx");
 ][0])._add_($recv($recv(root)._datasets())._first());
 $self.loader=nil;
-return [$self._announceChanged()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx2.sendIdx["announceChanged"]=1
-//>>excludeEnd("ctx");
-][0];
+return $self._announceLoaded();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx2) {$ctx2.fillBlock({json:json,root:root},$ctx1,1)});
 //>>excludeEnd("ctx");
@@ -6855,6 +6948,43 @@ return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"load:for:doing:",{aDatasource:aDatasource,anApplication:anApplication,oneArgumentBlock:oneArgumentBlock})});
 //>>excludeEnd("ctx");
+}; }),
+$globals.Territory);
+
+$core.addMethod(
+$core.method({
+selector: "loadAction",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "loadAction\x0a\x09\x22<Block>\x0a\x09One argument block (territory) to load the datasets for the parts\x22\x0a\x09\x0a\x09^loadAction",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+return $self.loadAction;
+
+}; }),
+$globals.Territory);
+
+$core.addMethod(
+$core.method({
+selector: "loadAction:",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aOneArgumentBlock"],
+source: "loadAction: aOneArgumentBlock\x0a\x09loadAction := aOneArgumentBlock",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (aOneArgumentBlock){
+var self=this,$self=this;
+$self.loadAction=aOneArgumentBlock;
+return self;
+
 }; }),
 $globals.Territory);
 

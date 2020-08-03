@@ -1610,6 +1610,10 @@ tree
 
 !Tree methodsFor: 'actions'!
 
+announceSelected
+	self announcer announce: TerritorySelected new
+!
+
 scrollBy: aNumber
 	| treeDiv |
 	treeDiv := self frame asDomNode.
@@ -1639,13 +1643,7 @@ select: aTreeItem
 		self selection refresh].
 	self scrollToShow: self selection.
 	self root frame asDomNode focus.
-	self announcer announce: TerritorySelected new
-!
-
-selectAfter: aChildTreeItem
-!
-
-selectBefore: aChildTreeItem
+	self announceSelected
 ! !
 
 !Tree methodsFor: 'events'!
@@ -1755,6 +1753,11 @@ expand
 	self refresh
 !
 
+load
+	self model load.
+	self refresh
+!
+
 select
 	self tree select: self
 !
@@ -1766,8 +1769,7 @@ selectAfter: aChildTreeItem
 		rst next = aChildTreeItem ifTrue: [
 			rst atEnd ifTrue: [
 				^self parent selectAfter: self].
-			^rst next select]].
-	self halt
+			^rst next select]]
 !
 
 selectBefore: aChildTreeItem
@@ -1777,8 +1779,7 @@ selectBefore: aChildTreeItem
 		rst next = aChildTreeItem ifTrue: [
 			rst atEnd ifTrue: [
 				^self select].
-			^rst next selectLast]].
-	self halt
+			^rst next selectLast]]
 !
 
 selectLast
@@ -1799,6 +1800,13 @@ selectPrevious
 
 !TreeItem methodsFor: 'events'!
 
+partsLoaded
+	self structureChanged.
+	self expand.
+	self isSelected ifTrue: [
+		self tree announceSelected]
+!
+
 structureChanged
 	self resetParts.
 	self refresh.
@@ -1812,7 +1820,8 @@ structureChanged
 initializeFrame: aSilk model: aModel parent: aTreeItemOrTree
 	parent := aTreeItemOrTree.
 	self initializeFrame: aSilk model: aModel.
-	self model announcer on: StructureChanged send: #structureChanged to: self
+	self model announcer on: StructureChanged send: #structureChanged to: self.
+	self model announcer on: PartsLoaded send: #partsLoaded to: self
 !
 
 resetParts
@@ -1867,6 +1876,8 @@ itemSilk
 lineHead
 	| cssClass |
 	cssClass := 'opener'.
+	self hasLoadAction ifTrue: [
+		^(Silk BUTTON: {'class' -> 'loadButton'}) on: #click bind: [self load]].
 	self isLoading ifTrue: [
 		^Silk DIV: 'class' -> 'loader'].
 	(self hasParts not or: [
@@ -1878,6 +1889,10 @@ lineHead
 ! !
 
 !TreeItem methodsFor: 'testing'!
+
+hasLoadAction
+	^self model hasLoadAction
+!
 
 hasParts
 	"<Boolean>"

@@ -59,6 +59,19 @@ li.open > .Treeline > .opener {
 	transform-origin: 50% 50%;
 }
 
+.loadButton {
+	background: none;
+	border: none;
+	outline: none;
+}
+
+.loadButton::after {
+	font-size: 14px;
+	font-weight: bold;
+	margin: 0 0.1em;
+	content: "⭳"
+}
+
 .loader {
 	margin: 0 0.4em;
 	align-self: center;

@@ -6185,6 +6185,30 @@ $core.addClass("Tree", $globals.Component, "Covid19view");
 $core.setSlots($globals.Tree, ["root", "selection"]);
 $core.addMethod(
 $core.method({
+selector: "announceSelected",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "announceSelected\x0a\x09self announcer announce: TerritorySelected new",
+referencedClasses: ["TerritorySelected"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["announce:", "announcer", "new"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv($self._announcer())._announce_($recv($globals.TerritorySelected)._new());
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"announceSelected",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Tree);
+
+$core.addMethod(
+$core.method({
 selector: "arrowDown",
 protocol: "events",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -6553,11 +6577,11 @@ selector: "select:",
 protocol: "actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aTreeItem"],
-source: "select: aTreeItem\x0a\x09| old |\x0a\x09old := self selection.\x0a\x09selection := aTreeItem.\x0a\x09old ifNotNil: [old refresh].\x0a\x09self selection ifNotNil: [\x0a\x09\x09self selection refresh].\x0a\x09self scrollToShow: self selection.\x0a\x09self root frame asDomNode focus.\x0a\x09self announcer announce: TerritorySelected new",
-referencedClasses: ["TerritorySelected"],
+source: "select: aTreeItem\x0a\x09| old |\x0a\x09old := self selection.\x0a\x09selection := aTreeItem.\x0a\x09old ifNotNil: [old refresh].\x0a\x09self selection ifNotNil: [\x0a\x09\x09self selection refresh].\x0a\x09self scrollToShow: self selection.\x0a\x09self root frame asDomNode focus.\x0a\x09self announceSelected",
+referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["selection", "ifNotNil:", "refresh", "scrollToShow:", "focus", "asDomNode", "frame", "root", "announce:", "announcer", "new"]
+messageSends: ["selection", "ifNotNil:", "refresh", "scrollToShow:", "focus", "asDomNode", "frame", "root", "announceSelected"]
 }, function ($methodClass){ return function (aTreeItem){
 var self=this,$self=this;
 var old;
@@ -6597,47 +6621,11 @@ $recv([$self._selection()
 }
 $self._scrollToShow_($self._selection());
 $recv($recv($recv($self._root())._frame())._asDomNode())._focus();
-$recv($self._announcer())._announce_($recv($globals.TerritorySelected)._new());
+$self._announceSelected();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"select:",{aTreeItem:aTreeItem,old:old})});
 //>>excludeEnd("ctx");
-}; }),
-$globals.Tree);
-
-$core.addMethod(
-$core.method({
-selector: "selectAfter:",
-protocol: "actions",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aChildTreeItem"],
-source: "selectAfter: aChildTreeItem",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: []
-}, function ($methodClass){ return function (aChildTreeItem){
-var self=this,$self=this;
-return self;
-
-}; }),
-$globals.Tree);
-
-$core.addMethod(
-$core.method({
-selector: "selectBefore:",
-protocol: "actions",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aChildTreeItem"],
-source: "selectBefore: aChildTreeItem",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: []
-}, function ($methodClass){ return function (aChildTreeItem){
-var self=this,$self=this;
-return self;
-
 }; }),
 $globals.Tree);
 
@@ -6889,6 +6877,29 @@ $globals.TreeItem);
 
 $core.addMethod(
 $core.method({
+selector: "hasLoadAction",
+protocol: "testing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "hasLoadAction\x0a\x09^self model hasLoadAction",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["hasLoadAction", "model"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._model())._hasLoadAction();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"hasLoadAction",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.TreeItem);
+
+$core.addMethod(
+$core.method({
 selector: "hasParts",
 protocol: "testing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -6916,8 +6927,8 @@ selector: "initializeFrame:model:parent:",
 protocol: "initialization",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aSilk", "aModel", "aTreeItemOrTree"],
-source: "initializeFrame: aSilk model: aModel parent: aTreeItemOrTree\x0a\x09parent := aTreeItemOrTree.\x0a\x09self initializeFrame: aSilk model: aModel.\x0a\x09self model announcer on: StructureChanged send: #structureChanged to: self",
-referencedClasses: ["StructureChanged"],
+source: "initializeFrame: aSilk model: aModel parent: aTreeItemOrTree\x0a\x09parent := aTreeItemOrTree.\x0a\x09self initializeFrame: aSilk model: aModel.\x0a\x09self model announcer on: StructureChanged send: #structureChanged to: self.\x0a\x09self model announcer on: PartsLoaded send: #partsLoaded to: self",
+referencedClasses: ["StructureChanged", "PartsLoaded"],
 //>>excludeEnd("ide");
 pragmas: [],
 messageSends: ["initializeFrame:model:", "on:send:to:", "announcer", "model"]
@@ -6928,7 +6939,20 @@ return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 $self.parent=aTreeItemOrTree;
 $self._initializeFrame_model_(aSilk,aModel);
-$recv($recv($self._model())._announcer())._on_send_to_($globals.StructureChanged,"structureChanged",self);
+[$recv([$recv([$self._model()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["model"]=1
+//>>excludeEnd("ctx");
+][0])._announcer()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["announcer"]=1
+//>>excludeEnd("ctx");
+][0])._on_send_to_($globals.StructureChanged,"structureChanged",self)
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["on:send:to:"]=1
+//>>excludeEnd("ctx");
+][0];
+$recv($recv($self._model())._announcer())._on_send_to_($globals.PartsLoaded,"partsLoaded",self);
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"initializeFrame:model:parent:",{aSilk:aSilk,aModel:aModel,aTreeItemOrTree:aTreeItemOrTree})});
@@ -7137,11 +7161,11 @@ selector: "lineHead",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "lineHead\x0a\x09| cssClass |\x0a\x09cssClass := 'opener'.\x0a\x09self isLoading ifTrue: [\x0a\x09\x09^Silk DIV: 'class' -> 'loader'].\x0a\x09(self hasParts not or: [\x0a\x09self model name = 'World']) ifTrue: [\x0a\x09\x09^Silk BUTTON: {'class' -> (cssClass, ' noButton')}]. \x0a\x09self isExpanded ifFalse: [\x0a\x09\x09^(Silk BUTTON: {'class' -> cssClass}) on: #click bind: [self expand]].\x0a\x09^(Silk BUTTON: {'class' -> (cssClass, ' open')}) on: #click bind: [self collapse]",
+source: "lineHead\x0a\x09| cssClass |\x0a\x09cssClass := 'opener'.\x0a\x09self hasLoadAction ifTrue: [\x0a\x09\x09^(Silk BUTTON: {'class' -> 'loadButton'}) on: #click bind: [self load]].\x0a\x09self isLoading ifTrue: [\x0a\x09\x09^Silk DIV: 'class' -> 'loader'].\x0a\x09(self hasParts not or: [\x0a\x09self model name = 'World']) ifTrue: [\x0a\x09\x09^Silk BUTTON: {'class' -> (cssClass, ' noButton')}]. \x0a\x09self isExpanded ifFalse: [\x0a\x09\x09^(Silk BUTTON: {'class' -> cssClass}) on: #click bind: [self expand]].\x0a\x09^(Silk BUTTON: {'class' -> (cssClass, ' open')}) on: #click bind: [self collapse]",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifTrue:", "isLoading", "DIV:", "->", "or:", "not", "hasParts", "=", "name", "model", "BUTTON:", ",", "ifFalse:", "isExpanded", "on:bind:", "expand", "collapse"]
+messageSends: ["ifTrue:", "hasLoadAction", "on:bind:", "BUTTON:", "->", "load", "isLoading", "DIV:", "or:", "not", "hasParts", "=", "name", "model", ",", "ifFalse:", "isExpanded", "expand", "collapse"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 var cssClass;
@@ -7150,10 +7174,33 @@ return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 var $1;
 cssClass="opener";
+if($core.assert($self._hasLoadAction())){
+return [$recv([$recv($globals.Silk)._BUTTON_([["class".__minus_gt("loadButton")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=1
+//>>excludeEnd("ctx");
+][0]])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["BUTTON:"]=1
+//>>excludeEnd("ctx");
+][0])._on_bind_("click",(function(){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._load();
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,2)});
+//>>excludeEnd("ctx");
+}))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["on:bind:"]=1
+//>>excludeEnd("ctx");
+][0];
+}
 if($core.assert($self._isLoading())){
 return $recv($globals.Silk)._DIV_(["class".__minus_gt("loader")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["->"]=1
+,$ctx1.sendIdx["->"]=2
 //>>excludeEnd("ctx");
 ][0]);
 }
@@ -7169,22 +7216,22 @@ return [$recv($globals.Silk)._BUTTON_([["class".__minus_gt([$recv(cssClass).__co
 //>>excludeEnd("ctx");
 ][0])
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["->"]=2
+,$ctx1.sendIdx["->"]=3
 //>>excludeEnd("ctx");
 ][0]])
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["BUTTON:"]=1
+,$ctx1.sendIdx["BUTTON:"]=2
 //>>excludeEnd("ctx");
 ][0];
 }
 if(!$core.assert($self._isExpanded())){
 return [$recv([$recv($globals.Silk)._BUTTON_([["class".__minus_gt(cssClass)
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["->"]=3
+,$ctx1.sendIdx["->"]=4
 //>>excludeEnd("ctx");
 ][0]])
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["BUTTON:"]=2
+,$ctx1.sendIdx["BUTTON:"]=3
 //>>excludeEnd("ctx");
 ][0])._on_bind_("click",(function(){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -7192,11 +7239,11 @@ return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
 return $self._expand();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,5)});
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,7)});
 //>>excludeEnd("ctx");
 }))
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["on:bind:"]=1
+,$ctx1.sendIdx["on:bind:"]=2
 //>>excludeEnd("ctx");
 ][0];
 }
@@ -7206,11 +7253,36 @@ return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
 return $self._collapse();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,6)});
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,8)});
 //>>excludeEnd("ctx");
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"lineHead",{cssClass:cssClass})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.TreeItem);
+
+$core.addMethod(
+$core.method({
+selector: "load",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "load\x0a\x09self model load.\x0a\x09self refresh",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["load", "model", "refresh"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv($self._model())._load();
+$self._refresh();
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"load",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.TreeItem);
@@ -7273,6 +7345,34 @@ $globals.TreeItem);
 
 $core.addMethod(
 $core.method({
+selector: "partsLoaded",
+protocol: "events",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "partsLoaded\x0a\x09self structureChanged.\x0a\x09self expand.\x0a\x09self isSelected ifTrue: [\x0a\x09\x09self tree announceSelected]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["structureChanged", "expand", "ifTrue:", "isSelected", "announceSelected", "tree"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$self._structureChanged();
+$self._expand();
+if($core.assert($self._isSelected())){
+$recv($self._tree())._announceSelected();
+}
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"partsLoaded",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.TreeItem);
+
+$core.addMethod(
+$core.method({
 selector: "resetParts",
 protocol: "initialization",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -7320,11 +7420,11 @@ selector: "selectAfter:",
 protocol: "actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aChildTreeItem"],
-source: "selectAfter: aChildTreeItem\x0a\x09| rst |\x0a\x09rst := self parts readStream.\x0a\x09[rst atEnd] whileFalse: [\x0a\x09\x09rst next = aChildTreeItem ifTrue: [\x0a\x09\x09\x09rst atEnd ifTrue: [\x0a\x09\x09\x09\x09^self parent selectAfter: self].\x0a\x09\x09\x09^rst next select]].\x0a\x09self halt",
+source: "selectAfter: aChildTreeItem\x0a\x09| rst |\x0a\x09rst := self parts readStream.\x0a\x09[rst atEnd] whileFalse: [\x0a\x09\x09rst next = aChildTreeItem ifTrue: [\x0a\x09\x09\x09rst atEnd ifTrue: [\x0a\x09\x09\x09\x09^self parent selectAfter: self].\x0a\x09\x09\x09^rst next select]]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["readStream", "parts", "whileFalse:", "atEnd", "ifTrue:", "=", "next", "selectAfter:", "parent", "select", "halt"]
+messageSends: ["readStream", "parts", "whileFalse:", "atEnd", "ifTrue:", "=", "next", "selectAfter:", "parent", "select"]
 }, function ($methodClass){ return function (aChildTreeItem){
 var self=this,$self=this;
 var rst;
@@ -7364,7 +7464,6 @@ throw $early=[$recv($recv(rst)._next())._select()];
 }, function($ctx2) {$ctx2.fillBlock({},$ctx1,2)});
 //>>excludeEnd("ctx");
 }));
-$self._halt();
 return self;
 }
 catch(e) {if(e===$early)return e[0]; throw e}
@@ -7380,11 +7479,11 @@ selector: "selectBefore:",
 protocol: "actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aChildTreeItem"],
-source: "selectBefore: aChildTreeItem\x0a\x09| rst |\x0a\x09rst := self parts reversed readStream.\x0a\x09[rst atEnd] whileFalse: [\x0a\x09\x09rst next = aChildTreeItem ifTrue: [\x0a\x09\x09\x09rst atEnd ifTrue: [\x0a\x09\x09\x09\x09^self select].\x0a\x09\x09\x09^rst next selectLast]].\x0a\x09self halt",
+source: "selectBefore: aChildTreeItem\x0a\x09| rst |\x0a\x09rst := self parts reversed readStream.\x0a\x09[rst atEnd] whileFalse: [\x0a\x09\x09rst next = aChildTreeItem ifTrue: [\x0a\x09\x09\x09rst atEnd ifTrue: [\x0a\x09\x09\x09\x09^self select].\x0a\x09\x09\x09^rst next selectLast]]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["readStream", "reversed", "parts", "whileFalse:", "atEnd", "ifTrue:", "=", "next", "select", "selectLast", "halt"]
+messageSends: ["readStream", "reversed", "parts", "whileFalse:", "atEnd", "ifTrue:", "=", "next", "select", "selectLast"]
 }, function ($methodClass){ return function (aChildTreeItem){
 var self=this,$self=this;
 var rst;
@@ -7424,7 +7523,6 @@ throw $early=[$recv($recv(rst)._next())._selectLast()];
 }, function($ctx2) {$ctx2.fillBlock({},$ctx1,2)});
 //>>excludeEnd("ctx");
 }));
-$self._halt();
 return self;
 }
 catch(e) {if(e===$early)return e[0]; throw e}

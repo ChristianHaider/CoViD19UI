@@ -134,7 +134,6 @@ arrowUp
 !
 
 keyPressed: aKeyboardEvent
-	console log: aKeyboardEvent.
 	aKeyboardEvent key = 'ArrowDown' ifTrue: [
 		aKeyboardEvent preventDefault.
 		^self arrowDown].
@@ -310,6 +309,13 @@ about
 		about := component]
 !
 
+fullBoxClassed: aClassString
+	^SVG RECT: {
+		'class' -> aClassString.
+		'x' -> 0. 'y' -> 0. 
+		'width' -> '100%'. 'height' -> '100%'}
+!
+
 graphics
 	"<Graphics>
 	the graphics of a territory"
@@ -325,6 +331,23 @@ model
 	"the model with all data"
 	
 	^model ifNil: [model := CoViD19Application current]
+!
+
+sortDropDown
+	| select |
+	select := Silk SELECT: {
+		'class' -> 'SortDropDown'.
+		Silk OPTION: {'value' -> #lastConfirmed.
+			'Total cases'}.
+		Silk OPTION: {'value' -> #lastNewConfirmedAverage.
+			'New cases (average of the past 7 days)'}.
+		Silk OPTION: {'value' -> #lastDeaths.
+			'Total deaths'}.
+		Silk OPTION: {'value' -> #lastNewDeathsAverage.
+			'New deaths (average of the past 7 days)'}}.
+	select on: #change bind: [:event |
+		self dropDownChanged: event].
+	^select
 !
 
 tree
@@ -353,7 +376,7 @@ version
 !CoViD19 methodsFor: 'actions'!
 
 refreshTree
-	self tree refresh.
+	self tree resort.
 	self about refresh.
 	self graphics refresh
 ! !
@@ -361,12 +384,17 @@ refreshTree
 !CoViD19 methodsFor: 'events'!
 
 dataReceived
+	self tree resort.
 	self version refresh
 !
 
 datasetSelected
 	self about refresh.
 	self graphics reset
+!
+
+dropDownChanged: aChangeEvent
+	self tree resortWith: aChangeEvent target value
 !
 
 territorySelected
@@ -381,6 +409,7 @@ asSilk
 		'id' -> 'Contents'. 
 		self header.
 		self about frame.
+		self sortDropDown.
 		self tree frame.
 		self graphics frame.
 		self footer}
@@ -1582,7 +1611,7 @@ territoryInfoPopulation: aNumber
 ! !
 
 Component subclass: #Tree
-	slots: {#root. #selection}
+	slots: {#root. #selection. #valueSelector}
 	package: 'Covid19view'!
 
 !Tree methodsFor: 'accessing'!
@@ -1606,6 +1635,17 @@ selection
 
 tree
 	^self
+!
+
+valueSelector
+	"<Symbol>
+	selector used for sorting the items and displaying the value"
+	
+	^valueSelector ifNil: [#lastConfirmed]
+!
+
+valueSelector: aSymbol
+	valueSelector := aSymbol
 ! !
 
 !Tree methodsFor: 'actions'!
@@ -1614,17 +1654,33 @@ announceSelected
 	self announcer announce: TerritorySelected new
 !
 
+focusSelection
+	self root frame asDomNode focus
+!
+
+resort
+	self root resort.
+	self scrollToSelection.
+	self focusSelection.
+	self refresh
+!
+
+resortWith: aSelector
+	valueSelector := aSelector.
+	self resort
+!
+
 scrollBy: aNumber
 	| treeDiv |
 	treeDiv := self frame asDomNode.
 	treeDiv scrollTop: (treeDiv scrollTop + aNumber max: 0)
 !
 
-scrollToShow: aTreeItem
+scrollToSelection
 	| margin treeBounds itemBounds topSpace bottomSpace |
 	margin := 12.
 	treeBounds := self frame asDomNode getBoundingClientRect.
-	itemBounds := (aTreeItem frame at: 'div') asDomNode getBoundingClientRect.
+	itemBounds := (self selection frame at: 'div') asDomNode getBoundingClientRect.
 	topSpace := itemBounds top - treeBounds top - margin.
 	topSpace negative ifTrue: [
 		self scrollBy: topSpace.
@@ -1641,8 +1697,8 @@ select: aTreeItem
 	old ifNotNil: [old refresh].
 	self selection ifNotNil: [
 		self selection refresh].
-	self scrollToShow: self selection.
-	self root frame asDomNode focus.
+	self scrollToSelection.
+	self focusSelection.
 	self announceSelected
 ! !
 
@@ -1704,6 +1760,23 @@ Component subclass: #TreeItem
 
 !TreeItem methodsFor: 'accessing'!
 
+displayString
+	"<String>"
+	
+	(#(#lastConfirmed #lastDeaths) includes: self tree valueSelector) ifTrue: [
+		^self domainValue asLocalizedString].
+	^self domainValue asLocalizedString: #{
+		'maximumFractionDigits' -> 1.
+		'minimumFractionDigits' -> 1}
+!
+
+domainValue
+	"<Number>
+	the number to be shown and the sort criterion"
+	
+	^self model perform: self tree valueSelector
+!
+
 expanded: aBoolean
 	expanded := aBoolean
 !
@@ -1755,6 +1828,16 @@ expand
 
 load
 	self model load.
+	self resort
+!
+
+resetParts
+	parts := nil
+!
+
+resort
+	self parts sort: [:a :b | a domainValue > b domainValue].
+	self parts do: #resort.
 	self refresh
 !
 
@@ -1822,10 +1905,6 @@ initializeFrame: aSilk model: aModel parent: aTreeItemOrTree
 	self initializeFrame: aSilk model: aModel.
 	self model announcer on: StructureChanged send: #structureChanged to: self.
 	self model announcer on: PartsLoaded send: #partsLoaded to: self
-!
-
-resetParts
-	parts := nil
 ! !
 
 !TreeItem methodsFor: 'presenting'!
@@ -1856,19 +1935,23 @@ flag
 !
 
 itemSilk
-	| css flag silk |
+	| css rank silk |
 	css := 'Treeitem'.
 	self isSelected ifTrue: [
 		css := css, ' selected'].
+	rank := Silk SPAN: 'class' -> 'Rank'.
+	(self parent isKindOf: self class) ifTrue: [
+		rank <<	((self parent parts indexOf: self) printString, '.')].
 	silk := Silk SPAN: {
 		'class' -> css. 
+		rank.
 		Silk SPAN: {
 			'class' -> 'TerritoryName'. 
 			self flag.
 			self model presentationName}.
 		Silk SPAN: {
 			'class' -> 'TerritoryValue'.
-			self model lastConfirmed asLocalizedString}}.
+			self displayString}}.
 	silk on: #click bind: [self select].
 	^silk
 !

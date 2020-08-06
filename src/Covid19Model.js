@@ -4343,7 +4343,7 @@ $globals.RKIDatapoint.a$cls);
 
 
 $core.addClass("Dataset", $globals.Object, "Covid19Model");
-$core.setSlots($globals.Dataset, ["source", "about", "series", "movingAverage"]);
+$core.setSlots($globals.Dataset, ["source", "about", "series", "movingAverage", "changeDataset"]);
 //>>excludeStart("ide", pragmas.excludeIdeData);
 $globals.Dataset.comment="A dataset is a date series of datapoints for a territory from a provider at a certain time\x0a\x0aThe `series` is keyed by `date` representing a *day* (not a timestamp).\x0aThe datapoints in `series` are ordered from the frist date at the beginning and the last at the end of the collection.\x0a\x0aThe datapoints contain the current accumulated numbers.\x0aTherefore the values are growing monotonously.\x0a\x0aAdding two instances results in a new instance with both series added. For missing entries in one series, the previous value of that series is used (not zero!).";
 //>>excludeEnd("ide");
@@ -4496,23 +4496,26 @@ selector: "changeDataset",
 protocol: "copying",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "changeDataset\x0a\x09\x22<Dataset>\x22\x0a\x09\x0a\x09| last |\x0a\x09last := self series first.\x0a\x09^self copyWithSeries: {last}, (self series collect: [:datapoint |\x0a\x09\x09\x09[datapoint changeFrom: last] ensure: [\x0a\x09\x09\x09\x09last := datapoint]])",
+source: "changeDataset\x0a\x09\x22<Dataset>\x22\x0a\x09\x0a\x09^changeDataset ifNil: [\x0a\x09\x09| last |\x0a\x09\x09last := self series first.\x0a\x09\x09changeDataset := self copyWithSeries: {last}, (self series collect: [:datapoint |\x0a\x09\x09\x09[datapoint changeFrom: last] ensure: [\x0a\x09\x09\x09\x09last := datapoint]])]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["first", "series", "copyWithSeries:", ",", "collect:", "ensure:", "changeFrom:"]
+messageSends: ["ifNil:", "first", "series", "copyWithSeries:", ",", "collect:", "ensure:", "changeFrom:"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
-var last;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
+var $1;
+$1=$self.changeDataset;
+if($1 == null || $1.a$nil){
+var last;
 last=$recv([$self._series()
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["series"]=1
 //>>excludeEnd("ctx");
 ][0])._first();
-return $self._copyWithSeries_($recv([last]).__comma($recv($self._series())._collect_((function(datapoint){
+$self.changeDataset=$self._copyWithSeries_($recv([last]).__comma($recv($self._series())._collect_((function(datapoint){
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
@@ -4522,7 +4525,7 @@ return $core.withContext(function($ctx3) {
 //>>excludeEnd("ctx");
 return $recv(datapoint)._changeFrom_(last);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx3) {$ctx3.fillBlock({},$ctx2,2)});
+}, function($ctx3) {$ctx3.fillBlock({},$ctx2,3)});
 //>>excludeEnd("ctx");
 }))._ensure_((function(){
 last=datapoint;
@@ -4530,11 +4533,15 @@ return last;
 
 }));
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({datapoint:datapoint},$ctx1,1)});
+}, function($ctx2) {$ctx2.fillBlock({datapoint:datapoint},$ctx1,2)});
 //>>excludeEnd("ctx");
 }))));
+return $self.changeDataset;
+} else {
+return $1;
+}
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"changeDataset",{last:last})});
+}, function($ctx1) {$ctx1.fill(self,"changeDataset",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Dataset);
@@ -6272,114 +6279,6 @@ $globals.Territory.comment="A country, state, county, even the world is modelled
 //>>excludeEnd("ide");
 $core.addMethod(
 $core.method({
-selector: "<",
-protocol: "comparing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aTerritory"],
-source: "< aTerritory\x0a\x09^self lastConfirmed < aTerritory lastConfirmed",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["<", "lastConfirmed"]
-}, function ($methodClass){ return function (aTerritory){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return $recv([$self._lastConfirmed()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["lastConfirmed"]=1
-//>>excludeEnd("ctx");
-][0]).__lt($recv(aTerritory)._lastConfirmed());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"<",{aTerritory:aTerritory})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Territory);
-
-$core.addMethod(
-$core.method({
-selector: "<=",
-protocol: "comparing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aTerritory"],
-source: "<= aTerritory\x0a\x09^self lastConfirmed <= aTerritory lastConfirmed",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: ["<=", "lastConfirmed"]
-}, function ($methodClass){ return function (aTerritory){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return $recv([$self._lastConfirmed()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["lastConfirmed"]=1
-//>>excludeEnd("ctx");
-][0]).__lt_eq($recv(aTerritory)._lastConfirmed());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"<=",{aTerritory:aTerritory})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Territory);
-
-$core.addMethod(
-$core.method({
-selector: ">",
-protocol: "comparing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aTerritory"],
-source: "> aTerritory\x0a\x09^self lastConfirmed > aTerritory lastConfirmed",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: [">", "lastConfirmed"]
-}, function ($methodClass){ return function (aTerritory){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return $recv([$self._lastConfirmed()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["lastConfirmed"]=1
-//>>excludeEnd("ctx");
-][0]).__gt($recv(aTerritory)._lastConfirmed());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,">",{aTerritory:aTerritory})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Territory);
-
-$core.addMethod(
-$core.method({
-selector: ">=",
-protocol: "comparing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aTerritory"],
-source: ">= aTerritory\x0a\x09^self lastConfirmed >= aTerritory lastConfirmed",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: [">=", "lastConfirmed"]
-}, function ($methodClass){ return function (aTerritory){
-var self=this,$self=this;
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx1) {
-//>>excludeEnd("ctx");
-return $recv([$self._lastConfirmed()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["lastConfirmed"]=1
-//>>excludeEnd("ctx");
-][0]).__gt_eq($recv(aTerritory)._lastConfirmed());
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,">=",{aTerritory:aTerritory})});
-//>>excludeEnd("ctx");
-}; }),
-$globals.Territory);
-
-$core.addMethod(
-$core.method({
 selector: "about",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -6882,6 +6781,96 @@ $globals.Territory);
 
 $core.addMethod(
 $core.method({
+selector: "lastDeaths",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "lastDeaths\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09self datasets isEmpty ifTrue: [\x0a\x09\x09^0].\x0a\x09^self datasets first lastValueOf: #deaths",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifTrue:", "isEmpty", "datasets", "lastValueOf:", "first"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+if($core.assert($recv([$self._datasets()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["datasets"]=1
+//>>excludeEnd("ctx");
+][0])._isEmpty())){
+return (0);
+}
+return $recv($recv($self._datasets())._first())._lastValueOf_("deaths");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"lastDeaths",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Territory);
+
+$core.addMethod(
+$core.method({
+selector: "lastNewConfirmedAverage",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "lastNewConfirmedAverage\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09self datasets isEmpty ifTrue: [\x0a\x09\x09^0].\x0a\x09^self datasets first changeDataset movingAverage last perform: #confirmed",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifTrue:", "isEmpty", "datasets", "perform:", "last", "movingAverage", "changeDataset", "first"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+if($core.assert($recv([$self._datasets()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["datasets"]=1
+//>>excludeEnd("ctx");
+][0])._isEmpty())){
+return (0);
+}
+return $recv($recv($recv($recv($recv($self._datasets())._first())._changeDataset())._movingAverage())._last())._perform_("confirmed");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"lastNewConfirmedAverage",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Territory);
+
+$core.addMethod(
+$core.method({
+selector: "lastNewDeathsAverage",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "lastNewDeathsAverage\x0a\x09\x22<Integer>\x22\x0a\x09\x0a\x09self datasets isEmpty ifTrue: [\x0a\x09\x09^0].\x0a\x09^self datasets first changeDataset movingAverage last perform: #deaths",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifTrue:", "isEmpty", "datasets", "perform:", "last", "movingAverage", "changeDataset", "first"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+if($core.assert($recv([$self._datasets()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["datasets"]=1
+//>>excludeEnd("ctx");
+][0])._isEmpty())){
+return (0);
+}
+return $recv($recv($recv($recv($recv($self._datasets())._first())._changeDataset())._movingAverage())._last())._perform_("deaths");
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"lastNewDeathsAverage",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Territory);
+
+$core.addMethod(
+$core.method({
 selector: "load",
 protocol: "actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -7333,25 +7322,17 @@ selector: "name:about:parts:dataset:",
 protocol: "instance creation",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aString", "aDictionary", "someTerritories", "aDataset"],
-source: "name: aString about: aDictionary parts: someTerritories dataset: aDataset\x0a\x09^self \x0a\x09\x09name: aString \x0a\x09\x09about: aDictionary \x0a\x09\x09parts: (someTerritories sort: [:a :b | a > b])\x0a\x09\x09datasets: {aDataset}",
+source: "name: aString about: aDictionary parts: someTerritories dataset: aDataset\x0a\x09^self \x0a\x09\x09name: aString \x0a\x09\x09about: aDictionary \x0a\x09\x09parts: someTerritories\x0a\x09\x09datasets: {aDataset}",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["name:about:parts:datasets:", "sort:", ">"]
+messageSends: ["name:about:parts:datasets:"]
 }, function ($methodClass){ return function (aString,aDictionary,someTerritories,aDataset){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-return $self._name_about_parts_datasets_(aString,aDictionary,$recv(someTerritories)._sort_((function(a,b){
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-return $core.withContext(function($ctx2) {
-//>>excludeEnd("ctx");
-return $recv(a).__gt(b);
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({a:a,b:b},$ctx1,1)});
-//>>excludeEnd("ctx");
-})),[aDataset]);
+return $self._name_about_parts_datasets_(aString,aDictionary,someTerritories,[aDataset]);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"name:about:parts:dataset:",{aString:aString,aDictionary:aDictionary,someTerritories:someTerritories,aDataset:aDataset})});
 //>>excludeEnd("ctx");

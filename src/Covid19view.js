@@ -500,17 +500,16 @@ selector: "keyPressed:",
 protocol: "events",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aKeyboardEvent"],
-source: "keyPressed: aKeyboardEvent\x0a\x09console log: aKeyboardEvent.\x0a\x09aKeyboardEvent key = 'ArrowDown' ifTrue: [\x0a\x09\x09aKeyboardEvent preventDefault.\x0a\x09\x09^self arrowDown].\x0a\x09aKeyboardEvent key = 'ArrowUp' ifTrue: [\x0a\x09\x09aKeyboardEvent preventDefault.\x0a\x09\x09^self arrowUp]",
+source: "keyPressed: aKeyboardEvent\x0a\x09aKeyboardEvent key = 'ArrowDown' ifTrue: [\x0a\x09\x09aKeyboardEvent preventDefault.\x0a\x09\x09^self arrowDown].\x0a\x09aKeyboardEvent key = 'ArrowUp' ifTrue: [\x0a\x09\x09aKeyboardEvent preventDefault.\x0a\x09\x09^self arrowUp]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["log:", "ifTrue:", "=", "key", "preventDefault", "arrowDown", "arrowUp"]
+messageSends: ["ifTrue:", "=", "key", "preventDefault", "arrowDown", "arrowUp"]
 }, function ($methodClass){ return function (aKeyboardEvent){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-$recv(console)._log_(aKeyboardEvent);
 if($core.assert([$recv([$recv(aKeyboardEvent)._key()
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["key"]=1
@@ -1274,11 +1273,11 @@ selector: "asSilk",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "asSilk\x0a\x09^Silk DIV: {\x0a\x09\x09'id' -> 'Contents'. \x0a\x09\x09self header.\x0a\x09\x09self about frame.\x0a\x09\x09self tree frame.\x0a\x09\x09self graphics frame.\x0a\x09\x09self footer}",
+source: "asSilk\x0a\x09^Silk DIV: {\x0a\x09\x09'id' -> 'Contents'. \x0a\x09\x09self header.\x0a\x09\x09self about frame.\x0a\x09\x09self sortDropDown.\x0a\x09\x09self tree frame.\x0a\x09\x09self graphics frame.\x0a\x09\x09self footer}",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["DIV:", "->", "header", "frame", "about", "tree", "graphics", "footer"]
+messageSends: ["DIV:", "->", "header", "frame", "about", "sortDropDown", "tree", "graphics", "footer"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -1288,7 +1287,7 @@ return $recv($globals.Silk)._DIV_(["id".__minus_gt("Contents"),$self._header(),[
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["frame"]=1
 //>>excludeEnd("ctx");
-][0],[$recv($self._tree())._frame()
+][0],$self._sortDropDown(),[$recv($self._tree())._frame()
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["frame"]=2
 //>>excludeEnd("ctx");
@@ -1331,16 +1330,17 @@ selector: "dataReceived",
 protocol: "events",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "dataReceived\x0a\x09self version refresh",
+source: "dataReceived\x0a\x09self tree resort.\x0a\x09self version refresh",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["refresh", "version"]
+messageSends: ["resort", "tree", "refresh", "version"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
+$recv($self._tree())._resort();
 $recv($self._version())._refresh();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -1376,6 +1376,30 @@ $globals.CoViD19);
 
 $core.addMethod(
 $core.method({
+selector: "dropDownChanged:",
+protocol: "events",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aChangeEvent"],
+source: "dropDownChanged: aChangeEvent\x0a\x09self tree resortWith: aChangeEvent target value",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["resortWith:", "tree", "value", "target"]
+}, function ($methodClass){ return function (aChangeEvent){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv($self._tree())._resortWith_($recv($recv(aChangeEvent)._target())._value());
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"dropDownChanged:",{aChangeEvent:aChangeEvent})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19);
+
+$core.addMethod(
+$core.method({
 selector: "footer",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -1393,6 +1417,45 @@ return $core.withContext(function($ctx1) {
 return $recv($globals.Silk)._FOOTER_([$self._softwareVersionInfo(),$recv($recv($self._version())._refresh())._frame()]);
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"footer",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19);
+
+$core.addMethod(
+$core.method({
+selector: "fullBoxClassed:",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aClassString"],
+source: "fullBoxClassed: aClassString\x0a\x09^SVG RECT: {\x0a\x09\x09'class' -> aClassString.\x0a\x09\x09'x' -> 0. 'y' -> 0. \x0a\x09\x09'width' -> '100%'. 'height' -> '100%'}",
+referencedClasses: ["SVG"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["RECT:", "->"]
+}, function ($methodClass){ return function (aClassString){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($globals.SVG)._RECT_([["class".__minus_gt(aClassString)
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=1
+//>>excludeEnd("ctx");
+][0],["x".__minus_gt((0))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=2
+//>>excludeEnd("ctx");
+][0],["y".__minus_gt((0))
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=3
+//>>excludeEnd("ctx");
+][0],["width".__minus_gt("100%")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=4
+//>>excludeEnd("ctx");
+][0],"height".__minus_gt("100%")]);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"fullBoxClassed:",{aClassString:aClassString})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19);
@@ -1493,24 +1556,20 @@ selector: "refreshTree",
 protocol: "actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "refreshTree\x0a\x09self tree refresh.\x0a\x09self about refresh.\x0a\x09self graphics refresh",
+source: "refreshTree\x0a\x09self tree resort.\x0a\x09self about refresh.\x0a\x09self graphics refresh",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["refresh", "tree", "about", "graphics"]
+messageSends: ["resort", "tree", "refresh", "about", "graphics"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
-[$recv($self._tree())._refresh()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["refresh"]=1
-//>>excludeEnd("ctx");
-][0];
+$recv($self._tree())._resort();
 [$recv($self._about())._refresh()
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["refresh"]=2
+,$ctx1.sendIdx["refresh"]=1
 //>>excludeEnd("ctx");
 ][0];
 $recv($self._graphics())._refresh();
@@ -1591,6 +1650,68 @@ return [$recv($globals.Silk)._SPAN_([[$recv($globals.Silk)._SPAN_([["class".__mi
 ][0];
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"softwareVersionInfo",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.CoViD19);
+
+$core.addMethod(
+$core.method({
+selector: "sortDropDown",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "sortDropDown\x0a\x09| select |\x0a\x09select := Silk SELECT: {\x0a\x09\x09'class' -> 'SortDropDown'.\x0a\x09\x09Silk OPTION: {'value' -> #lastConfirmed.\x0a\x09\x09\x09'Total cases'}.\x0a\x09\x09Silk OPTION: {'value' -> #lastNewConfirmedAverage.\x0a\x09\x09\x09'New cases (average of the past 7 days)'}.\x0a\x09\x09Silk OPTION: {'value' -> #lastDeaths.\x0a\x09\x09\x09'Total deaths'}.\x0a\x09\x09Silk OPTION: {'value' -> #lastNewDeathsAverage.\x0a\x09\x09\x09'New deaths (average of the past 7 days)'}}.\x0a\x09select on: #change bind: [:event |\x0a\x09\x09self dropDownChanged: event].\x0a\x09^select",
+referencedClasses: ["Silk"],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["SELECT:", "->", "OPTION:", "on:bind:", "dropDownChanged:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+var select;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+select=$recv($globals.Silk)._SELECT_([["class".__minus_gt("SortDropDown")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=1
+//>>excludeEnd("ctx");
+][0],[$recv($globals.Silk)._OPTION_([["value".__minus_gt("lastConfirmed")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=2
+//>>excludeEnd("ctx");
+][0],"Total cases"])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["OPTION:"]=1
+//>>excludeEnd("ctx");
+][0],[$recv($globals.Silk)._OPTION_([["value".__minus_gt("lastNewConfirmedAverage")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=3
+//>>excludeEnd("ctx");
+][0],"New cases (average of the past 7 days)"])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["OPTION:"]=2
+//>>excludeEnd("ctx");
+][0],[$recv($globals.Silk)._OPTION_([["value".__minus_gt("lastDeaths")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["->"]=4
+//>>excludeEnd("ctx");
+][0],"Total deaths"])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["OPTION:"]=3
+//>>excludeEnd("ctx");
+][0],$recv($globals.Silk)._OPTION_(["value".__minus_gt("lastNewDeathsAverage"),"New deaths (average of the past 7 days)"])]);
+$recv(select)._on_bind_("change",(function(event){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $self._dropDownChanged_(event);
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({event:event},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+return select;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"sortDropDown",{select:select})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.CoViD19);
@@ -6182,7 +6303,7 @@ $globals.TerritoryView);
 
 
 $core.addClass("Tree", $globals.Component, "Covid19view");
-$core.setSlots($globals.Tree, ["root", "selection"]);
+$core.setSlots($globals.Tree, ["root", "selection", "valueSelector"]);
 $core.addMethod(
 $core.method({
 selector: "announceSelected",
@@ -6349,6 +6470,30 @@ $globals.Tree);
 
 $core.addMethod(
 $core.method({
+selector: "focusSelection",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "focusSelection\x0a\x09self root frame asDomNode focus",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["focus", "asDomNode", "frame", "root"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv($recv($recv($self._root())._frame())._asDomNode())._focus();
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"focusSelection",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Tree);
+
+$core.addMethod(
+$core.method({
 selector: "hasSelection",
 protocol: "testing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -6437,6 +6582,58 @@ $globals.Tree);
 
 $core.addMethod(
 $core.method({
+selector: "resort",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "resort\x0a\x09self root resort.\x0a\x09self scrollToSelection.\x0a\x09self focusSelection.\x0a\x09self refresh",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["resort", "root", "scrollToSelection", "focusSelection", "refresh"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv($self._root())._resort();
+$self._scrollToSelection();
+$self._focusSelection();
+$self._refresh();
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"resort",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Tree);
+
+$core.addMethod(
+$core.method({
+selector: "resortWith:",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aSelector"],
+source: "resortWith: aSelector\x0a\x09valueSelector := aSelector.\x0a\x09self resort",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["resort"]
+}, function ($methodClass){ return function (aSelector){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$self.valueSelector=aSelector;
+$self._resort();
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"resortWith:",{aSelector:aSelector})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Tree);
+
+$core.addMethod(
+$core.method({
 selector: "root",
 protocol: "accessing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
@@ -6505,16 +6702,16 @@ $globals.Tree);
 
 $core.addMethod(
 $core.method({
-selector: "scrollToShow:",
+selector: "scrollToSelection",
 protocol: "actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aTreeItem"],
-source: "scrollToShow: aTreeItem\x0a\x09| margin treeBounds itemBounds topSpace bottomSpace |\x0a\x09margin := 12.\x0a\x09treeBounds := self frame asDomNode getBoundingClientRect.\x0a\x09itemBounds := (aTreeItem frame at: 'div') asDomNode getBoundingClientRect.\x0a\x09topSpace := itemBounds top - treeBounds top - margin.\x0a\x09topSpace negative ifTrue: [\x0a\x09\x09self scrollBy: topSpace.\x0a\x09\x09^self].\x0a\x09bottomSpace := itemBounds bottom - treeBounds bottom + margin.\x0a\x09bottomSpace > 0 ifTrue: [\x0a\x09\x09self scrollBy: bottomSpace]",
+args: [],
+source: "scrollToSelection\x0a\x09| margin treeBounds itemBounds topSpace bottomSpace |\x0a\x09margin := 12.\x0a\x09treeBounds := self frame asDomNode getBoundingClientRect.\x0a\x09itemBounds := (self selection frame at: 'div') asDomNode getBoundingClientRect.\x0a\x09topSpace := itemBounds top - treeBounds top - margin.\x0a\x09topSpace negative ifTrue: [\x0a\x09\x09self scrollBy: topSpace.\x0a\x09\x09^self].\x0a\x09bottomSpace := itemBounds bottom - treeBounds bottom + margin.\x0a\x09bottomSpace > 0 ifTrue: [\x0a\x09\x09self scrollBy: bottomSpace]",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["getBoundingClientRect", "asDomNode", "frame", "at:", "-", "top", "ifTrue:", "negative", "scrollBy:", "+", "bottom", ">"]
-}, function ($methodClass){ return function (aTreeItem){
+messageSends: ["getBoundingClientRect", "asDomNode", "frame", "at:", "selection", "-", "top", "ifTrue:", "negative", "scrollBy:", "+", "bottom", ">"]
+}, function ($methodClass){ return function (){
 var self=this,$self=this;
 var margin,treeBounds,itemBounds,topSpace,bottomSpace;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -6534,7 +6731,7 @@ treeBounds=[$recv([$recv([$self._frame()
 ,$ctx1.sendIdx["getBoundingClientRect"]=1
 //>>excludeEnd("ctx");
 ][0];
-itemBounds=$recv($recv($recv($recv(aTreeItem)._frame())._at_("div"))._asDomNode())._getBoundingClientRect();
+itemBounds=$recv($recv($recv($recv($self._selection())._frame())._at_("div"))._asDomNode())._getBoundingClientRect();
 topSpace=[$recv([$recv([$recv(itemBounds)._top()
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["top"]=1
@@ -6566,7 +6763,7 @@ $self._scrollBy_(bottomSpace);
 }
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"scrollToShow:",{aTreeItem:aTreeItem,margin:margin,treeBounds:treeBounds,itemBounds:itemBounds,topSpace:topSpace,bottomSpace:bottomSpace})});
+}, function($ctx1) {$ctx1.fill(self,"scrollToSelection",{margin:margin,treeBounds:treeBounds,itemBounds:itemBounds,topSpace:topSpace,bottomSpace:bottomSpace})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.Tree);
@@ -6577,11 +6774,11 @@ selector: "select:",
 protocol: "actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aTreeItem"],
-source: "select: aTreeItem\x0a\x09| old |\x0a\x09old := self selection.\x0a\x09selection := aTreeItem.\x0a\x09old ifNotNil: [old refresh].\x0a\x09self selection ifNotNil: [\x0a\x09\x09self selection refresh].\x0a\x09self scrollToShow: self selection.\x0a\x09self root frame asDomNode focus.\x0a\x09self announceSelected",
+source: "select: aTreeItem\x0a\x09| old |\x0a\x09old := self selection.\x0a\x09selection := aTreeItem.\x0a\x09old ifNotNil: [old refresh].\x0a\x09self selection ifNotNil: [\x0a\x09\x09self selection refresh].\x0a\x09self scrollToSelection.\x0a\x09self focusSelection.\x0a\x09self announceSelected",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["selection", "ifNotNil:", "refresh", "scrollToShow:", "focus", "asDomNode", "frame", "root", "announceSelected"]
+messageSends: ["selection", "ifNotNil:", "refresh", "scrollToSelection", "focusSelection", "announceSelected"]
 }, function ($methodClass){ return function (aTreeItem){
 var self=this,$self=this;
 var old;
@@ -6613,14 +6810,10 @@ $2=[$self._selection()
 if($2 == null || $2.a$nil){
 $2;
 } else {
-$recv([$self._selection()
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["selection"]=3
-//>>excludeEnd("ctx");
-][0])._refresh();
+$recv($self._selection())._refresh();
 }
-$self._scrollToShow_($self._selection());
-$recv($recv($recv($self._root())._frame())._asDomNode())._focus();
+$self._scrollToSelection();
+$self._focusSelection();
 $self._announceSelected();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
@@ -6660,6 +6853,54 @@ pragmas: [],
 messageSends: []
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
+return self;
+
+}; }),
+$globals.Tree);
+
+$core.addMethod(
+$core.method({
+selector: "valueSelector",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "valueSelector\x0a\x09\x22<Symbol>\x0a\x09selector used for sorting the items and displaying the value\x22\x0a\x09\x0a\x09^valueSelector ifNil: [#lastConfirmed]",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifNil:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+var $1;
+$1=$self.valueSelector;
+if($1 == null || $1.a$nil){
+return "lastConfirmed";
+} else {
+return $1;
+}
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"valueSelector",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.Tree);
+
+$core.addMethod(
+$core.method({
+selector: "valueSelector:",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: ["aSymbol"],
+source: "valueSelector: aSymbol\x0a\x09valueSelector := aSymbol",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: []
+}, function ($methodClass){ return function (aSymbol){
+var self=this,$self=this;
+$self.valueSelector=aSymbol;
 return self;
 
 }; }),
@@ -6773,6 +7014,59 @@ $recv($self._parent())._select();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"collapseOrSelectParent",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.TreeItem);
+
+$core.addMethod(
+$core.method({
+selector: "displayString",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "displayString\x0a\x09\x22<String>\x22\x0a\x09\x0a\x09(#(#lastConfirmed #lastDeaths) includes: self tree valueSelector) ifTrue: [\x0a\x09\x09^self domainValue asLocalizedString].\x0a\x09^self domainValue asLocalizedString: #{\x0a\x09\x09'maximumFractionDigits' -> 1.\x0a\x09\x09'minimumFractionDigits' -> 1}",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["ifTrue:", "includes:", "valueSelector", "tree", "asLocalizedString", "domainValue", "asLocalizedString:"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+if($core.assert(["lastConfirmed", "lastDeaths"]._includes_($recv($self._tree())._valueSelector()))){
+return $recv([$self._domainValue()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["domainValue"]=1
+//>>excludeEnd("ctx");
+][0])._asLocalizedString();
+}
+return $recv($self._domainValue())._asLocalizedString_($globals.HashedCollection._newFromPairs_(["maximumFractionDigits",(1),"minimumFractionDigits",(1)]));
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"displayString",{})});
+//>>excludeEnd("ctx");
+}; }),
+$globals.TreeItem);
+
+$core.addMethod(
+$core.method({
+selector: "domainValue",
+protocol: "accessing",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "domainValue\x0a\x09\x22<Number>\x0a\x09the number to be shown and the sort criterion\x22\x0a\x09\x0a\x09^self model perform: self tree valueSelector",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["perform:", "model", "valueSelector", "tree"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+return $recv($self._model())._perform_($recv($self._tree())._valueSelector());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"domainValue",{})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.TreeItem);
@@ -7102,41 +7396,57 @@ selector: "itemSilk",
 protocol: "presenting",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "itemSilk\x0a\x09| css flag silk |\x0a\x09css := 'Treeitem'.\x0a\x09self isSelected ifTrue: [\x0a\x09\x09css := css, ' selected'].\x0a\x09silk := Silk SPAN: {\x0a\x09\x09'class' -> css. \x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'class' -> 'TerritoryName'. \x0a\x09\x09\x09self flag.\x0a\x09\x09\x09self model presentationName}.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'class' -> 'TerritoryValue'.\x0a\x09\x09\x09self model lastConfirmed asLocalizedString}}.\x0a\x09silk on: #click bind: [self select].\x0a\x09^silk",
+source: "itemSilk\x0a\x09| css rank silk |\x0a\x09css := 'Treeitem'.\x0a\x09self isSelected ifTrue: [\x0a\x09\x09css := css, ' selected'].\x0a\x09rank := Silk SPAN: 'class' -> 'Rank'.\x0a\x09(self parent isKindOf: self class) ifTrue: [\x0a\x09\x09rank <<\x09((self parent parts indexOf: self) printString, '.')].\x0a\x09silk := Silk SPAN: {\x0a\x09\x09'class' -> css. \x0a\x09\x09rank.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'class' -> 'TerritoryName'. \x0a\x09\x09\x09self flag.\x0a\x09\x09\x09self model presentationName}.\x0a\x09\x09Silk SPAN: {\x0a\x09\x09\x09'class' -> 'TerritoryValue'.\x0a\x09\x09\x09self displayString}}.\x0a\x09silk on: #click bind: [self select].\x0a\x09^silk",
 referencedClasses: ["Silk"],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["ifTrue:", "isSelected", ",", "SPAN:", "->", "flag", "presentationName", "model", "asLocalizedString", "lastConfirmed", "on:bind:", "select"]
+messageSends: ["ifTrue:", "isSelected", ",", "SPAN:", "->", "isKindOf:", "parent", "class", "<<", "printString", "indexOf:", "parts", "flag", "presentationName", "model", "displayString", "on:bind:", "select"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
-var css,flag,silk;
+var css,rank,silk;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 css="Treeitem";
 if($core.assert($self._isSelected())){
-css=$recv(css).__comma(" selected");
+css=[$recv(css).__comma(" selected")
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx[","]=1
+//>>excludeEnd("ctx");
+][0];
 css;
 }
-silk=[$recv($globals.Silk)._SPAN_([["class".__minus_gt(css)
+rank=[$recv($globals.Silk)._SPAN_(["class".__minus_gt("Rank")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["->"]=1
 //>>excludeEnd("ctx");
-][0],[$recv($globals.Silk)._SPAN_([["class".__minus_gt("TerritoryName")
+][0])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["SPAN:"]=1
+//>>excludeEnd("ctx");
+][0];
+if($core.assert($recv([$self._parent()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["parent"]=1
+//>>excludeEnd("ctx");
+][0])._isKindOf_($self._class()))){
+$recv(rank).__lt_lt($recv($recv($recv($recv($self._parent())._parts())._indexOf_(self))._printString()).__comma("."));
+}
+silk=[$recv($globals.Silk)._SPAN_([["class".__minus_gt(css)
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["->"]=2
 //>>excludeEnd("ctx");
-][0],$self._flag(),$recv([$self._model()
+][0],rank,[$recv($globals.Silk)._SPAN_([["class".__minus_gt("TerritoryName")
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["model"]=1
+,$ctx1.sendIdx["->"]=3
 //>>excludeEnd("ctx");
-][0])._presentationName()])
+][0],$self._flag(),$recv($self._model())._presentationName()])
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["SPAN:"]=3
+//>>excludeEnd("ctx");
+][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("TerritoryValue"),$self._displayString()])])
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 ,$ctx1.sendIdx["SPAN:"]=2
-//>>excludeEnd("ctx");
-][0],$recv($globals.Silk)._SPAN_(["class".__minus_gt("TerritoryValue"),$recv($recv($self._model())._lastConfirmed())._asLocalizedString()])])
-//>>excludeStart("ctx", pragmas.excludeDebugContexts);
-,$ctx1.sendIdx["SPAN:"]=1
 //>>excludeEnd("ctx");
 ][0];
 $recv(silk)._on_bind_("click",(function(){
@@ -7145,12 +7455,12 @@ return $core.withContext(function($ctx2) {
 //>>excludeEnd("ctx");
 return $self._select();
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx2) {$ctx2.fillBlock({},$ctx1,2)});
+}, function($ctx2) {$ctx2.fillBlock({},$ctx1,3)});
 //>>excludeEnd("ctx");
 }));
 return silk;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
-}, function($ctx1) {$ctx1.fill(self,"itemSilk",{css:css,flag:flag,silk:silk})});
+}, function($ctx1) {$ctx1.fill(self,"itemSilk",{css:css,rank:rank,silk:silk})});
 //>>excludeEnd("ctx");
 }; }),
 $globals.TreeItem);
@@ -7268,18 +7578,18 @@ selector: "load",
 protocol: "actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
-source: "load\x0a\x09self model load.\x0a\x09self refresh",
+source: "load\x0a\x09self model load.\x0a\x09self resort",
 referencedClasses: [],
 //>>excludeEnd("ide");
 pragmas: [],
-messageSends: ["load", "model", "refresh"]
+messageSends: ["load", "model", "resort"]
 }, function ($methodClass){ return function (){
 var self=this,$self=this;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 return $core.withContext(function($ctx1) {
 //>>excludeEnd("ctx");
 $recv($self._model())._load();
-$self._refresh();
+$self._resort();
 return self;
 //>>excludeStart("ctx", pragmas.excludeDebugContexts);
 }, function($ctx1) {$ctx1.fill(self,"load",{})});
@@ -7374,7 +7684,7 @@ $globals.TreeItem);
 $core.addMethod(
 $core.method({
 selector: "resetParts",
-protocol: "initialization",
+protocol: "actions",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: [],
 source: "resetParts\x0a\x09parts := nil",
@@ -7387,6 +7697,48 @@ var self=this,$self=this;
 $self.parts=nil;
 return self;
 
+}; }),
+$globals.TreeItem);
+
+$core.addMethod(
+$core.method({
+selector: "resort",
+protocol: "actions",
+//>>excludeStart("ide", pragmas.excludeIdeData);
+args: [],
+source: "resort\x0a\x09self parts sort: [:a :b | a domainValue > b domainValue].\x0a\x09self parts do: #resort.\x0a\x09self refresh",
+referencedClasses: [],
+//>>excludeEnd("ide");
+pragmas: [],
+messageSends: ["sort:", "parts", ">", "domainValue", "do:", "refresh"]
+}, function ($methodClass){ return function (){
+var self=this,$self=this;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx1) {
+//>>excludeEnd("ctx");
+$recv([$self._parts()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx1.sendIdx["parts"]=1
+//>>excludeEnd("ctx");
+][0])._sort_((function(a,b){
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+return $core.withContext(function($ctx2) {
+//>>excludeEnd("ctx");
+return $recv([$recv(a)._domainValue()
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+,$ctx2.sendIdx["domainValue"]=1
+//>>excludeEnd("ctx");
+][0]).__gt($recv(b)._domainValue());
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx2) {$ctx2.fillBlock({a:a,b:b},$ctx1,1)});
+//>>excludeEnd("ctx");
+}));
+$recv($self._parts())._do_("resort");
+$self._refresh();
+return self;
+//>>excludeStart("ctx", pragmas.excludeDebugContexts);
+}, function($ctx1) {$ctx1.fill(self,"resort",{})});
+//>>excludeEnd("ctx");
 }; }),
 $globals.TreeItem);
 

@@ -1098,7 +1098,7 @@ secondLevelTerritoryAboutFromJson: aJson
 ! !
 
 Object subclass: #Dataset
-	slots: {#source. #about. #series. #movingAverage}
+	slots: {#source. #about. #series. #movingAverage. #changeDataset}
 	package: 'Covid19Model'!
 !Dataset commentStamp!
 A dataset is a date series of datapoints for a territory from a provider at a certain time
@@ -1308,11 +1308,12 @@ with: aDataset onlyInSelf: onlyInSelfBlock onlyInArg: onlyInArgBlock inBoth: inB
 changeDataset
 	"<Dataset>"
 	
-	| last |
-	last := self series first.
-	^self copyWithSeries: {last}, (self series collect: [:datapoint |
+	^changeDataset ifNil: [
+		| last |
+		last := self series first.
+		changeDataset := self copyWithSeries: {last}, (self series collect: [:datapoint |
 			[datapoint changeFrom: last] ensure: [
-				last := datapoint]])
+				last := datapoint]])]
 !
 
 copyWithSeries: someDatapoints
@@ -1654,6 +1655,30 @@ lastDate
 	^self datasets allButFirst inject: self datasets first lastDate into: [:max :dataset | max max: dataset lastDate]
 !
 
+lastDeaths
+	"<Integer>"
+	
+	self datasets isEmpty ifTrue: [
+		^0].
+	^self datasets first lastValueOf: #deaths
+!
+
+lastNewConfirmedAverage
+	"<Integer>"
+	
+	self datasets isEmpty ifTrue: [
+		^0].
+	^self datasets first changeDataset movingAverage last perform: #confirmed
+!
+
+lastNewDeathsAverage
+	"<Integer>"
+	
+	self datasets isEmpty ifTrue: [
+		^0].
+	^self datasets first changeDataset movingAverage last perform: #deaths
+!
+
 loadAction
 	"<Block>
 	One argument block (territory) to load the datasets for the parts"
@@ -1752,24 +1777,6 @@ load: aDatasource for: anApplication doing: oneArgumentBlock
 	self announceChanged
 ! !
 
-!Territory methodsFor: 'comparing'!
-
-< aTerritory
-	^self lastConfirmed < aTerritory lastConfirmed
-!
-
-<= aTerritory
-	^self lastConfirmed <= aTerritory lastConfirmed
-!
-
-> aTerritory
-	^self lastConfirmed > aTerritory lastConfirmed
-!
-
->= aTerritory
-	^self lastConfirmed >= aTerritory lastConfirmed
-! !
-
 !Territory methodsFor: 'initialization'!
 
 initializeName: aString about: aDictionary parts: someTerritories datasets: someDatasets
@@ -1841,7 +1848,7 @@ name: aString about: aDictionary parts: someTerritories dataset: aDataset
 	^self 
 		name: aString 
 		about: aDictionary 
-		parts: (someTerritories sort: [:a :b | a > b])
+		parts: someTerritories
 		datasets: {aDataset}
 !
 

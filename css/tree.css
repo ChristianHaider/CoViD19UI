@@ -1,3 +1,11 @@
+.SortDropDown {
+	grid-column: 1;
+	grid-row: 2;
+	border: 1px solid;
+	padding: 0 .5em .1em .5em;
+	margin: .5em .6em 0 .6em;
+}
+
 ul {
 	padding-left: 0.7em;
 	margin: 0;
@@ -14,11 +22,12 @@ li {
 #WorldTree {
 	background: #fffbf0;
 	grid-column: 1;
+	grid-row: 3;
 	overflow-y: auto;
-}
-
-div #WorldTree {
-	padding-left: 0;
+	border-radius: 0px 0.5em 0.5em;
+	border: 1px solid;
+	padding: .5em .5em 0 0;
+	margin: .2em .5em .5em .5em;
 }
 
 #WorldTree button {
@@ -42,6 +51,7 @@ div #WorldTree {
 	border: none;
 	outline: none;
 	transition: transform 0.3s ease-in-out;
+	cursor: pointer;
 }
 
 .opener::after, .noButton::after {
@@ -63,6 +73,7 @@ li.open > .Treeline > .opener {
 	background: none;
 	border: none;
 	outline: none;
+	cursor: pointer;
 }
 
 .loadButton::after {
@@ -90,8 +101,14 @@ li.open > .Treeline > .opener {
 
 .Treeitem {
 	display: grid;
-	grid-template-columns: auto auto;
+	grid-template-columns: min-content auto auto;
 	cursor: pointer;
+}
+
+.Rank {
+	text-align: right;
+	padding-right: 0.3em;
+	width: 2em;
 }
 
 .Flag {

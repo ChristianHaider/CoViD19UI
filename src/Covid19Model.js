@@ -8695,7 +8695,7 @@ $globals.GermanData);
 $core.addMethod(
 $core.method({
 selector: "isFor:",
-protocol: "accessing",
+protocol: "testing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aTerritory"],
 source: "isFor: aTerritory\x0a\x09^self key = aTerritory id asNumber",
@@ -8765,7 +8765,7 @@ $core.addClass("BundeslandData", $globals.GermanData, "Covid19Model");
 $core.addMethod(
 $core.method({
 selector: "isFor:",
-protocol: "as yet unclassified",
+protocol: "testing",
 //>>excludeStart("ide", pragmas.excludeIdeData);
 args: ["aTerritory"],
 source: "isFor: aTerritory\x0a\x09\x22special for Hamburg\x22\x0a\x09\x0a\x09^(self key = 2 and: [\x0a\x09aTerritory id asNumber = 2000]) or: [\x0a\x09super isFor: aTerritory]",

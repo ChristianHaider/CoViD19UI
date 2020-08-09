@@ -6887,25 +6887,6 @@ return $1;
 }; }),
 $globals.Tree);
 
-$core.addMethod(
-$core.method({
-selector: "valueSelector:",
-protocol: "accessing",
-//>>excludeStart("ide", pragmas.excludeIdeData);
-args: ["aSymbol"],
-source: "valueSelector: aSymbol\x0a\x09valueSelector := aSymbol",
-referencedClasses: [],
-//>>excludeEnd("ide");
-pragmas: [],
-messageSends: []
-}, function ($methodClass){ return function (aSymbol){
-var self=this,$self=this;
-$self.valueSelector=aSymbol;
-return self;
-
-}; }),
-$globals.Tree);
-
 
 
 $core.addClass("TreeItem", $globals.Component, "Covid19view");

@@ -1642,10 +1642,6 @@ valueSelector
 	selector used for sorting the items and displaying the value"
 	
 	^valueSelector ifNil: [#lastConfirmed]
-!
-
-valueSelector: aSymbol
-	valueSelector := aSymbol
 ! !
 
 !Tree methodsFor: 'actions'!

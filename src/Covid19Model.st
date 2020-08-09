@@ -2137,15 +2137,17 @@ initializeId: idString name: nameString key: keyString localName: localNameStrin
 	key := keyString asNumber
 !
 
-isFor: aTerritory
-	^self key = aTerritory id asNumber
-!
-
 key
 	"<Integer>
 	German regional key (P1388)"
 	
 	^key
+! !
+
+!GermanData methodsFor: 'testing'!
+
+isFor: aTerritory
+	^self key = aTerritory id asNumber
 ! !
 
 !GermanData class methodsFor: 'instance creation'!
@@ -2161,7 +2163,7 @@ GermanData subclass: #BundeslandData
 	slots: {}
 	package: 'Covid19Model'!
 
-!BundeslandData methodsFor: 'as yet unclassified'!
+!BundeslandData methodsFor: 'testing'!
 
 isFor: aTerritory
 	"special for Hamburg"

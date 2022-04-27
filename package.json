@@ -39,7 +39,7 @@
     "@ambers/helios": "^0.13.1",
     "@ambers/ide-starter-modal": "^0.2.0",
     "@ambers/sdk": "^0.12.1",
-    "grunt": "^1.3.0",
+    "grunt": "^1.5.2",
     "grunt-contrib-clean": "^1.1.0",
     "grunt-contrib-connect": "^2.1.0",
     "grunt-contrib-requirejs": "^1.0.0",

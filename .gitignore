@@ -4,7 +4,13 @@
 /data/
 /dataNew/
 
+/server/
+
 /test_runner.js
 
 /config.js
 /the.js
+
+/*.im
+/*.cha
+/*.log
